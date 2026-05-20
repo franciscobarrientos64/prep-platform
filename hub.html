@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP ≫ Hub del Proyecto</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#08090d;--panel:#0d0f15;--card:#12151e;--card2:#181c28;
+  --border:#1e2235;--border2:#2a2f48;
+  --text:#dde2f4;--muted:#525a80;--dim:#282e48;
+  --gold:#c4963a;--gold-l:#d4a84a;--gold-d:rgba(196,150,58,.10);--gold-dd:rgba(196,150,58,.05);
+  --green:#22c55e;--green-d:rgba(34,197,94,.10);
+  --blue:#3b82f6;--blue-d:rgba(59,130,246,.10);
+  --red:#ef4444;--red-d:rgba(239,68,68,.10);
+  --amber:#f59e0b;--amber-d:rgba(245,158,11,.10);
+  --purple:#a855f7;--purple-d:rgba(168,85,247,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;display:flex;flex-direction:column;}
+/* TOP */
+.tb{height:52px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:50;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--gold);}
+.tb-sep{width:1px;height:22px;background:var(--border);}
+.tb-title{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.tb-stat{display:flex;flex-direction:column;align-items:flex-end;}
+.tb-stat strong{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
+.tb-stat span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;}
+/* SIDEBAR */
+.sb{width:224px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sb-sec{padding:14px 14px 6px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.nav{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12px;font-weight:500;color:var(--muted);}
+.nav:hover{color:var(--text);background:var(--card);}
+.nav.active{color:var(--gold);border-left-color:var(--gold);background:var(--gold-dd);}
+.nav-ic{font-size:15px;flex-shrink:0;}
+.nb{margin-left:auto;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;}
+.nb-done{background:var(--green-d);color:var(--green);}
+.nb-wip{background:var(--amber-d);color:var(--amber);}
+.nb-plan{background:var(--dim);color:var(--muted);}
+/* MAIN */
+.main{flex:1;overflow-y:auto;}
+.pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;}
+.pg.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* TYPOGRAPHY */
+.ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;letter-spacing:.5px;margin-bottom:4px;}
+.ph-sub{color:var(--muted);font-size:12px;margin-bottom:24px;}
+.sl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;display:flex;align-items:center;gap:10px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:10px;}
+.card.gold-border{border-color:rgba(196,150,58,.25);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+/* STAT */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:3px;}
+.sl2{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;}
+.bg{background:var(--green-d);color:var(--green);}
+.ba{background:var(--amber-d);color:var(--amber);}
+.bb{background:var(--blue-d);color:var(--blue);}
+.bp{background:var(--purple-d);color:var(--purple);}
+.bm{background:var(--card2);color:var(--muted);}
+.bgold{background:var(--gold-d);color:var(--gold);}
+/* MODULE CARDS */
+.mcard{background:var(--card);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.mcard:hover{border-color:var(--border2);transform:translateY(-1px);}
+.mcard.built{border-color:rgba(34,197,94,.2);}
+.mcard.wip{border-color:rgba(245,158,11,.2);}
+.mstrip{height:3px;}
+.mcard.built .mstrip{background:var(--green);}
+.mcard.wip .mstrip{background:var(--amber);}
+.mcard.plan .mstrip{background:var(--dim);}
+.mcard.analysis .mstrip{background:var(--blue);}
+.mbody{padding:14px 16px;}
+.mtype{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.mcard.built .mtype{color:var(--green);}
+.mcard.wip .mtype{color:var(--amber);}
+.mcard.plan .mtype{color:var(--muted);}
+.mcard.analysis .mtype{color:var(--blue);}
+.mic{font-size:24px;margin-bottom:6px;}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;margin-bottom:4px;}
+.mdesc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px;}
+.mfeats{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
+.mf{font-size:10px;background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:var(--muted);font-family:'DM Mono',monospace;}
+.mfooter{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);}
+.mdate{font-size:10px;color:var(--dim);}
+/* PROGRESS */
+.prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{text-align:left;padding:8px 12px;background:var(--card2);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);border:1px solid var(--border);}
+.tbl td{padding:9px 12px;border:1px solid var(--border);vertical-align:middle;}
+.tbl tr:hover td{background:var(--card2);}
+/* PHASE */
+.phase{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;border-top:3px solid;}
+.phase.p1{border-top-color:var(--green);}
+.phase.p2{border-top-color:var(--blue);}
+.phase.p3{border-top-color:var(--purple);}
+.phase.p4{border-top-color:var(--amber);}
+.ph-num{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.p1 .ph-num{color:var(--green);}
+.p2 .ph-num{color:var(--blue);}
+.p3 .ph-num{color:var(--purple);}
+.p4 .ph-num{color:var(--amber);}
+.ph-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;}
+.ph-items{display:flex;flex-direction:column;gap:4px;}
+.phi{display:flex;gap:6px;font-size:11px;color:var(--muted);}
+.phi::before{content:'';width:5px;height:5px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.p1 .phi.done{color:var(--text);}
+.p1 .phi.done::before{background:var(--green);}
+.p1 .phi::before{background:var(--border2);}
+.p2 .phi::before,.p3 .phi::before,.p4 .phi::before{background:var(--border2);}
+.phi.now{color:var(--amber)!important;}
+.phi.now::before{background:var(--amber)!important;}
+/* STACK PILL */
+.sp{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+.sp-ic{font-size:18px;}
+.sp-name{font-weight:700;font-size:12px;}
+.sp-role{font-size:10px;color:var(--muted);margin-top:1px;}
+.sp-st{margin-left:auto;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.st-on{background:var(--green-d);color:var(--green);}
+.st-plan{background:var(--dim);color:var(--muted);}
+/* DECISION */
+.dec{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:28px 1fr auto;gap:12px;margin-bottom:6px;}
+.dec-n{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.dec-t{font-size:12px;line-height:1.65;}
+.dec-t strong{color:var(--gold);}
+.dec-d{font-size:10px;color:var(--dim);white-space:nowrap;}
+/* OVERALL PROGRESS */
+.op-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+.op-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.op-t{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;}
+.op-pct{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--gold);}
+.op-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:10px;}
+.op-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold));width:18%;}
+.op-phases{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.op-ph{display:flex;flex-direction:column;gap:3px;}
+.op-ph-bar{height:3px;border-radius:99px;}
+.op-ph-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.op-ph-v{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;}
+/* COMP TABLE */
+.ct{width:100%;border-collapse:collapse;font-size:12px;}
+.ct th{text-align:left;padding:9px 14px;background:var(--card2);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);border:1px solid var(--border);}
+.ct td{padding:9px 14px;border:1px solid var(--border);vertical-align:middle;}
+.ct tr:hover td{background:var(--card2);}
+.chk{color:var(--green);font-weight:700;}
+.xno{color:var(--dim);}
+.prt{color:var(--amber);font-weight:600;}
+.prep-c{background:rgba(196,150,58,.04)!important;font-weight:700;color:var(--gold)!important;}
+/* CALLOUT */
+.callout{border-left:3px solid var(--gold);background:var(--gold-dd);border-radius:0 8px 8px 0;padding:12px 16px;font-size:12px;line-height:1.7;margin:12px 0;}
+/* RICH TEXT */
+.rt h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;margin-bottom:8px;margin-top:20px;}
+.rt h3:first-child{margin-top:0;}
+.rt p{color:var(--muted);font-size:13px;line-height:1.75;margin-bottom:10px;}
+.rt ul{color:var(--muted);font-size:12px;line-height:1.8;padding-left:18px;margin-bottom:10px;}
+.rt ul li{margin-bottom:2px;}
+.rt strong{color:var(--text);}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.dot-status{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;display:inline-block;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<!-- TOPBAR -->
+<div class="tb">
+  <div class="logo">PREP ≫</div>
+  <div class="tb-sep"></div>
+  <div class="tb-title">Hub del Proyecto · Todo en un lugar</div>
+  <div class="tb-right">
+    <div class="tb-stat"><strong>11</strong><span>Entregables</span></div>
+    <div class="tb-stat"><strong>3</strong><span>Módulos activos</span></div>
+    <div class="tb-stat"><strong>18%</strong><span>Avance</span></div>
+    <div style="width:1px;height:22px;background:var(--border)"></div>
+    <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);"><span class="dot-status"></span>prep.rest · activo</span>
+  </div>
+</div>
+<div class="layout">
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-sec">Proyecto</div>
+  <div class="nav active" onclick="go('overview',this)"><span class="nav-ic">🗺️</span>Overview<span class="nb nb-wip">18%</span></div>
+  <div class="nav" onclick="go('roadmap',this)"><span class="nav-ic">📅</span>Roadmap</div>
+  <div class="nav" onclick="go('stack',this)"><span class="nav-ic">⚙️</span>Stack técnico</div>
+  <div class="nav" onclick="go('decisions',this)"><span class="nav-ic">🧠</span>Decisiones</div>
+  <div class="sb-sec">Análisis y estrategia</div>
+  <div class="nav" onclick="go('analisis',this)"><span class="nav-ic">📊</span>Análisis competitivo<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('prd',this)"><span class="nav-ic">📋</span>PRD completo<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('sistema',this)"><span class="nav-ic">🗂️</span>Mapa del sistema<span class="nb nb-done">✓</span></div>
+  <div class="sb-sec">Módulos construidos</div>
+  <div class="nav" onclick="go('pos',this)"><span class="nav-ic">🖥️</span>POS · Punto de Venta<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('boh',this)"><span class="nav-ic">🛒</span>BOH · Compras<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('reservas',this)"><span class="nav-ic">📅</span>Reservas · Spec<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('widget',this)"><span class="nav-ic">🌐</span>Widget reservas<span class="nb nb-done">✓</span></div>
+  <div class="sb-sec">Planificado</div>
+  <div class="nav" onclick="go('kds',this)"><span class="nav-ic">📺</span>KDS · Cocina<span class="nb nb-plan">plan</span></div>
+  <div class="nav" onclick="go('inventario',this)"><span class="nav-ic">📦</span>Inventario · Food Cost<span class="nb nb-plan">plan</span></div>
+  <div class="nav" onclick="go('dashboard',this)"><span class="nav-ic">📊</span>Dashboard dueño<span class="nb nb-plan">plan</span></div>
+  <div class="nav" onclick="go('sunat',this)"><span class="nav-ic">🧾</span>SUNAT · Nubefact<span class="nb nb-plan">plan</span></div>
+</div>
+<!-- MAIN -->
+<div class="main" id="main">
+
+<!-- ════ OVERVIEW ════ -->
+<div id="pg-overview" class="pg active">
+  <div class="ph1">🗺️ Overview del Proyecto</div>
+  <div class="ph-sub">PREP Platform · Sistema de gestión para restaurantes latinoamericanos · prep.rest · Mayo 2026</div>
+  <div class="g4">
+    <div class="stat-card"><div class="sv" style="color:var(--green)">3</div><div class="sl2">Módulos construidos</div></div>
+    <div class="stat-card"><div class="sv" style="color:var(--amber)">4</div><div class="sl2">En construcción</div></div>
+    <div class="stat-card"><div class="sv" style="color:var(--muted)">8</div><div class="sl2">Por construir</div></div>
+    <div class="stat-card"><div class="sv" style="color:var(--gold)">11</div><div class="sl2">Entregables en Drive</div></div>
+  </div>
+  <div class="op-wrap" style="margin-top:12px">
+    <div class="op-h"><div class="op-t">Progreso total del proyecto</div><div class="op-pct">18%</div></div>
+    <div class="op-bar"><div class="op-fill"></div></div>
+    <div class="op-phases">
+      <div class="op-ph"><div class="op-ph-bar" style="background:var(--green)"></div><div style="display:flex;justify-content:space-between;margin-top:4px"><div class="op-ph-l">Fase 1 MVP</div><div class="op-ph-v" style="color:var(--green)">25%</div></div></div>
+      <div class="op-ph"><div class="op-ph-bar" style="background:var(--border2)"></div><div style="display:flex;justify-content:space-between;margin-top:4px"><div class="op-ph-l">Fase 2 Retención</div><div class="op-ph-v" style="color:var(--muted)">0%</div></div></div>
+      <div class="op-ph"><div class="op-ph-bar" style="background:var(--border2)"></div><div style="display:flex;justify-content:space-between;margin-top:4px"><div class="op-ph-l">Fase 3 IA</div><div class="op-ph-v" style="color:var(--muted)">0%</div></div></div>
+      <div class="op-ph"><div class="op-ph-bar" style="background:var(--border2)"></div><div style="display:flex;justify-content:space-between;margin-top:4px"><div class="op-ph-l">Fase 4 Latam</div><div class="op-ph-v" style="color:var(--muted)">0%</div></div></div>
+    </div>
+  </div>
+  <div class="sl">Todos los entregables</div>
+  <div class="g3">
+    <div class="mcard analysis" onclick="go('analisis',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">Análisis estratégico</div><div class="mic">📊</div><div class="mtitle">Análisis Competitivo</div><div class="mdesc">Restaurant.pe vs Toast POS · Brechas estratégicas · Posicionamiento de PREP en Latam.</div><div class="mfeats"><span class="mf">17 features</span><span class="mf">9 brechas</span><span class="mf">4 fases</span></div><div class="mfooter"><span class="mdate">Mayo 2026</span><span class="badge bg">✓ Completo</span></div></div></div>
+    <div class="mcard analysis" onclick="go('prd',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">Documento de producto</div><div class="mic">📋</div><div class="mtitle">PRD Completo · 11 secciones</div><div class="mdesc">Visión, mercado, módulos, MVP, flujos, pricing, monetización, arquitectura técnica y roadmap 18 meses.</div><div class="mfeats"><span class="mf">S/199</span><span class="mf">S/349</span><span class="mf">S/799</span></div><div class="mfooter"><span class="mdate">Mayo 2026 · v1.0</span><span class="badge bg">✓ Completo</span></div></div></div>
+    <div class="mcard analysis" onclick="go('sistema',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">Arquitectura de producto</div><div class="mic">🗂️</div><div class="mtitle">Mapa del Sistema</div><div class="mdesc">15 módulos en 3 zonas, 7 roles de usuario, capa core, stack técnico y roadmap visual.</div><div class="mfeats"><span class="mf">FOH</span><span class="mf">BOH</span><span class="mf">Gestión</span><span class="mf">7 roles</span></div><div class="mfooter"><span class="mdate">Mayo 2026</span><span class="badge bg">✓ Completo</span></div></div></div>
+    <div class="mcard built" onclick="go('pos',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">✓ Módulo construido</div><div class="mic">🖥️</div><div class="mtitle">POS · Punto de Venta</div><div class="mdesc">Mapa de mesas 3 zonas, toma de pedidos, KDS, cobro multi-método, comprobante SUNAT vía Nubefact.</div><div class="mfeats"><span class="mf">16 mesas</span><span class="mf">4 pagos</span><span class="mf">SUNAT</span></div><div class="mfooter"><span class="mdate">v1.0 · Mayo 2026</span><span class="badge bg">✓ Prototipo</span></div></div></div>
+    <div class="mcard built" onclick="go('boh',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">✓ Módulo construido</div><div class="mic">🛒</div><div class="mtitle">BOH · Sistema de Compras</div><div class="mdesc">Requisiciones con PIN, verificación stock, comparación VTEX, split multi-proveedor, PDF OC, WhatsApp.</div><div class="mfeats"><span class="mf">4 áreas</span><span class="mf">VTEX API</span><span class="mf">PDF+WA</span></div><div class="mfooter"><span class="mdate">v1.0 · Mayo 2026</span><span class="badge bg">✓ Prototipo</span></div></div></div>
+    <div class="mcard built" onclick="go('reservas',null)"><div class="mstrip"></div><div class="mbody"><div class="mtype">✓ Spec + Widget construidos</div><div class="mic">📅</div><div class="mtitle">Reservas · Spec + Widget</div><div class="mdesc">18 features especificadas · Widget embebible con 4 pasos · Personalizable · WhatsApp-first.</div><div class="mfeats"><span class="mf">18 features</span><span class="mf">Widget</span><span class="mf">0% fee</span></div><div class="mfooter"><span class="mdate">v1.0 · Mayo 2026</span><span class="badge bg">✓ Prototipo</span></div></div></div>
+  </div>
+</div>
+
+<!-- ════ ROADMAP ════ -->
+<div id="pg-roadmap" class="pg">
+  <div class="ph1">📅 Roadmap · 24 meses</div>
+  <div class="ph-sub">Fase 1 activa ahora · meses 0–3</div>
+  <div class="g2" style="margin-bottom:10px">
+    <div class="phase p1">
+      <div class="ph-num">Fase 1 · 0–3 meses</div>
+      <div class="ph-title">MVP — El restaurante opera</div>
+      <div class="ph-items">
+        <div class="phi done">✓ Sistema de Compras BOH</div>
+        <div class="phi done">✓ POS + Mapa de mesas</div>
+        <div class="phi done">✓ SUNAT (Nubefact API)</div>
+        <div class="phi done">✓ Widget de Reservas</div>
+        <div class="phi now">⏳ Panel hostess reservas</div>
+        <div class="phi">KDS pantalla cocina</div>
+        <div class="phi">Inventario + food cost</div>
+        <div class="phi">Dashboard dueño móvil</div>
+        <div class="phi">Gestión de carta (admin)</div>
+        <div class="phi">Supabase Auth real</div>
+      </div>
+    </div>
+    <div class="phase p2">
+      <div class="ph-num">Fase 2 · 4–9 meses</div>
+      <div class="ph-title">Retención — Gana más</div>
+      <div class="ph-items">
+        <div class="phi">Delivery propio 0% comisión</div>
+        <div class="phi">WhatsApp Commerce nativo</div>
+        <div class="phi">Carta QR en mesa</div>
+        <div class="phi">Multi-sede básico</div>
+        <div class="phi">Garantía anti no-show (Culqi)</div>
+        <div class="phi">Integración Rappi/PedidosYa</div>
+        <div class="phi">App PWA móvil</div>
+        <div class="phi">Reservas desde Google</div>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="phase p3">
+      <div class="ph-num">Fase 3 · 10–15 meses</div>
+      <div class="ph-title">Inteligencia — Decide mejor</div>
+      <div class="ph-items">
+        <div class="phi">IA predicción de demanda</div>
+        <div class="phi">Asistente IA en español (Claude API)</div>
+        <div class="phi">CRM y fidelización</div>
+        <div class="phi">Campañas automáticas</div>
+        <div class="phi">RRHH y planilla</div>
+        <div class="phi">Pasarela de pagos propia</div>
+      </div>
+    </div>
+    <div class="phase p4">
+      <div class="ph-num">Fase 4 · 16–24 meses</div>
+      <div class="ph-title">Expansión — Latam</div>
+      <div class="ph-items">
+        <div class="phi">Colombia (DIAN)</div>
+        <div class="phi">Chile (SII)</div>
+        <div class="phi">México (SAT)</div>
+        <div class="phi">API pública para integradores</div>
+        <div class="phi">Fintech · Capital restaurantes</div>
+        <div class="phi">Marketplace de proveedores</div>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Estado de módulos Fase 1</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl">
+      <thead><tr><th>Módulo</th><th>Estado</th><th>Progreso</th><th>Siguiente paso</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sistema de Compras BOH</strong></td><td><span class="badge bg">✓ Prototipo</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:60%;background:var(--green)"></div></div></td><td style="color:var(--muted)">Conectar Supabase</td></tr>
+        <tr><td><strong>POS · Punto de Venta</strong></td><td><span class="badge bg">✓ Prototipo</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:55%;background:var(--green)"></div></div></td><td style="color:var(--muted)">Auth + persistencia DB</td></tr>
+        <tr><td><strong>Widget de Reservas</strong></td><td><span class="badge bg">✓ Prototipo</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--green)"></div></div></td><td style="color:var(--muted)">Panel hostess</td></tr>
+        <tr><td><strong>KDS · Pantalla Cocina</strong></td><td><span class="badge ba">⏳ Pendiente</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--muted)"></div></div></td><td style="color:var(--muted)">Sprint 3</td></tr>
+        <tr><td><strong>Inventario · Food Cost</strong></td><td><span class="badge ba">⏳ Pendiente</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--muted)"></div></div></td><td style="color:var(--muted)">Sprint 3</td></tr>
+        <tr><td><strong>Facturación SUNAT</strong></td><td><span class="badge bg">✓ En POS</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:40%;background:var(--green)"></div></div></td><td style="color:var(--muted)">Nubefact API real</td></tr>
+        <tr><td><strong>Dashboard dueño</strong></td><td><span class="badge ba">⏳ Pendiente</span></td><td><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--muted)"></div></div></td><td style="color:var(--muted)">Sprint 4</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════ STACK ════ -->
+<div id="pg-stack" class="pg">
+  <div class="ph1">⚙️ Stack Técnico</div>
+  <div class="ph-sub">Arquitectura definida — React + Supabase + Vercel + Nubefact</div>
+  <div class="sl">Frontend</div>
+  <div class="g4">
+    <div class="sp"><div class="sp-ic">⚛️</div><div><div class="sp-name">React 19</div><div class="sp-role">UI principal</div></div><span class="sp-st st-on">Activo</span></div>
+    <div class="sp"><div class="sp-ic">🎨</div><div><div class="sp-name">Tailwind CSS</div><div class="sp-role">Estilos</div></div><span class="sp-st st-on">Activo</span></div>
+    <div class="sp"><div class="sp-ic">⚡</div><div><div class="sp-name">Vite</div><div class="sp-role">Build tool</div></div><span class="sp-st st-on">Activo</span></div>
+    <div class="sp"><div class="sp-ic">🧩</div><div><div class="sp-name">shadcn/ui</div><div class="sp-role">Componentes</div></div><span class="sp-st st-on">Activo</span></div>
+  </div>
+  <div class="sl">Backend y base de datos</div>
+  <div class="g4">
+    <div class="sp"><div class="sp-ic">🔐</div><div><div class="sp-name">Supabase Auth</div><div class="sp-role">Autenticación y roles</div></div><span class="sp-st st-plan">Sprint 2</span></div>
+    <div class="sp"><div class="sp-ic">🗄️</div><div><div class="sp-name">Supabase DB</div><div class="sp-role">PostgreSQL + RLS</div></div><span class="sp-st st-plan">Sprint 2</span></div>
+    <div class="sp"><div class="sp-ic">⚡</div><div><div class="sp-name">Supabase Realtime</div><div class="sp-role">KDS · POS sync WebSockets</div></div><span class="sp-st st-plan">Sprint 3</span></div>
+    <div class="sp"><div class="sp-ic">🚀</div><div><div class="sp-name">Vercel</div><div class="sp-role">Deploy edge network</div></div><span class="sp-st st-plan">Sprint 2</span></div>
+  </div>
+  <div class="sl">Integraciones críticas</div>
+  <div class="g4">
+    <div class="sp"><div class="sp-ic">🧾</div><div><div class="sp-name">Nubefact API</div><div class="sp-role">SUNAT · PSE certificado</div></div><span class="sp-st st-plan">Sprint 2</span></div>
+    <div class="sp"><div class="sp-ic">📱</div><div><div class="sp-name">WhatsApp API</div><div class="sp-role">Meta Business API oficial</div></div><span class="sp-st st-plan">Sprint 3</span></div>
+    <div class="sp"><div class="sp-ic">💳</div><div><div class="sp-name">Culqi</div><div class="sp-role">Pagos · Garantías reservas</div></div><span class="sp-st st-plan">Sprint 3</span></div>
+    <div class="sp"><div class="sp-ic">🛒</div><div><div class="sp-name">VTEX API</div><div class="sp-role">Wong · Metro · Makro precios</div></div><span class="sp-st st-on">En BOH</span></div>
+  </div>
+  <div class="sl">IA y analytics</div>
+  <div class="g4">
+    <div class="sp"><div class="sp-ic">🤖</div><div><div class="sp-name">Claude API</div><div class="sp-role">IA · Asistente · Matching</div></div><span class="sp-st st-plan">Fase 3</span></div>
+    <div class="sp"><div class="sp-ic">📧</div><div><div class="sp-name">Resend</div><div class="sp-role">Emails transaccionales</div></div><span class="sp-st st-plan">Sprint 3</span></div>
+    <div class="sp"><div class="sp-ic">📊</div><div><div class="sp-name">Posthog</div><div class="sp-role">Analytics de producto</div></div><span class="sp-st st-plan">Sprint 4</span></div>
+    <div class="sp"><div class="sp-ic">📄</div><div><div class="sp-name">jsPDF</div><div class="sp-role">PDFs órdenes de compra</div></div><span class="sp-st st-on">Activo en BOH</span></div>
+  </div>
+  <div class="callout" style="margin-top:16px"><strong>Costo infraestructura Fase 1:</strong> Supabase Free → Pro $25/mes cuando supere 500MB. Vercel Free → Pro $20/mes. Nubefact ~S/50/mes. Total: ~$50/mes para los primeros 100 restaurantes.</div>
+</div>
+
+<!-- ════ DECISIONS ════ -->
+<div id="pg-decisions" class="pg">
+  <div class="ph1">🧠 Decisiones Clave</div>
+  <div class="ph-sub">Registro de todas las decisiones técnicas y de producto relevantes</div>
+  <div class="dec"><div class="dec-n">#01</div><div class="dec-t"><strong>SUNAT via Nubefact</strong> — No integrar directamente con SUNAT. Nubefact actúa como PSE certificado, absorbe cambios regulatorios. El restaurante da de alta con su Clave SOL. Payload JSON → Nubefact → firma digital → SUNAT → CDR en 2-3 segundos.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#02</div><div class="dec-t"><strong>PIN de 4 dígitos por área BOH</strong> — Login sin fricción para cocina, bar, sala, oficina. QR en la pared genera URL pre-seleccionada con ?area=cocina. Sin contraseñas complejas para el cocinero con las manos ocupadas.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#03</div><div class="dec-t"><strong>Sin fee por reserva</strong> — Mesa247 cobra por cubierto. PREP incluye reservas dentro de la suscripción mensual, modelo como Resy. Diferencial de precio real: S/0 por cubierto vs S/5-7 de la competencia.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#04</div><div class="dec-t"><strong>Precios supermercados via VTEX API</strong> — Wong, Metro, Makro son todos VTEX. Mismo endpoint que Cocina Semanal: /api/catalog_system/pub/products/search. Cache 6h para planificación, fetch real-time para urgentes.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#05</div><div class="dec-t"><strong>Supabase Realtime para KDS + POS</strong> — WebSockets nativos sin implementar Socket.io ni Redis. Latencia < 500ms para sincronización comanda → KDS. Crítico para que cocina y sala estén sincronizados.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#06</div><div class="dec-t"><strong>POS primero, SUNAT al final del flujo</strong> — No módulo aislado. La facturación se llama en el momento del cobro en caja: cobro → boleta/factura → Nubefact. Integrado al POS, no como pantalla separada.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#07</div><div class="dec-t"><strong>Split multi-proveedor por ítem en BOH</strong> — Cada ítem de la lista de compra puede ir a un proveedor diferente. El sistema agrupa automáticamente y genera carrito VTEX, PDF y WhatsApp por separado según destino.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#08</div><div class="dec-t"><strong>Widget sin cuenta obligatoria</strong> — Solo nombre + celular para reservar. Sin crear cuenta. El número activa reconfirmación automática por WhatsApp. Máxima conversión en el primer paso del funnel.</div><div class="dec-d">Mayo 2026</div></div>
+  <div class="dec"><div class="dec-n">#09</div><div class="dec-t"><strong>Multi-tenant con RLS en Supabase</strong> — Cada restaurante es un tenant. Row Level Security en PostgreSQL garantiza que los datos de un restaurante nunca sean visibles para otro. Sin infraestructura separada por cliente.</div><div class="dec-d">Mayo 2026</div></div>
+</div>
+
+<!-- ════ ANÁLISIS COMPETITIVO ════ -->
+<div id="pg-analisis" class="pg">
+  <div class="ph1">📊 Análisis Competitivo</div>
+  <div class="ph-sub">Restaurant.pe (referencia Perú) vs Toast POS (líder mundial) · Brechas para PREP</div>
+  <div class="g2" style="margin-bottom:12px">
+    <div class="card">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:8px">🇵🇪 Restaurant.pe</div>
+      <div class="rt">
+        <p><strong>Referencia local.</strong> SaaS sin contratos. 9 países. S/100 plan base. +50% crecimiento post-pandemia. Gestiona S/125M en ventas mensuales de sus clientes.</p>
+        <p><strong>Fortalezas:</strong> SUNAT integrado, precio accesible, sin contrato, cultura local.</p>
+        <p><strong>Debilidades:</strong> Sin KDS, sin delivery propio, sin WhatsApp, sin CRM, analytics muy básicos, soporte solo en horario de oficina.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:8px">🌎 Toast POS · #1 Mundial</div>
+      <div class="rt">
+        <p><strong>Líder global.</strong> 148,000 locales activos (Q2 2025). $1.7B ARR. 90% retención. Primer año GAAP-rentable 2024. Solo disponible en USA.</p>
+        <p><strong>Fortalezas:</strong> KDS nativo, delivery propio 0%, loyalty, nómina integrada, 24/7 soporte, analytics avanzados.</p>
+        <p><strong>Debilidades:</strong> Solo USA, contrato de 2 años requerido, sin SUNAT, sin WhatsApp, no disponible en Latam.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Comparativa de 17 features</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="ct">
+      <thead><tr><th>Feature</th><th>Restaurant.pe</th><th>Toast (USA)</th><th class="prep-c">PREP</th></tr></thead>
+      <tbody>
+        <tr><td>POS en la nube</td><td class="chk">✓</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
+        <tr><td>SUNAT integrado</td><td class="chk">✓</td><td class="xno">✗</td><td class="prep-c chk">✓ Nubefact</td></tr>
+        <tr><td>KDS pantalla cocina</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
+        <tr><td>WhatsApp nativo</td><td class="xno">✗</td><td class="xno">✗</td><td class="prep-c chk">✓ Diferencial</td></tr>
+        <tr><td>Delivery propio 0%</td><td class="xno">✗</td><td class="prt">✓ (solo USA)</td><td class="prep-c chk">✓</td></tr>
+        <tr><td>Food cost automático</td><td class="prt">Básico</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
+        <tr><td>IA predictiva</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c prt">Fase 3</td></tr>
+        <tr><td>Sistema compras BOH</td><td class="xno">✗</td><td class="xno">✗</td><td class="prep-c chk">✓ Exclusivo</td></tr>
+        <tr><td>CRM y fidelización</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c prt">Fase 3</td></tr>
+        <tr><td>Sin fee por reserva</td><td class="xno">Cobra</td><td class="chk">✓</td><td class="prep-c chk">✓ Incluido</td></tr>
+        <tr><td>Sin contrato</td><td class="chk">✓</td><td class="xno">2 años req.</td><td class="prep-c chk">✓</td></tr>
+        <tr><td>Disponible en Latam</td><td class="chk">✓ 9 países</td><td class="xno">✗ Solo USA</td><td class="prep-c chk">✓ Nativo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:12px"><strong>Posicionamiento PREP:</strong> "El único sistema de gestión diseñado para el restaurantero latinoamericano real" — potencia de Toast, cumplimiento fiscal de restaurant.pe, conectividad WhatsApp que el mercado necesita. Sin competidor directo en Latam.</div>
+</div>
+
+<!-- ════ PRD ════ -->
+<div id="pg-prd" class="pg">
+  <div class="ph1">📋 PRD Completo · v1.0</div>
+  <div class="ph-sub">Documento de Producto — 11 secciones</div>
+  <div class="g2" style="margin-bottom:12px">
+    <div class="card"><div class="rt">
+      <h3>01 · Visión</h3>
+      <p>El restaurantero peruano tiene tres herramientas hoy: cuaderno, WhatsApp y Rappi. PREP reemplaza las tres sin perder la cercanía ni la cultura local.</p>
+      <p><strong>Misión:</strong> Ser el sistema operativo del restaurante latinoamericano, tan fácil como WhatsApp y tan poderoso como Toast, construido desde Lima para el mundo hispanohablante.</p>
+    </div></div>
+    <div class="card"><div class="rt">
+      <h3>02 · Mercado</h3>
+      <p><strong>Perú:</strong> ~80,000 restaurantes formales. 18% con software. TAM a S/199/mes = S/156M/año. SAM realista (5%) = S/7.8M/año.</p>
+      <p><strong>Latam:</strong> ~1.8M restaurantes. &lt;12% penetración tech. +28% CAGR POS cloud. Mercado global 2025: $25.1B → 2035: $49.3B.</p>
+    </div></div>
+  </div>
+  <div class="sl">Modelo de precios</div>
+  <div class="g3" style="margin-bottom:12px">
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Plan Básico</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--text)">S/199<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">1 local · 30 mesas · 5 usuarios · POS + KDS + SUNAT + Inventario + Dashboard</div></div>
+    <div class="card gold-border"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:8px">Plan Pro · Más popular</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--gold)">S/349<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">1 local · Mesas ilimitadas · Delivery propio · WhatsApp · Rappi integrado · Usuarios ilimitados</div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Plan Cadena</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--text)">S/799<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">Hasta 5 locales · IA predictiva · CRM · RRHH · Multi-sede · API · Account manager</div></div>
+  </div>
+  <div class="sl">Proyección financiera conservadora</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl">
+      <thead><tr><th>Período</th><th>Restaurantes</th><th>MRR</th><th>ARR</th><th>Hito</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mes 3</strong></td><td>20</td><td>S/5,980</td><td>S/71,760</td><td>Validación producto-mercado</td></tr>
+        <tr><td><strong>Mes 6</strong></td><td>80</td><td>S/23,920</td><td>S/287,040</td><td>Primer equipo de ventas</td></tr>
+        <tr><td><strong>Mes 12</strong></td><td>250</td><td>S/74,750</td><td>S/897,000</td><td>Breakeven operativo</td></tr>
+        <tr><td><strong>Mes 18</strong></td><td>600</td><td>S/179,400</td><td>S/2.15M</td><td>Expansión Colombia/Chile</td></tr>
+        <tr><td><strong>Mes 24</strong></td><td>1,500</td><td>S/448,500</td><td>S/5.38M</td><td>Serie A / inversión</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════ SISTEMA ════ -->
+<div id="pg-sistema" class="pg">
+  <div class="ph1">🗂️ Mapa del Sistema · 15 módulos</div>
+  <div class="ph-sub">3 zonas · 7 roles de usuario · 4 fases de construcción</div>
+  <div class="sl">Front of House (FOH)</div>
+  <div class="g3">
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">POS · Fase 1</div><div class="rt"><p>Mapa de mesas interactivo, toma de pedidos, división de cuenta, Yape/Plin/efectivo/tarjeta, modo offline.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">KDS · Fase 1</div><div class="rt"><p>Pantalla cocina en tiempo real vía Supabase Realtime. Por estación, alertas de tiempo, resumen de turno.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">Delivery propio · Fase 2</div><div class="rt"><p>URL propia sin comisión. Pago online vía Culqi. Tracking del cliente. Integración Rappi/PedidosYa.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">WhatsApp Commerce · Fase 2</div><div class="rt"><p>Notificaciones al dueño, carta digital, pedidos por WA, campañas. Meta Business API oficial.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">Reservas · Fase 1-2</div><div class="rt"><p>Widget embebible, perfil de comensal, brief de turno, lista de espera con Notify, garantía anti no-show.</p></div></div>
+  </div>
+  <div class="sl">Back of House (BOH)</div>
+  <div class="g3">
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Compras · Fase 1 ✓</div><div class="rt"><p>Requisiciones PIN, verificación stock, comparación VTEX, split multi-proveedor, PDF OC, WhatsApp/email a proveedor.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Inventario · Fase 1</div><div class="rt"><p>Fichas técnicas, descuento automático al vender, food cost % real, alertas stock bajo, reporte teórico vs físico.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Proveedores · Fase 1</div><div class="rt"><p>Directorio con contactos, lista de precios, historial de OC, evaluación de proveedores.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:6px">RRHH · Fase 3</div><div class="rt"><p>Asistencia QR, turnos, planilla ONP/AFP/CTS, vacaciones y permisos.</p></div></div>
+  </div>
+  <div class="sl">Gestión y Administración</div>
+  <div class="g3">
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Dashboard dueño · Fase 1</div><div class="rt"><p>Ventas real-time, food cost %, top platos, alertas caja, todo en el celular sin instalar nada.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">SUNAT · Fase 1</div><div class="rt"><p>Boletas y facturas vía Nubefact API, notas de crédito, cierre de caja, reporte mensual para contador.</p></div></div>
+    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:6px">IA Asistente · Fase 3</div><div class="rt"><p>Predicción de demanda, sugerencias compra, análisis rentabilidad, chat en español. Claude API.</p></div></div>
+  </div>
+</div>
+
+<!-- ════ POS ════ -->
+<div id="pg-pos" class="pg">
+  <div class="ph1">🖥️ POS · Punto de Venta</div>
+  <div class="ph-sub">Prototipo funcional v1.0 · Flujo completo de mesa → cobro → SUNAT</div>
+  <div class="callout">Este módulo está construido y funcional. Cubre el flujo completo: <strong>Mesa → Pedido → Cocina → Cobro → Comprobante SUNAT</strong>. Para verlo en acción usa <strong>Casa Italia</strong>, el demo configurado con restaurante real.</div>
+  <div class="sl">Pantallas implementadas</div>
+  <div class="g3">
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">🗺️ Mapa de mesas</div><div style="font-size:11px;color:var(--muted)">3 zonas: Salón, Terraza, Bar. Estados: libre/ocupada/reservada/sucia. Click → abrir panel de pedido.</div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">🍽️ Toma de pedidos</div><div style="font-size:11px;color:var(--muted)">Panel lateral con menú por categorías, búsqueda, modificadores. Controles +/- de cantidad en tiempo real.</div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">📺 Envío a KDS</div><div style="font-size:11px;color:var(--muted)">Botón "Cocina" envía comanda en tiempo real. En producción usa Supabase Realtime WebSockets.</div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">💳 Cobro multi-método</div><div style="font-size:11px;color:var(--muted)">Efectivo (con vuelto automático), Tarjeta, Yape, Plin. División de cuenta pendiente.</div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">🧾 SUNAT integrado</div><div style="font-size:11px;color:var(--muted)">Toggle Boleta/Factura. Simulación Nubefact API con CDR hash. Mesa liberada automáticamente al cobrar.</div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:4px">📊 Stats en topbar</div><div style="font-size:11px;color:var(--muted)">Mesas activas, ventas del día, cubiertos. Reloj en vivo. Todo en tiempo real sin refrescar.</div></div>
+  </div>
+  <div class="sl">Siguiente sprint (v1.1)</div>
+  <div class="card"><div class="rt"><ul>
+    <li><strong>Supabase Auth:</strong> Login real por rol (mozo, cajero, dueño, cocina)</li>
+    <li><strong>Persistencia DB:</strong> tablas orders, order_items, payments guardados en PostgreSQL</li>
+    <li><strong>Nubefact real:</strong> credenciales del restaurante, emisión real a SUNAT</li>
+    <li><strong>Supabase Realtime:</strong> sincronización KDS ↔ POS con WebSockets reales</li>
+    <li><strong>Gestión de carta:</strong> CRUD del menú y precios desde panel admin</li>
+  </ul></div></div>
+</div>
+
+<!-- ════ BOH ════ -->
+<div id="pg-boh" class="pg">
+  <div class="ph1">🛒 BOH · Sistema de Compras</div>
+  <div class="ph-sub">Prototipo funcional v1.0 · Flujo completo de 4 etapas</div>
+  <div class="callout">Este módulo es el <strong>gran diferencial de PREP</strong>: ningún competidor (ni restaurant.pe ni Toast) tiene un sistema de compras integrado con el POS. Es exclusivo de PREP y resuelve el mayor dolor del restaurantero: el descontrol en las compras.</div>
+  <div class="g2">
+    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Etapa 1 · Requisición</div><div class="rt"><p>Cada área (Cocina, Bar, Sala, Oficina) tiene login con PIN 4 dígitos. Catálogo de ítems frecuentes pre-cargado. Formulario con urgencia Normal/Urgente. QR en la pared para acceso directo.</p></div></div>
+    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:8px">Etapa 2 · Stock</div><div class="rt"><p>Almacén recibe solicitud en tiempo real. Cruce automático vs inventario. Estado por ítem: ✓ Disponible / ⚠ Parcial / ✗ Sin stock. Despacho desde stock o pasa a compra externa.</p></div></div>
+    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Etapa 3 · Comparación precios</div><div class="rt"><p>API VTEX: Wong, Metro, Makro, Plaza Vea en tiempo real. Proveedores propios con lista manual. Marcado automático del precio más bajo ★. Split multi-proveedor: cada ítem a destino diferente.</p></div></div>
+    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Etapa 4 · Pedido final</div><div class="rt"><p>Carrito VTEX directo (supermercados). PDF Orden de Compra con logo del restaurante e IGV. WhatsApp al proveedor con lista formateada. Email con PDF adjunto.</p></div></div>
+  </div>
+</div>
+
+<!-- ════ RESERVAS ════ -->
+<div id="pg-reservas" class="pg">
+  <div class="ph1">📅 Reservas · Módulo completo</div>
+  <div class="ph-sub">18 features especificadas · Spec v1.0 · Widget v1.0</div>
+  <div class="callout"><strong>Diferencial vs Mesa247 y Resy:</strong> WhatsApp nativo (ambos carecen) · Integración directa con POS · Sin fee por cubierto (S/0) · Brief de turno por WhatsApp · Perfil acumulativo del comensal vinculado al CRM.</div>
+  <div class="sl">6 features solicitadas + 12 sugeridas = 18 total</div>
+  <div class="g2">
+    <div class="card"><div style="font-weight:700;margin-bottom:10px;color:var(--gold)">✓ Features solicitadas</div>
+      <div class="rt"><ul>
+        <li><strong>Widget 100% personalizable</strong> — logo, colores, URL propia</li>
+        <li><strong>Integración directa con POS</strong> — sin doble digitación</li>
+        <li><strong>Asignación auto o manual</strong> — drag & drop al mapa</li>
+        <li><strong>Mover reservas libremente</strong> — cambio hora/mesa instant.</li>
+        <li><strong>Brief de turno configurable</strong> — frecuencia, canal, destinatarios</li>
+        <li><strong>Reconfirmación automática</strong> — 48h, 24h, 2h antes</li>
+      </ul></div></div>
+    <div class="card"><div style="font-weight:700;margin-bottom:10px;color:var(--green)">+ Features sugeridas</div>
+      <div class="rt"><ul>
+        <li><strong>Perfil acumulativo del comensal</strong> — historial, tags, alergias</li>
+        <li><strong>Lista de espera con Notify</strong> — Resy logró 90% fill rate</li>
+        <li><strong>Garantía anti no-show</strong> — baja de 5% a 0.6% (Culqi)</li>
+        <li><strong>Walk-ins integrados</strong> — sin cuadernos paralelos</li>
+        <li><strong>Calendario de ocupación</strong> — heatmap mensual</li>
+        <li><strong>Turn time inteligente</strong> — pacing automático de cocina</li>
+      </ul></div></div>
+  </div>
+</div>
+
+<!-- ════ WIDGET ════ -->
+<div id="pg-widget" class="pg">
+  <div class="ph1">🌐 Widget de Reservas · Público</div>
+  <div class="ph-sub">Lo que ve el comensal · v1.0 · Embebible con 1 línea de código</div>
+  <div class="callout">El widget tiene barra de personalización en tiempo real — cambia nombre del restaurante, colores y acento sin recargar. Prueba en Casa Italia o en el widget independiente.</div>
+  <div class="sl">Los 4 pasos del comensal</div>
+  <div class="g4">
+    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">1</div><div style="font-weight:700;margin-bottom:4px">Fecha + personas</div><div style="font-size:11px;color:var(--muted)">Calendario con días llenos bloqueados. Selector de pax de 1 a 10+.</div></div>
+    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">2</div><div style="font-weight:700;margin-bottom:4px">Horario disponible</div><div style="font-size:11px;color:var(--muted)">Slots de almuerzo y cena. Llenos marcados con tachado.</div></div>
+    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">3</div><div style="font-weight:700;margin-bottom:4px">Datos del comensal</div><div style="font-size:11px;color:var(--muted)">Nombre, WhatsApp, email, ocasión especial, nota para cocina.</div></div>
+    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">4</div><div style="font-weight:700;margin-bottom:4px">Confirmación</div><div style="font-size:11px;color:var(--muted)">Resumen + aviso WhatsApp automático. Código de reserva. Botón guardar en WA.</div></div>
+  </div>
+  <div class="sl">Próximas features del widget</div>
+  <div class="card"><div class="rt"><ul>
+    <li><strong>Conectar Supabase:</strong> guardar reservas en DB real</li>
+    <li><strong>WhatsApp API:</strong> confirmación automática real al comensal</li>
+    <li><strong>Panel hostess:</strong> el equipo ve y gestiona las reservas del widget</li>
+    <li><strong>Google Business Profile:</strong> botón "Reservar" en búsqueda de Google</li>
+  </ul></div></div>
+</div>
+
+<!-- ════ PENDIENTES ════ -->
+<div id="pg-kds" class="pg">
+  <div class="ph1">📺 KDS · Pantalla de Cocina</div>
+  <div class="ph-sub">Planificado · Sprint 3</div>
+  <div class="callout">El KDS se construye después de conectar Supabase Realtime al POS. El prototipo del POS ya tiene el botón "Enviar a cocina" listo. En producción: comanda enviada desde POS → aparece en KDS en menos de 500ms vía WebSockets.</div>
+  <div class="card"><div class="rt"><h3>Features planificadas</h3><ul>
+    <li>Pedidos en tiempo real via Supabase Realtime (WebSockets)</li>
+    <li>Vista por estación: Cocina caliente / Entrantes fríos / Bar</li>
+    <li>Alertas de tiempo de espera (verde → amarillo → rojo)</li>
+    <li>Marcar plato como listo → notifica al mozo en tablet</li>
+    <li>Resumen del turno: platos producidos, tiempo promedio</li>
+    <li>Funciona en cualquier tablet o TV conectada al WiFi</li>
+  </ul></div></div>
+</div>
+<div id="pg-inventario" class="pg">
+  <div class="ph1">📦 Inventario · Food Cost</div>
+  <div class="ph-sub">Planificado · Sprint 3</div>
+  <div class="callout">El módulo más impactante para el control de costos. La base ya existe: las fichas técnicas del BOH compras son la misma estructura. Se extiende con descuento automático al vender y food cost en tiempo real.</div>
+  <div class="card"><div class="rt"><h3>Features planificadas</h3><ul>
+    <li>Registro de ingredientes con unidad y costo actual</li>
+    <li>Fichas técnicas: receta por plato con cantidades</li>
+    <li>Descuento automático al vender desde el POS</li>
+    <li>Food cost % en tiempo real por plato y categoría</li>
+    <li>Alertas de stock bajo por WhatsApp al dueño</li>
+    <li>Reporte semanal: teórico vs físico (mermas)</li>
+  </ul></div></div>
+</div>
+<div id="pg-dashboard" class="pg">
+  <div class="ph1">📊 Dashboard del Dueño</div>
+  <div class="ph-sub">Planificado · Sprint 4</div>
+  <div class="callout">Vista en tiempo real de todo el negocio desde el celular, sin instalar ninguna app. Solo el navegador. El dueño ve ventas, food cost, mesas activas y alertas desde cualquier lugar.</div>
+  <div class="card"><div class="rt"><h3>Widgets planificados</h3><ul>
+    <li>Ventas del día vs mismo día semana pasada (real-time, cada 30s)</li>
+    <li>Mesas activas ahora mismo y cubiertos del turno</li>
+    <li>Food cost % del día vs meta configurada</li>
+    <li>Top 5 platos por ingreso y por margen</li>
+    <li>Alerta automática si hay diferencia en cierre de caja</li>
+    <li>Notificación WhatsApp al cierre de cada turno</li>
+  </ul></div></div>
+</div>
+<div id="pg-sunat" class="pg">
+  <div class="ph1">🧾 SUNAT · Nubefact</div>
+  <div class="ph-sub">Integrado en POS prototipo · API real pendiente</div>
+  <div class="callout">El flujo de SUNAT ya existe en el POS (simulado). El siguiente paso es conectar con credenciales reales de Nubefact. Nubefact tiene ambiente de sandbox gratuito para pruebas antes de producción.</div>
+  <div class="card"><div class="rt">
+    <h3>Flujo de integración</h3>
+    <p>PREP POS → llama API Nubefact (JSON) → Nubefact firma y valida → SUNAT → CDR de vuelta → PDF/XML al cliente</p>
+    <h3>Payload de ejemplo (boleta)</h3>
+    <pre style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);overflow-x:auto;white-space:pre-wrap">{
+  "tipo_de_comprobante": 2,
+  "serie": "B001",
+  "numero": 1,
+  "cliente_tipo_de_documento": 1,
+  "moneda": 1,
+  "items": [{"descripcion": "Spaghetti Carbonara", "cantidad": 2, "precio_unitario": 56.73, "igv": 20.42}],
+  "total_gravada": 81.36,
+  "total_igv": 20.42,
+  "total": 101.78
+}</pre>
+    <h3>Datos que el restaurante configura 1 vez</h3>
+    <ul>
+      <li>RUC del restaurante</li>
+      <li>Clave SOL (credencial SUNAT)</li>
+      <li>Serie de boleta (ej: B001) y factura (ej: F001)</li>
+      <li>Correlativo inicial (número de comprobante)</li>
+    </ul>
+  </div></div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+<script>
+function go(id, el) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('pg-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    document.querySelectorAll('.nav').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'"))
+        n.classList.add('active');
+    });
+  }
+  document.querySelector('.main').scrollTop = 0;
+}
+</script>
+</body>
+</html>
