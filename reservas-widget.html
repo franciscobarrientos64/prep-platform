@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Reservas · La Mesa Miraflores</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* Customizable per restaurant — these vars get injected by PREP */
+:root {
+  --r-primary: #1a1411;
+  --r-accent: #c4963a;
+  --r-accent-l: #d4a84a;
+  --r-accent-d: rgba(196,150,58,.10);
+  --r-bg: #f9f7f3;
+  --r-surface: #ffffff;
+  --r-border: #e8e2d8;
+  --r-text: #1a1411;
+  --r-muted: #8a8070;
+  --r-dim: #c8c0b0;
+  --r-green: #166534;
+  --r-green-d: rgba(22,101,52,.08);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--r-bg);color:var(--r-text);font-family:'Barlow',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+
+/* DEMO CONTROLS */
+.demo-bar{background:#1a1411;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.demo-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);}
+.demo-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:5px 10px;color:#fff;font-size:12px;font-family:'Barlow',sans-serif;width:150px;outline:none;}
+.demo-color{width:32px;height:28px;border:none;border-radius:5px;cursor:pointer;padding:0;}
+.demo-btn{background:var(--r-accent);border:none;color:#1a1411;padding:5px 14px;border-radius:5px;font-weight:700;font-size:11px;cursor:pointer;font-family:'Barlow',sans-serif;}
+
+/* WIDGET WRAPPER */
+.widget-wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:32px 20px;background:var(--r-bg);}
+.widget{width:100%;max-width:480px;background:var(--r-surface);border:1px solid var(--r-border);border-radius:20px;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,.10);}
+
+/* BANNER */
+.banner{background:var(--r-primary);padding:28px 28px 24px;position:relative;overflow:hidden;}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04);}
+.banner-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.resto-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:26px;color:#fff;letter-spacing:.5px;line-height:1.1;}
+.resto-meta{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;}
+.powered-badge{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--r-accent);white-space:nowrap;}
+
+/* STEPS INDICATOR */
+.steps{display:flex;gap:0;padding:0 28px 20px;}
+.step-dot{display:flex;align-items:center;flex:1;}
+.step-dot:last-child{flex:none;}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;transition:all .25s;font-family:'Barlow',sans-serif;}
+.step-num.past{background:var(--r-accent);color:var(--r-primary);}
+.step-num.current{background:#fff;color:var(--r-primary);}
+.step-num.future{background:rgba(255,255,255,.15);color:rgba(255,255,255,.4);}
+.step-line{flex:1;height:1px;background:rgba(255,255,255,.15);margin:0 4px;}
+.step-line.done{background:var(--r-accent);}
+
+/* BODY */
+.wbody{padding:28px;}
+
+/* STEP TITLES */
+.step-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;margin-bottom:4px;line-height:1.2;}
+.step-sub{font-size:12px;color:var(--r-muted);margin-bottom:24px;}
+
+/* FORM ELEMENTS */
+.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--r-muted);margin-bottom:6px;display:block;}
+.finput{background:var(--r-bg);border:1.5px solid var(--r-border);border-radius:9px;padding:11px 14px;color:var(--r-text);font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;width:100%;outline:none;transition:border-color .15s;}
+.finput:focus{border-color:var(--r-accent);}
+.finput::placeholder{color:var(--r-dim);}
+
+/* DATE GRID */
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.date-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.date-month{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;}
+.date-nav-btn{background:none;border:1.5px solid var(--r-border);border-radius:7px;width:32px;height:32px;cursor:pointer;color:var(--r-muted);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.date-nav-btn:hover{border-color:var(--r-accent);color:var(--r-accent);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+.cal-day-label{font-size:10px;font-weight:700;color:var(--r-dim);text-transform:uppercase;letter-spacing:.5px;padding:4px 0;}
+.cal-day{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;margin:0 auto;transition:all .15s;}
+.cal-day:hover:not(.empty):not(.past):not(.full){background:var(--r-accent-d);color:var(--r-accent);}
+.cal-day.selected{background:var(--r-primary);color:#fff;}
+.cal-day.today{font-weight:800;color:var(--r-accent);}
+.cal-day.past{color:var(--r-dim);cursor:not-allowed;}
+.cal-day.full{color:var(--r-dim);cursor:not-allowed;text-decoration:line-through;}
+.cal-day.empty{cursor:default;}
+
+/* PAX SELECTOR */
+.pax-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.pax-btn{border:1.5px solid var(--r-border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;background:var(--r-bg);}
+.pax-btn:hover{border-color:var(--r-accent);}
+.pax-btn.selected{border-color:var(--r-primary);background:var(--r-primary);color:#fff;}
+.pax-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;}
+.pax-label{font-size:9px;color:inherit;text-transform:uppercase;letter-spacing:.5px;opacity:.6;margin-top:2px;}
+
+/* TIME SLOTS */
+.slots-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--r-muted);margin-bottom:10px;}
+.slots-section{margin-bottom:16px;}
+.slots-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.slot-btn{border:1.5px solid var(--r-border);border-radius:8px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;cursor:pointer;background:var(--r-surface);transition:all .15s;color:var(--r-text);}
+.slot-btn:hover:not(.full){border-color:var(--r-accent);color:var(--r-accent);}
+.slot-btn.selected{border-color:var(--r-primary);background:var(--r-primary);color:#fff;}
+.slot-btn.full{color:var(--r-dim);cursor:not-allowed;text-decoration:line-through;border-style:dashed;}
+
+/* GUEST FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.form-full{margin-bottom:16px;}
+.occasion-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.occ-chip{border:1.5px solid var(--r-border);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;transition:all .15s;background:var(--r-surface);}
+.occ-chip:hover{border-color:var(--r-accent);}
+.occ-chip.selected{border-color:var(--r-primary);background:var(--r-primary);color:#fff;}
+
+/* CONFIRMATION */
+.confirm-box{background:var(--r-primary);border-radius:14px;padding:24px;margin-bottom:20px;color:#fff;}
+.confirm-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;}
+.confirm-row:last-child{border:none;}
+.confirm-label{color:rgba(255,255,255,.5);font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+.confirm-val{font-weight:600;}
+.alert-bar{background:var(--r-accent-d);border:1px solid rgba(196,150,58,.2);border-radius:9px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--r-muted);margin-bottom:16px;}
+
+/* SUCCESS */
+.success-wrap{text-align:center;padding:20px 0;}
+.success-ring{width:80px;height:80px;border-radius:50%;border:3px solid var(--r-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;animation:ringIn .4s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes ringIn{from{transform:scale(0) rotate(-180deg)}to{transform:scale(1) rotate(0)}}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:6px;}
+.success-sub{color:var(--r-muted);font-size:13px;margin-bottom:24px;line-height:1.7;}
+.conf-code{font-family:'DM Mono',monospace;font-size:12px;background:var(--r-bg);border:1px solid var(--r-border);border-radius:8px;padding:10px 16px;display:inline-block;margin-bottom:24px;letter-spacing:1px;}
+.wa-btn{width:100%;background:#25d366;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Barlow',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:background .15s;}
+.wa-btn:hover{background:#1ea855;}
+.modify-link{font-size:12px;color:var(--r-muted);text-align:center;cursor:pointer;text-decoration:underline;}
+
+/* CTA BUTTON */
+.cta-btn{width:100%;background:var(--r-primary);color:#fff;border:none;border-radius:11px;padding:14px;font-family:'Barlow',sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;margin-top:4px;}
+.cta-btn:hover{background:#2d2820;transform:translateY(-1px);}
+.cta-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.back-btn{background:none;border:none;color:var(--r-muted);font-size:12px;font-family:'Barlow',sans-serif;cursor:pointer;padding:10px 0 0;display:flex;align-items:center;gap:4px;margin-top:8px;}
+.back-btn:hover{color:var(--r-text);}
+
+/* FOOTER */
+.wfooter{padding:14px 28px;border-top:1px solid var(--r-border);display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;color:var(--r-dim);}
+.wfooter a{color:var(--r-accent);font-weight:700;text-decoration:none;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--r-border);margin:20px 0;}
+
+/* ANIMATE */
+.step-enter{animation:stIn .2s ease;}
+@keyframes stIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- DEMO CUSTOMIZER -->
+<div class="demo-bar">
+  <span class="demo-label">Demo · personalizar widget</span>
+  <input class="demo-input" id="demoName" value="La Mesa Miraflores" placeholder="Nombre restaurante" oninput="applyDemo()">
+  <input class="demo-input" id="demoMeta" value="Cocina peruana · Miraflores, Lima" oninput="applyDemo()">
+  <input type="color" class="demo-color" id="demoColor" value="#1a1411" oninput="applyDemo()">
+  <input type="color" class="demo-color" id="demoAccent" value="#c4963a" oninput="applyDemo()">
+  <button class="demo-btn" onclick="resetDemo()">Reset</button>
+</div>
+
+<!-- WIDGET -->
+<div class="widget-wrap">
+<div class="widget">
+
+  <!-- BANNER -->
+  <div class="banner">
+    <div class="banner-top">
+      <div>
+        <div class="resto-name" id="bannerName">La Mesa Miraflores</div>
+        <div class="resto-meta" id="bannerMeta">Cocina peruana · Miraflores, Lima</div>
+      </div>
+      <div class="powered-badge">⚡ PREP</div>
+    </div>
+    <!-- Steps -->
+    <div class="steps" id="stepsIndicator">
+      <div class="step-dot"><div class="step-num current" id="sn1">1</div></div>
+      <div class="step-dot"><div class="step-line" id="sl1"></div><div class="step-num future" id="sn2">2</div></div>
+      <div class="step-dot"><div class="step-line" id="sl2"></div><div class="step-num future" id="sn3">3</div></div>
+      <div class="step-dot"><div class="step-line" id="sl3"></div><div class="step-num future" id="sn4">4</div></div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="wbody">
+
+    <!-- STEP 1: DATE + PAX -->
+    <div id="step1" class="step-enter">
+      <div class="step-title">¿Cuándo quieres venir?</div>
+      <div class="step-sub">Elige la fecha y el número de personas</div>
+
+      <div class="date-nav">
+        <button class="date-nav-btn" onclick="prevMonth()">‹</button>
+        <div class="date-month" id="calMonth">Mayo 2026</div>
+        <button class="date-nav-btn" onclick="nextMonth()">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+
+      <div class="divider"></div>
+      <div class="step-sub" style="margin-bottom:12px">¿Cuántas personas?</div>
+      <div class="pax-grid">
+        <div class="pax-btn" onclick="selectPax(1,this)"><div class="pax-num">1</div><div class="pax-label">persona</div></div>
+        <div class="pax-btn selected" onclick="selectPax(2,this)"><div class="pax-num">2</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(3,this)"><div class="pax-num">3</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(4,this)"><div class="pax-num">4</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(5,this)"><div class="pax-num">5</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(6,this)"><div class="pax-num">6</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(8,this)"><div class="pax-num">8</div><div class="pax-label">personas</div></div>
+        <div class="pax-btn" onclick="selectPax(10,this)"><div class="pax-num">10+</div><div class="pax-label">personas</div></div>
+      </div>
+
+      <button class="cta-btn" id="step1Btn" onclick="goStep(2)" disabled>Elegir horario →</button>
+    </div>
+
+    <!-- STEP 2: TIME SLOTS -->
+    <div id="step2" style="display:none" class="step-enter">
+      <div class="step-title">¿A qué hora?</div>
+      <div class="step-sub" id="step2Sub">Selecciona un horario disponible</div>
+
+      <div class="slots-section">
+        <div class="slots-title">☀️ Almuerzo</div>
+        <div class="slots-grid" id="lunchSlots"></div>
+      </div>
+      <div class="slots-section">
+        <div class="slots-title">🌙 Cena</div>
+        <div class="slots-grid" id="dinnerSlots"></div>
+      </div>
+
+      <button class="cta-btn" id="step2Btn" onclick="goStep(3)" disabled>Continuar →</button>
+      <button class="back-btn" onclick="goStep(1)">← Volver</button>
+    </div>
+
+    <!-- STEP 3: GUEST INFO -->
+    <div id="step3" style="display:none" class="step-enter">
+      <div class="step-title">Tus datos</div>
+      <div class="step-sub">Casi listo — solo necesitamos esto</div>
+
+      <div class="form-grid">
+        <div>
+          <label class="flabel">Nombre</label>
+          <input class="finput" id="guestName" placeholder="Tu nombre" oninput="validateStep3()">
+        </div>
+        <div>
+          <label class="flabel">Apellido</label>
+          <input class="finput" id="guestLastname" placeholder="Apellido" oninput="validateStep3()">
+        </div>
+      </div>
+      <div class="form-full">
+        <label class="flabel">WhatsApp / Celular</label>
+        <input class="finput" id="guestPhone" placeholder="987 654 321" oninput="validateStep3()" type="tel">
+      </div>
+      <div class="form-full">
+        <label class="flabel">Email (opcional)</label>
+        <input class="finput" id="guestEmail" placeholder="tu@email.com" type="email">
+      </div>
+
+      <div class="divider"></div>
+      <label class="flabel">¿Alguna ocasión especial?</label>
+      <div class="occasion-chips">
+        <div class="occ-chip" onclick="toggleOcc(this,'ninguna')">Sin ocasión especial</div>
+        <div class="occ-chip" onclick="toggleOcc(this,'cumpleanos')">🎂 Cumpleaños</div>
+        <div class="occ-chip" onclick="toggleOcc(this,'aniversario')">💑 Aniversario</div>
+        <div class="occ-chip" onclick="toggleOcc(this,'negocios')">💼 Negocios</div>
+        <div class="occ-chip" onclick="toggleOcc(this,'boda')">💍 Pre/post boda</div>
+        <div class="occ-chip" onclick="toggleOcc(this,'otro')">🎉 Otra celebración</div>
+      </div>
+
+      <div class="form-full">
+        <label class="flabel">Nota para el restaurante (opcional)</label>
+        <input class="finput" id="guestNote" placeholder="Ej: alergia a mariscos, preferimos mesa en terraza…">
+      </div>
+
+      <button class="cta-btn" id="step3Btn" onclick="goStep(4)" disabled>Confirmar reserva →</button>
+      <button class="back-btn" onclick="goStep(2)">← Volver</button>
+    </div>
+
+    <!-- STEP 4: CONFIRM -->
+    <div id="step4" style="display:none" class="step-enter">
+      <div class="step-title">Confirmar reserva</div>
+      <div class="step-sub">Revisa los detalles antes de confirmar</div>
+
+      <div class="confirm-box" id="confirmBox"></div>
+
+      <div class="alert-bar">
+        <span>📱</span>
+        <div>Recibirás una <strong>confirmación por WhatsApp</strong> inmediatamente. 24 horas antes te enviaremos un recordatorio para que puedas confirmar o cancelar.</div>
+      </div>
+
+      <button class="cta-btn" id="step4Btn" onclick="submitReservation()" style="background:var(--r-accent);color:#1a1411">
+        ✓ Reservar mesa
+      </button>
+      <button class="back-btn" onclick="goStep(3)">← Editar datos</button>
+    </div>
+
+    <!-- STEP 5: SUCCESS -->
+    <div id="step5" style="display:none" class="step-enter">
+      <div class="success-wrap">
+        <div class="success-ring">✓</div>
+        <div class="success-title">¡Reserva confirmada!</div>
+        <div class="success-sub" id="successText">Tu mesa está reservada.<br>Te esperamos con gusto.</div>
+        <div class="conf-code" id="confCode">RES-00000</div>
+        <button class="wa-btn" onclick="shareWA()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.124 1.524 5.861L0 24l6.29-1.496A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.665-.489-5.211-1.349l-.374-.221-3.736.889.934-3.622-.243-.393A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Guardar en WhatsApp
+        </button>
+        <div class="modify-link" onclick="goStep(1)">Hacer otra reserva</div>
+      </div>
+    </div>
+
+  </div><!-- /wbody -->
+
+  <!-- FOOTER -->
+  <div class="wfooter">
+    <span>Reservas sin comisión · Powered by</span>
+    <a href="#" style="color:var(--r-accent)">PREP ≫</a>
+    <span>· prep.rest</span>
+  </div>
+</div>
+</div><!-- /widget-wrap -->
+
+<script>
+// ═══════ STATE ═══════
+const RES = {
+  date: null, pax: 2, slot: null,
+  name: '', lastname: '', phone: '', email: '', occasion: '', note: '',
+  code: ''
+};
+
+// ═══════ CALENDAR ═══════
+let calDate = new Date(2026, 4, 1); // May 2026
+
+const FULL_DAYS = [21, 22, 23, 28, 29];
+const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS_ES = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+
+function buildCalendar() {
+  const grid = document.getElementById('calGrid');
+  const month = calDate.getMonth();
+  const year = calDate.getFullYear();
+  const today = new Date();
+  document.getElementById('calMonth').textContent = `${MONTHS_ES[month]} ${year}`;
+  let html = DAYS_ES.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+  const first = new Date(year, month, 1).getDay();
+  const offset = first === 0 ? 6 : first - 1;
+  for(let i=0;i<offset;i++) html += `<div class="cal-day empty"></div>`;
+  const days = new Date(year, month+1, 0).getDate();
+  for(let d=1;d<=days;d++) {
+    const isPast = new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isFull = FULL_DAYS.includes(d) && month === 4;
+    const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    const isSelected = RES.date && RES.date.getDate()===d && RES.date.getMonth()===month && RES.date.getFullYear()===year;
+    let cls = 'cal-day';
+    if(isPast) cls += ' past';
+    else if(isFull) cls += ' full';
+    if(isToday) cls += ' today';
+    if(isSelected) cls += ' selected';
+    const onclick = (!isPast && !isFull) ? `onclick="selectDay(${d},${month},${year},this)"` : '';
+    html += `<div class="${cls}" ${onclick}>${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function selectDay(d, m, y, el) {
+  RES.date = new Date(y, m, d);
+  buildCalendar();
+  document.getElementById('step1Btn').disabled = false;
+}
+
+function prevMonth() { calDate = new Date(calDate.getFullYear(), calDate.getMonth()-1, 1); buildCalendar(); }
+function nextMonth() { calDate = new Date(calDate.getFullYear(), calDate.getMonth()+1, 1); buildCalendar(); }
+
+function selectPax(n, el) {
+  RES.pax = n;
+  document.querySelectorAll('.pax-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ═══════ TIME SLOTS ═══════
+const LUNCH = ['12:00','12:30','13:00','13:30','14:00','14:30'];
+const DINNER = ['19:00','19:30','20:00','20:30','21:00','21:30'];
+const FULL_SLOTS = ['13:00','20:00','20:30'];
+
+function buildSlots() {
+  const dateStr = RES.date ? RES.date.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'}) : '';
+  document.getElementById('step2Sub').textContent = `${dateStr} · ${RES.pax} persona${RES.pax!==1?'s':''}`;
+  document.getElementById('lunchSlots').innerHTML = LUNCH.map(t => {
+    const full = FULL_SLOTS.includes(t);
+    const sel = RES.slot === t;
+    return `<div class="slot-btn ${full?'full':''} ${sel?'selected':''}" ${!full?`onclick="selectSlot('${t}',this)"`:''>${t}</div>`;
+  }).join('');
+  document.getElementById('dinnerSlots').innerHTML = DINNER.map(t => {
+    const full = FULL_SLOTS.includes(t);
+    const sel = RES.slot === t;
+    return `<div class="slot-btn ${full?'full':''} ${sel?'selected':''}" ${!full?`onclick="selectSlot('${t}',this)"`:''>${t}</div>`;
+  }).join('');
+}
+
+function selectSlot(t, el) {
+  RES.slot = t;
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('step2Btn').disabled = false;
+}
+
+// ═══════ GUEST FORM ═══════
+function toggleOcc(el, val) {
+  document.querySelectorAll('.occ-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  RES.occasion = val;
+}
+
+function validateStep3() {
+  const name = document.getElementById('guestName').value.trim();
+  const phone = document.getElementById('guestPhone').value.trim();
+  RES.name = name;
+  RES.lastname = document.getElementById('guestLastname').value.trim();
+  RES.phone = phone;
+  document.getElementById('step3Btn').disabled = !(name && phone.length >= 9);
+}
+
+// ═══════ CONFIRM BOX ═══════
+function buildConfirm() {
+  const dateStr = RES.date.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const occ = RES.occasion && RES.occasion !== 'ninguna' ? `<div class="confirm-row"><span class="confirm-label">Ocasión</span><span class="confirm-val">${{cumpleanos:'🎂 Cumpleaños',aniversario:'💑 Aniversario',negocios:'💼 Negocios',boda:'💍 Pre/post boda',otro:'🎉 Celebración'}[RES.occasion]||''}</span></div>` : '';
+  const note = RES.note ? `<div class="confirm-row"><span class="confirm-label">Nota</span><span class="confirm-val" style="font-style:italic;font-size:12px">${RES.note}</span></div>` : '';
+  document.getElementById('confirmBox').innerHTML = `
+    <div class="confirm-row"><span class="confirm-label">Restaurante</span><span class="confirm-val">${document.getElementById('bannerName').textContent}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Fecha</span><span class="confirm-val">${dateStr}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Hora</span><span class="confirm-val">${RES.slot} hrs</span></div>
+    <div class="confirm-row"><span class="confirm-label">Personas</span><span class="confirm-val">${RES.pax} persona${RES.pax!==1?'s':''}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Nombre</span><span class="confirm-val">${RES.name} ${RES.lastname}</span></div>
+    <div class="confirm-row"><span class="confirm-label">WhatsApp</span><span class="confirm-val">${RES.phone}</span></div>
+    ${occ}${note}
+  `;
+}
+
+// ═══════ SUBMIT ═══════
+function submitReservation() {
+  const btn = document.getElementById('step4Btn');
+  btn.textContent = '⏳ Confirmando…';
+  btn.disabled = true;
+  setTimeout(() => {
+    RES.code = 'RES-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    const dateStr = RES.date.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('confCode').textContent = RES.code;
+    document.getElementById('successText').innerHTML = `
+      ${dateStr} a las ${RES.slot} hrs · ${RES.pax} personas<br>
+      <span style="color:var(--r-muted)">Recibirás confirmación por WhatsApp al ${RES.phone}</span>
+    `;
+    goStep(5);
+  }, 1400);
+}
+
+// ═══════ WHATSAPP SHARE ═══════
+function shareWA() {
+  const dateStr = RES.date.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const resto = document.getElementById('bannerName').textContent;
+  const msg = `🍽️ *Reserva confirmada - ${resto}*\n\n📅 ${dateStr}\n🕐 ${RES.slot} hrs\n👥 ${RES.pax} personas\n\nCódigo: ${RES.code}\n\n_Powered by PREP · prep.rest_`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ═══════ STEPS ═══════
+function goStep(n) {
+  for(let i=1;i<=5;i++) {
+    const el = document.getElementById('step'+i);
+    if(el) el.style.display = i===n ? 'block' : 'none';
+    if(el && i===n) { el.className = 'step-enter'; void el.offsetWidth; }
+  }
+  updateStepsUI(n);
+  if(n===2) buildSlots();
+  if(n===4) buildConfirm();
+  document.querySelector('.widget-wrap').scrollTop = 0;
+  document.querySelector('.wbody').scrollTop = 0;
+}
+
+function updateStepsUI(current) {
+  const show = current <= 4;
+  document.getElementById('stepsIndicator').style.display = show ? 'flex' : 'none';
+  for(let i=1;i<=4;i++) {
+    const sn = document.getElementById('sn'+i);
+    if(!sn) continue;
+    if(i < current) { sn.className='step-num past'; sn.textContent='✓'; }
+    else if(i===current) { sn.className='step-num current'; sn.textContent=i; }
+    else { sn.className='step-num future'; sn.textContent=i; }
+    if(i<4) {
+      const sl = document.getElementById('sl'+i);
+      if(sl) sl.className = 'step-line' + (i < current ? ' done' : '');
+    }
+  }
+}
+
+// ═══════ DEMO CUSTOMIZER ═══════
+function applyDemo() {
+  const name = document.getElementById('demoName').value;
+  const meta = document.getElementById('demoMeta').value;
+  const color = document.getElementById('demoColor').value;
+  const accent = document.getElementById('demoAccent').value;
+  document.getElementById('bannerName').textContent = name;
+  document.getElementById('bannerMeta').textContent = meta;
+  document.documentElement.style.setProperty('--r-primary', color);
+  document.documentElement.style.setProperty('--r-accent', accent);
+  document.documentElement.style.setProperty('--r-accent-l', accent);
+  document.documentElement.style.setProperty('--r-accent-d', hexToRgba(accent, .10));
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function resetDemo() {
+  document.getElementById('demoName').value = 'La Mesa Miraflores';
+  document.getElementById('demoMeta').value = 'Cocina peruana · Miraflores, Lima';
+  document.getElementById('demoColor').value = '#1a1411';
+  document.getElementById('demoAccent').value = '#c4963a';
+  document.documentElement.style.setProperty('--r-primary','#1a1411');
+  document.documentElement.style.setProperty('--r-accent','#c4963a');
+  document.documentElement.style.setProperty('--r-accent-l','#d4a84a');
+  document.documentElement.style.setProperty('--r-accent-d','rgba(196,150,58,.10)');
+  document.getElementById('bannerName').textContent = 'La Mesa Miraflores';
+  document.getElementById('bannerMeta').textContent = 'Cocina peruana · Miraflores, Lima';
+}
+
+// ═══════ INIT ═══════
+buildCalendar();
+</script>
+</body>
+</html>

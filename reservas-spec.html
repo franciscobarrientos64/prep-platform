@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP ≫ Módulo Reservas — Especificación</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface2: #f0ede6;
+  --border: #e0dbd0;
+  --text: #1a1815;
+  --muted: #7a7060;
+  --dim: #c0bab0;
+  --gold: #b8871e;
+  --gold-d: rgba(184,135,30,0.10);
+  --green: #166534;
+  --green-d: rgba(22,101,52,0.08);
+  --blue: #1e3a8a;
+  --blue-d: rgba(30,58,138,0.08);
+  --red: #991b1b;
+  --red-d: rgba(153,27,27,0.08);
+  --purple: #6b21a8;
+  --purple-d: rgba(107,33,168,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; line-height: 1.6; }
+
+/* HEADER */
+.header { background: var(--text); padding: 32px 48px; }
+.header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+.logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: 3px; color: var(--gold); }
+.header-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 32px; color: #fff; letter-spacing: 1px; line-height: 1; }
+.header-sub { color: rgba(255,255,255,0.45); font-size: 13px; margin-top: 4px; }
+.header-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+.hmeta { text-align: right; }
+.hmeta strong { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: var(--gold); display: block; }
+.hmeta span { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; }
+
+/* LAYOUT */
+.main { max-width: 1200px; margin: 0 auto; padding: 40px 32px 80px; }
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* FEATURE CARDS */
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.feat-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.feat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.feat-top { height: 3px; position: absolute; top: 0; left: 0; right: 0; }
+.feat-card.yours .feat-top { background: var(--gold); }
+.feat-card.suggested .feat-top { background: var(--green); }
+.feat-card.advanced .feat-top { background: var(--purple); }
+
+.feat-tag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.tag-yours { background: var(--gold-d); color: var(--gold); }
+.tag-suggested { background: var(--green-d); color: var(--green); }
+.tag-advanced { background: var(--purple-d); color: var(--purple); }
+
+.feat-icon { font-size: 28px; margin-bottom: 8px; }
+.feat-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 16px; margin-bottom: 6px; }
+.feat-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+.feat-sub-items { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+.feat-sub {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  align-items: flex-start;
+}
+.feat-sub::before { content: '·'; color: var(--dim); flex-shrink: 0; margin-top: 1px; }
+.feat-phase {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* COMPETITIVE TABLE */
+.comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.comp-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--surface2);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.comp-table td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: middle; }
+.comp-table tr:hover td { background: var(--surface2); }
+.check { color: #166534; font-weight: 700; }
+.cross { color: #9ca3af; }
+.partial { color: var(--gold); font-weight: 600; }
+.prep-col { background: rgba(184,135,30,0.04) !important; font-weight: 700; color: var(--gold) !important; }
+
+/* FLOW DIAGRAM */
+.flow-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; margin: 20px 0; }
+.flow-step {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 14px;
+  text-align: center;
+  position: relative;
+  margin: 0 4px;
+}
+.flow-step::after {
+  content: '→';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dim);
+  font-size: 16px;
+  z-index: 1;
+}
+.flow-step:last-child::after { display: none; }
+.flow-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gold-d);
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.flow-title { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+.flow-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+/* BRIEF SECTION */
+.brief-card {
+  background: var(--text);
+  border-radius: 12px;
+  padding: 28px;
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+.brief-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.brief-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 10px; }
+.brief-item { display: flex; gap: 8px; font-size: 12px; color: rgba(255,255,255,0.65); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.brief-item:last-child { border: none; }
+.brief-item strong { color: #fff; }
+.brief-preview {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 18px;
+  font-size: 12px;
+}
+.brief-preview-title { font-weight: 700; margin-bottom: 12px; color: var(--gold); font-size: 14px; }
+.brief-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 11px; color: rgba(255,255,255,0.7); }
+.brief-row:last-child { border: none; }
+.brief-row span { color: #fff; font-weight: 600; }
+
+/* WIDGET PREVIEW */
+.widget-preview {
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+.widget-banner {
+  height: 80px;
+  background: linear-gradient(135deg, #1a1815, #2d2820);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.widget-logo { color: #c4963a; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: 2px; }
+.widget-resto { text-align: right; color: rgba(255,255,255,0.7); font-size: 12px; }
+.widget-body { padding: 24px; }
+.widget-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; display: block; }
+.widget-date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.widget-input {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  background: var(--surface2);
+  cursor: pointer;
+}
+.widget-pax-row { display: flex; gap: 6px; margin-bottom: 16px; }
+.widget-pax-btn {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  background: var(--surface2);
+  font-family: 'Barlow', sans-serif;
+}
+.widget-pax-btn.sel { border-color: #c4963a; background: rgba(196,150,58,0.1); color: #b8871e; }
+.widget-slots { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.widget-slot {
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  background: var(--surface);
+}
+.widget-slot.sel { border-color: #c4963a; background: rgba(196,150,58,0.1); color: #b8871e; }
+.widget-slot.full { opacity: 0.4; text-decoration: line-through; cursor: not-allowed; }
+.widget-btn {
+  background: #1a1815;
+  color: #c4963a;
+  border: none;
+  border-radius: 9px;
+  padding: 13px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 1px;
+  width: 100%;
+  cursor: pointer;
+}
+.widget-footer { padding: 12px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 10px; color: var(--dim); }
+
+/* TECH */
+.tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.tech-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.tech-icon { font-size: 20px; margin-bottom: 6px; }
+.tech-name { font-weight: 700; font-size: 12px; margin-bottom: 2px; }
+.tech-detail { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+.callout {
+  border-left: 3px solid var(--gold);
+  background: var(--gold-d);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  margin: 16px 0;
+  line-height: 1.7;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo">PREP ≫</div>
+      <div class="header-title">Módulo de Reservas</div>
+      <div class="header-sub">Especificación completa · v1.0 · Mayo 2026</div>
+    </div>
+    <div class="header-meta">
+      <div class="hmeta"><strong>18</strong><span>Features</span></div>
+      <div class="hmeta"><strong>2</strong><span>Interfaces</span></div>
+      <div class="hmeta"><strong>0%</strong><span>Comisión por reserva</span></div>
+      <div class="hmeta"><strong>0.6%</strong><span>No-show con garantía</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- FLOW -->
+<div class="section-title">Flujo completo · del comensal al turno</div>
+<div class="flow-steps">
+  <div class="flow-step">
+    <div class="flow-num">1</div>
+    <div class="flow-title">Comensal reserva</div>
+    <div class="flow-desc">Widget web · Instagram · WhatsApp · Google · Teléfono</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">2</div>
+    <div class="flow-title">Confirmación auto</div>
+    <div class="flow-desc">WhatsApp + email inmediato con link de gestión</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">3</div>
+    <div class="flow-title">Reconfirmación</div>
+    <div class="flow-desc">24h antes (auto) · 2h antes (auto) · comensal responde</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">4</div>
+    <div class="flow-title">Brief de turno</div>
+    <div class="flow-desc">Email/WA al equipo con resumen de reservas y notas</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">5</div>
+    <div class="flow-title">Mesa asignada</div>
+    <div class="flow-desc">Auto o manual → sincroniza con POS en tiempo real</div>
+  </div>
+</div>
+
+<!-- LO TUYO -->
+<div class="section-title">Features solicitadas</div>
+<div class="features-grid">
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">🎨</div>
+    <div class="feat-title">Widget 100% personalizable</div>
+    <div class="feat-desc">El formulario de reserva toma los colores, logo y tipografía del restaurante. Embebible en web, bio de Instagram, Google Business o como URL directa.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Logo, color primario, fuente</div>
+      <div class="feat-sub">URL propia: reservas.turestaurante.com</div>
+      <div class="feat-sub">Embed en cualquier web con 1 línea de código</div>
+      <div class="feat-sub">Botón "Reservar" para Google Business Profile</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">🔗</div>
+    <div class="feat-title">Integración directa con POS</div>
+    <div class="feat-desc">La reserva entra al sistema PREP en tiempo real. Sin doble digitación, sin hojas de Excel, sin cuadernos.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Reserva confirmada → aparece en libro de reservas</div>
+      <div class="feat-sub">Al asignar mesa → bloquea en mapa del POS</div>
+      <div class="feat-sub">Al sentarse → cambia estado a "Ocupada" automáticamente</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">🪑</div>
+    <div class="feat-title">Asignación auto o manual</div>
+    <div class="feat-desc">El sistema puede asignar mesas automáticamente según disponibilidad y tamaño de grupo, o el hostess elige manualmente.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Modo auto: asigna la mesa óptima por pax y zona</div>
+      <div class="feat-sub">Modo manual: drag & drop desde el libro de reservas al mapa</div>
+      <div class="feat-sub">Reglas personalizables: "VIPs siempre en zona terraza"</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">↔️</div>
+    <div class="feat-title">Mover reservas libremente</div>
+    <div class="feat-desc">Cambiar de mesa, de hora o de turno con drag & drop. El comensal recibe notificación automática si hay cambio de horario.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Drag & drop entre mesas en el mapa del salón</div>
+      <div class="feat-sub">Cambio de hora con recalculo de disponibilidad</div>
+      <div class="feat-sub">Combinar mesas para grupos grandes</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">📋</div>
+    <div class="feat-title">Brief de turno configurable</div>
+    <div class="feat-desc">Resumen automático antes del servicio con todos los datos que el equipo necesita: quién viene, cuántos, ocasiones especiales, alergias.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Configurar cuántos briefs al día (ej: 2 — a las 11am y 6pm)</div>
+      <div class="feat-sub">Elegir canal: Email / WhatsApp / Ambos</div>
+      <div class="feat-sub">Formato personalizable: detallado o resumen ejecutivo</div>
+      <div class="feat-sub">Puede ser por turno: almuerzo / cena</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card yours">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-yours">Tu idea</span>
+    <div class="feat-icon">✅</div>
+    <div class="feat-title">Reconfirmación automática</div>
+    <div class="feat-desc">El sistema contacta al comensal antes de la reserva. Si no responde o cancela, la mesa se libera y se notifica a la lista de espera.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Configurable: 48h, 24h, 2h antes</div>
+      <div class="feat-sub">Por WhatsApp o email (o ambos)</div>
+      <div class="feat-sub">El comensal confirma con 1 clic o responde "NO"</div>
+      <div class="feat-sub">Si no responde en X horas → mesa liberada automáticamente</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+</div>
+
+<!-- SUGERIDAS -->
+<div class="section-title">Features que yo agrego — el diferencial real</div>
+<div class="features-grid">
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">👤</div>
+    <div class="feat-title">Perfil acumulativo del comensal</div>
+    <div class="feat-desc">Cada visita enriquece el perfil. Cuando el comensal llega, el hostess ya sabe todo lo que necesita. Esto es lo que hace grandes a Resy y Eleven Madison Park.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Historial de visitas, gasto promedio, platos favoritos</div>
+      <div class="feat-sub">Preferencias: vegetariano, alérgico, vino, cumpleaños</div>
+      <div class="feat-sub">Tags: VIP · Regular · Primera vez · Prensa · Influencer</div>
+      <div class="feat-sub">Notas del equipo: "prefiere mesa cerca de la ventana"</div>
+      <div class="feat-sub">Vinculado al CRM de PREP (Fase 3)</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">🔔</div>
+    <div class="feat-title">Lista de espera con Notify</div>
+    <div class="feat-desc">Si se cancela una reserva, notificación automática a quienes están en lista de espera. Convierte cancelaciones en cubiertos.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">El cliente entra a lista de espera con 1 clic</div>
+      <div class="feat-sub">Al cancelarse una reserva → WA/email inmediato a los primeros de la lista</div>
+      <div class="feat-sub">Primero que confirma, se queda con la mesa</div>
+      <div class="feat-sub">Resy logró 90% fill de cancellations con esta feature</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">💳</div>
+    <div class="feat-title">Garantía anti no-show</div>
+    <div class="feat-desc">Mesa247 bajó el no-show de 5% a 0.6% con esto. Para grupos grandes o fechas especiales, se requiere tarjeta. Si no vienen, cargo automático vía Culqi.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Configurable: activar para grupos de 6+, fines de semana, fechas especiales</div>
+      <div class="feat-sub">Monto personalizable: S/30–S/100 por persona</div>
+      <div class="feat-sub">Tarjeta retenida, cargo solo si no-show</div>
+      <div class="feat-sub">Integrado con Culqi (pasarela peruana)</div>
+    </div>
+    <div class="feat-phase">Fase 2</div>
+  </div>
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">🚶</div>
+    <div class="feat-title">Walk-ins integrados</div>
+    <div class="feat-desc">El hostess registra en el sistema a quienes llegan sin reserva. No más cuadernos paralelos. Todo unificado en el mismo libro.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Botón "Walk-in" en el panel → captura nombre y pax</div>
+      <div class="feat-sub">Asigna mesa disponible instantáneamente</div>
+      <div class="feat-sub">Agrega al perfil del comensal si ya tiene historial</div>
+      <div class="feat-sub">Reportes de ratio reserva vs walk-in por día</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">📅</div>
+    <div class="feat-title">Calendario de ocupación</div>
+    <div class="feat-desc">Vista mensual con heatmap de demanda. El dueño ve qué días están llenos, cuáles están flojos, y puede abrir o cerrar disponibilidad manualmente.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Heatmap: verde (libre) → amarillo → rojo (lleno)</div>
+      <div class="feat-sub">Cerrar disponibilidad para eventos privados</div>
+      <div class="feat-sub">Gestionar feriados y eventos especiales</div>
+      <div class="feat-sub">Control de overbooking configurable por mesa</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+  <div class="feat-card suggested">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-suggested">Sugerido</span>
+    <div class="feat-icon">⏱️</div>
+    <div class="feat-title">Turn time inteligente</div>
+    <div class="feat-desc">El sistema conoce cuánto tarda cada tipo de mesa. Bloquea automáticamente la disponibilidad para no sobrevender el mismo slot.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Configurable: Mesa 2 = 75 min · Mesa 4 = 90 min · Mesa 6+ = 120 min</div>
+      <div class="feat-sub">Buffer configurable entre turnos (ej: 15 min para preparar)</div>
+      <div class="feat-sub">Ajuste automático si el servicio se extiende</div>
+      <div class="feat-sub">Sugerencia de pacing por turno para no saturar cocina</div>
+    </div>
+    <div class="feat-phase">Fase 1</div>
+  </div>
+
+</div>
+
+<!-- AVANZADAS -->
+<div class="section-title">Features avanzadas — Fase 2 en adelante</div>
+<div class="features-grid">
+
+  <div class="feat-card advanced">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-advanced">Fase 2</span>
+    <div class="feat-icon">🌟</div>
+    <div class="feat-title">Experiencias y eventos</div>
+    <div class="feat-desc">Más allá de una mesa: cenas maridaje, catas, menú degustación, clases de cocina. El cliente paga por adelantado → cero no-shows.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Crea "experiencias" con precio fijo (ej: S/180/persona)</div>
+      <div class="feat-sub">Pago anticipado via Culqi al reservar</div>
+      <div class="feat-sub">Cupos limitados por evento</div>
+      <div class="feat-sub">Add-ons: maridaje de vinos, pisco tour, etc.</div>
+    </div>
+  </div>
+
+  <div class="feat-card advanced">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-advanced">Fase 2</span>
+    <div class="feat-icon">💬</div>
+    <div class="feat-title">Mensajería 2 vías con el comensal</div>
+    <div class="feat-desc">Comunicación directa con el comensal antes, durante y después del servicio. El hostess puede enviar mensajes personalizados.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">WhatsApp Business API bidireccional</div>
+      <div class="feat-sub">Plantillas: "Su mesa estará lista en 10 min"</div>
+      <div class="feat-sub">Follow-up post-visita: "¿Cómo estuvo su experiencia?"</div>
+    </div>
+  </div>
+
+  <div class="feat-card advanced">
+    <div class="feat-top"></div>
+    <span class="feat-tag tag-advanced">Fase 3</span>
+    <div class="feat-icon">🤖</div>
+    <div class="feat-title">IA predictiva de demanda</div>
+    <div class="feat-desc">El sistema aprende de la historia y predice cuántos cubiertos habrá cada turno. El chef puede preparar exactamente lo necesario.</div>
+    <div class="feat-sub-items">
+      <div class="feat-sub">Predicción de cubiertos por turno y día de la semana</div>
+      <div class="feat-sub">Alertas si hay un pico inusual de reservas</div>
+      <div class="feat-sub">Sugerencias de staffing basadas en la ocupación esperada</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BRIEF SECTION -->
+<div class="section-title">El brief de turno — cómo funciona</div>
+<div class="brief-card">
+  <div>
+    <div class="brief-label">Configuración</div>
+    <div class="brief-title">El brief llega cuando tú dices</div>
+    <div class="brief-item"><strong>Frecuencia:</strong> 1–3 veces por día</div>
+    <div class="brief-item"><strong>Horarios:</strong> ej. 10:30am (almuerzo) · 5:30pm (cena)</div>
+    <div class="brief-item"><strong>Canales:</strong> Email · WhatsApp · Ambos</div>
+    <div class="brief-item"><strong>Destinatarios:</strong> Dueño · Gerente · Chef · Maître</div>
+    <div class="brief-item"><strong>Formato:</strong> Resumen ejecutivo · Detallado por mesa</div>
+    <div class="brief-item"><strong>Idioma:</strong> Español (siempre)</div>
+  </div>
+  <div>
+    <div class="brief-label">Preview del brief</div>
+    <div class="brief-preview">
+      <div class="brief-preview-title">📋 Brief Turno Noche · Viernes 19 Mayo</div>
+      <div class="brief-row">Total reservas confirmadas<span>18</span></div>
+      <div class="brief-row">Cubiertos esperados<span>52</span></div>
+      <div class="brief-row">Walk-ins estimados<span>~8</span></div>
+      <div class="brief-row">En lista de espera<span>4</span></div>
+      <div class="brief-row">Con garantía (tarjeta)<span>6 reservas</span></div>
+      <div class="brief-row" style="margin-top:8px;color:rgba(255,255,255,0.9)">🎂 Cumpleaños: Mesa 4 · García, 4 pax · 9pm</div>
+      <div class="brief-row" style="color:rgba(255,255,255,0.9)">🥗 Vegano: Mesa 7 · Rodríguez, 2 pax</div>
+      <div class="brief-row" style="color:rgba(255,255,255,0.9)">⚠ Alergia mariscos: Mesa 12 · Torres</div>
+      <div class="brief-row" style="color:rgba(255,255,255,0.9)">🏆 VIP: Mesa 2 · Sra. Mejía (3ra visita este mes)</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITIVE TABLE -->
+<div class="section-title">Comparativa de funcionalidades</div>
+<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden">
+<table class="comp-table">
+  <thead>
+    <tr>
+      <th style="width:28%">Feature</th>
+      <th>Mesa247</th>
+      <th>Resy (NYC)</th>
+      <th>OpenTable</th>
+      <th class="prep-col" style="background:rgba(184,135,30,0.06)!important">PREP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Widget personalizable</strong></td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓</td></tr>
+    <tr><td><strong>Integración con POS propio</strong></td><td class="cross">✗</td><td class="partial">Parcial (Toast/Square)</td><td class="partial">Parcial</td><td class="prep-col check">✓ Nativo</td></tr>
+    <tr><td><strong>Asignación auto de mesas</strong></td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓</td></tr>
+    <tr><td><strong>Brief de turno configurable</strong></td><td class="partial">Básico</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓ + WA nativo</td></tr>
+    <tr><td><strong>Reconfirmación automática</strong></td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓</td></tr>
+    <tr><td><strong>WhatsApp native</strong></td><td class="cross">✗</td><td class="cross">✗ (no LATAM)</td><td class="cross">✗</td><td class="prep-col check">✓ Diferencial</td></tr>
+    <tr><td><strong>Perfil acumulativo de comensal</strong></td><td class="partial">Básico</td><td class="check">✓ Avanzado</td><td class="partial">Parcial</td><td class="prep-col check">✓</td></tr>
+    <tr><td><strong>Lista de espera con Notify</strong></td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓</td></tr>
+    <tr><td><strong>Garantía anti no-show</strong></td><td class="check">✓ (Culqi)</td><td class="check">✓</td><td class="check">✓</td><td class="prep-col check">✓ (Culqi)</td></tr>
+    <tr><td><strong>Experiencias / eventos con pago</strong></td><td class="partial">Básico</td><td class="check">✓</td><td class="partial">Parcial</td><td class="prep-col check">✓ (Fase 2)</td></tr>
+    <tr><td><strong>Fee por cubierto</strong></td><td class="partial">Sí</td><td class="check">No</td><td class="partial">Sí (S/5–7)</td><td class="prep-col check">No — incluido en plan</td></tr>
+    <tr><td><strong>Disponible en Perú</strong></td><td class="check">✓</td><td class="cross">✗</td><td class="partial">Limitado</td><td class="prep-col check">✓ Native</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- WIDGET PREVIEW -->
+<div class="section-title">Widget público — lo que ve el comensal</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+  <div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.7">El widget es el primer contacto del comensal con el restaurante. Tiene que ser <strong>rápido</strong> (máximo 4 pasos), <strong>elegante</strong> (toma la identidad visual del restaurante) y <strong>sin fricción</strong> (sin crear cuenta obligatoria).</p>
+    <div class="callout">
+      <strong>Diferencial PREP:</strong> El widget tiene el teléfono del comensal desde el paso 1. Con eso activamos la reconfirmación automática por WhatsApp sin que tenga que instalar nada.
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px">Los 4 pasos del comensal</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:start;font-size:12px"><div style="width:20px;height:20px;border-radius:50%;background:var(--gold-d);color:var(--gold);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><div><strong>Fecha + pax</strong> — elige cuándo y cuántos</div></div>
+        <div style="display:flex;gap:10px;align-items:start;font-size:12px"><div style="width:20px;height:20px;border-radius:50%;background:var(--gold-d);color:var(--gold);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><div><strong>Hora</strong> — slots disponibles en tiempo real</div></div>
+        <div style="display:flex;gap:10px;align-items:start;font-size:12px"><div style="width:20px;height:20px;border-radius:50%;background:var(--gold-d);color:var(--gold);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><div><strong>Datos</strong> — nombre, cel, ocasión especial, nota</div></div>
+        <div style="display:flex;gap:10px;align-items:start;font-size:12px"><div style="width:20px;height:20px;border-radius:50%;background:var(--gold-d);color:var(--gold);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div><div><strong>Confirmar</strong> — WA + email en segundos</div></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="widget-preview">
+      <div class="widget-banner">
+        <div class="widget-logo">LA MESA</div>
+        <div class="widget-resto"><div style="color:#fff;font-weight:700;font-size:13px">Reservar mesa</div><div>Miraflores · Lima</div></div>
+      </div>
+      <div class="widget-body">
+        <div class="widget-date-row">
+          <div>
+            <span class="widget-label">Fecha</span>
+            <div class="widget-input">📅 Vie 23 mayo</div>
+          </div>
+          <div>
+            <span class="widget-label">Personas</span>
+            <div style="display:flex;gap:4px;margin-top:0">
+              <div class="widget-pax-btn">1</div>
+              <div class="widget-pax-btn sel">2</div>
+              <div class="widget-pax-btn">3</div>
+              <div class="widget-pax-btn">4</div>
+              <div class="widget-pax-btn">+</div>
+            </div>
+          </div>
+        </div>
+        <span class="widget-label">Hora disponible</span>
+        <div class="widget-slots">
+          <div class="widget-slot">12:30</div>
+          <div class="widget-slot">13:00</div>
+          <div class="widget-slot full">13:30</div>
+          <div class="widget-slot sel">14:00</div>
+          <div class="widget-slot">14:30</div>
+          <div class="widget-slot full">20:00</div>
+          <div class="widget-slot">20:30</div>
+          <div class="widget-slot">21:00</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div>
+            <span class="widget-label">Nombre</span>
+            <div class="widget-input">Carlos García</div>
+          </div>
+          <div>
+            <span class="widget-label">WhatsApp</span>
+            <div class="widget-input">987 654 321</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <span class="widget-label">Ocasión especial (opcional)</span>
+          <div class="widget-input" style="color:#b8871e">🎂 Cumpleaños</div>
+        </div>
+        <button class="widget-btn">CONFIRMAR RESERVA →</button>
+      </div>
+      <div class="widget-footer">
+        <span>⚡ PREP</span>
+        <span>·</span>
+        <span>Reservas sin comisión para el restaurante</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH -->
+<div class="section-title">Stack técnico del módulo</div>
+<div class="tech-grid">
+  <div class="tech-item">
+    <div class="tech-icon">🗄️</div>
+    <div class="tech-name">Supabase</div>
+    <div class="tech-detail">Tablas: reservations, guests, waitlist, experiences. Realtime para sync inmediato con POS.</div>
+  </div>
+  <div class="tech-item">
+    <div class="tech-icon">📱</div>
+    <div class="tech-name">WhatsApp Business API</div>
+    <div class="tech-detail">Confirmaciones, reconfirmaciones, briefs y Notify. Meta official API — no terceros.</div>
+  </div>
+  <div class="tech-item">
+    <div class="tech-icon">📧</div>
+    <div class="tech-name">Resend</div>
+    <div class="tech-detail">Emails de confirmación, brief de turno, seguimiento post-visita. Templates HTML con branding del restaurante.</div>
+  </div>
+  <div class="tech-item">
+    <div class="tech-icon">💳</div>
+    <div class="tech-name">Culqi</div>
+    <div class="tech-detail">Garantías anti no-show. Retención de tarjeta sin cargo inmediato. Pago en experiencias prepagadas.</div>
+  </div>
+</div>
+
+<div style="background:var(--text);border-radius:12px;padding:24px;margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+  <div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#fff;margin-bottom:4px">El diferencial de PREP sobre Mesa247 y Resy</div>
+    <div style="color:rgba(255,255,255,0.55);font-size:13px;max-width:560px;line-height:1.7">WhatsApp nativo (Mesa247 y Resy no lo tienen). Sin fee por cubierto (Mesa247 sí cobra). Integración con el POS propio — sin doble sistema. El brief llega por WhatsApp, no solo por email.</div>
+  </div>
+  <div style="text-align:center;flex-shrink:0">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;color:#c4963a">S/0</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px">fee por reserva</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

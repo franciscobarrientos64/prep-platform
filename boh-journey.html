@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOH Purchasing System — Journey Map</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0d0f14;
+  --surface: #14161d;
+  --surface2: #1c1f2a;
+  --border: #252836;
+  --text: #e8eaf0;
+  --muted: #6b7090;
+  --c1: #f59e0b;   /* Requisición */
+  --c2: #06b6d4;   /* Almacén */
+  --c3: #10b981;   /* Comparación */
+  --c4: #8b5cf6;   /* Pedido */
+  --red: #f43f5e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 0;
+}
+
+/* HEADER */
+.header {
+  padding: 40px 48px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.header-left h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.header-left p { color: var(--muted); font-size: 13px; max-width: 480px; }
+.header-tag {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* STAGE TABS */
+.stage-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.stage-tab {
+  padding: 16px 28px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+.stage-tab.active { color: var(--text); }
+.stage-tab.s1.active { border-bottom-color: var(--c1); }
+.stage-tab.s2.active { border-bottom-color: var(--c2); }
+.stage-tab.s3.active { border-bottom-color: var(--c3); }
+.stage-tab.s4.active { border-bottom-color: var(--c4); }
+.stage-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.s1 .stage-num { background: rgba(245,158,11,0.15); color: var(--c1); }
+.s2 .stage-num { background: rgba(6,182,212,0.15); color: var(--c2); }
+.s3 .stage-num { background: rgba(16,185,129,0.15); color: var(--c3); }
+.s4 .stage-num { background: rgba(139,92,246,0.15); color: var(--c4); }
+
+/* CONTENT AREA */
+.content { display: none; padding: 0; }
+.content.active { display: block; }
+
+/* FLOW SECTION */
+.flow-section {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: calc(100vh - 200px);
+}
+.flow-left {
+  border-right: 1px solid var(--border);
+  padding: 32px;
+  background: var(--surface);
+}
+.flow-right { padding: 32px; }
+
+/* LEFT PANEL */
+.stage-header {
+  margin-bottom: 28px;
+}
+.stage-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.s1 .stage-eyebrow { color: var(--c1); }
+.s2 .stage-eyebrow { color: var(--c2); }
+.s3 .stage-eyebrow { color: var(--c3); }
+.s4 .stage-eyebrow { color: var(--c4); }
+.stage-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.stage-desc { color: var(--muted); font-size: 13px; line-height: 1.75; }
+
+/* ACTORS */
+.actors-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin: 24px 0 12px;
+}
+.actor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.actor-icon { font-size: 20px; }
+.actor-name { font-weight: 600; }
+.actor-role { font-size: 11px; color: var(--muted); }
+
+/* DATA IN/OUT */
+.data-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.data-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.data-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  color: var(--muted);
+}
+.data-item::before { content: '→'; color: var(--border); }
+
+/* RIGHT PANEL — MOCKUP CARDS */
+.mockup-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mockup-title span {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+/* SCREEN MOCKUPS */
+.screen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.screen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.screen-bar {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.dot-red { width:8px;height:8px;border-radius:50%;background:#ef4444; }
+.dot-yellow { width:8px;height:8px;border-radius:50%;background:#f59e0b; }
+.dot-green { width:8px;height:8px;border-radius:50%;background:#22c55e; }
+.screen-bar-title { margin-left:8px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace; }
+.screen-body { padding: 16px; }
+
+/* UI ELEMENTS IN MOCKUP */
+.ui-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px; }
+.ui-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 10px;
+  width: 100%;
+}
+.ui-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ui-btn.primary { background: var(--c1); color: #000; }
+.ui-btn.secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+.ui-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.ui-row:last-child { border-bottom: none; }
+.ui-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.ui-badge.urgente { background: rgba(244,63,94,0.15); color: var(--red); }
+.ui-badge.normal { background: var(--surface2); color: var(--muted); }
+.ui-badge.ok { background: rgba(16,185,129,0.15); color: var(--c3); }
+.ui-badge.low { background: rgba(245,158,11,0.15); color: var(--c1); }
+.ui-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--muted);
+}
+
+/* DECISION FLOW DIAGRAM */
+.decision-flow {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+  position: relative;
+}
+.df-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+}
+.df-node.start { background: var(--surface2); border: 1px solid var(--border); }
+.df-node.decision { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.3); }
+.df-node.action { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); }
+.df-node.end-ok { background: rgba(16,185,129,0.12); border: 1px solid var(--c3); }
+.df-node.end-buy { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.3); }
+.df-arrow {
+  text-align: center;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  margin: 2px 0 2px 20px;
+}
+.df-branch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 4px 0;
+}
+.df-branch-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* TECH SPEC */
+.tech-spec {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.tech-spec-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.tech-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  gap: 20px;
+}
+.tech-row:last-child { border-bottom: none; }
+.tech-component { font-weight: 600; color: var(--text); flex-shrink: 0; width: 140px; }
+.tech-detail { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; flex: 1; }
+
+/* PRICE COMPARISON MOCKUP */
+.price-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
+.price-table th {
+  text-align: left;
+  padding: 6px 10px;
+  background: var(--surface2);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.price-table td {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  vertical-align: middle;
+}
+.price-best { color: var(--c3); font-weight: 700; }
+.price-ok { color: var(--text); }
+.price-high { color: var(--muted); }
+.winner-row td { background: rgba(16,185,129,0.05); }
+
+/* ORDER OUTPUT MOCKUP */
+.pdf-preview {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  color: #1a1916;
+  font-size: 11px;
+}
+.pdf-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.pdf-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #d4380d; }
+.pdf-meta { text-align: right; color: #6b7280; font-size: 10px; }
+.pdf-to { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 8px; margin-bottom: 10px; }
+.pdf-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.pdf-table th { background: #f3f4f6; padding: 5px 8px; text-align: left; font-weight: 700; border: 1px solid #e5e7eb; }
+.pdf-table td { padding: 5px 8px; border: 1px solid #e5e7eb; }
+.pdf-total { text-align: right; margin-top: 8px; font-weight: 700; font-size: 12px; }
+
+/* CALLOUT */
+.callout {
+  border-left: 3px solid var(--border);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 13px;
+  border-radius: 0 6px 6px 0;
+}
+.callout.amber { border-left-color: var(--c1); background: rgba(245,158,11,0.06); }
+.callout.cyan { border-left-color: var(--c2); background: rgba(6,182,212,0.06); }
+.callout.green { border-left-color: var(--c3); background: rgba(16,185,129,0.06); }
+.callout.purple { border-left-color: var(--c4); background: rgba(139,92,246,0.06); }
+
+/* FULL WIDTH SECTION */
+.full-section {
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+}
+.full-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+.db-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+.db-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.db-table-header {
+  background: var(--surface2);
+  padding: 8px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c2);
+  border-bottom: 1px solid var(--border);
+}
+.db-col {
+  padding: 5px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+.db-col:last-child { border-bottom: none; }
+.db-col span { color: var(--c1); font-size: 9px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>🏪 Sistema de Compras · Back of House</h1>
+    <p>Journey completo del proceso de requisición → stock → comparación de precios → pedido final. 4 etapas, 4 pantallas principales.</p>
+  </div>
+  <div class="header-tag">Módulo de Compras · Arquitectura v1.0</div>
+</div>
+
+<div class="stage-tabs">
+  <div class="stage-tab s1 active" onclick="showStage(1)">
+    <span class="stage-num">1</span> Requisición Interna
+  </div>
+  <div class="stage-tab s2" onclick="showStage(2)">
+    <span class="stage-num">2</span> Verificación de Stock
+  </div>
+  <div class="stage-tab s3" onclick="showStage(3)">
+    <span class="stage-num">3</span> Comparación de Precios
+  </div>
+  <div class="stage-tab s4" onclick="showStage(4)">
+    <span class="stage-num">4</span> Pedido Final
+  </div>
+</div>
+
+<!-- ===== STAGE 1: REQUISICIÓN ===== -->
+<div class="content active" id="stage-1">
+<div class="flow-section">
+  <div class="flow-left">
+    <div class="stage-header s1">
+      <div class="stage-eyebrow">Etapa 01 · Solicitud</div>
+      <div class="stage-title">Requisición Interna</div>
+      <div class="stage-desc">Cada área del restaurante genera un pedido de insumos hacia almacén/compras. El sistema reemplaza los cuadernos, los mensajes de WhatsApp y los Google Forms, manteniendo todo trazado y con usuario propio.</div>
+    </div>
+
+    <div class="actors-label">Actores involucrados</div>
+    <div class="actor"><div class="actor-icon">🍳</div><div><div class="actor-name">Jefe de Cocina</div><div class="actor-role">Solicita insumos de cocina caliente/fría</div></div></div>
+    <div class="actor"><div class="actor-icon">🍸</div><div><div class="actor-name">Jefe de Bar</div><div class="actor-role">Solicita bebidas, licores, insumos bar</div></div></div>
+    <div class="actor"><div class="actor-icon">🪑</div><div><div class="actor-name">Capitán de Sala</div><div class="actor-role">Artículos de servicio, limpieza, menaje</div></div></div>
+    <div class="actor"><div class="actor-icon">💼</div><div><div class="actor-name">Administración</div><div class="actor-role">Útiles de oficina, insumos generales</div></div></div>
+
+    <div class="actors-label" style="margin-top:20px">Datos que genera</div>
+    <div class="data-box">
+      <div class="data-label">Output de esta etapa</div>
+      <div class="data-item">Área solicitante</div>
+      <div class="data-item">Lista de ítems + cantidades</div>
+      <div class="data-item">Nivel de urgencia</div>
+      <div class="data-item">Fecha/hora de solicitud</div>
+      <div class="data-item">Usuario que solicitó</div>
+      <div class="data-item">Notas adicionales</div>
+    </div>
+
+    <div class="callout amber" style="margin-top:16px">
+      <strong>Login por área:</strong> Cada área tiene un usuario simple (ej: <code style="font-family:DM Mono">cocina / pin4</code>). Sin contraseñas complejas. Acceso por QR en la pared del área → abre directo el formulario.
+    </div>
+  </div>
+
+  <div class="flow-right">
+    <div class="mockup-title">
+      Pantallas de requisición
+      <span style="background:rgba(245,158,11,0.15);color:var(--c1)">Vista del jefe de área</span>
+    </div>
+
+    <div class="screen-grid">
+      <!-- LOGIN AREA -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">restaurante.pe / login-area</div>
+        </div>
+        <div class="screen-body">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:32px">🍳</div>
+            <div style="font-family:Syne,sans-serif;font-weight:700;font-size:14px;margin:6px 0 2px">Cocina</div>
+            <div style="font-size:10px;color:var(--muted)">Solicitud de insumos</div>
+          </div>
+          <div class="ui-label">PIN del área</div>
+          <div class="ui-input">● ● ● ●</div>
+          <div style="text-align:center;margin-top:4px">
+            <button class="ui-btn primary" style="width:100%">Ingresar →</button>
+          </div>
+          <div style="text-align:center;margin-top:10px">
+            <div style="font-size:10px;color:var(--muted)">📱 Escanea el QR en tu área para acceder directo</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULARIO -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Nueva Requisición · Cocina</div>
+        </div>
+        <div class="screen-body">
+          <div class="ui-label">Urgencia</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <button class="ui-btn secondary" style="font-size:11px;padding:5px 10px">Normal</button>
+            <button class="ui-btn" style="background:rgba(244,63,94,0.15);color:var(--red);border:1px solid rgba(244,63,94,0.3);font-size:11px;padding:5px 10px">🔴 Urgente</button>
+          </div>
+          <div class="ui-label">Ítems solicitados</div>
+          <div class="ui-row">
+            <span>Aceite de oliva</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="ui-tag">5 L</span>
+              <span>🗑️</span>
+            </div>
+          </div>
+          <div class="ui-row">
+            <span>Harina sin preparar</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="ui-tag">10 kg</span>
+              <span>🗑️</span>
+            </div>
+          </div>
+          <div class="ui-row" style="color:var(--muted);font-size:11px">
+            <span>+ Agregar ítem...</span>
+          </div>
+          <div class="ui-label" style="margin-top:10px">Nota para almacén</div>
+          <div class="ui-input" style="height:40px">Para el servicio de mañana 8am</div>
+          <button class="ui-btn primary" style="margin-top:8px;width:100%">Enviar solicitud ✓</button>
+        </div>
+      </div>
+
+      <!-- CATÁLOGO POR ÁREA -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Catálogo rápido · Cocina</div>
+        </div>
+        <div class="screen-body">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Ítems frecuentes del área</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🧄 Ajo</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🧅 Cebolla</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🫒 Aceite</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🧈 Mantequilla</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🌿 Hierbas</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🍋 Limón</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🥩 Carne</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🍗 Pollo</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🐟 Pescado</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🥚 Huevos</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">🫙 Sal</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">+ Otro</button>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:var(--muted)">Toca un ítem para agregarlo a la solicitud →</div>
+        </div>
+      </div>
+
+      <!-- HISTORIAL -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Mis solicitudes recientes</div>
+        </div>
+        <div class="screen-body">
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Solicitud #47</div>
+              <div style="font-size:10px;color:var(--muted)">Hoy 09:15 · 5 ítems</div>
+            </div>
+            <span class="ui-badge ok">Aprobada</span>
+          </div>
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Solicitud #46</div>
+              <div style="font-size:10px;color:var(--muted)">Ayer 16:30 · 3 ítems</div>
+            </div>
+            <span class="ui-badge ok">Entregada</span>
+          </div>
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Solicitud #45</div>
+              <div style="font-size:10px;color:var(--muted)">Lun 11:00 · 8 ítems</div>
+            </div>
+            <span class="ui-badge urgente">En proceso</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-spec" style="margin-top:16px">
+      <div class="tech-spec-title">⚙️ Implementación técnica · Etapa 1</div>
+      <div class="tech-row">
+        <div class="tech-component">Auth por área</div>
+        <div class="tech-detail">Supabase Auth con roles personalizados. PIN de 4 dígitos por área. QR genera URL con área pre-seleccionada (?area=cocina)</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Catálogo rápido</div>
+        <div class="tech-detail">tabla <code>area_catalog_items</code> — ítems frecuentes por área, configurable por el admin del restaurante</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Notificación</div>
+        <div class="tech-detail">Al enviar → Supabase Realtime notifica al dashboard de almacén instantáneamente + WhatsApp al encargado de compras</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Estado tracking</div>
+        <div class="tech-detail">requisition_status: pending → reviewed → approved → ordered → delivered</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== STAGE 2: STOCK CHECK ===== -->
+<div class="content" id="stage-2">
+<div class="flow-section">
+  <div class="flow-left">
+    <div class="stage-header s2">
+      <div class="stage-eyebrow">Etapa 02 · Almacén</div>
+      <div class="stage-title">Verificación de Stock</div>
+      <div class="stage-desc">El área de almacén/compras recibe la requisición y la cruza contra el inventario actual. Ítems disponibles se despachan internamente. Los que no hay → pasan a compras externas.</div>
+    </div>
+
+    <div class="actors-label">Actor principal</div>
+    <div class="actor"><div class="actor-icon">📦</div><div><div class="actor-name">Almacenero / Jefe de Compras</div><div class="actor-role">Revisa stock, aprueba, despacha o compra</div></div></div>
+
+    <div class="actors-label" style="margin-top:20px">Lógica de decisión</div>
+    <div class="decision-flow">
+      <div class="df-node start">📋 Llega requisición del área</div>
+      <div class="df-arrow">↓</div>
+      <div class="df-node decision">🔍 Sistema cruza contra stock actual</div>
+      <div class="df-arrow">↓</div>
+      <div class="df-branch">
+        <div>
+          <div class="df-branch-label" style="color:var(--c3)">✅ Hay stock</div>
+          <div class="df-node end-ok">Despachar a área solicitante → marcar como entregado</div>
+        </div>
+        <div>
+          <div class="df-branch-label" style="color:var(--red)">❌ Stock insuficiente</div>
+          <div class="df-node end-buy">Pasar a Etapa 3: Comparación de precios</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout cyan" style="margin-top:16px">
+      <strong>Auto-cruce:</strong> Si el inventario está actualizado (food cost activo), el sistema marca automáticamente qué ítems hay y cuáles no, sin que el almacenero tenga que buscar uno por uno.
+    </div>
+  </div>
+
+  <div class="flow-right">
+    <div class="mockup-title">
+      Panel de Almacén / Compras
+      <span style="background:rgba(6,182,212,0.15);color:var(--c2)">Vista del encargado</span>
+    </div>
+
+    <div class="screen-grid">
+      <!-- INBOX REQUISICIONES -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Bandeja de Solicitudes</div>
+        </div>
+        <div class="screen-body">
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Cocina · #47</div>
+              <div style="font-size:10px;color:var(--muted)">Hace 3 min · 5 ítems</div>
+            </div>
+            <span class="ui-badge urgente">🔴 Urgente</span>
+          </div>
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Bar · #46</div>
+              <div style="font-size:10px;color:var(--muted)">Hace 1h · 3 ítems</div>
+            </div>
+            <span class="ui-badge normal">Normal</span>
+          </div>
+          <div class="ui-row">
+            <div>
+              <div style="font-weight:600;font-size:12px">Sala · #45</div>
+              <div style="font-size:10px;color:var(--muted)">Hace 2h · 2 ítems</div>
+            </div>
+            <span class="ui-badge normal">Normal</span>
+          </div>
+          <button class="ui-btn secondary" style="width:100%;margin-top:10px;font-size:11px">Ver todas las solicitudes</button>
+        </div>
+      </div>
+
+      <!-- DETALLE CON CRUCE STOCK -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Cocina #47 — Cruce de stock</div>
+        </div>
+        <div class="screen-body">
+          <div class="ui-row">
+            <span>Aceite de oliva · 5L</span>
+            <span class="ui-badge ok">✓ Stock: 8L</span>
+          </div>
+          <div class="ui-row">
+            <span>Harina sin prep. · 10kg</span>
+            <span class="ui-badge low">⚠ Stock: 2kg</span>
+          </div>
+          <div class="ui-row">
+            <span>Mantequilla · 2kg</span>
+            <span class="ui-badge urgente">✗ Stock: 0</span>
+          </div>
+          <div class="ui-row">
+            <span>Limones · 30 un</span>
+            <span class="ui-badge ok">✓ Stock: 50</span>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:6px">
+            <button class="ui-btn secondary" style="font-size:10px;flex:1">Despachar disponibles</button>
+            <button class="ui-btn" style="background:rgba(6,182,212,0.15);color:var(--c2);border:1px solid rgba(6,182,212,0.3);font-size:10px;flex:1">→ Comprar faltantes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTARIO ACTUAL -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Inventario Almacén</div>
+        </div>
+        <div class="screen-body">
+          <div style="margin-bottom:8px;display:flex;gap:6px">
+            <button class="ui-btn primary" style="font-size:10px;padding:4px 8px">Todos</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">Stock bajo</button>
+            <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">Sin stock</button>
+          </div>
+          <div class="ui-row">
+            <span>Aceite de oliva</span>
+            <div><span class="ui-badge ok">8L</span></div>
+          </div>
+          <div class="ui-row">
+            <span>Harina sin preparar</span>
+            <div><span class="ui-badge low">2kg ⚠</span></div>
+          </div>
+          <div class="ui-row">
+            <span>Mantequilla</span>
+            <div><span class="ui-badge urgente">0 ✗</span></div>
+          </div>
+          <div class="ui-row">
+            <span>Limones</span>
+            <div><span class="ui-badge ok">50 un</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN DEL DÍA -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Resumen hoy</div>
+        </div>
+        <div class="screen-body">
+          <div class="ui-row">
+            <span style="color:var(--muted)">Solicitudes recibidas</span>
+            <strong>8</strong>
+          </div>
+          <div class="ui-row">
+            <span style="color:var(--muted)">Atendidas con stock</span>
+            <strong style="color:var(--c3)">5</strong>
+          </div>
+          <div class="ui-row">
+            <span style="color:var(--muted)">Necesitan compra</span>
+            <strong style="color:var(--c1)">3</strong>
+          </div>
+          <div class="ui-row">
+            <span style="color:var(--muted)">Urgentes pendientes</span>
+            <strong style="color:var(--red)">1</strong>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:var(--muted)">📊 Alertas automáticas activadas para stock crítico</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-spec" style="margin-top:16px">
+      <div class="tech-spec-title">⚙️ Implementación técnica · Etapa 2</div>
+      <div class="tech-row">
+        <div class="tech-component">Auto-cruce</div>
+        <div class="tech-detail">JOIN entre <code>requisition_items</code> y <code>ingredients</code> (stock_current). Retorna status: "available" | "partial" | "out_of_stock" por ítem</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Stock mínimo</div>
+        <div class="tech-detail">Cada ingrediente tiene <code>min_stock</code>. Si stock_current &lt; min_stock → alerta automática + WhatsApp al encargado</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Despacho interno</div>
+        <div class="tech-detail">Al marcar "despachar" → crea <code>stock_movement</code> tipo "internal_dispatch" → resta del inventario → marca ítem de requisición como "fulfilled"</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Realtime</div>
+        <div class="tech-detail">Supabase Realtime: el panel de almacén se actualiza automáticamente al llegar nuevas solicitudes, sin refrescar la página</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== STAGE 3: PRICE COMPARISON ===== -->
+<div class="content" id="stage-3">
+<div class="flow-section">
+  <div class="flow-left">
+    <div class="stage-header s3">
+      <div class="stage-eyebrow">Etapa 03 · Compras</div>
+      <div class="stage-title">Comparación de Precios</div>
+      <div class="stage-desc">La misma tecnología de Cocina Semanal aplicada al abastecimiento profesional. Compara precios en tiempo real entre supermercados (VTEX) y los proveedores habituales del restaurante. Elige por ítem, no por proveedor.</div>
+    </div>
+
+    <div class="actors-label">Fuentes de precios</div>
+    <div class="actor"><div class="actor-icon">🛒</div><div><div class="actor-name">Wong / Metro / Plaza Vea</div><div class="actor-role">API VTEX — precios en tiempo real</div></div></div>
+    <div class="actor"><div class="actor-icon">🏭</div><div><div class="actor-name">Makro / Costco</div><div class="actor-role">API VTEX o scraping periódico</div></div></div>
+    <div class="actor"><div class="actor-icon">🚚</div><div><div class="actor-name">Proveedores propios</div><div class="actor-role">Lista de precios manual, actualizada por el restaurante</div></div></div>
+
+    <div class="actors-label" style="margin-top:20px">Lógica de comparación</div>
+    <div class="data-box">
+      <div class="data-label">Cómo funciona el matching</div>
+      <div class="data-item">Ítem genérico "Harina 1kg" → busca en catálogos</div>
+      <div class="data-item">Fuzzy matching por nombre/categoría</div>
+      <div class="data-item">Normaliza precios por unidad comparable</div>
+      <div class="data-item">Marca el precio más bajo</div>
+      <div class="data-item">Permite split: ítem A de Wong, ítem B del proveedor</div>
+    </div>
+
+    <div class="callout green" style="margin-top:16px">
+      <strong>Diferencial clave:</strong> Los supermercados → VTEX API en tiempo real. Los proveedores propios → lista de precios que el restaurante actualiza manualmente (o que el proveedor actualiza vía link especial).
+    </div>
+  </div>
+
+  <div class="flow-right">
+    <div class="mockup-title">
+      Comparador de Precios
+      <span style="background:rgba(16,185,129,0.15);color:var(--c3)">Vista del encargado de compras</span>
+    </div>
+
+    <div class="screen-card" style="margin-bottom:16px">
+      <div class="screen-bar">
+        <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+        <div class="screen-bar-title">Comparación de precios — Lista de compra</div>
+      </div>
+      <div class="screen-body">
+        <div style="margin-bottom:12px;font-size:11px;color:var(--muted)">3 ítems a comprar · Cocina #47 + Bar #46 consolidado</div>
+        <table class="price-table">
+          <thead>
+            <tr>
+              <th>Ítem</th>
+              <th>Cant.</th>
+              <th>🟡 Wong</th>
+              <th>🔵 Metro</th>
+              <th>🔴 Plaza Vea</th>
+              <th>🏭 Proveedor ABC</th>
+              <th>Mejor opción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="winner-row">
+              <td><strong>Harina sin prep.</strong></td>
+              <td>8 kg</td>
+              <td class="price-ok">S/4.90/kg</td>
+              <td class="price-ok">S/5.10/kg</td>
+              <td class="price-high">S/5.50/kg</td>
+              <td class="price-best">S/4.20/kg ★</td>
+              <td><span class="ui-badge ok">Proveedor ABC</span></td>
+            </tr>
+            <tr>
+              <td><strong>Mantequilla</strong></td>
+              <td>2 kg</td>
+              <td class="price-best">S/12.90/kg ★</td>
+              <td class="price-ok">S/13.50/kg</td>
+              <td class="price-ok">S/13.20/kg</td>
+              <td class="price-high">S/15.00/kg</td>
+              <td><span class="ui-badge ok">Wong</span></td>
+            </tr>
+            <tr>
+              <td><strong>Ron oscuro</strong></td>
+              <td>2 bot.</td>
+              <td class="price-ok">S/38.90</td>
+              <td class="price-high">S/42.00</td>
+              <td class="price-ok">S/39.50</td>
+              <td class="price-best">S/35.00 ★</td>
+              <td><span class="ui-badge ok">Proveedor ABC</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--muted)">Total estimado comprando al mejor precio: <strong style="color:var(--c3)">S/142.60</strong> vs S/168.40 al precio más alto</div>
+          <div style="font-size:11px;color:var(--c3);font-weight:700">Ahorro: S/25.80 (15.3%)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-bar">
+        <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+        <div class="screen-bar-title">Precios de Proveedores Propios</div>
+      </div>
+      <div class="screen-body">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Lista actualizable manualmente · Último update: hace 2 días</div>
+        <div class="ui-row">
+          <div>
+            <div style="font-weight:600;font-size:12px">Proveedor ABC — Distribuidora Central</div>
+            <div style="font-size:10px;color:var(--muted)">📞 987-654-321 · WhatsApp activo</div>
+          </div>
+          <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">Editar precios</button>
+        </div>
+        <div class="ui-row">
+          <div>
+            <div style="font-weight:600;font-size:12px">Makro Mayorista</div>
+            <div style="font-size:10px;color:var(--muted)">🌐 Precios via scraping · Auto</div>
+          </div>
+          <button class="ui-btn secondary" style="font-size:10px;padding:4px 8px">Ver catálogo</button>
+        </div>
+        <div class="ui-row" style="color:var(--muted)">
+          <span style="font-size:11px">+ Agregar nuevo proveedor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-spec" style="margin-top:16px">
+      <div class="tech-spec-title">⚙️ Implementación técnica · Etapa 3</div>
+      <div class="tech-row">
+        <div class="tech-component">VTEX API</div>
+        <div class="tech-detail">Wong/Metro/Plaza Vea — mismo endpoint que Cocina Semanal. GET /api/catalog_system/pub/products/search?fq=productName:{query}</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Fuzzy matching</div>
+        <div class="tech-detail">Ítem genérico → catálogo VTEX con Levenshtein distance o embeddings semánticos (Claude API). "Harina sin preparar" → "Harina Blanca Nicolini 1kg"</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Proveedores propios</div>
+        <div class="tech-detail">tabla <code>suppliers</code> + <code>supplier_prices</code>. El encargado actualiza precios o puede invitar al proveedor a actualizar via link especial</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Caché de precios</div>
+        <div class="tech-detail">Precios VTEX cacheados 6h en Supabase. Para compras urgentes → fetch en tiempo real. Para planificación → cache suficiente</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== STAGE 4: PEDIDO FINAL ===== -->
+<div class="content" id="stage-4">
+<div class="flow-section">
+  <div class="flow-left">
+    <div class="stage-header s4">
+      <div class="stage-eyebrow">Etapa 04 · Ejecución</div>
+      <div class="stage-title">Pedido Final</div>
+      <div class="stage-desc">Con la lista optimizada y los proveedores elegidos, el sistema ejecuta el pedido por el canal más apropiado: carrito directo en el supermercado, PDF profesional por email, o mensaje de WhatsApp al proveedor habitual.</div>
+    </div>
+
+    <div class="actors-label">Canales de salida</div>
+    <div class="actor"><div class="actor-icon">🛒</div><div><div class="actor-name">Carrito VTEX directo</div><div class="actor-role">Wong / Metro / Plaza Vea → abre carrito pre-llenado</div></div></div>
+    <div class="actor"><div class="actor-icon">📄</div><div><div class="actor-name">Orden de compra PDF</div><div class="actor-role">Documento profesional para enviar a proveedor</div></div></div>
+    <div class="actor"><div class="actor-icon">📱</div><div><div class="actor-name">WhatsApp Business</div><div class="actor-role">Mensaje con lista formateada + PDF adjunto</div></div></div>
+    <div class="actor"><div class="actor-icon">✉️</div><div><div class="actor-name">Email</div><div class="actor-role">Correo con PDF de orden de compra</div></div></div>
+
+    <div class="callout purple" style="margin-top:16px">
+      <strong>Split inteligente:</strong> Si la mejor opción es Wong para 2 ítems y el Proveedor ABC para 3, el sistema genera automáticamente 2 pedidos separados — uno con el carrito VTEX y otro como PDF/WhatsApp al proveedor.
+    </div>
+
+    <div class="actors-label" style="margin-top:16px">Post-pedido</div>
+    <div class="data-box">
+      <div class="data-label">Trazabilidad completa</div>
+      <div class="data-item">Pedido marcado como "enviado" con timestamp</div>
+      <div class="data-item">Encargado confirma recepción en almacén</div>
+      <div class="data-item">Stock se actualiza automáticamente</div>
+      <div class="data-item">Requisición original marcada como "atendida"</div>
+      <div class="data-item">Área solicitante recibe notificación de llegada</div>
+    </div>
+  </div>
+
+  <div class="flow-right">
+    <div class="mockup-title">
+      Ejecución del Pedido
+      <span style="background:rgba(139,92,246,0.15);color:var(--c4)">Vista del encargado de compras</span>
+    </div>
+
+    <div class="screen-grid" style="margin-bottom:16px">
+      <!-- RESUMEN PEDIDO -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Resumen del pedido</div>
+        </div>
+        <div class="screen-body">
+          <div style="font-size:11px;font-weight:600;margin-bottom:8px;color:var(--c4)">Pedido dividido en 2 destinos</div>
+          <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:10px;margin-bottom:8px">
+            <div style="font-size:11px;font-weight:700;color:var(--c3);margin-bottom:6px">🟡 Wong · S/25.80</div>
+            <div class="ui-row" style="border-color:rgba(255,255,255,0.05)">
+              <span>Mantequilla 2kg</span><strong>S/25.80</strong>
+            </div>
+          </div>
+          <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:6px;padding:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--c4);margin-bottom:6px">🚚 Proveedor ABC · S/116.80</div>
+            <div class="ui-row" style="border-color:rgba(255,255,255,0.05)">
+              <span>Harina 8kg</span><strong>S/33.60</strong>
+            </div>
+            <div class="ui-row" style="border-color:rgba(255,255,255,0.05)">
+              <span>Ron oscuro x2</span><strong>S/70.00</strong>
+            </div>
+          </div>
+          <div style="margin-top:10px;text-align:right;font-size:13px;font-weight:700">Total: <span style="color:var(--c3)">S/142.60</span></div>
+        </div>
+      </div>
+
+      <!-- ACCIONES -->
+      <div class="screen-card">
+        <div class="screen-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+          <div class="screen-bar-title">Ejecutar pedido</div>
+        </div>
+        <div class="screen-body">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Elige cómo enviar cada pedido:</div>
+          <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:8px">
+            <div style="font-size:11px;font-weight:700;margin-bottom:8px">🟡 Wong (Mantequilla)</div>
+            <button class="ui-btn" style="background:var(--c3);color:#fff;font-size:11px;width:100%">🛒 Abrir carrito en Wong →</button>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;margin-bottom:8px">🚚 Proveedor ABC</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="ui-btn" style="background:rgba(37,211,102,0.2);color:#25d366;border:1px solid rgba(37,211,102,0.3);font-size:11px;justify-content:center">📱 Enviar por WhatsApp</button>
+              <button class="ui-btn secondary" style="font-size:11px;justify-content:center">📄 Generar PDF y enviar email</button>
+              <button class="ui-btn secondary" style="font-size:11px;justify-content:center">📋 Copiar lista de pedido</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF PREVIEW -->
+    <div class="screen-card" style="margin-bottom:16px">
+      <div class="screen-bar">
+        <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+        <div class="screen-bar-title">Preview — Orden de Compra PDF</div>
+      </div>
+      <div class="screen-body">
+        <div class="pdf-preview">
+          <div class="pdf-header">
+            <div>
+              <div class="pdf-logo">🍽️ Restaurante La Mesa</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Jr. Las Flores 245, Miraflores · Lima</div>
+            </div>
+            <div class="pdf-meta">
+              <div><strong>ORDEN DE COMPRA #OC-2024-047</strong></div>
+              <div>Fecha: 12 Mayo 2024</div>
+              <div>Válida hasta: 14 Mayo 2024</div>
+            </div>
+          </div>
+          <div class="pdf-to">
+            <div style="font-size:10px;font-weight:700;margin-bottom:4px">PARA:</div>
+            <div><strong>Distribuidora ABC SAC</strong></div>
+            <div style="font-size:10px;color:#6b7280">RUC: 20512345678 · Contacto: Sr. Ramírez · 987-654-321</div>
+          </div>
+          <table class="pdf-table">
+            <thead>
+              <tr><th>#</th><th>Producto</th><th>Unidad</th><th>Cantidad</th><th>P. Unit.</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Harina sin preparar Blanca Flor</td><td>kg</td><td>8</td><td>S/4.20</td><td>S/33.60</td></tr>
+              <tr><td>2</td><td>Ron oscuro Cartavio</td><td>bot. 750ml</td><td>2</td><td>S/35.00</td><td>S/70.00</td></tr>
+              <tr><td colspan="5" style="text-align:right;font-weight:700">Subtotal:</td><td><strong>S/103.60</strong></td></tr>
+              <tr><td colspan="5" style="text-align:right;color:#6b7280">IGV (18%):</td><td style="color:#6b7280">S/13.20</td></tr>
+              <tr><td colspan="5" style="text-align:right;font-weight:800">TOTAL:</td><td><strong>S/116.80</strong></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;font-size:9px;color:#9ca3af">Autorizado por: Administración · Entrega requerida: 13 Mayo 2024 antes de las 8:00am · Favor confirmar recepción de este pedido.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-spec">
+      <div class="tech-spec-title">⚙️ Implementación técnica · Etapa 4</div>
+      <div class="tech-row">
+        <div class="tech-component">Carrito VTEX</div>
+        <div class="tech-detail">Igual que Cocina Semanal: construir URL con orderForm API o link de búsqueda. Wong: <code>/checkout/?orderFormId=...</code>. Metro similar.</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">PDF Generation</div>
+        <div class="tech-detail">jsPDF (cliente) o Puppeteer en Edge Function (server). Template HTML → PDF con logo, datos del restaurante, tabla de ítems, firmas.</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">WhatsApp API</div>
+        <div class="tech-detail">Meta WhatsApp Business API → mensaje template con lista de ítems + PDF como documento adjunto al número del proveedor guardado</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Email</div>
+        <div class="tech-detail">Resend (email API) → PDF adjunto + cuerpo HTML profesional → al email del proveedor registrado en la plataforma</div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-component">Trazabilidad</div>
+        <div class="tech-detail">tabla <code>purchase_orders</code> → status: draft | sent | confirmed | received. Al confirmar recepción → actualiza stock automáticamente</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BASE DE DATOS -->
+<div class="full-section">
+  <div class="full-title">🗄️ Modelo de datos — Módulo de Compras</div>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Las tablas nuevas que este módulo añade a la base de datos existente del sistema.</p>
+  <div class="db-grid">
+    <div class="db-table">
+      <div class="db-table-header">requisitions</div>
+      <div class="db-col">id <span>uuid</span></div>
+      <div class="db-col">restaurant_id <span>fk</span></div>
+      <div class="db-col">area <span>enum</span></div>
+      <div class="db-col">requested_by <span>fk users</span></div>
+      <div class="db-col">urgency <span>enum</span></div>
+      <div class="db-col">status <span>enum</span></div>
+      <div class="db-col">notes <span>text</span></div>
+      <div class="db-col">created_at <span>ts</span></div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">requisition_items</div>
+      <div class="db-col">id <span>uuid</span></div>
+      <div class="db-col">requisition_id <span>fk</span></div>
+      <div class="db-col">ingredient_id <span>fk</span></div>
+      <div class="db-col">qty_requested <span>decimal</span></div>
+      <div class="db-col">qty_fulfilled <span>decimal</span></div>
+      <div class="db-col">status <span>enum</span></div>
+      <div class="db-col">fulfillment_type <span>enum</span></div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">suppliers</div>
+      <div class="db-col">id <span>uuid</span></div>
+      <div class="db-col">restaurant_id <span>fk</span></div>
+      <div class="db-col">name <span>text</span></div>
+      <div class="db-col">type <span>enum</span></div>
+      <div class="db-col">whatsapp <span>text</span></div>
+      <div class="db-col">email <span>text</span></div>
+      <div class="db-col">ruc <span>text</span></div>
+      <div class="db-col">is_active <span>bool</span></div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">purchase_orders</div>
+      <div class="db-col">id <span>uuid</span></div>
+      <div class="db-col">restaurant_id <span>fk</span></div>
+      <div class="db-col">supplier_id <span>fk</span></div>
+      <div class="db-col">total_amount <span>decimal</span></div>
+      <div class="db-col">status <span>enum</span></div>
+      <div class="db-col">sent_via <span>enum</span></div>
+      <div class="db-col">sent_at <span>ts</span></div>
+      <div class="db-col">received_at <span>ts</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showStage(n) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.stage-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('stage-' + n).classList.add('active');
+  document.querySelectorAll('.stage-tab')[n-1].classList.add('active');
+}
+</script>
+</body>
+</html>
