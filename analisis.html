@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis Competitivo: Gestión de Restaurantes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #1a1d25;
+    --border: #2a2d38;
+    --text: #e8eaf0;
+    --muted: #7a7f94;
+    --peru: #f59e0b;
+    --peru-dim: rgba(245,158,11,0.12);
+    --toast: #22c55e;
+    --toast-dim: rgba(34,197,94,0.12);
+    --gap: #818cf8;
+    --gap-dim: rgba(129,140,248,0.12);
+    --accent: #f43f5e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 64px 48px 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(244,63,94,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    max-width: 800px;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 640px;
+    font-style: italic;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hero-stat strong {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .hero-stat span { color: var(--muted); font-size: 12px; }
+
+  /* LAYOUT */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 40px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* PLAYER CARDS */
+  .players {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 0 32px;
+  }
+  .player-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .player-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .player-card.peru::before { background: var(--peru); }
+  .player-card.toast::before { background: var(--toast); }
+  .player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .player-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .player-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .player-badge.peru { background: var(--peru-dim); color: var(--peru); }
+  .player-badge.toast { background: var(--toast-dim); color: var(--toast); }
+  .player-desc {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .player-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .kpi-box {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .kpi-box strong {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .kpi-box span { color: var(--muted); font-size: 11px; }
+  .kpi-box.peru strong { color: var(--peru); }
+  .kpi-box.toast strong { color: var(--toast); }
+
+  /* COMPARISON TABLE */
+  .comp-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row:hover { background: var(--surface2); }
+  .comp-row.header {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+  }
+  .comp-cell {
+    padding: 14px 20px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .comp-cell:last-child { border-right: none; }
+  .comp-cell.cat {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .comp-cell.header-cell {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .comp-cell.header-cell.peru { color: var(--peru); }
+  .comp-cell.header-cell.toast { color: var(--toast); }
+
+  /* STATUS BADGES */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .status::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status.yes { color: #4ade80; }
+  .status.yes::before { background: #4ade80; }
+  .status.partial { color: var(--peru); }
+  .status.partial::before { background: var(--peru); }
+  .status.no { color: #6b7280; }
+  .status.no::before { background: #374151; border: 1px solid #4b5563; }
+  .status.strong { color: var(--toast); }
+  .status.strong::before { background: var(--toast); box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+
+  /* SCORE BAR */
+  .score-wrap { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+  .score-label { display: flex; justify-content: space-between; align-items: center; }
+  .score-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+  .score-bar-bg { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 99px; }
+
+  /* GAP MAP */
+  .gap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding-bottom: 40px;
+  }
+  .gap-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .gap-card:hover {
+    border-color: var(--gap);
+    transform: translateY(-2px);
+  }
+  .gap-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: var(--gap-dim);
+    border-radius: 0 0 0 60px;
+  }
+  .gap-priority {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gap);
+    margin-bottom: 8px;
+  }
+  .gap-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .gap-desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .gap-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  /* STRATEGY SECTION */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-bottom: 48px;
+  }
+  .strategy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    border-left: 3px solid var(--gap);
+  }
+  .strategy-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--gap);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .strategy-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .strategy-desc {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+  .tab-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: var(--gap);
+    border-color: var(--gap);
+    color: #fff;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .footer-badge span { color: var(--gap); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Análisis Competitivo · Versión 2025</div>
+  <h1>Benchmarking de<br><span>Gestión de Restaurantes</span></h1>
+  <p class="hero-sub">Restaurant.pe (referencia Perú) vs Toast POS (líder mundial) — identificación de brechas estratégicas para una nueva plataforma diferenciada</p>
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <strong style="color:var(--peru)">S/100</strong>
+      <span>Plan base restaurant.pe</span>
+    </div>
+    <div class="hero-stat">
+      <strong style="color:var(--toast)">148K+</strong>
+      <span>Locales activos Toast (Q2 2025)</span>
+    </div>
+    <div class="hero-stat">
+      <strong style="color:var(--gap)">$1.7B</strong>
+      <span>ARR anual Toast</span>
+    </div>
+    <div class="hero-stat">
+      <strong style="color:var(--accent)">9</strong>
+      <span>Países restaurant.pe</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TABS -->
+  <div class="section-title">Secciones del análisis</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('perfiles')">Perfiles de competidores</button>
+    <button class="tab-btn" onclick="showTab('features')">Comparativa de features</button>
+    <button class="tab-btn" onclick="showTab('gaps')">Brechas estratégicas</button>
+    <button class="tab-btn" onclick="showTab('roadmap')">Hoja de ruta sugerida</button>
+  </div>
+
+  <!-- TAB 1: PERFILES -->
+  <div id="tab-perfiles" class="tab-content active">
+    <div class="players">
+      <!-- RESTAURANT.PE -->
+      <div class="player-card peru">
+        <div class="player-header">
+          <div class="player-name">Restaurant.pe</div>
+          <div class="player-badge peru">Referencia Perú</div>
+        </div>
+        <p class="player-desc">
+          Plataforma peruana SaaS fundada para democratizar la tecnología gastronómica. Opera en modelo de suscripción mensual sin contratos de largo plazo. Integra POS, inventario y facturación electrónica SUNAT. Presente en 9 países latinoamericanos. Gestiona más de S/125M en ventas mensuales de sus clientes. Creció +50% durante la reactivación post-pandemia.
+        </p>
+        <div class="player-kpis">
+          <div class="kpi-box peru">
+            <strong>9</strong>
+            <span>Países activos</span>
+          </div>
+          <div class="kpi-box peru">
+            <strong>S/100</strong>
+            <span>Plan base/mes</span>
+          </div>
+          <div class="kpi-box peru">
+            <strong>SaaS</strong>
+            <span>Modelo sin contrato</span>
+          </div>
+          <div class="kpi-box peru">
+            <strong>SUNAT</strong>
+            <span>Facturación integrada</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOAST -->
+      <div class="player-card toast">
+        <div class="player-header">
+          <div class="player-name">Toast POS</div>
+          <div class="player-badge toast">#1 Mundial (G2)</div>
+        </div>
+        <p class="player-desc">
+          Fundado en 2013, es el POS #1 del mundo según G2, NerdWallet y múltiples rankings independientes. Construido exclusivamente para restaurantes desde su arquitectura base. En Q2 2025 sirve ~148,000 ubicaciones. Primer año GAAP-rentable en 2024. Expande a retail e internacionalización en 2025. Alta retención del 90% de clientes. Solo disponible en EE.UU. actualmente.
+        </p>
+        <div class="player-kpis">
+          <div class="kpi-box toast">
+            <strong>148K</strong>
+            <span>Restaurantes activos</span>
+          </div>
+          <div class="kpi-box toast">
+            <strong>$1.7B</strong>
+            <span>ARR (Q1 2025)</span>
+          </div>
+          <div class="kpi-box toast">
+            <strong>90%</strong>
+            <span>Retención de clientes</span>
+          </div>
+          <div class="kpi-box toast">
+            <strong>24/7</strong>
+            <span>Soporte en todos los planes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: FEATURES -->
+  <div id="tab-features" class="tab-content">
+    <div class="comp-table">
+      <div class="comp-row header">
+        <div class="comp-cell cat">Funcionalidad</div>
+        <div class="comp-cell header-cell peru">🇵🇪 Restaurant.pe</div>
+        <div class="comp-cell header-cell toast">🌎 Toast POS</div>
+      </div>
+
+      <!-- CORE -->
+      <div class="comp-row">
+        <div class="comp-cell cat">POS / Punto de Venta</div>
+        <div class="comp-cell"><span class="status yes">POS en la nube, mesas y pedidos</span></div>
+        <div class="comp-cell"><span class="status strong">POS nativo, hardware resistente a derrames/calor, kioscos, handhelds</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Gestión de inventario</div>
+        <div class="comp-cell"><span class="status yes">Control de stock y kardex</span></div>
+        <div class="comp-cell"><span class="status strong">Sync real-time, analytics de uso, predicción de compras</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Facturación electrónica</div>
+        <div class="comp-cell"><span class="status strong">SUNAT integrada (boletas/facturas)</span></div>
+        <div class="comp-cell"><span class="status partial">Solo USA (IRS/ventas) — sin SUNAT</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Gestión de mesas</div>
+        <div class="comp-cell"><span class="status yes">Mapa de mesas, estados</span></div>
+        <div class="comp-cell"><span class="status strong">Planos personalizables, rotación optimizada</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">KDS (pantalla de cocina)</div>
+        <div class="comp-cell"><span class="status no">No incluido</span></div>
+        <div class="comp-cell"><span class="status strong">KDS nativo, alertas por tiempo</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Pedidos online propios</div>
+        <div class="comp-cell"><span class="status no">Sin canal propio</span></div>
+        <div class="comp-cell"><span class="status strong">Página sin comisiones + App Toast TakeOut</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Pedidos desde la mesa (QR)</div>
+        <div class="comp-cell"><span class="status no">No disponible</span></div>
+        <div class="comp-cell"><span class="status strong">Order & Pay con QR en mesa</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Nómina y RRHH</div>
+        <div class="comp-cell"><span class="status no">No integrado</span></div>
+        <div class="comp-cell"><span class="status strong">Toast Payroll & HR nativo</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Marketing y fidelización</div>
+        <div class="comp-cell"><span class="status no">No incluido</span></div>
+        <div class="comp-cell"><span class="status strong">Campañas, descuentos, loyalty integrado</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Analítica e IA</div>
+        <div class="comp-cell"><span class="status no">Reportes básicos</span></div>
+        <div class="comp-cell"><span class="status strong">Dashboards avanzados, predicción de ventas</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Soporte técnico</div>
+        <div class="comp-cell"><span class="status partial">Horario de oficina</span></div>
+        <div class="comp-cell"><span class="status strong">24/7 en todos los planes</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Multi-sede</div>
+        <div class="comp-cell"><span class="status partial">Limitado</span></div>
+        <div class="comp-cell"><span class="status strong">Centralizado, menús y precios por sede</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">App móvil para dueños</div>
+        <div class="comp-cell"><span class="status partial">Web responsive básica</span></div>
+        <div class="comp-cell"><span class="status strong">Dashboard en tiempo real desde móvil</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Integración con delivery externo</div>
+        <div class="comp-cell"><span class="status no">Sin integración nativa</span></div>
+        <div class="comp-cell"><span class="status strong">Uber Eats, DoorDash, multi-delivery</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">WhatsApp / notificaciones</div>
+        <div class="comp-cell"><span class="status no">No disponible</span></div>
+        <div class="comp-cell"><span class="status no">Sin WhatsApp (no relevante en USA)</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Contrato</div>
+        <div class="comp-cell"><span class="status yes">Sin contrato, mes a mes</span></div>
+        <div class="comp-cell"><span class="status partial">Contrato de 2 años requerido</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Disponibilidad en Latam</div>
+        <div class="comp-cell"><span class="status strong">9 países latinoamericanos</span></div>
+        <div class="comp-cell"><span class="status no">Solo USA (2025)</span></div>
+      </div>
+    </div>
+
+    <!-- SCORE COMPARISON -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <div style="font-family:Syne,sans-serif;font-size:14px;font-weight:700;margin-bottom:20px;color:var(--peru)">🇵🇪 Restaurant.pe — Puntuación por área</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          ${[['Operaciones core (POS)', 70, '#f59e0b'],['Cumplimiento fiscal local', 95, '#f59e0b'],['Gestión de cocina', 30, '#f59e0b'],['Analytics e IA', 25, '#f59e0b'],['Canales de venta', 20, '#f59e0b'],['Fidelización / CRM', 15, '#f59e0b'],['Soporte y onboarding', 50, '#f59e0b']].map(([l,v,c])=>`
+          <div class="score-wrap">
+            <div class="score-label">
+              <span style="font-size:12px;color:var(--muted)">${l}</span>
+              <span class="score-val" style="color:${c}">${v}</span>
+            </div>
+            <div class="score-bar-bg"><div class="score-bar-fill" style="width:${v}%;background:${c}"></div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <div style="font-family:Syne,sans-serif;font-size:14px;font-weight:700;margin-bottom:20px;color:var(--toast)">🌎 Toast POS — Puntuación por área</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          ${[['Operaciones core (POS)', 98, '#22c55e'],['Cumplimiento fiscal local', 30, '#22c55e'],['Gestión de cocina', 95, '#22c55e'],['Analytics e IA', 88, '#22c55e'],['Canales de venta', 92, '#22c55e'],['Fidelización / CRM', 85, '#22c55e'],['Soporte y onboarding', 96, '#22c55e']].map(([l,v,c])=>`
+          <div class="score-wrap">
+            <div class="score-label">
+              <span style="font-size:12px;color:var(--muted)">${l}</span>
+              <span class="score-val" style="color:${c}">${v}</span>
+            </div>
+            <div class="score-bar-bg"><div class="score-bar-fill" style="width:${v}%;background:${c}"></div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: GAPS -->
+  <div id="tab-gaps" class="tab-content">
+    <p style="color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.7;">Las siguientes brechas representan oportunidades reales donde <strong style="color:var(--text)">ninguno de los dos actores actuales cubre el mercado latinoamericano</strong> con profundidad. Estas son las bases del diferencial competitivo.</p>
+    <div class="gap-grid">
+
+      <div class="gap-card">
+        <div class="gap-icon">🤖</div>
+        <div class="gap-priority">Brecha #1 · Alta prioridad</div>
+        <div class="gap-title">IA Predictiva para Latam</div>
+        <div class="gap-desc">Ninguna plataforma latinoamericana ofrece predicción de demanda, optimización de menú ni alertas inteligentes de costos. Toast lo tiene en USA pero no llega a Perú. Restaurant.pe tiene reportes básicos. Oportunidad: motor de IA entrenado con datos locales (estacionalidad, feriados, inflación).</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">📱</div>
+        <div class="gap-priority">Brecha #2 · Alta prioridad</div>
+        <div class="gap-title">WhatsApp Commerce nativo</div>
+        <div class="gap-desc">WhatsApp tiene penetración del 94% en Perú. Ninguna plataforma tiene integración nativa de pedidos, notificaciones a dueños y marketing por WhatsApp. Es el canal omitido por todos los jugadores y la gran oportunidad para el mercado LATAM.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">🛵</div>
+        <div class="gap-priority">Brecha #3 · Alta prioridad</div>
+        <div class="gap-title">Delivery propio sin comisión</div>
+        <div class="gap-desc">Rappi y PedidosYa cobran hasta 30% de comisión. Toast ofrece su propio canal sin comisión en USA. Ninguna plataforma peruana ofrece esto. Una plataforma de delivery propio integrada al POS daría una ventaja brutal contra el duopolio de apps.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">📊</div>
+        <div class="gap-priority">Brecha #4 · Media prioridad</div>
+        <div class="gap-title">Dashboard para dueños en tiempo real</div>
+        <div class="gap-desc">Los dueños de restaurantes peruanos necesitan ver ventas, cuadres y food cost desde el celular en tiempo real. Restaurant.pe tiene web responsive básica. Toast tiene dashboard robusto. Oportunidad de app móvil nativa con alertas automáticas.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">🍽️</div>
+        <div class="gap-priority">Brecha #5 · Media prioridad</div>
+        <div class="gap-title">KDS + Food Cost automatizado</div>
+        <div class="gap-desc">Kitchen Display System (pantalla de cocina) prácticamente ausente en plataformas locales. El food cost automático (que descuenta ingredientes por receta al vender) es básico en Toast pero raro en Perú. Ambos módulos reducen pérdidas directamente.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">🎁</div>
+        <div class="gap-priority">Brecha #6 · Media prioridad</div>
+        <div class="gap-title">CRM y Fidelización nativa</div>
+        <div class="gap-desc">Toast tiene loyalty y marketing integrado. Restaurant.pe no. En Perú no existe ninguna plataforma local con CRM de clientes, historial de compras y campañas de reactivación. El cliente que repite gasta 67% más que uno nuevo.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">👥</div>
+        <div class="gap-priority">Brecha #7 · Media prioridad</div>
+        <div class="gap-title">RRHH y Nómina integrada</div>
+        <div class="gap-desc">Toast integra payroll, scheduling y gestión de planilla. En Perú esto no existe en ninguna plataforma gastronómica. Un módulo de control de asistencia con biometría y cálculo de ONP/AFP sería pionero en el segmento.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">🏪</div>
+        <div class="gap-priority">Brecha #8 · Media prioridad</div>
+        <div class="gap-title">Gestión multi-sede real</div>
+        <div class="gap-desc">Las cadenas en crecimiento (franquicias, dark kitchens) no tienen en Perú una herramienta que centralice menús, precios, inventarios y reportes de múltiples sedes. Toast lo resuelve brillantemente. El segmento de cadenas medianas está desatendido localmente.</div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-icon">💳</div>
+        <div class="gap-priority">Brecha #9 · Baja prioridad</div>
+        <div class="gap-title">Pagos integrados sin terceros</div>
+        <div class="gap-desc">Toast genera el 81% de su revenue con pagos integrados (fintech). En Perú las plataformas delegan el cobro a Izipay, Niubiz o POS bancario externos. Integrar una pasarela propia (Culqi, Mercado Pago) con split automático abriría un nuevo flujo de ingresos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ROADMAP -->
+  <div id="tab-roadmap" class="tab-content">
+    <p style="color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.7;">Estrategia de construcción por fases — combinando la <strong style="color:var(--peru)">base regulatoria de restaurant.pe</strong> con las <strong style="color:var(--toast)">capacidades avanzadas de Toast</strong>, aplicadas al contexto peruano.</p>
+
+    <div style="margin-bottom:12px;background:var(--gap-dim);border:1px solid rgba(129,140,248,0.3);border-radius:8px;padding:14px 18px;font-size:13px;color:var(--text);">
+      💡 <strong>Hipótesis central:</strong> Restaurant.pe resuelve el "qué" (cumplimiento local). Toast resuelve el "cómo" (experiencia de nivel mundial). Tu plataforma puede resolver el "para quién" — el restaurantero latinoamericano con contexto real: WhatsApp, Rappi, SUNAT, informalidad, celular como herramienta principal.
+    </div>
+
+    <div class="strategy-grid">
+      <div class="strategy-card">
+        <div class="strategy-num">FASE 01 · MVP (0-6 meses)</div>
+        <div class="strategy-title">El núcleo irrenunciable</div>
+        <div class="strategy-desc">POS en la nube · Mapa de mesas · Carta digital QR · Facturación electrónica SUNAT · Control de inventario con recetas y food cost automático · Dashboard móvil para dueño · Soporte 7/7. <br><br>Diferencial mínimo: food cost + dashboard en tiempo real + soporte en horario gastronómico.</div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-num">FASE 02 · Crecimiento (6-18 meses)</div>
+        <div class="strategy-title">La capa de retención</div>
+        <div class="strategy-desc">KDS (pantalla de cocina) · Pedidos propios online sin comisión · Integración WhatsApp para notificaciones y marketing · CRM básico de clientes · Módulo de delivery propio para corta distancia · Multi-sede para cadenas. <br><br>Diferencial: WhatsApp commerce + delivery sin comisión.</div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-num">FASE 03 · Escalado (18-36 meses)</div>
+        <div class="strategy-title">La plataforma de datos</div>
+        <div class="strategy-desc">Motor de IA para predicción de ventas y demanda · Fidelización y campañas automatizadas · Módulo RRHH + asistencia biométrica · Integración con marketplaces (Rappi, PedidosYa) · Pasarela de pagos propia. <br><br>Diferencial: único POS latinoamericano con IA predictiva local.</div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-num">FASE 04 · Expansión (36+ meses)</div>
+        <div class="strategy-title">El modelo Toast latinoamericano</div>
+        <div class="strategy-desc">Internacionalización (Colombia, México, Chile) · Programa de franquicias tech · API pública para integradores · Hardware propio (tablets, impresoras certificadas SUNAT) · Modelo fintech con pagos integrados y adelantos de capital. <br><br>Diferencial: fintech + hardware Latin-first.</div>
+      </div>
+    </div>
+
+    <!-- POSITIONING BOX -->
+    <div style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(244,63,94,0.05));border:1px solid rgba(129,140,248,0.2);border-radius:12px;padding:28px;margin-bottom:40px;">
+      <div style="font-family:Syne,sans-serif;font-weight:800;font-size:18px;margin-bottom:12px;">Posicionamiento recomendado</div>
+      <div style="color:var(--muted);font-size:14px;line-height:1.8;max-width:720px;">
+        <strong style="color:var(--text)">"El único sistema de gestión diseñado para el restaurantero latinoamericano real"</strong> — con la potencia operativa de Toast, el cumplimiento fiscal de restaurant.pe, y la conectividad que el mercado peruano necesita: WhatsApp, delivery propio, IA en español, y soporte cuando el restaurante más lo necesita.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <span>Análisis elaborado con datos de G2, NerdWallet, Capterra, PQS, Pestel-analysis.com · Mayo 2025</span>
+  <div class="footer-badge">Plataforma objetivo: <span>Tu nueva web de gestión</span></div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

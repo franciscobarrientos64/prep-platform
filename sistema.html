@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP — Mapa del Sistema</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --border: #e2ddd5;
+  --text: #1c1a16;
+  --muted: #8a8070;
+  --dim: #c4bdb0;
+
+  --gold: #c4963a;
+  --gold-d: rgba(196,150,58,0.10);
+
+  /* PHASE COLORS */
+  --p1: #1c4a2e; --p1-d: rgba(28,74,46,0.08);
+  --p2: #1a3a6b; --p2-d: rgba(26,58,107,0.08);
+  --p3: #6b1a4a; --p3-d: rgba(107,26,74,0.08);
+  --p4: #4a1a6b; --p4-d: rgba(74,26,107,0.08);
+
+  /* ZONE COLORS */
+  --foh: #c4963a;
+  --boh: #1c4a2e;
+  --mgmt: #1a3a6b;
+  --core: #333;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--text);
+  padding: 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-word {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: 3px;
+}
+.logo-chevrons { display: flex; gap: 2px; align-items: center; }
+.chev { width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid var(--gold); margin-left: 2px; }
+.header-center {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.header-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.phase-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.pl1 { background: var(--p1-d); color: var(--p1); border-color: rgba(28,74,46,0.2); }
+.pl2 { background: var(--p2-d); color: var(--p2); border-color: rgba(26,58,107,0.2); }
+.pl3 { background: var(--p3-d); color: var(--p3); border-color: rgba(107,26,74,0.2); }
+.pl4 { background: var(--p4-d); color: var(--p4); border-color: rgba(74,26,107,0.2); }
+.pl-dot { width: 7px; height: 7px; border-radius: 50%; }
+.pl1 .pl-dot { background: var(--p1); }
+.pl2 .pl-dot { background: var(--p2); }
+.pl3 .pl-dot { background: var(--p3); }
+.pl4 .pl-dot { background: var(--p4); }
+
+/* ── ZONES ── */
+.zones-wrap {
+  padding: 32px 32px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.zone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.zone-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.zone-dot {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.zone-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.zone-sub { color: var(--muted); font-size: 11px; }
+.zone-foh .zone-dot { background: var(--foh); }
+.zone-foh .zone-label { color: var(--foh); }
+.zone-boh .zone-dot { background: var(--boh); }
+.zone-boh .zone-label { color: var(--boh); }
+.zone-mgmt .zone-dot { background: var(--mgmt); }
+.zone-mgmt .zone-label { color: var(--mgmt); }
+
+/* ── MODULE CARDS ── */
+.mod {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.mod:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.mod.built { border-color: rgba(28,74,46,0.3); }
+
+.mod-phase-bar {
+  height: 3px;
+  width: 100%;
+}
+.mod.p1 .mod-phase-bar { background: var(--p1); }
+.mod.p2 .mod-phase-bar { background: var(--p2); }
+.mod.p3 .mod-phase-bar { background: var(--p3); }
+.mod.p4 .mod-phase-bar { background: var(--p4); }
+
+.mod-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.mod-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.zone-foh .mod-icon { background: rgba(196,150,58,0.12); }
+.zone-boh .mod-icon { background: rgba(28,74,46,0.10); }
+.zone-mgmt .mod-icon { background: rgba(26,58,107,0.10); }
+
+.mod-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+.mod-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+.mod-badges {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px 10px;
+  flex-wrap: wrap;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.2px;
+}
+.badge-built { background: rgba(28,74,46,0.1); color: var(--p1); }
+.badge-p1 { background: var(--p1-d); color: var(--p1); }
+.badge-p2 { background: var(--p2-d); color: var(--p2); }
+.badge-p3 { background: var(--p3-d); color: var(--p3); }
+.badge-p4 { background: var(--p4-d); color: var(--p4); }
+.badge-gold { background: var(--gold-d); color: var(--gold); }
+
+/* ── FEATURE LIST ── */
+.mod-features {
+  padding: 0 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+  padding: 2px 0;
+}
+.feat-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.p1 .feat-dot { background: var(--p1); }
+.p2 .feat-dot { background: var(--p2); }
+.p3 .feat-dot { background: var(--p3); }
+.p4 .feat-dot { background: var(--p4); }
+.feat.done { color: var(--text); }
+.feat.done .feat-dot { background: var(--gold); }
+
+.feat-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--dim);
+  margin-top: 6px;
+  margin-bottom: 2px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── DIVIDER LINE ── */
+.mod-divider { height: 1px; background: var(--border); margin: 0 16px; }
+
+/* ── BUILT TAG ── */
+.built-tag {
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--p1);
+  background: rgba(28,74,46,0.1);
+  border: 1px solid rgba(28,74,46,0.2);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* ── CORE LAYER ── */
+.core-wrap {
+  padding: 16px 32px 32px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.core-section {
+  background: var(--text);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.core-label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.core-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.core-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+.core-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.core-pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.core-pill span { color: var(--gold); }
+
+/* ── USERS ROW ── */
+.users-wrap {
+  padding: 0 32px 16px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.users-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.user-pill {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.user-icon { font-size: 18px; }
+.user-modules { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  background: var(--gold-d);
+  border-bottom: 1px solid rgba(196,150,58,0.2);
+  padding: 12px 48px;
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.stat { display: flex; flex-direction: column; gap: 1px; }
+.stat strong { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--gold); }
+.stat span { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── CONNECTOR LINES (decorative) ── */
+.connector-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0 32px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.conn-line {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.conn-line::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 100%;
+  background: var(--border);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <span class="logo-word">PREP</span>
+    <div class="logo-chevrons">
+      <div class="chev"></div><div class="chev"></div>
+    </div>
+  </div>
+  <div class="header-center">Mapa del Sistema · Platform v1.0</div>
+  <div class="header-right">
+    <div class="phase-legend pl1"><div class="pl-dot"></div> Fase 1 · MVP</div>
+    <div class="phase-legend pl2"><div class="pl-dot"></div> Fase 2 · Retención</div>
+    <div class="phase-legend pl3"><div class="pl-dot"></div> Fase 3 · Inteligencia</div>
+    <div class="phase-legend pl4"><div class="pl-dot"></div> Fase 4 · Expansión</div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat"><strong>15</strong><span>Módulos totales</span></div>
+  <div class="stat"><strong>8</strong><span>Módulos fase 1</span></div>
+  <div class="stat"><strong>2</strong><span>Ya construidos</span></div>
+  <div class="stat"><strong>7</strong><span>Roles de usuario</span></div>
+  <div class="stat"><strong>4</strong><span>Integraciones clave</span></div>
+  <div class="stat"><strong>prep.rest</strong><span>Dominio principal</span></div>
+</div>
+
+<!-- USUARIOS -->
+<div style="padding: 24px 32px 0; max-width:1800px; margin: 0 auto;">
+  <div class="section-label">Roles de usuario del sistema</div>
+  <div class="users-row">
+    <div class="user-pill"><div class="user-icon">👑</div><div><div>Dueño / Gerente</div><div class="user-modules">Dashboard · Reportes · Compras · Config · IA</div></div></div>
+    <div class="user-pill"><div class="user-icon">🧑‍💼</div><div><div>Administrador</div><div class="user-modules">POS · Inventario · Compras · RRHH · SUNAT</div></div></div>
+    <div class="user-pill"><div class="user-icon">🧑‍🍳</div><div><div>Jefe de Área (BOH)</div><div class="user-modules">Requisiciones · Catálogo · Historial</div></div></div>
+    <div class="user-pill"><div class="user-icon">📦</div><div><div>Almacenero</div><div class="user-modules">Stock · Compras · Recepción · Proveedores</div></div></div>
+    <div class="user-pill"><div class="user-icon">🙋</div><div><div>Mozo / Mesero</div><div class="user-modules">Mapa de mesas · Toma de pedidos · KDS</div></div></div>
+    <div class="user-pill"><div class="user-icon">💳</div><div><div>Cajero</div><div class="user-modules">Cobro · Facturación SUNAT · Cierre de caja</div></div></div>
+    <div class="user-pill"><div class="user-icon">👨‍🍳</div><div><div>Cocinero / Bartender</div><div class="user-modules">KDS pantalla cocina · Marcar listos</div></div></div>
+  </div>
+</div>
+
+<!-- MAIN 3 ZONES -->
+<div class="zones-wrap">
+
+  <!-- ══════ ZONA FOH ══════ -->
+  <div class="zone zone-foh">
+    <div class="zone-header">
+      <div class="zone-dot"></div>
+      <div>
+        <div class="zone-label">Front of House — FOH</div>
+        <div class="zone-sub">Todo lo que el cliente ve y experimenta</div>
+      </div>
+    </div>
+
+    <!-- POS -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🖥️</div>
+        <div>
+          <div class="mod-title">POS — Punto de Venta</div>
+          <div class="mod-desc">Núcleo operativo. Toma de pedidos, mesas y cobro</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+        <span class="badge badge-gold">Prioridad máxima</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat-group-label">Gestión de mesas</div>
+        <div class="feat"><div class="feat-dot"></div>Mapa de mesas interactivo (arrastrar y soltar)</div>
+        <div class="feat"><div class="feat-dot"></div>Estados: libre / ocupada / reservada / sucia</div>
+        <div class="feat"><div class="feat-dot"></div>Número de comensales por mesa</div>
+        <div class="feat-group-label">Toma de pedidos</div>
+        <div class="feat"><div class="feat-dot"></div>Búsqueda y navegación por categorías</div>
+        <div class="feat"><div class="feat-dot"></div>Modificadores y notas por plato</div>
+        <div class="feat"><div class="feat-dot"></div>Envío directo a KDS de cocina/bar</div>
+        <div class="feat-group-label">Cobro y pagos</div>
+        <div class="feat"><div class="feat-dot"></div>División de cuenta entre personas</div>
+        <div class="feat"><div class="feat-dot"></div>Yape, Plin, efectivo, tarjeta</div>
+        <div class="feat"><div class="feat-dot"></div>Modo offline (sin internet)</div>
+      </div>
+    </div>
+
+    <!-- KDS -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">📺</div>
+        <div>
+          <div class="mod-title">KDS — Pantalla de Cocina</div>
+          <div class="mod-desc">Display en tiempo real para cocina y bar. Fin del papel</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Pedidos en tiempo real por Supabase Realtime</div>
+        <div class="feat"><div class="feat-dot"></div>Vista por estación: cocina caliente / barra / pastelería</div>
+        <div class="feat"><div class="feat-dot"></div>Alertas de tiempo de espera (color rojo si se pasa)</div>
+        <div class="feat"><div class="feat-dot"></div>Marcar plato como listo → notifica al mozo</div>
+        <div class="feat"><div class="feat-dot"></div>Resumen del turno (platos producidos, tiempo promedio)</div>
+      </div>
+    </div>
+
+    <!-- DELIVERY PROPIO -->
+    <div class="mod p2">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🛵</div>
+        <div>
+          <div class="mod-title">Delivery Propio · 0% comisión</div>
+          <div class="mod-desc">Canal de pedidos online con la marca del restaurante</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p2">Fase 2</span>
+        <span class="badge badge-gold">vs. 30% de Rappi</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>URL propia: restaurante.prep.rest</div>
+        <div class="feat"><div class="feat-dot"></div>Carta digital con fotos y precios</div>
+        <div class="feat"><div class="feat-dot"></div>Pago online (Culqi / Mercado Pago)</div>
+        <div class="feat"><div class="feat-dot"></div>Tracking del pedido para el cliente</div>
+        <div class="feat"><div class="feat-dot"></div>Integración automática con el POS</div>
+        <div class="feat"><div class="feat-dot"></div>Integración Rappi / PedidosYa (receptor)</div>
+      </div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div class="mod p2">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">💬</div>
+        <div>
+          <div class="mod-title">WhatsApp Commerce</div>
+          <div class="mod-desc">El canal #1 del restaurantero peruano, integrado</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p2">Fase 2</span>
+        <span class="badge badge-gold">94% penetración Perú</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Notificaciones automáticas al dueño (cierre, stock, alertas)</div>
+        <div class="feat"><div class="feat-dot"></div>Carta digital enviable por WhatsApp</div>
+        <div class="feat"><div class="feat-dot"></div>Pedidos por WhatsApp (chatbot)</div>
+        <div class="feat"><div class="feat-dot"></div>Campañas de marketing a clientes</div>
+        <div class="feat"><div class="feat-dot"></div>WhatsApp Business API (Meta)</div>
+      </div>
+    </div>
+
+    <!-- RESERVAS -->
+    <div class="mod p2">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">📅</div>
+        <div>
+          <div class="mod-title">Reservas Online</div>
+          <div class="mod-desc">Gestión de reservaciones con confirmación automática</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p2">Fase 2</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Widget de reservas embebible en redes y web</div>
+        <div class="feat"><div class="feat-dot"></div>Confirmación automática por WhatsApp / email</div>
+        <div class="feat"><div class="feat-dot"></div>Gestión de lista de espera</div>
+        <div class="feat"><div class="feat-dot"></div>Bloqueo automático de mesas en el mapa POS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ZONA BOH ══════ -->
+  <div class="zone zone-boh">
+    <div class="zone-header">
+      <div class="zone-dot"></div>
+      <div>
+        <div class="zone-label">Back of House — BOH</div>
+        <div class="zone-sub">Operaciones internas, compras e inventario</div>
+      </div>
+    </div>
+
+    <!-- COMPRAS (BUILT) -->
+    <div class="mod p1 built">
+      <div class="mod-phase-bar"></div>
+      <div class="built-tag">✓ Construido</div>
+      <div class="mod-header">
+        <div class="mod-icon">🛒</div>
+        <div>
+          <div class="mod-title">Sistema de Compras · Requisiciones</div>
+          <div class="mod-desc">Del pedido interno al proveedor en 4 pasos</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+        <span class="badge badge-built">✓ Prototipo listo</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat-group-label">Etapa 1 · Requisición interna</div>
+        <div class="feat done"><div class="feat-dot"></div>Login por área con PIN de 4 dígitos</div>
+        <div class="feat done"><div class="feat-dot"></div>Catálogo genérico pre-cargado por área</div>
+        <div class="feat done"><div class="feat-dot"></div>Formulario de solicitud con urgencia</div>
+        <div class="feat done"><div class="feat-dot"></div>Historial de solicitudes por área</div>
+        <div class="feat-group-label">Etapa 2 · Verificación stock</div>
+        <div class="feat done"><div class="feat-dot"></div>Bandeja de almacén en tiempo real</div>
+        <div class="feat done"><div class="feat-dot"></div>Cruce automático con inventario</div>
+        <div class="feat done"><div class="feat-dot"></div>Despacho interno si hay stock</div>
+        <div class="feat-group-label">Etapa 3 · Comparación precios</div>
+        <div class="feat done"><div class="feat-dot"></div>API VTEX: Wong, Metro, Makro</div>
+        <div class="feat done"><div class="feat-dot"></div>Proveedores propios en lista</div>
+        <div class="feat done"><div class="feat-dot"></div>Marcado automático del mejor precio</div>
+        <div class="feat done"><div class="feat-dot"></div>Split multi-proveedor por ítem</div>
+        <div class="feat-group-label">Etapa 4 · Pedido final</div>
+        <div class="feat done"><div class="feat-dot"></div>Carrito VTEX directo (Wong/Metro)</div>
+        <div class="feat done"><div class="feat-dot"></div>PDF Orden de Compra con logo</div>
+        <div class="feat done"><div class="feat-dot"></div>Envío WhatsApp al proveedor</div>
+        <div class="feat done"><div class="feat-dot"></div>Envío Email al proveedor</div>
+      </div>
+    </div>
+
+    <!-- INVENTARIO -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">📦</div>
+        <div>
+          <div class="mod-title">Inventario y Food Cost</div>
+          <div class="mod-desc">Stock en tiempo real. Costo de plato automático</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+        <span class="badge badge-gold">Reduce pérdidas hasta 15%</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat-group-label">Gestión de ingredientes</div>
+        <div class="feat"><div class="feat-dot"></div>Registro de ingredientes con unidad y costo</div>
+        <div class="feat"><div class="feat-dot"></div>Stock actual y stock mínimo configurable</div>
+        <div class="feat"><div class="feat-dot"></div>Alertas automáticas de stock bajo</div>
+        <div class="feat-group-label">Fichas técnicas / Recetas</div>
+        <div class="feat"><div class="feat-dot"></div>Receta por plato: ingredientes + cantidades</div>
+        <div class="feat"><div class="feat-dot"></div>Costo de producción calculado automáticamente</div>
+        <div class="feat"><div class="feat-dot"></div>Food cost % en tiempo real al vender</div>
+        <div class="feat-group-label">Movimientos</div>
+        <div class="feat"><div class="feat-dot"></div>Descuento automático por venta en POS</div>
+        <div class="feat"><div class="feat-dot"></div>Ingreso al stock por recepción de compras</div>
+        <div class="feat"><div class="feat-dot"></div>Mermas y ajustes manuales auditados</div>
+        <div class="feat"><div class="feat-dot"></div>Reporte teórico vs. físico semanal</div>
+      </div>
+    </div>
+
+    <!-- PROVEEDORES -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🚚</div>
+        <div>
+          <div class="mod-title">Gestión de Proveedores</div>
+          <div class="mod-desc">Directorio, precios y trazabilidad de compras</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Directorio de proveedores con datos de contacto</div>
+        <div class="feat"><div class="feat-dot"></div>Lista de precios por proveedor (actualizable)</div>
+        <div class="feat"><div class="feat-dot"></div>Historial de órdenes de compra</div>
+        <div class="feat"><div class="feat-dot"></div>Comparativa de precio histórico vs. actual</div>
+        <div class="feat"><div class="feat-dot"></div>Evaluación de proveedores (puntualidad, calidad)</div>
+      </div>
+    </div>
+
+    <!-- RRHH -->
+    <div class="mod p3">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">👥</div>
+        <div>
+          <div class="mod-title">RRHH y Nómina</div>
+          <div class="mod-desc">Control de personal, asistencia y planilla</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p3">Fase 3</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Control de asistencia (código QR o PIN)</div>
+        <div class="feat"><div class="feat-dot"></div>Turnos y horarios por empleado</div>
+        <div class="feat"><div class="feat-dot"></div>Cálculo de horas extras</div>
+        <div class="feat"><div class="feat-dot"></div>Planilla mensual: ONP, AFP, CTS, gratificación</div>
+        <div class="feat"><div class="feat-dot"></div>Vacaciones y permisos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ZONA MGMT ══════ -->
+  <div class="zone zone-mgmt">
+    <div class="zone-header">
+      <div class="zone-dot"></div>
+      <div>
+        <div class="zone-label">Gestión y Administración</div>
+        <div class="zone-sub">Dashboard, facturación, analytics e inteligencia</div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">📊</div>
+        <div>
+          <div class="mod-title">Dashboard del Dueño</div>
+          <div class="mod-desc">Todo el negocio en el celular, en tiempo real</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+        <span class="badge badge-gold">Mobile-first</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Ventas del día vs. semana anterior</div>
+        <div class="feat"><div class="feat-dot"></div>Mesas activas ahora mismo</div>
+        <div class="feat"><div class="feat-dot"></div>Food cost en tiempo real (%)</div>
+        <div class="feat"><div class="feat-dot"></div>Top 5 platos más vendidos y más rentables</div>
+        <div class="feat"><div class="feat-dot"></div>Alerta automática si hay diferencia en caja</div>
+        <div class="feat"><div class="feat-dot"></div>Notificación WhatsApp al cierre del turno</div>
+        <div class="feat"><div class="feat-dot"></div>Acceso desde cualquier celular sin instalar nada</div>
+      </div>
+    </div>
+
+    <!-- SUNAT -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🧾</div>
+        <div>
+          <div class="mod-title">Facturación Electrónica SUNAT</div>
+          <div class="mod-desc">Boletas y facturas integradas. Cumplimiento 100%</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+        <span class="badge badge-gold">Vía Nubefact</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Boletas electrónicas en 1 clic desde el POS</div>
+        <div class="feat"><div class="feat-dot"></div>Facturas para personas jurídicas (RUC)</div>
+        <div class="feat"><div class="feat-dot"></div>Notas de crédito y débito</div>
+        <div class="feat"><div class="feat-dot"></div>Cierre de caja diario automatizado</div>
+        <div class="feat"><div class="feat-dot"></div>Reporte mensual para contador (Excel/PDF)</div>
+        <div class="feat"><div class="feat-dot"></div>Registro de libros electrónicos</div>
+        <div class="feat"><div class="feat-dot"></div>Integrado via Nubefact (PSE certificado)</div>
+      </div>
+    </div>
+
+    <!-- REPORTES -->
+    <div class="mod p1">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">📈</div>
+        <div>
+          <div class="mod-title">Reportes y Analytics</div>
+          <div class="mod-desc">Datos que permiten tomar decisiones reales</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p1">Fase 1 · MVP</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat-group-label">Ventas</div>
+        <div class="feat"><div class="feat-dot"></div>Ventas por día / semana / mes / año</div>
+        <div class="feat"><div class="feat-dot"></div>Ventas por mozo y por turno</div>
+        <div class="feat"><div class="feat-dot"></div>Ranking de platos por ingreso y margen</div>
+        <div class="feat-group-label">Costos</div>
+        <div class="feat"><div class="feat-dot"></div>Food cost histórico por período</div>
+        <div class="feat"><div class="feat-dot"></div>Costo de compras por proveedor</div>
+        <div class="feat-group-label">Exportación</div>
+        <div class="feat"><div class="feat-dot"></div>Descarga en Excel y PDF</div>
+        <div class="feat"><div class="feat-dot"></div>Envío automático al contador</div>
+      </div>
+    </div>
+
+    <!-- CRM -->
+    <div class="mod p3">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🎁</div>
+        <div>
+          <div class="mod-title">CRM · Fidelización de Clientes</div>
+          <div class="mod-desc">El cliente que regresa gasta 67% más</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p3">Fase 3</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Perfil de cliente con historial de visitas</div>
+        <div class="feat"><div class="feat-dot"></div>Programa de puntos / sellos digitales</div>
+        <div class="feat"><div class="feat-dot"></div>Campañas automáticas (cumpleaños, reactivación)</div>
+        <div class="feat"><div class="feat-dot"></div>Segmentación por frecuencia y ticket promedio</div>
+      </div>
+    </div>
+
+    <!-- IA -->
+    <div class="mod p3">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🤖</div>
+        <div>
+          <div class="mod-title">IA · Asistente de Gestión</div>
+          <div class="mod-desc">Predicciones y recomendaciones en español</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p3">Fase 3</span>
+        <span class="badge badge-gold">Claude API</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Predicción de demanda por día y plato</div>
+        <div class="feat"><div class="feat-dot"></div>Sugerencias de compra antes de que se acabe</div>
+        <div class="feat"><div class="feat-dot"></div>Análisis de rentabilidad y platos a eliminar</div>
+        <div class="feat"><div class="feat-dot"></div>Asistente en lenguaje natural (¿cuánto vendí este mes?)</div>
+        <div class="feat"><div class="feat-dot"></div>Alertas inteligentes fuera de lo normal</div>
+      </div>
+    </div>
+
+    <!-- MULTI-SEDE -->
+    <div class="mod p2">
+      <div class="mod-phase-bar"></div>
+      <div class="mod-header">
+        <div class="mod-icon">🏪</div>
+        <div>
+          <div class="mod-title">Multi-sede · Cadenas</div>
+          <div class="mod-desc">Central de control para múltiples locales</div>
+        </div>
+      </div>
+      <div class="mod-badges">
+        <span class="badge badge-p2">Fase 2</span>
+      </div>
+      <div class="mod-divider"></div>
+      <div class="mod-features">
+        <div class="feat"><div class="feat-dot"></div>Dashboard consolidado de todas las sedes</div>
+        <div class="feat"><div class="feat-dot"></div>Menú centralizado con precios por sede</div>
+        <div class="feat"><div class="feat-dot"></div>Compras centralizadas (mayor poder de negociación)</div>
+        <div class="feat"><div class="feat-dot"></div>Comparativo de performance entre locales</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTOR -->
+<div class="connector-row" style="padding-top:8px;padding-bottom:8px">
+  <div class="conn-line"></div>
+  <div class="conn-line"></div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- CORE PLATFORM LAYER -->
+<div class="core-wrap">
+  <div class="section-label">Capa base de la plataforma — compartida por todos los módulos</div>
+  <div class="core-section">
+    <div class="core-label-wrap">
+      <div class="core-label">PREP Core Platform</div>
+      <div class="core-desc">Infraestructura compartida. Sin esto, nada funciona. Se construye una sola vez y todos los módulos la consumen.</div>
+    </div>
+    <div class="core-pills">
+      <div class="core-pill"><span>🔐</span> Autenticación y roles (Supabase Auth)</div>
+      <div class="core-pill"><span>🗄️</span> Base de datos PostgreSQL (Supabase)</div>
+      <div class="core-pill"><span>⚡</span> Tiempo real WebSockets (Supabase Realtime)</div>
+      <div class="core-pill"><span>🌐</span> Frontend React 19 + Tailwind</div>
+      <div class="core-pill"><span>🚀</span> Deploy Vercel (edge network)</div>
+      <div class="core-pill"><span>🧾</span> Facturación: Nubefact API (SUNAT)</div>
+      <div class="core-pill"><span>💳</span> Pagos: Culqi + Mercado Pago</div>
+      <div class="core-pill"><span>📱</span> WhatsApp: Meta Business API</div>
+      <div class="core-pill"><span>📧</span> Email: Resend</div>
+      <div class="core-pill"><span>🤖</span> IA: Claude API (Anthropic)</div>
+      <div class="core-pill"><span>🏷️</span> Multi-tenant por restaurante</div>
+      <div class="core-pill"><span>🔒</span> RLS (Row Level Security) por tenant</div>
+      <div class="core-pill"><span>📄</span> PDF: jsPDF client-side</div>
+      <div class="core-pill"><span>🛒</span> Precios: VTEX API (Wong/Metro/Makro)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP TIMELINE -->
+<div style="padding: 0 32px 32px; max-width:1800px; margin:0 auto">
+  <div class="section-label">Roadmap de construcción · Orden de prioridad</div>
+  <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:10px">
+    <div style="background:var(--surface);border:1.5px solid rgba(28,74,46,0.3);border-top:3px solid var(--p1);border-radius:10px;padding:16px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--p1);margin-bottom:10px">Fase 1 · 0–3 meses</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:12px;font-weight:600">✓ Sistema de Compras BOH</div>
+        <div style="font-size:12px;color:var(--muted)">→ Autenticación + roles</div>
+        <div style="font-size:12px;color:var(--muted)">→ POS + Mapa de mesas</div>
+        <div style="font-size:12px;color:var(--muted)">→ KDS pantalla cocina</div>
+        <div style="font-size:12px;color:var(--muted)">→ Inventario + food cost</div>
+        <div style="font-size:12px;color:var(--muted)">→ Facturación SUNAT</div>
+        <div style="font-size:12px;color:var(--muted)">→ Cierre de caja</div>
+        <div style="font-size:12px;color:var(--muted)">→ Dashboard dueño</div>
+        <div style="font-size:12px;color:var(--muted)">→ Reportes básicos</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1.5px solid rgba(26,58,107,0.3);border-top:3px solid var(--p2);border-radius:10px;padding:16px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--p2);margin-bottom:10px">Fase 2 · 4–9 meses</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:12px;color:var(--muted)">→ Delivery propio sin comisión</div>
+        <div style="font-size:12px;color:var(--muted)">→ WhatsApp Commerce</div>
+        <div style="font-size:12px;color:var(--muted)">→ Carta QR en mesa</div>
+        <div style="font-size:12px;color:var(--muted)">→ Reservas online</div>
+        <div style="font-size:12px;color:var(--muted)">→ Multi-sede básico</div>
+        <div style="font-size:12px;color:var(--muted)">→ Integración Rappi/PedidosYa</div>
+        <div style="font-size:12px;color:var(--muted)">→ App PWA móvil</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1.5px solid rgba(107,26,74,0.3);border-top:3px solid var(--p3);border-radius:10px;padding:16px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--p3);margin-bottom:10px">Fase 3 · 10–15 meses</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:12px;color:var(--muted)">→ IA predicción de demanda</div>
+        <div style="font-size:12px;color:var(--muted)">→ Asistente IA en español</div>
+        <div style="font-size:12px;color:var(--muted)">→ CRM y fidelización</div>
+        <div style="font-size:12px;color:var(--muted)">→ Campañas automáticas</div>
+        <div style="font-size:12px;color:var(--muted)">→ RRHH y planilla</div>
+        <div style="font-size:12px;color:var(--muted)">→ Pasarela de pagos propia</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1.5px solid rgba(74,26,107,0.3);border-top:3px solid var(--p4);border-radius:10px;padding:16px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--p4);margin-bottom:10px">Fase 4 · 16–24 meses</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:12px;color:var(--muted)">→ Colombia (DIAN)</div>
+        <div style="font-size:12px;color:var(--muted)">→ Chile (SII)</div>
+        <div style="font-size:12px;color:var(--muted)">→ México (SAT)</div>
+        <div style="font-size:12px;color:var(--muted)">→ API pública</div>
+        <div style="font-size:12px;color:var(--muted)">→ Capital para restaurantes</div>
+        <div style="font-size:12px;color:var(--muted)">→ Marketplace proveedores</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
