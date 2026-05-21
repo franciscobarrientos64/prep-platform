@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP ≫ Roadmap Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#06070a; --panel:#0c0d12; --card:#131520; --card2:#191c28;
+  --border:#1e2235; --border2:#2a3050;
+  --text:#dde2f4; --muted:#4a5272; --dim:#1e2235;
+  --p1:#22c55e; --p1d:rgba(34,197,94,.12); --p1b:rgba(34,197,94,.06);
+  --p2:#3b82f6; --p2d:rgba(59,130,246,.12); --p2b:rgba(59,130,246,.06);
+  --p3:#a855f7; --p3d:rgba(168,85,247,.12); --p3b:rgba(168,85,247,.06);
+  --p4:#f59e0b; --p4d:rgba(245,158,11,.12); --p4b:rgba(245,158,11,.06);
+  --inf:#06b6d4; --infd:rgba(6,182,212,.12);
+  --gold:#c4963a;
+  --done:#22c55e; --wip:#f59e0b; --plan:#4a5272;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);user-select:none;}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);
+  z-index:1000;display:flex;align-items:center;gap:6px;
+  background:var(--panel);border:1px solid var(--border2);
+  border-radius:12px;padding:7px 12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  backdrop-filter:blur(20px);
+}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;letter-spacing:3px;color:var(--gold);margin-right:6px;}
+.tb-div{width:1px;height:20px;background:var(--border);margin:0 3px;}
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:7px;border:1px solid transparent;
+  background:none;color:var(--muted);font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .15s;font-family:'Barlow',sans-serif;
+  white-space:nowrap;
+}
+.tb-btn:hover{background:var(--card2);color:var(--text);border-color:var(--border);}
+.tb-btn.active{background:var(--gold);color:#0a0b0d;border-color:var(--gold);}
+.tb-zoom{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);min-width:40px;text-align:center;}
+
+/* ── LEGEND ── */
+.legend{
+  position:fixed;bottom:16px;left:16px;z-index:1000;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.legend-title{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.leg-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+/* ── MINIMAP ── */
+.minimap{
+  position:fixed;bottom:16px;right:16px;z-index:1000;
+  width:160px;height:100px;
+  background:rgba(6,7,10,.8);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+}
+.minimap-viewport{
+  position:absolute;
+  border:1px solid rgba(196,150,58,.6);
+  background:rgba(196,150,58,.05);
+  pointer-events:none;
+}
+
+/* ── CANVAS WRAPPER ── */
+.canvas-wrapper{
+  position:fixed;inset:0;
+  overflow:hidden;cursor:grab;
+  background-image:radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size:28px 28px;
+}
+.canvas-wrapper.grabbing{cursor:grabbing;}
+.canvas-wrapper.connecting{cursor:crosshair;}
+
+.canvas{
+  position:absolute;
+  transform-origin:0 0;
+  width:4000px;height:3000px;
+}
+
+/* ── SVG CONNECTIONS ── */
+.connections-svg{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;overflow:visible;
+}
+.conn-line{stroke-width:1.5;fill:none;opacity:.6;}
+.conn-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;fill:var(--muted);}
+.conn-arrow{fill:none;}
+
+/* ── CARDS ── */
+.card{
+  position:absolute;
+  width:220px;
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  cursor:move;
+  transition:box-shadow .15s, border-color .15s;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+.card:hover{box-shadow:0 8px 40px rgba(0,0,0,.5);}
+.card.selected{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-d),0 8px 40px rgba(0,0,0,.5);}
+.card.expanded{width:280px;}
+.card-stripe{height:3px;width:100%;}
+.card-header{padding:11px 12px 9px;display:flex;align-items:flex-start;gap:8px;}
+.card-icon{font-size:18px;flex-shrink:0;line-height:1;margin-top:1px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;line-height:1.2;flex:1;}
+.card-status{
+  font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;flex-shrink:0;margin-top:1px;
+}
+.status-done{background:var(--p1d);color:var(--p1);}
+.status-wip{background:var(--p4d);color:var(--p4);}
+.status-plan{background:rgba(74,82,114,.15);color:var(--plan);}
+.card-meta{padding:0 12px 10px;display:flex;align-items:center;justify-content:space-between;}
+.card-phase-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;letter-spacing:.5px;}
+.card-feat-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.card-toggle{
+  margin:0 12px 10px;padding:6px 10px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:6px;text-align:center;font-size:10px;font-weight:700;
+  color:var(--muted);cursor:pointer;transition:all .15s;
+  font-family:'Barlow',sans-serif;
+}
+.card-toggle:hover{border-color:var(--border2);color:var(--text);}
+
+/* EXPANDED FEATURES */
+.card-features{
+  padding:0 12px 12px;
+  display:none;
+  flex-direction:column;gap:4px;
+}
+.card.expanded .card-features{display:flex;}
+.feat-item{
+  display:flex;align-items:flex-start;gap:6px;
+  font-size:11px;line-height:1.4;color:var(--muted);
+  padding:4px 0;border-bottom:1px solid var(--dim);
+}
+.feat-item:last-child{border:none;}
+.feat-check{
+  width:14px;height:14px;border-radius:3px;
+  border:1.5px solid var(--border2);
+  flex-shrink:0;margin-top:1px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;transition:all .15s;
+}
+.feat-check.checked{background:var(--p1);border-color:var(--p1);color:#fff;}
+.feat-text{flex:1;}
+.feat-text.done{text-decoration:line-through;opacity:.5;}
+.feat-del{opacity:0;cursor:pointer;color:var(--muted);font-size:12px;flex-shrink:0;padding:0 2px;}
+.feat-item:hover .feat-del{opacity:1;}
+.feat-add{
+  display:flex;gap:5px;margin-top:6px;
+}
+.feat-input{
+  flex:1;background:var(--card2);border:1px solid var(--border);
+  border-radius:5px;padding:5px 8px;color:var(--text);
+  font-family:'Barlow',sans-serif;font-size:11px;outline:none;
+  transition:border-color .15s;
+}
+.feat-input:focus{border-color:var(--border2);}
+.feat-add-btn{
+  background:var(--border2);border:none;color:var(--text);
+  padding:5px 8px;border-radius:5px;cursor:pointer;font-size:12px;
+}
+
+/* ── PHASE LABELS ── */
+.phase-label{
+  position:absolute;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;opacity:.35;
+  pointer-events:none;
+}
+
+/* ── GROUP BACKGROUNDS ── */
+.group-bg{
+  position:absolute;
+  border-radius:20px;
+  border:1px dashed;
+  pointer-events:none;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card2);border:1px solid var(--border2);
+  color:var(--text);padding:10px 20px;border-radius:8px;
+  font-weight:700;font-size:12px;transition:transform .3s;z-index:9999;
+  white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="logo">PREP ≫</div>
+  <span style="font-size:10px;color:var(--muted);margin-right:4px">Roadmap Board</span>
+  <div class="tb-div"></div>
+  <button class="tb-btn" onclick="zoomIn()">＋</button>
+  <div class="tb-zoom" id="zoomLabel">100%</div>
+  <button class="tb-btn" onclick="zoomOut()">−</button>
+  <button class="tb-btn" onclick="fitAll()">⊞ Fit</button>
+  <div class="tb-div"></div>
+  <button class="tb-btn" onclick="resetConnections()">⟳ Reset</button>
+  <button class="tb-btn active" onclick="addCard()">＋ Módulo</button>
+  <div class="tb-div"></div>
+  <button class="tb-btn" onclick="saveBoard()">💾 Guardar</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-title">Fases</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p1)"></div>Fase 1 · MVP</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p2)"></div>Fase 2 · Retención</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p3)"></div>Fase 3 · Inteligencia</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p4)"></div>Fase 4 · Expansión</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--inf)"></div>Infraestructura</div>
+  <div style="height:4px"></div>
+  <div class="legend-title">Estado</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p1)"></div>✓ Construido</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--p4)"></div>⏳ En progreso</div>
+  <div class="leg-row"><div class="leg-dot" style="background:var(--muted)"></div>Planificado</div>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas-wrapper" id="wrapper"
+  onmousedown="onWrapperDown(event)"
+  onmousemove="onMouseMove(event)"
+  onmouseup="onMouseUp(event)"
+  onwheel="onWheel(event)">
+  <div class="canvas" id="canvas">
+    <!-- SVG connections drawn by JS -->
+    <svg class="connections-svg" id="connSvg"></svg>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ══════════════════════════════════
+   DATA
+══════════════════════════════════ */
+const PHASES = {
+  1:{label:'Fase 1 · MVP',color:'var(--p1)',bg:'var(--p1d)',light:'var(--p1b)'},
+  2:{label:'Fase 2 · Retención',color:'var(--p2)',bg:'var(--p2d)',light:'var(--p2b)'},
+  3:{label:'Fase 3 · Inteligencia',color:'var(--p3)',bg:'var(--p3d)',light:'var(--p3b)'},
+  4:{label:'Fase 4 · Expansión',color:'var(--p4)',bg:'var(--p4d)',light:'var(--p4b)'},
+  0:{label:'Infraestructura',color:'var(--inf)',bg:'var(--infd)',light:'rgba(6,182,212,.03)'},
+};
+
+let cards = [
+  // ── FASE 1: FOH
+  {id:'pos',x:80,y:80,icon:'🖥️',title:'POS · Punto de Venta',phase:1,status:'done',
+   features:[
+    {t:'Mapa de mesas interactivo (16 mesas, 3 zonas)',done:true},
+    {t:'Toma de pedidos con menú por categorías',done:true},
+    {t:'Controles +/- de cantidad en tiempo real',done:true},
+    {t:'Cobro: Efectivo, Tarjeta, Yape, Plin',done:true},
+    {t:'Calculadora de vuelto para efectivo',done:true},
+    {t:'Envío a KDS (botón listo)',done:true},
+    {t:'SUNAT vía Nubefact (Boleta/Factura)',done:true},
+    {t:'Mesa liberada automáticamente al cobrar',done:true},
+    {t:'Stats en topbar en tiempo real',done:true},
+    {t:'Conectar Supabase (persistencia real)',done:false},
+    {t:'Supabase Auth por rol',done:false},
+    {t:'Nubefact API real',done:false},
+   ]},
+  {id:'kds',x:80,y:420,icon:'📺',title:'KDS · Pantalla Cocina',phase:1,status:'plan',
+   features:[
+    {t:'Vista por estación: Caliente/Fría/Bar',done:false},
+    {t:'Pedidos en tiempo real (Supabase Realtime)',done:false},
+    {t:'Timer por orden con alertas de color',done:false},
+    {t:'Marcar ítem como listo → notifica al mozo',done:false},
+    {t:'Resumen del turno: platos producidos',done:false},
+    {t:'Funciona en tablet o TV con WiFi',done:false},
+   ]},
+  {id:'reservas_widget',x:340,y:80,icon:'🌐',title:'Widget de Reservas',phase:1,status:'done',
+   features:[
+    {t:'4 pasos: fecha/pax → hora → datos → confirm.',done:true},
+    {t:'Calendario con días llenos bloqueados',done:true},
+    {t:'Slots almuerzo y cena con disponibilidad',done:true},
+    {t:'Nombre, WhatsApp, email, ocasión especial',done:true},
+    {t:'Confirmación por WhatsApp automática',done:true},
+    {t:'Personalizable: colores, logo, nombre',done:true},
+    {t:'Embebible con 1 línea de código',done:true},
+    {t:'Conectar Supabase (guardar reservas)',done:false},
+    {t:'WhatsApp API real (Meta Business)',done:false},
+   ]},
+  {id:'reservas_hostess',x:340,y:440,icon:'📋',title:'Panel Hostess',phase:1,status:'wip',
+   features:[
+    {t:'Libro de reservas del turno activo',done:false},
+    {t:'Asignación auto o manual al mapa de mesas',done:false},
+    {t:'Drag & drop entre mesas',done:false},
+    {t:'Perfiles: VIP, cumpleaños, alergias, notas',done:false},
+    {t:'Lista de espera con Notify automático',done:false},
+    {t:'Brief de turno configurable (WA/email)',done:false},
+    {t:'Reconfirmación automática 24h/2h antes',done:false},
+    {t:'Walk-ins integrados',done:false},
+   ]},
+  {id:'boh_compras',x:600,y:80,icon:'🛒',title:'BOH · Compras',phase:1,status:'done',
+   features:[
+    {t:'Login PIN 4 dígitos por área',done:true},
+    {t:'Catálogo de ítems frecuentes pre-cargado',done:true},
+    {t:'Verificación vs stock en almacén',done:true},
+    {t:'Comparación precios VTEX (Wong/Metro/Makro)',done:true},
+    {t:'Split multi-proveedor por ítem',done:true},
+    {t:'PDF Orden de Compra con logo del restaurante',done:true},
+    {t:'WhatsApp al proveedor con lista formateada',done:true},
+    {t:'Carrito VTEX directo',done:true},
+   ]},
+  {id:'inventario',x:600,y:420,icon:'📦',title:'Inventario · Food Cost',phase:1,status:'plan',
+   features:[
+    {t:'Fichas técnicas: receta por plato',done:false},
+    {t:'Registro ingredientes con unidad y costo',done:false},
+    {t:'Descuento automático al vender desde POS',done:false},
+    {t:'Food cost % en tiempo real por categoría',done:false},
+    {t:'Alertas stock bajo por WhatsApp al dueño',done:false},
+    {t:'Reporte semanal: teórico vs físico',done:false},
+   ]},
+  {id:'dashboard',x:860,y:80,icon:'📊',title:'Dashboard Dueño',phase:1,status:'plan',
+   features:[
+    {t:'Ventas del día vs misma semana anterior',done:false},
+    {t:'Mesas activas y cubiertos del turno',done:false},
+    {t:'Food cost % vs meta configurada',done:false},
+    {t:'Top 5 platos por ingreso y margen',done:false},
+    {t:'Alerta de diferencia en cierre de caja',done:false},
+    {t:'Notificación WhatsApp al cierre de turno',done:false},
+    {t:'Funciona solo con navegador (sin app)',done:false},
+   ]},
+  {id:'sunat',x:860,y:380,icon:'🧾',title:'SUNAT · Nubefact',phase:1,status:'wip',
+   features:[
+    {t:'Boleta de Venta firmada digitalmente',done:true},
+    {t:'Factura con RUC del cliente',done:true},
+    {t:'Integrado al flujo de cobro del POS',done:true},
+    {t:'CDR (Constancia de Recepción) SUNAT',done:true},
+    {t:'Nubefact API real (credenciales reales)',done:false},
+    {t:'Notas de crédito (devoluciones)',done:false},
+    {t:'Cierre de caja y reporte para contador',done:false},
+   ]},
+
+  // ── FASE 2: RETENCIÓN
+  {id:'delivery',x:80,y:800,icon:'🛵',title:'Delivery Propio 0%',phase:2,status:'plan',
+   features:[
+    {t:'URL propia del restaurante para pedidos',done:false},
+    {t:'Pago online vía Culqi',done:false},
+    {t:'Tracking del pedido para el cliente',done:false},
+    {t:'Sin comisión (incluido en suscripción)',done:false},
+    {t:'Integración Rappi/PedidosYa',done:false},
+   ]},
+  {id:'whatsapp',x:340,y:800,icon:'💬',title:'WhatsApp Commerce',phase:2,status:'plan',
+   features:[
+    {t:'Catálogo de platos vía WhatsApp',done:false},
+    {t:'Pedidos y reservas por chat',done:false},
+    {t:'Notificaciones dueño en tiempo real',done:false},
+    {t:'Campañas automáticas (cumpleaños, etc.)',done:false},
+    {t:'Meta Business API oficial',done:false},
+   ]},
+  {id:'cartaqr',x:600,y:800,icon:'📱',title:'Carta QR en Mesa',phase:2,status:'plan',
+   features:[
+    {t:'QR único por mesa con la carta digital',done:false},
+    {t:'El cliente pide desde su celular',done:false},
+    {t:'Orden entra directamente al POS',done:false},
+    {t:'Sin app, solo navegador',done:false},
+   ]},
+  {id:'multisede',x:860,y:800,icon:'🏢',title:'Multi-sede',phase:2,status:'plan',
+   features:[
+    {t:'Hasta 5 locales en un plan Cadena',done:false},
+    {t:'Dashboard consolidado con métricas',done:false},
+    {t:'Menús independientes por local',done:false},
+    {t:'Transferencia de stock entre sedes',done:false},
+   ]},
+  {id:'noshow',x:1120,y:800,icon:'💳',title:'Garantía No-Show',phase:2,status:'plan',
+   features:[
+    {t:'Tarjeta requerida para grupos de 6+',done:false},
+    {t:'Cargo automático si no asisten',done:false},
+    {t:'Configurable: monto y condiciones',done:false},
+    {t:'Culqi como pasarela (retención)',done:false},
+    {t:'Baja el no-show de 5% a 0.6%',done:false},
+   ]},
+
+  // ── FASE 3: INTELIGENCIA
+  {id:'ia',x:1380,y:80,icon:'🤖',title:'IA · Asistente y Predicción',phase:3,status:'plan',
+   features:[
+    {t:'Predicción de demanda por turno y día',done:false},
+    {t:'Alertas de pico inusual de reservas',done:false},
+    {t:'Sugerencias de staffing automáticas',done:false},
+    {t:'Asistente en español (Claude API)',done:false},
+    {t:'Análisis de rentabilidad por plato',done:false},
+   ]},
+  {id:'crm',x:1380,y:400,icon:'❤️',title:'CRM · Fidelización',phase:3,status:'plan',
+   features:[
+    {t:'Perfiles completos de comensales',done:false},
+    {t:'Historial de visitas y gasto promedio',done:false},
+    {t:'Campañas automáticas por segmento',done:false},
+    {t:'Programa de puntos o sellos',done:false},
+    {t:'Integrado con reservas y POS',done:false},
+   ]},
+  {id:'rrhh',x:1380,y:680,icon:'👥',title:'RRHH · Planilla',phase:3,status:'plan',
+   features:[
+    {t:'Asistencia por QR',done:false},
+    {t:'Gestión de turnos y horarios',done:false},
+    {t:'Planilla ONP/AFP/CTS',done:false},
+    {t:'Vacaciones y permisos',done:false},
+   ]},
+
+  // ── FASE 4: EXPANSIÓN
+  {id:'colombia',x:1680,y:80,icon:'🇨🇴',title:'Colombia · DIAN',phase:4,status:'plan',
+   features:[
+    {t:'Facturación electrónica DIAN',done:false},
+    {t:'Equivalente a Nubefact para Colombia',done:false},
+    {t:'Soporte para COP y pagos locales',done:false},
+   ]},
+  {id:'chile',x:1680,y:320,icon:'🇨🇱',title:'Chile · SII',phase:4,status:'plan',
+   features:[
+    {t:'Facturación electrónica SII',done:false},
+    {t:'Soporte CLP y Transbank',done:false},
+   ]},
+  {id:'mexico',x:1680,y:540,icon:'🇲🇽',title:'México · SAT',phase:4,status:'plan',
+   features:[
+    {t:'CFDI 4.0 vía SAT',done:false},
+    {t:'Soporte MXN y SPEI',done:false},
+   ]},
+  {id:'api',x:1960,y:80,icon:'⚡',title:'API Pública',phase:4,status:'plan',
+   features:[
+    {t:'REST API documentada para integradores',done:false},
+    {t:'Webhooks para POS, reservas, inventario',done:false},
+    {t:'SDK para desarrolladores',done:false},
+   ]},
+  {id:'fintech',x:1960,y:340,icon:'💰',title:'Fintech · Capital',phase:4,status:'plan',
+   features:[
+    {t:'Adelanto de capital basado en ventas PREP',done:false},
+    {t:'Tasa calculada con datos reales del POS',done:false},
+    {t:'Sin banco intermediario',done:false},
+   ]},
+
+  // ── INFRAESTRUCTURA
+  {id:'supabase',x:200,y:1150,icon:'🗄️',title:'Supabase',phase:0,status:'wip',
+   features:[
+    {t:'PostgreSQL + Row Level Security',done:true},
+    {t:'Auth (pendiente integrar)',done:false},
+    {t:'Realtime WebSockets para KDS/POS',done:false},
+    {t:'Storage: bucket alfred-files',done:true},
+    {t:'Edge Functions (upload-prep-files activa)',done:true},
+    {t:'project_id: jmkvphayyhwzootlybde',done:true},
+   ]},
+  {id:'vercel',x:500,y:1150,icon:'▲',title:'Vercel + GitHub',phase:0,status:'done',
+   features:[
+    {t:'prep-platform-seven.vercel.app',done:true},
+    {t:'Auto-deploy desde main branch',done:true},
+    {t:'repo: franciscobarrientos64/prep-platform',done:true},
+    {t:'10 archivos HTML en producción',done:true},
+   ]},
+  {id:'whatsapp_api',x:800,y:1150,icon:'📱',title:'WhatsApp Business API',phase:0,status:'plan',
+   features:[
+    {t:'Meta Business API oficial',done:false},
+    {t:'Confirmaciones y reconfirmaciones reservas',done:false},
+    {t:'Brief de turno automático',done:false},
+    {t:'Alertas al dueño en tiempo real',done:false},
+   ]},
+  {id:'culqi',x:1080,y:1150,icon:'💳',title:'Culqi',phase:0,status:'plan',
+   features:[
+    {t:'Pasarela de pagos peruana',done:false},
+    {t:'Retención de tarjeta para no-shows',done:false},
+    {t:'Pago en delivery propio',done:false},
+   ]},
+  {id:'nubefact_api',x:1360,y:1150,icon:'🧾',title:'Nubefact API',phase:0,status:'wip',
+   features:[
+    {t:'PSE certificado por SUNAT',done:true},
+    {t:'Boletas y facturas electrónicas',done:true},
+    {t:'Credenciales reales pendientes',done:false},
+    {t:'Sandbox disponible para pruebas',done:true},
+   ]},
+];
+
+let connections = [
+  {from:'pos',to:'kds',label:'comanda',color:'var(--p1)'},
+  {from:'pos',to:'sunat',label:'cobro',color:'var(--p1)'},
+  {from:'pos',to:'dashboard',label:'ventas',color:'var(--p1)'},
+  {from:'pos',to:'inventario',label:'descuento',color:'var(--p1)'},
+  {from:'reservas_widget',to:'reservas_hostess',label:'reserva',color:'var(--p2)'},
+  {from:'reservas_hostess',to:'pos',label:'mesa',color:'var(--p2)'},
+  {from:'boh_compras',to:'inventario',label:'stock',color:'var(--p1)'},
+  {from:'inventario',to:'dashboard',label:'food cost',color:'var(--p1)'},
+  {from:'pos',to:'supabase',label:'data',color:'var(--inf)'},
+  {from:'kds',to:'supabase',label:'realtime',color:'var(--inf)'},
+  {from:'reservas_widget',to:'supabase',label:'data',color:'var(--inf)'},
+  {from:'supabase',to:'vercel',label:'deploy',color:'var(--inf)'},
+  {from:'whatsapp',to:'whatsapp_api',label:'api',color:'var(--inf)'},
+  {from:'reservas_widget',to:'whatsapp_api',label:'notif',color:'var(--inf)'},
+  {from:'delivery',to:'culqi',label:'pago',color:'var(--inf)'},
+  {from:'noshow',to:'culqi',label:'cargo',color:'var(--inf)'},
+  {from:'pos',to:'nubefact_api',label:'factura',color:'var(--inf)'},
+  {from:'ia',to:'supabase',label:'data',color:'var(--p3)'},
+];
+
+/* ══ STATE ══ */
+let cam = {x:0, y:0, scale:1};
+let isPanning = false;
+let draggingCard = null;
+let dragOffset = {x:0, y:0};
+let dragMoved = false;
+let lastMouse = {x:0, y:0};
+let expandedCards = new Set();
+
+/* ══ INIT ══ */
+window.addEventListener('DOMContentLoaded', () => {
+  loadBoard();
+  renderAll();
+  fitAll(true);
+});
+
+/* ══ RENDER ══ */
+function renderAll() {
+  renderGroupBgs();
+  renderCards();
+  renderConnections();
+}
+
+function renderGroupBgs() {
+  const canvas = document.getElementById('canvas');
+  canvas.querySelectorAll('.group-bg,.phase-label').forEach(e=>e.remove());
+  const groups = [
+    {label:'FOH · Front of House', x:50, y:40, w:1120, h:380, color:'var(--p1)'},
+    {label:'BOH · Back of House', x:50, y:450, w:840, h:270, color:'var(--p1)'},
+    {label:'Infraestructura Core', x:140, y:1110, w:1300, h:200, color:'var(--inf)'},
+    {label:'Fase 2 · Retención', x:50, y:760, w:1160, h:210, color:'var(--p2)'},
+    {label:'Fase 3 · Inteligencia', x:1340, y:40, w:280, h:730, color:'var(--p3)'},
+    {label:'Fase 4 · Expansión', x:1640, y:40, w:380, h:590, color:'var(--p4)'},
+  ];
+  groups.forEach(g=>{
+    const bg = document.createElement('div');
+    bg.className='group-bg';
+    bg.style.cssText=`left:${g.x}px;top:${g.y}px;width:${g.w}px;height:${g.h}px;border-color:${g.color};background:${g.color.replace('var(--','var(--').replace(')','')}d)`;
+    // Fix background with low opacity
+    const col = g.color;
+    bg.style.background = col.replace('var(--p1)','rgba(34,197,94,.04)').replace('var(--p2)','rgba(59,130,246,.04)').replace('var(--p3)','rgba(168,85,247,.04)').replace('var(--p4)','rgba(245,158,11,.04)').replace('var(--inf)','rgba(6,182,212,.04)');
+    canvas.insertBefore(bg, canvas.querySelector('.connections-svg'));
+    const lbl = document.createElement('div');
+    lbl.className='phase-label';
+    lbl.style.cssText=`left:${g.x+14}px;top:${g.y-18}px;color:${g.color}`;
+    lbl.textContent=g.label;
+    canvas.insertBefore(lbl, canvas.querySelector('.connections-svg'));
+  });
+}
+
+function renderCards() {
+  const canvas = document.getElementById('canvas');
+  canvas.querySelectorAll('.card').forEach(e=>e.remove());
+  cards.forEach(c=>{
+    const ph = PHASES[c.phase];
+    const isExpanded = expandedCards.has(c.id);
+    const doneFeats = c.features.filter(f=>f.done).length;
+    const el = document.createElement('div');
+    el.className = `card${isExpanded?' expanded':''}`;
+    el.id = 'card_'+c.id;
+    el.style.cssText = `left:${c.x}px;top:${c.y}px;`;
+    const statusLabel = {done:'✓ Hecho',wip:'⏳ En curso',plan:'Planificado'}[c.status];
+    const statusClass = {done:'status-done',wip:'status-wip',plan:'status-plan'}[c.status];
+    el.innerHTML = `
+      <div class="card-stripe" style="background:${ph.color}"></div>
+      <div class="card-header">
+        <div class="card-icon">${c.icon}</div>
+        <div class="card-title">${c.title}</div>
+        <div class="card-status ${statusClass}">${statusLabel}</div>
+      </div>
+      <div class="card-meta">
+        <span class="card-phase-tag" style="background:${ph.bg};color:${ph.color}">${ph.label}</span>
+        <span class="card-feat-count">${doneFeats}/${c.features.length} features</span>
+      </div>
+      <div class="card-toggle" data-id="${c.id}" onclick="toggleCard('${c.id}')">
+        ${isExpanded?'▲ Cerrar':'▼ Ver features'}
+      </div>
+      <div class="card-features">
+        ${c.features.map((f,i)=>`
+          <div class="feat-item">
+            <div class="feat-check${f.done?' checked':''}" onclick="toggleFeat('${c.id}',${i})">${f.done?'✓':''}</div>
+            <div class="feat-text${f.done?' done':''}">${f.t}</div>
+            <div class="feat-del" onclick="deleteFeat('${c.id}',${i})">×</div>
+          </div>`).join('')}
+        <div class="feat-add">
+          <input class="feat-input" id="fi_${c.id}" placeholder="+ agregar feature" onkeydown="addFeat(event,'${c.id}')">
+          <button class="feat-add-btn" onclick="addFeatBtn('${c.id}')">+</button>
+        </div>
+      </div>
+    `;
+    el.addEventListener('mousedown', e=>onCardDown(e, c.id));
+    canvas.appendChild(el);
+  });
+}
+
+function renderConnections() {
+  const svg = document.getElementById('connSvg');
+  svg.innerHTML = '';
+  const defs = `<defs>
+    ${['p1','p2','p3','p4','inf'].map(p=>`
+    <marker id="arrow_${p}" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="var(--${p})" opacity=".5"/>
+    </marker>`).join('')}
+  </defs>`;
+  svg.innerHTML = defs;
+  connections.forEach(conn=>{
+    const fromCard = cards.find(c=>c.id===conn.from);
+    const toCard = cards.find(c=>c.id===conn.to);
+    if(!fromCard||!toCard)return;
+    const fw=220, fh=110, tw=220, th=110;
+    const fx = fromCard.x + fw/2;
+    const fy = fromCard.y + fh/2;
+    const tx = toCard.x + tw/2;
+    const ty = toCard.y + th/2;
+    const dx = tx-fx, dy = ty-fy;
+    const cpx = fx + dx*.4 + (Math.abs(dy)>.1?dy*.15:0);
+    const cpy = fy + dy*.4 + (Math.abs(dx)>.1?-dx*.08:0);
+    const colorVar = conn.color.replace('var(--','').replace(')','');
+    const strokeColor = `var(--${colorVar})`;
+    const markerId = `arrow_${colorVar.includes('p1')?'p1':colorVar.includes('p2')?'p2':colorVar.includes('p3')?'p3':colorVar.includes('p4')?'p4':'inf'}`;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${fx},${fy} Q${cpx},${cpy} ${tx},${ty}`);
+    path.setAttribute('stroke',strokeColor);
+    path.setAttribute('class','conn-line');
+    path.setAttribute('marker-end',`url(#${markerId})`);
+    svg.appendChild(path);
+    // Label at midpoint
+    const mx = (fx+tx)/2 + (cpy-fy)*.08;
+    const my = (fy+ty)/2 - Math.abs(dx)*.02;
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',mx); text.setAttribute('y',my);
+    text.setAttribute('text-anchor','middle');
+    text.setAttribute('class','conn-label');
+    text.textContent=conn.label||'';
+    svg.appendChild(text);
+  });
+}
+
+/* ══ CAMERA TRANSFORM ══ */
+function applyTransform() {
+  document.getElementById('canvas').style.transform = `translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;
+  document.getElementById('zoomLabel').textContent = Math.round(cam.scale*100)+'%';
+  updateMinimap();
+}
+
+function zoomIn() { zoom(1.15); }
+function zoomOut() { zoom(1/1.15); }
+
+function zoom(factor, cx, cy) {
+  const wrapper = document.getElementById('wrapper');
+  const rect = wrapper.getBoundingClientRect();
+  const px = cx ?? rect.width/2;
+  const py = cy ?? rect.height/2;
+  const newScale = Math.min(2.5, Math.max(0.15, cam.scale*factor));
+  const f = newScale/cam.scale;
+  cam.x = px - f*(px - cam.x);
+  cam.y = py - f*(py - cam.y);
+  cam.scale = newScale;
+  applyTransform();
+}
+
+function fitAll(initial=false) {
+  if(cards.length===0)return;
+  const pad=80;
+  const xs=cards.map(c=>c.x); const ys=cards.map(c=>c.y);
+  const minX=Math.min(...xs)-pad; const maxX=Math.max(...xs)+240+pad;
+  const minY=Math.min(...ys)-pad; const maxY=Math.max(...ys)+180+pad;
+  const wrapper=document.getElementById('wrapper');
+  const ww=wrapper.clientWidth; const wh=wrapper.clientHeight;
+  const sx=(ww)/(maxX-minX); const sy=(wh)/(maxY-minY);
+  const s=Math.min(sx,sy,1.2);
+  cam.scale=s;
+  cam.x=(ww-(maxX-minX)*s)/2-minX*s;
+  cam.y=(wh-(maxY-minY)*s)/2-minY*s;
+  applyTransform();
+}
+
+function resetConnections() { renderConnections(); showToast('⟳ Conexiones actualizadas'); }
+
+/* ══ MOUSE EVENTS ══ */
+function onWrapperDown(e) {
+  if(draggingCard) return;
+  if(e.target.closest('.card')) return;
+  isPanning=true;
+  lastMouse={x:e.clientX,y:e.clientY};
+  document.getElementById('wrapper').classList.add('grabbing');
+}
+
+function onCardDown(e, id) {
+  e.stopPropagation();
+  if(e.target.closest('.card-toggle')||e.target.closest('.feat-item')||e.target.closest('.feat-add')) return;
+  const c=cards.find(c=>c.id===id);
+  draggingCard=id;
+  dragMoved=false;
+  dragOffset={
+    x:e.clientX/cam.scale - c.x - cam.x/cam.scale,
+    y:e.clientY/cam.scale - c.y - cam.y/cam.scale,
+  };
+  lastMouse={x:e.clientX,y:e.clientY};
+  document.getElementById('card_'+id).style.zIndex=100;
+}
+
+function onMouseMove(e) {
+  if(isPanning) {
+    const dx=e.clientX-lastMouse.x; const dy=e.clientY-lastMouse.y;
+    cam.x+=dx; cam.y+=dy;
+    lastMouse={x:e.clientX,y:e.clientY};
+    applyTransform();
+    return;
+  }
+  if(draggingCard) {
+    const dx=Math.abs(e.clientX-lastMouse.x)+Math.abs(e.clientY-lastMouse.y);
+    if(dx>3) dragMoved=true;
+    const c=cards.find(c=>c.id===draggingCard);
+    c.x = e.clientX/cam.scale - dragOffset.x - cam.x/cam.scale;
+    c.y = e.clientY/cam.scale - dragOffset.y - cam.y/cam.scale;
+    const el=document.getElementById('card_'+draggingCard);
+    if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
+    renderConnections();
+  }
+}
+
+function onMouseUp(e) {
+  if(isPanning){isPanning=false;document.getElementById('wrapper').classList.remove('grabbing');}
+  if(draggingCard){
+    const el=document.getElementById('card_'+draggingCard);
+    if(el)el.style.zIndex='';
+    if(!dragMoved) {
+      // was a click — handled by toggle
+    }
+    draggingCard=null;
+    saveBoard();
+  }
+}
+
+function onWheel(e) {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 1/1.1;
+  zoom(factor, e.clientX, e.clientY);
+}
+
+/* ══ CARD ACTIONS ══ */
+function toggleCard(id) {
+  if(expandedCards.has(id)) expandedCards.delete(id);
+  else expandedCards.add(id);
+  renderCards();
+  renderConnections();
+}
+
+function toggleFeat(cardId, idx) {
+  const c=cards.find(c=>c.id===cardId);
+  c.features[idx].done=!c.features[idx].done;
+  // Update status badge
+  const allDone=c.features.every(f=>f.done);
+  const anyDone=c.features.some(f=>f.done);
+  if(allDone) c.status='done';
+  else if(anyDone) c.status='wip';
+  renderCards();
+  renderConnections();
+  saveBoard();
+}
+
+function deleteFeat(cardId, idx) {
+  const c=cards.find(c=>c.id===cardId);
+  c.features.splice(idx,1);
+  renderCards();
+  saveBoard();
+}
+
+function addFeat(e, cardId) {
+  if(e.key==='Enter') addFeatBtn(cardId);
+}
+
+function addFeatBtn(cardId) {
+  const inp=document.getElementById('fi_'+cardId);
+  if(!inp||!inp.value.trim())return;
+  const c=cards.find(c=>c.id===cardId);
+  c.features.push({t:inp.value.trim(),done:false});
+  renderCards();
+  const newInp=document.getElementById('fi_'+cardId);
+  if(newInp) newInp.focus();
+  saveBoard();
+}
+
+function addCard() {
+  const id='card_'+Date.now();
+  const worldCenter={
+    x:(document.getElementById('wrapper').clientWidth/2-cam.x)/cam.scale,
+    y:(document.getElementById('wrapper').clientHeight/2-cam.y)/cam.scale,
+  };
+  cards.push({
+    id,x:worldCenter.x-110,y:worldCenter.y-60,
+    icon:'🔧',title:'Nuevo módulo',phase:1,status:'plan',features:[]
+  });
+  expandedCards.add(id);
+  renderAll();
+  saveBoard();
+  showToast('✓ Módulo agregado — haz click en ▼ para editarlo');
+}
+
+/* ══ MINIMAP ══ */
+function updateMinimap() {
+  // Simple minimap - just show viewport indicator
+}
+
+/* ══ SAVE/LOAD ══ */
+function saveBoard() {
+  try{localStorage.setItem('prep_board',JSON.stringify({cards:[...cards],expanded:[...expandedCards]}));}
+  catch(e){}
+}
+
+function loadBoard() {
+  try{
+    const saved=localStorage.getItem('prep_board');
+    if(saved){
+      const data=JSON.parse(saved);
+      if(data.cards&&data.cards.length>0){
+        cards=data.cards;
+        expandedCards=new Set(data.expanded||[]);
+      }
+    }
+  }catch(e){}
+}
+
+/* ══ TOAST ══ */
+let _tt;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){expandedCards.clear();renderAll();}
+  if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();saveBoard();showToast('💾 Guardado');}
+  if((e.metaKey||e.ctrlKey)&&e.key==='0'){fitAll();}
+});
+document.addEventListener('mouseup',onMouseUp);
+</script>
+</body>
+</html>
