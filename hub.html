@@ -30,7 +30,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .tb-stat strong{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
 .tb-stat span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 /* LAYOUT */
-.layout{display:flex;flex:1;overflow:hidden;}
+.layout{display:flex;flex:1;overflow:hidden;min-width:0;}
 /* SIDEBAR */
 .sb{width:224px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
 .sb-sec{padding:14px 14px 6px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
@@ -43,27 +43,27 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .nb-wip{background:var(--amber-d);color:var(--amber);}
 .nb-plan{background:var(--dim);color:var(--muted);}
 /* MAIN */
-.main{flex:1;overflow-y:auto;}
-.pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;}
+.main{flex:1;overflow:auto;min-width:0;}
+.pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;min-width:0;max-width:100%;box-sizing:border-box;}
 .pg.active{display:flex;flex-direction:column;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .pg-iframe { padding: 0 !important; }
   .pg-iframe iframe { flex: 1; border: none; width: 100%; min-height: 0; }
 
 /* TYPOGRAPHY */
-.ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;letter-spacing:.5px;margin-bottom:4px;}
+.ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(20px,3vw,30px);letter-spacing:.5px;margin-bottom:4px;}
 .ph-sub{color:var(--muted);font-size:12px;margin-bottom:24px;}
 .sl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;display:flex;align-items:center;gap:10px;}
 .sl::after{content:'';flex:1;height:1px;background:var(--border);}
 /* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:10px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:10px;min-width:0;overflow:hidden;}
 .card.gold-border{border-color:rgba(196,150,58,.25);}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
 /* STAT */
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
-.sv{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:3px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;min-width:0;overflow:hidden;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:clamp(20px,2.5vw,32px);font-weight:800;line-height:1;margin-bottom:3px;}
 .sl2{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 /* BADGE */
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;}
@@ -390,7 +390,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/analisis" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/analisis" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📊 Análisis Competitivo"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/analisis" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📊 Análisis Competitivo"></iframe>
 </div>
 
 <!-- ════ PRD ════ -->
@@ -403,7 +403,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/prd" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/prd" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📋 PRD Completo · v1.0"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/prd" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📋 PRD Completo · v1.0"></iframe>
 </div>
 
 <!-- ════ SISTEMA ════ -->
@@ -416,7 +416,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/sistema" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/sistema" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🗂️ Mapa del Sistema · 15 módulos"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/sistema" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🗂️ Mapa del Sistema · 15 módulos"></iframe>
 </div>
 
 <!-- ════ POS ════ -->
@@ -429,7 +429,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/pos" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/pos" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🖥️ POS · Punto de Venta"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/pos" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🖥️ POS · Punto de Venta"></iframe>
 </div>
 
 <!-- ════ BOH ════ -->
@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/boh-compras" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/boh-compras" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🛒 BOH · Sistema de Compras"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/boh-compras" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🛒 BOH · Sistema de Compras"></iframe>
 </div>
 
 <!-- ════ RESERVAS ════ -->
@@ -455,7 +455,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Spec</span>
     <a href="https://prep-platform-seven.vercel.app/reservas-spec" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/reservas-spec" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📅 Reservas · Especificación completa"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-spec" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📅 Reservas · Especificación completa"></iframe>
 </div>
 
 <!-- ════ WIDGET ════ -->
@@ -468,7 +468,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/reservas-widget" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/reservas-widget" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🌐 Widget de Reservas · Público"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-widget" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🌐 Widget de Reservas · Público"></iframe>
 </div>
 
 <!-- ════ PENDIENTES ════ -->
