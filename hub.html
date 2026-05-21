@@ -47,8 +47,25 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .pg{display:none;padding:20px 24px 48px;animation:fi .2s ease;min-width:0;max-width:100%;box-sizing:border-box;}
 .pg.active{display:flex;flex-direction:column;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .pg-iframe { padding: 0 !important; }
-  .pg-iframe iframe { flex: 1; border: none; width: 100%; min-height: 0; }
+  .pg-iframe.active {
+    position: fixed !important;
+    top: 52px;
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 !important;
+    z-index: 20;
+    background: var(--bg);
+  }
+  .pg-iframe iframe {
+    flex: 1;
+    border: none;
+    width: 100%;
+    min-height: 0;
+    display: block;
+  }
 
 /* TYPOGRAPHY */
 .ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(20px,3vw,30px);letter-spacing:.5px;margin-bottom:4px;}
@@ -390,7 +407,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/analisis" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/analisis" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📊 Análisis Competitivo"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/analisis" style="width:100%;border:none;display:block;" title="📊 Análisis Competitivo"></iframe>
 </div>
 
 <!-- ════ PRD ════ -->
@@ -403,7 +420,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/prd" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/prd" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📋 PRD Completo · v1.0"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/prd" style="width:100%;border:none;display:block;" title="📋 PRD Completo · v1.0"></iframe>
 </div>
 
 <!-- ════ SISTEMA ════ -->
@@ -416,7 +433,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
     <a href="https://prep-platform-seven.vercel.app/sistema" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/sistema" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🗂️ Mapa del Sistema · 15 módulos"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/sistema" style="width:100%;border:none;display:block;" title="🗂️ Mapa del Sistema · 15 módulos"></iframe>
 </div>
 
 <!-- ════ POS ════ -->
@@ -429,7 +446,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/pos" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/pos" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🖥️ POS · Punto de Venta"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/pos" style="width:100%;border:none;display:block;" title="🖥️ POS · Punto de Venta"></iframe>
 </div>
 
 <!-- ════ BOH ════ -->
@@ -442,7 +459,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/boh-compras" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/boh-compras" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🛒 BOH · Sistema de Compras"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/boh-compras" style="width:100%;border:none;display:block;" title="🛒 BOH · Sistema de Compras"></iframe>
 </div>
 
 <!-- ════ RESERVAS ════ -->
@@ -455,7 +472,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Spec</span>
     <a href="https://prep-platform-seven.vercel.app/reservas-spec" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/reservas-spec" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="📅 Reservas · Especificación completa"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-spec" style="width:100%;border:none;display:block;" title="📅 Reservas · Especificación completa"></iframe>
 </div>
 
 <!-- ════ WIDGET ════ -->
@@ -468,7 +485,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
     <a href="https://prep-platform-seven.vercel.app/reservas-widget" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <iframe src="https://prep-platform-seven.vercel.app/reservas-widget" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;min-width:0;" title="🌐 Widget de Reservas · Público"></iframe>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-widget" style="width:100%;border:none;display:block;" title="🌐 Widget de Reservas · Público"></iframe>
 </div>
 
 <!-- ════ PENDIENTES ════ -->
