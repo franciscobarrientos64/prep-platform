@@ -47,6 +47,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;}
 .pg.active{display:flex;flex-direction:column;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .pg-iframe { padding: 0 !important; }
+  .pg-iframe iframe { flex: 1; border: none; width: 100%; min-height: 0; }
+
 /* TYPOGRAPHY */
 .ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;letter-spacing:.5px;margin-bottom:4px;}
 .ph-sub{color:var(--muted);font-size:12px;margin-bottom:24px;}
@@ -193,7 +196,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 <div class="sb">
   <div class="sb-sec">Proyecto</div>
   <div class="nav active" onclick="go('overview',this)"><span class="nav-ic">🗺️</span>Overview<span class="nb nb-wip">18%</span></div>
-  <div class="nav" onclick="go('roadmap',this)"><span class="nav-ic">📅</span>Roadmap</div>
+  <div class="nav" onclick="go('esqueleto',this)"><span class="nav-ic">🦴</span>Esqueleto del Sistema</div>
   <div class="nav" onclick="go('stack',this)"><span class="nav-ic">⚙️</span>Stack técnico</div>
   <div class="nav" onclick="go('decisions',this)"><span class="nav-ic">🧠</span>Decisiones</div>
   <div class="sb-sec">Análisis y estrategia</div>
@@ -246,8 +249,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ ROADMAP ════ -->
-<div id="pg-roadmap" class="pg">
-  <div class="ph1">📅 Roadmap · 24 meses</div>
+<div id="pg-esqueleto" class="pg">
+  <div class="ph1">🦴 Esqueleto del Sistema · Roadmap</div>
   <div class="ph-sub">Fase 1 activa ahora · meses 0–3</div>
   <div class="g2" style="margin-bottom:10px">
     <div class="phase p1">
@@ -375,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ ANÁLISIS COMPETITIVO ════ -->
-<div id="pg-analisis" class="pg" style="padding:0;display:none;">
+<div id="pg-analisis" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📊 Análisis Competitivo</div>
@@ -388,7 +391,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ PRD ════ -->
-<div id="pg-prd" class="pg" style="padding:0;display:none;">
+<div id="pg-prd" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📋 PRD Completo · v1.0</div>
@@ -401,7 +404,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ SISTEMA ════ -->
-<div id="pg-sistema" class="pg" style="padding:0;display:none;">
+<div id="pg-sistema" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🗂️ Mapa del Sistema · 15 módulos</div>
@@ -414,7 +417,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ POS ════ -->
-<div id="pg-pos" class="pg" style="padding:0;display:none;">
+<div id="pg-pos" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🖥️ POS · Punto de Venta</div>
@@ -427,7 +430,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ BOH ════ -->
-<div id="pg-boh" class="pg" style="padding:0;display:none;">
+<div id="pg-boh" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🛒 BOH · Sistema de Compras</div>
@@ -440,7 +443,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ RESERVAS ════ -->
-<div id="pg-reservas" class="pg" style="padding:0;display:none;">
+<div id="pg-reservas" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📅 Reservas · Especificación completa</div>
@@ -453,7 +456,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ WIDGET ════ -->
-<div id="pg-widget" class="pg" style="padding:0;display:none;">
+<div id="pg-widget" class="pg pg-iframe">
   <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
     <div style="flex:1">
       <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🌐 Widget de Reservas · Público</div>
@@ -534,6 +537,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   </div></div>
 </div>
 
+
+<!-- ════ ROADMAP BOARD ════ -->
+<div id="pg-roadmap_board" class="pg pg-iframe">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🗺️ Roadmap Board</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Board interactivo estilo Miro · Drag, zoom, features editables</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Nuevo</span>
+    <a href="https://prep-platform-seven.vercel.app/roadmap" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
+  </div>
+  <iframe src="https://prep-platform-seven.vercel.app/roadmap" style="width:100%;flex:1;border:none;display:block;min-height:0;" title="Roadmap Board"></iframe>
+</div>
 </div><!-- /main -->
 </div><!-- /layout -->
 <script>
