@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .tb{height:52px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:50;}
 .logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--gold);}
 .tb-sep{width:1px;height:22px;background:var(--border);}
-.tb-title{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);}
+.tb-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
 .tb-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
 .tb-stat{display:flex;flex-direction:column;align-items:flex-end;}
 .tb-stat strong{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
@@ -32,7 +32,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;min-width:0;}
 /* SIDEBAR */
-.sb{width:224px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sb{width:200px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
 .sb-sec{padding:14px 14px 6px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
 .nav{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12px;font-weight:500;color:var(--muted);}
 .nav:hover{color:var(--text);background:var(--card);}
@@ -44,7 +44,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .nb-plan{background:var(--dim);color:var(--muted);}
 /* MAIN */
 .main{flex:1;overflow:auto;min-width:0;}
-.pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;min-width:0;max-width:100%;box-sizing:border-box;}
+.pg{display:none;padding:20px 24px 48px;animation:fi .2s ease;min-width:0;max-width:100%;box-sizing:border-box;}
 .pg.active{display:flex;flex-direction:column;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .pg-iframe { padding: 0 !important; }
@@ -64,7 +64,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* STAT */
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;min-width:0;overflow:hidden;}
 .sv{font-family:'Barlow Condensed',sans-serif;font-size:clamp(20px,2.5vw,32px);font-weight:800;line-height:1;margin-bottom:3px;}
-.sl2{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.sl2{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 /* BADGE */
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;}
 .bg{background:var(--green-d);color:var(--green);}
@@ -144,9 +144,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .op-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .op-t{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;}
 .op-pct{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--gold);}
-.op-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:10px;}
+.op-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:10px;min-width:0;}
 .op-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold));width:18%;}
-.op-phases{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.op-phases{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
 .op-ph{display:flex;flex-direction:column;gap:3px;}
 .op-ph-bar{height:3px;border-radius:99px;}
 .op-ph-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}

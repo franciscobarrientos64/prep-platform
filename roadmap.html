@@ -518,8 +518,14 @@ let expandedCards = new Set();
 window.addEventListener('DOMContentLoaded', () => {
   loadBoard();
   renderAll();
-  fitAll(true);
+  // Re-fit on resize (critical when embedded in hub iframe)
+window.addEventListener('resize', () => { setTimeout(() => fitAll(), 50); });
+
+// Delay fitAll: when embedded in iframe, clientWidth can be 0 at DOMContentLoaded
+  setTimeout(() => fitAll(true), 150);
 });
+
+
 
 /* ══ RENDER ══ */
 function renderAll() {
@@ -668,11 +674,14 @@ function zoom(factor, cx, cy) {
 
 function fitAll(initial=false) {
   if(cards.length===0)return;
+  const wrapper=document.getElementById('wrapper');
+  if(!wrapper || wrapper.clientWidth===0 || wrapper.clientHeight===0) {
+    setTimeout(()=>fitAll(initial), 150); return;
+  }
   const pad=80;
   const xs=cards.map(c=>c.x); const ys=cards.map(c=>c.y);
   const minX=Math.min(...xs)-pad; const maxX=Math.max(...xs)+240+pad;
   const minY=Math.min(...ys)-pad; const maxY=Math.max(...ys)+180+pad;
-  const wrapper=document.getElementById('wrapper');
   const ww=wrapper.clientWidth; const wh=wrapper.clientHeight;
   const sx=(ww)/(maxX-minX); const sy=(wh)/(maxY-minY);
   const s=Math.min(sx,sy,1.2);
