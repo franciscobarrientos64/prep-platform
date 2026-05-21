@@ -45,7 +45,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* MAIN */
 .main{flex:1;overflow-y:auto;}
 .pg{display:none;padding:28px 32px 60px;animation:fi .2s ease;}
-.pg.active{display:block;}
+.pg.active{display:flex;flex-direction:column;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* TYPOGRAPHY */
 .ph1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;letter-spacing:.5px;margin-bottom:4px;}
@@ -375,198 +375,94 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 </div>
 
 <!-- ════ ANÁLISIS COMPETITIVO ════ -->
-<div id="pg-analisis" class="pg">
-  <div class="ph1">📊 Análisis Competitivo</div>
-  <div class="ph-sub">Restaurant.pe (referencia Perú) vs Toast POS (líder mundial) · Brechas para PREP</div>
-  <div class="g2" style="margin-bottom:12px">
-    <div class="card">
-      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:8px">🇵🇪 Restaurant.pe</div>
-      <div class="rt">
-        <p><strong>Referencia local.</strong> SaaS sin contratos. 9 países. S/100 plan base. +50% crecimiento post-pandemia. Gestiona S/125M en ventas mensuales de sus clientes.</p>
-        <p><strong>Fortalezas:</strong> SUNAT integrado, precio accesible, sin contrato, cultura local.</p>
-        <p><strong>Debilidades:</strong> Sin KDS, sin delivery propio, sin WhatsApp, sin CRM, analytics muy básicos, soporte solo en horario de oficina.</p>
-      </div>
+<div id="pg-analisis" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📊 Análisis Competitivo</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Restaurant.pe vs Toast POS · Brechas estratégicas</div>
     </div>
-    <div class="card">
-      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:8px">🌎 Toast POS · #1 Mundial</div>
-      <div class="rt">
-        <p><strong>Líder global.</strong> 148,000 locales activos (Q2 2025). $1.7B ARR. 90% retención. Primer año GAAP-rentable 2024. Solo disponible en USA.</p>
-        <p><strong>Fortalezas:</strong> KDS nativo, delivery propio 0%, loyalty, nómina integrada, 24/7 soporte, analytics avanzados.</p>
-        <p><strong>Debilidades:</strong> Solo USA, contrato de 2 años requerido, sin SUNAT, sin WhatsApp, no disponible en Latam.</p>
-      </div>
-    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
+    <a href="https://prep-platform-seven.vercel.app/analisis" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <div class="sl">Comparativa de 17 features</div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <table class="ct">
-      <thead><tr><th>Feature</th><th>Restaurant.pe</th><th>Toast (USA)</th><th class="prep-c">PREP</th></tr></thead>
-      <tbody>
-        <tr><td>POS en la nube</td><td class="chk">✓</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
-        <tr><td>SUNAT integrado</td><td class="chk">✓</td><td class="xno">✗</td><td class="prep-c chk">✓ Nubefact</td></tr>
-        <tr><td>KDS pantalla cocina</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
-        <tr><td>WhatsApp nativo</td><td class="xno">✗</td><td class="xno">✗</td><td class="prep-c chk">✓ Diferencial</td></tr>
-        <tr><td>Delivery propio 0%</td><td class="xno">✗</td><td class="prt">✓ (solo USA)</td><td class="prep-c chk">✓</td></tr>
-        <tr><td>Food cost automático</td><td class="prt">Básico</td><td class="chk">✓</td><td class="prep-c chk">✓</td></tr>
-        <tr><td>IA predictiva</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c prt">Fase 3</td></tr>
-        <tr><td>Sistema compras BOH</td><td class="xno">✗</td><td class="xno">✗</td><td class="prep-c chk">✓ Exclusivo</td></tr>
-        <tr><td>CRM y fidelización</td><td class="xno">✗</td><td class="chk">✓</td><td class="prep-c prt">Fase 3</td></tr>
-        <tr><td>Sin fee por reserva</td><td class="xno">Cobra</td><td class="chk">✓</td><td class="prep-c chk">✓ Incluido</td></tr>
-        <tr><td>Sin contrato</td><td class="chk">✓</td><td class="xno">2 años req.</td><td class="prep-c chk">✓</td></tr>
-        <tr><td>Disponible en Latam</td><td class="chk">✓ 9 países</td><td class="xno">✗ Solo USA</td><td class="prep-c chk">✓ Nativo</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="callout" style="margin-top:12px"><strong>Posicionamiento PREP:</strong> "El único sistema de gestión diseñado para el restaurantero latinoamericano real" — potencia de Toast, cumplimiento fiscal de restaurant.pe, conectividad WhatsApp que el mercado necesita. Sin competidor directo en Latam.</div>
+  <iframe src="https://prep-platform-seven.vercel.app/analisis" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📊 Análisis Competitivo"></iframe>
 </div>
 
 <!-- ════ PRD ════ -->
-<div id="pg-prd" class="pg">
-  <div class="ph1">📋 PRD Completo · v1.0</div>
-  <div class="ph-sub">Documento de Producto — 11 secciones</div>
-  <div class="g2" style="margin-bottom:12px">
-    <div class="card"><div class="rt">
-      <h3>01 · Visión</h3>
-      <p>El restaurantero peruano tiene tres herramientas hoy: cuaderno, WhatsApp y Rappi. PREP reemplaza las tres sin perder la cercanía ni la cultura local.</p>
-      <p><strong>Misión:</strong> Ser el sistema operativo del restaurante latinoamericano, tan fácil como WhatsApp y tan poderoso como Toast, construido desde Lima para el mundo hispanohablante.</p>
-    </div></div>
-    <div class="card"><div class="rt">
-      <h3>02 · Mercado</h3>
-      <p><strong>Perú:</strong> ~80,000 restaurantes formales. 18% con software. TAM a S/199/mes = S/156M/año. SAM realista (5%) = S/7.8M/año.</p>
-      <p><strong>Latam:</strong> ~1.8M restaurantes. &lt;12% penetración tech. +28% CAGR POS cloud. Mercado global 2025: $25.1B → 2035: $49.3B.</p>
-    </div></div>
+<div id="pg-prd" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📋 PRD Completo · v1.0</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Visión · Mercado · Módulos · Pricing · Roadmap 18 meses</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
+    <a href="https://prep-platform-seven.vercel.app/prd" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <div class="sl">Modelo de precios</div>
-  <div class="g3" style="margin-bottom:12px">
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Plan Básico</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--text)">S/199<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">1 local · 30 mesas · 5 usuarios · POS + KDS + SUNAT + Inventario + Dashboard</div></div>
-    <div class="card gold-border"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:8px">Plan Pro · Más popular</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--gold)">S/349<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">1 local · Mesas ilimitadas · Delivery propio · WhatsApp · Rappi integrado · Usuarios ilimitados</div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Plan Cadena</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--text)">S/799<span style="font-size:16px;font-weight:400;color:var(--muted)">/mes</span></div><div style="font-size:11px;color:var(--muted);margin-top:4px">Hasta 5 locales · IA predictiva · CRM · RRHH · Multi-sede · API · Account manager</div></div>
-  </div>
-  <div class="sl">Proyección financiera conservadora</div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <table class="tbl">
-      <thead><tr><th>Período</th><th>Restaurantes</th><th>MRR</th><th>ARR</th><th>Hito</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Mes 3</strong></td><td>20</td><td>S/5,980</td><td>S/71,760</td><td>Validación producto-mercado</td></tr>
-        <tr><td><strong>Mes 6</strong></td><td>80</td><td>S/23,920</td><td>S/287,040</td><td>Primer equipo de ventas</td></tr>
-        <tr><td><strong>Mes 12</strong></td><td>250</td><td>S/74,750</td><td>S/897,000</td><td>Breakeven operativo</td></tr>
-        <tr><td><strong>Mes 18</strong></td><td>600</td><td>S/179,400</td><td>S/2.15M</td><td>Expansión Colombia/Chile</td></tr>
-        <tr><td><strong>Mes 24</strong></td><td>1,500</td><td>S/448,500</td><td>S/5.38M</td><td>Serie A / inversión</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <iframe src="https://prep-platform-seven.vercel.app/prd" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📋 PRD Completo · v1.0"></iframe>
 </div>
 
 <!-- ════ SISTEMA ════ -->
-<div id="pg-sistema" class="pg">
-  <div class="ph1">🗂️ Mapa del Sistema · 15 módulos</div>
-  <div class="ph-sub">3 zonas · 7 roles de usuario · 4 fases de construcción</div>
-  <div class="sl">Front of House (FOH)</div>
-  <div class="g3">
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">POS · Fase 1</div><div class="rt"><p>Mapa de mesas interactivo, toma de pedidos, división de cuenta, Yape/Plin/efectivo/tarjeta, modo offline.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">KDS · Fase 1</div><div class="rt"><p>Pantalla cocina en tiempo real vía Supabase Realtime. Por estación, alertas de tiempo, resumen de turno.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">Delivery propio · Fase 2</div><div class="rt"><p>URL propia sin comisión. Pago online vía Culqi. Tracking del cliente. Integración Rappi/PedidosYa.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">WhatsApp Commerce · Fase 2</div><div class="rt"><p>Notificaciones al dueño, carta digital, pedidos por WA, campañas. Meta Business API oficial.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">Reservas · Fase 1-2</div><div class="rt"><p>Widget embebible, perfil de comensal, brief de turno, lista de espera con Notify, garantía anti no-show.</p></div></div>
+<div id="pg-sistema" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🗂️ Mapa del Sistema · 15 módulos</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">3 zonas · FOH · BOH · Gestión · 7 roles · 4 fases</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Completo</span>
+    <a href="https://prep-platform-seven.vercel.app/sistema" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <div class="sl">Back of House (BOH)</div>
-  <div class="g3">
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Compras · Fase 1 ✓</div><div class="rt"><p>Requisiciones PIN, verificación stock, comparación VTEX, split multi-proveedor, PDF OC, WhatsApp/email a proveedor.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Inventario · Fase 1</div><div class="rt"><p>Fichas técnicas, descuento automático al vender, food cost % real, alertas stock bajo, reporte teórico vs físico.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Proveedores · Fase 1</div><div class="rt"><p>Directorio con contactos, lista de precios, historial de OC, evaluación de proveedores.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:6px">RRHH · Fase 3</div><div class="rt"><p>Asistencia QR, turnos, planilla ONP/AFP/CTS, vacaciones y permisos.</p></div></div>
-  </div>
-  <div class="sl">Gestión y Administración</div>
-  <div class="g3">
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Dashboard dueño · Fase 1</div><div class="rt"><p>Ventas real-time, food cost %, top platos, alertas caja, todo en el celular sin instalar nada.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">SUNAT · Fase 1</div><div class="rt"><p>Boletas y facturas vía Nubefact API, notas de crédito, cierre de caja, reporte mensual para contador.</p></div></div>
-    <div class="card"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:6px">IA Asistente · Fase 3</div><div class="rt"><p>Predicción de demanda, sugerencias compra, análisis rentabilidad, chat en español. Claude API.</p></div></div>
-  </div>
+  <iframe src="https://prep-platform-seven.vercel.app/sistema" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🗂️ Mapa del Sistema · 15 módulos"></iframe>
 </div>
 
 <!-- ════ POS ════ -->
-<div id="pg-pos" class="pg">
-  <div class="ph1">🖥️ POS · Punto de Venta</div>
-  <div class="ph-sub">Prototipo funcional v1.0 · Flujo completo de mesa → cobro → SUNAT</div>
-  <div class="callout">Este módulo está construido y funcional. Cubre el flujo completo: <strong>Mesa → Pedido → Cocina → Cobro → Comprobante SUNAT</strong>. Para verlo en acción usa <strong>Casa Italia</strong>, el demo configurado con restaurante real.</div>
-  <div class="sl">Pantallas implementadas</div>
-  <div class="g3">
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">🗺️ Mapa de mesas</div><div style="font-size:11px;color:var(--muted)">3 zonas: Salón, Terraza, Bar. Estados: libre/ocupada/reservada/sucia. Click → abrir panel de pedido.</div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">🍽️ Toma de pedidos</div><div style="font-size:11px;color:var(--muted)">Panel lateral con menú por categorías, búsqueda, modificadores. Controles +/- de cantidad en tiempo real.</div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">📺 Envío a KDS</div><div style="font-size:11px;color:var(--muted)">Botón "Cocina" envía comanda en tiempo real. En producción usa Supabase Realtime WebSockets.</div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">💳 Cobro multi-método</div><div style="font-size:11px;color:var(--muted)">Efectivo (con vuelto automático), Tarjeta, Yape, Plin. División de cuenta pendiente.</div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">🧾 SUNAT integrado</div><div style="font-size:11px;color:var(--muted)">Toggle Boleta/Factura. Simulación Nubefact API con CDR hash. Mesa liberada automáticamente al cobrar.</div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:4px">📊 Stats en topbar</div><div style="font-size:11px;color:var(--muted)">Mesas activas, ventas del día, cubiertos. Reloj en vivo. Todo en tiempo real sin refrescar.</div></div>
+<div id="pg-pos" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🖥️ POS · Punto de Venta</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Prototipo funcional v1.0 · Flujo completo mesa → cobro → SUNAT</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
+    <a href="https://prep-platform-seven.vercel.app/pos" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <div class="sl">Siguiente sprint (v1.1)</div>
-  <div class="card"><div class="rt"><ul>
-    <li><strong>Supabase Auth:</strong> Login real por rol (mozo, cajero, dueño, cocina)</li>
-    <li><strong>Persistencia DB:</strong> tablas orders, order_items, payments guardados en PostgreSQL</li>
-    <li><strong>Nubefact real:</strong> credenciales del restaurante, emisión real a SUNAT</li>
-    <li><strong>Supabase Realtime:</strong> sincronización KDS ↔ POS con WebSockets reales</li>
-    <li><strong>Gestión de carta:</strong> CRUD del menú y precios desde panel admin</li>
-  </ul></div></div>
+  <iframe src="https://prep-platform-seven.vercel.app/pos" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🖥️ POS · Punto de Venta"></iframe>
 </div>
 
 <!-- ════ BOH ════ -->
-<div id="pg-boh" class="pg">
-  <div class="ph1">🛒 BOH · Sistema de Compras</div>
-  <div class="ph-sub">Prototipo funcional v1.0 · Flujo completo de 4 etapas</div>
-  <div class="callout">Este módulo es el <strong>gran diferencial de PREP</strong>: ningún competidor (ni restaurant.pe ni Toast) tiene un sistema de compras integrado con el POS. Es exclusivo de PREP y resuelve el mayor dolor del restaurantero: el descontrol en las compras.</div>
-  <div class="g2">
-    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Etapa 1 · Requisición</div><div class="rt"><p>Cada área (Cocina, Bar, Sala, Oficina) tiene login con PIN 4 dígitos. Catálogo de ítems frecuentes pre-cargado. Formulario con urgencia Normal/Urgente. QR en la pared para acceso directo.</p></div></div>
-    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:8px">Etapa 2 · Stock</div><div class="rt"><p>Almacén recibe solicitud en tiempo real. Cruce automático vs inventario. Estado por ítem: ✓ Disponible / ⚠ Parcial / ✗ Sin stock. Despacho desde stock o pasa a compra externa.</p></div></div>
-    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Etapa 3 · Comparación precios</div><div class="rt"><p>API VTEX: Wong, Metro, Makro, Plaza Vea en tiempo real. Proveedores propios con lista manual. Marcado automático del precio más bajo ★. Split multi-proveedor: cada ítem a destino diferente.</p></div></div>
-    <div class="card"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Etapa 4 · Pedido final</div><div class="rt"><p>Carrito VTEX directo (supermercados). PDF Orden de Compra con logo del restaurante e IGV. WhatsApp al proveedor con lista formateada. Email con PDF adjunto.</p></div></div>
+<div id="pg-boh" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🛒 BOH · Sistema de Compras</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Prototipo funcional v1.0 · Flujo completo 4 etapas</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
+    <a href="https://prep-platform-seven.vercel.app/boh-compras" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
+  <iframe src="https://prep-platform-seven.vercel.app/boh-compras" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🛒 BOH · Sistema de Compras"></iframe>
 </div>
 
 <!-- ════ RESERVAS ════ -->
-<div id="pg-reservas" class="pg">
-  <div class="ph1">📅 Reservas · Módulo completo</div>
-  <div class="ph-sub">18 features especificadas · Spec v1.0 · Widget v1.0</div>
-  <div class="callout"><strong>Diferencial vs Mesa247 y Resy:</strong> WhatsApp nativo (ambos carecen) · Integración directa con POS · Sin fee por cubierto (S/0) · Brief de turno por WhatsApp · Perfil acumulativo del comensal vinculado al CRM.</div>
-  <div class="sl">6 features solicitadas + 12 sugeridas = 18 total</div>
-  <div class="g2">
-    <div class="card"><div style="font-weight:700;margin-bottom:10px;color:var(--gold)">✓ Features solicitadas</div>
-      <div class="rt"><ul>
-        <li><strong>Widget 100% personalizable</strong> — logo, colores, URL propia</li>
-        <li><strong>Integración directa con POS</strong> — sin doble digitación</li>
-        <li><strong>Asignación auto o manual</strong> — drag & drop al mapa</li>
-        <li><strong>Mover reservas libremente</strong> — cambio hora/mesa instant.</li>
-        <li><strong>Brief de turno configurable</strong> — frecuencia, canal, destinatarios</li>
-        <li><strong>Reconfirmación automática</strong> — 48h, 24h, 2h antes</li>
-      </ul></div></div>
-    <div class="card"><div style="font-weight:700;margin-bottom:10px;color:var(--green)">+ Features sugeridas</div>
-      <div class="rt"><ul>
-        <li><strong>Perfil acumulativo del comensal</strong> — historial, tags, alergias</li>
-        <li><strong>Lista de espera con Notify</strong> — Resy logró 90% fill rate</li>
-        <li><strong>Garantía anti no-show</strong> — baja de 5% a 0.6% (Culqi)</li>
-        <li><strong>Walk-ins integrados</strong> — sin cuadernos paralelos</li>
-        <li><strong>Calendario de ocupación</strong> — heatmap mensual</li>
-        <li><strong>Turn time inteligente</strong> — pacing automático de cocina</li>
-      </ul></div></div>
+<div id="pg-reservas" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">📅 Reservas · Especificación completa</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">18 features · Flujo público + panel hostess + brief turno</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Spec</span>
+    <a href="https://prep-platform-seven.vercel.app/reservas-spec" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-spec" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="📅 Reservas · Especificación completa"></iframe>
 </div>
 
 <!-- ════ WIDGET ════ -->
-<div id="pg-widget" class="pg">
-  <div class="ph1">🌐 Widget de Reservas · Público</div>
-  <div class="ph-sub">Lo que ve el comensal · v1.0 · Embebible con 1 línea de código</div>
-  <div class="callout">El widget tiene barra de personalización en tiempo real — cambia nombre del restaurante, colores y acento sin recargar. Prueba en Casa Italia o en el widget independiente.</div>
-  <div class="sl">Los 4 pasos del comensal</div>
-  <div class="g4">
-    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">1</div><div style="font-weight:700;margin-bottom:4px">Fecha + personas</div><div style="font-size:11px;color:var(--muted)">Calendario con días llenos bloqueados. Selector de pax de 1 a 10+.</div></div>
-    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">2</div><div style="font-weight:700;margin-bottom:4px">Horario disponible</div><div style="font-size:11px;color:var(--muted)">Slots de almuerzo y cena. Llenos marcados con tachado.</div></div>
-    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">3</div><div style="font-weight:700;margin-bottom:4px">Datos del comensal</div><div style="font-size:11px;color:var(--muted)">Nombre, WhatsApp, email, ocasión especial, nota para cocina.</div></div>
-    <div class="card"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--gold);margin-bottom:6px">4</div><div style="font-weight:700;margin-bottom:4px">Confirmación</div><div style="font-size:11px;color:var(--muted)">Resumen + aviso WhatsApp automático. Código de reserva. Botón guardar en WA.</div></div>
+<div id="pg-widget" class="pg" style="padding:0;display:none;">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">🌐 Widget de Reservas · Público</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Lo que ve el comensal · 4 pasos · Personalizable</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Prototipo</span>
+    <a href="https://prep-platform-seven.vercel.app/reservas-widget" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
-  <div class="sl">Próximas features del widget</div>
-  <div class="card"><div class="rt"><ul>
-    <li><strong>Conectar Supabase:</strong> guardar reservas en DB real</li>
-    <li><strong>WhatsApp API:</strong> confirmación automática real al comensal</li>
-    <li><strong>Panel hostess:</strong> el equipo ve y gestiona las reservas del widget</li>
-    <li><strong>Google Business Profile:</strong> botón "Reservar" en búsqueda de Google</li>
-  </ul></div></div>
+  <iframe src="https://prep-platform-seven.vercel.app/reservas-widget" style="width:100%;height:calc(100vh - 54px - 52px);border:none;display:block;" title="🌐 Widget de Reservas · Público"></iframe>
 </div>
 
 <!-- ════ PENDIENTES ════ -->
