@@ -228,7 +228,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   <div class="nav" onclick="go('widget',this)"><span class="nav-ic">🌐</span>Widget reservas<span class="nb nb-done">✓</span></div>
   <div class="nav" onclick="go('boh_journey',this)"><span class="nav-ic">🗺️</span>BOH Journey<span class="nb nb-done">✓</span></div>
   <div class="nav" onclick="go('casa_italia',this)"><span class="nav-ic">🍝</span>Demo Casa Italia<span class="nb nb-done">✓</span></div>
-  <div class="nav" onclick="go('caja_chica',this)"><span class="nav-ic">💵</span>Caja Chica<span class="nb nb-done">nuevo</span></div>
+  <div class="nav" onclick="go('caja_chica',this)"><span class="nav-ic">💵</span>Caja Chica<span class="nb nb-done">✓</span></div>
+  <div class="nav" onclick="go('inventario_mod',this)"><span class="nav-ic">⚖️</span>Inventario por peso<span class="nb nb-done">nuevo</span></div>
   <div class="sb-sec">Planificado</div>
   <div class="nav" onclick="go('kds',this)"><span class="nav-ic">📺</span>KDS · Cocina<span class="nb nb-plan">plan</span></div>
   <div class="nav" onclick="go('inventario',this)"><span class="nav-ic">📦</span>Inventario · Food Cost<span class="nb nb-plan">plan</span></div>
@@ -608,6 +609,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <a href="https://prep-platform-seven.vercel.app/caja-chica" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
   </div>
   <iframe src="https://prep-platform-seven.vercel.app/caja-chica" style="width:100%;flex:1;border:none;display:block;min-height:0;" title="Caja Chica"></iframe>
+</div>
+
+<!-- ════ INVENTARIO ════ -->
+<div id="pg-inventario_mod" class="pg pg-iframe">
+  <div style="height:54px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;">
+    <div style="flex:1">
+      <div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px">⚖️ Inventario por peso</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Multi-marca/local · Cálculo de líquido por densidad · Calibración · Conteo a prueba de errores · Reorden</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green)">✓ Nuevo</span>
+    <a href="https://prep-platform-seven.vercel.app/inventario" target="_blank" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);text-decoration:none;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">Abrir en nueva pestaña ↗</a>
+  </div>
+  <iframe src="https://prep-platform-seven.vercel.app/inventario" style="width:100%;flex:1;border:none;display:block;min-height:0;" title="Inventario"></iframe>
 </div>
 </div><!-- /main -->
 </div><!-- /layout -->
