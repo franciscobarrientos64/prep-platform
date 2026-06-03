@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>PREP ≫ Inventario</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
@@ -16,644 +16,848 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);overflow:hidden;}
-body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);}
-.topbar{position:fixed;top:0;left:0;right:0;height:56px;z-index:100;background:var(--panel);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 16px;gap:10px;}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;letter-spacing:3px;color:var(--gold);}
-.ctx-pill{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;transition:border-color .15s;}
+body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-tap-highlight-color:transparent;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;background:var(--panel);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 14px;gap:10px;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:3px;color:var(--gold);}
+.ctx-pill{display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;transition:border-color .15s;max-width:200px;overflow:hidden;}
 .ctx-pill:hover{border-color:var(--border2);}
-.ctx-pill .chev{color:var(--muted);font-size:10px;}
-.top-spacer{flex:1;}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;transition:background .3s;}
+.ctx-pill .chev{color:var(--muted);font-size:10px;flex-shrink:0;}
+.ctx-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
 .sync-dot.syncing{background:var(--yellow);animation:pulse 1s infinite;}
 .sync-dot.offline{background:var(--red);}
-.top-val{text-align:right;}
-.top-val-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
-.top-val-num{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--green);}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:60px;z-index:100;background:var(--panel);border-top:1px solid var(--border2);display:flex;overflow-x:auto;}
-.nav-item{flex:1;min-width:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'Barlow',sans-serif;transition:color .15s;}
+.top-val-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--green);}
+.bt-indicator{font-size:16px;cursor:pointer;opacity:.4;transition:opacity .2s;}
+.bt-indicator.on{opacity:1;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:58px;z-index:100;background:var(--panel);border-top:1px solid var(--border2);display:flex;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'Barlow',sans-serif;transition:color .15s;}
 .nav-item.active{color:var(--gold);}
-.nav-item .ni{font-size:18px;}
-.nav-item .nl{font-size:8.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;}
-.main{position:fixed;top:56px;left:0;right:0;bottom:60px;overflow-y:auto;}
-.screen{display:none;padding:16px;animation:fi .2s ease;}
+.nav-item .ni{font-size:18px;}.nav-item .nl{font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+
+/* MAIN */
+.main{position:fixed;top:52px;left:0;right:0;bottom:58px;overflow-y:auto;}
+.screen{display:none;padding:14px;animation:fi .18s ease;}
 .screen.active{display:block;}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
-.section-title{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* COUNTING SCREEN (fills entire main, no scroll) */
+.count-screen{position:fixed;top:52px;left:0;right:0;bottom:58px;z-index:50;background:var(--bg);display:none;flex-direction:column;}
+.count-screen.active{display:flex;}
+.count-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
+.count-back{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;}
+.count-area-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;flex:1;}
+.count-progress-txt{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);}
+.count-prog-bar{height:3px;background:var(--border);flex-shrink:0;}
+.count-prog-fill{height:100%;background:var(--gold);transition:width .3s;}
+.count-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow:hidden;gap:14px;}
+.count-product-icon{font-size:52px;line-height:1;}
+.count-product-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-align:center;line-height:1.1;max-width:100%;}
+.count-product-ref{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;}
+
+/* WEIGHT INPUT */
+.count-input-wrap{width:100%;max-width:360px;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:16px 20px;text-align:center;transition:border-color .2s;}
+.count-input-wrap.ok{border-color:var(--green);}.count-input-wrap.warn{border-color:var(--yellow);}.count-input-wrap.error{border-color:var(--red);}
+.count-big-input{font-family:'DM Mono',monospace;font-size:48px;font-weight:500;text-align:center;background:none;border:none;color:var(--text);outline:none;width:100%;}
+.count-unit-label{font-size:14px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.count-validation{font-size:12px;font-weight:600;margin-top:6px;min-height:18px;}
+.count-validation.ok{color:var(--green);}.count-validation.warn{color:var(--yellow);}.count-validation.error{color:var(--red);}
+
+/* SELLADAS COUNTER */
+.selladas-row{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:100%;max-width:360px;}
+.sell-label{font-size:12px;color:var(--muted);flex:1;}
+.sell-stepper{display:flex;align-items:center;gap:12px;}
+.sell-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:var(--card2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.sell-val{font-family:'DM Mono',monospace;font-size:22px;min-width:32px;text-align:center;}
+
+/* BOTTLE VISUAL */
+.bottle-result{display:flex;align-items:center;gap:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:100%;max-width:360px;}
+.bottle-mini{width:36px;height:74px;flex-shrink:0;}
+.bottle-result-info{flex:1;}
+.res-vol{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1;}
+.res-pct{font-size:11px;color:var(--muted);margin:2px 0;}
+.res-extras{display:flex;gap:12px;margin-top:4px;}
+.res-e{font-size:10px;color:var(--muted);}<br>.res-e b{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);}
+
+/* UNIT RESULT */
+.unit-result{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:100%;max-width:360px;}
+.ur-label{font-size:13px;color:var(--muted);}
+.ur-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--green);}
+
+/* CONFIRM BUTTON */
+.count-confirm-btn{width:100%;max-width:360px;height:58px;border-radius:14px;border:none;background:var(--gold);color:#0a0b0d;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:filter .15s;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0;}
+.count-confirm-btn:hover{filter:brightness(1.1);}
+.count-confirm-btn:active{filter:brightness(.9);}
+.count-nav-row{display:flex;justify-content:space-between;width:100%;max-width:360px;}
+.count-nav-btn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:8px 4px;font-family:'Barlow',sans-serif;}
+.count-nav-btn:hover{color:var(--text);}
+
+/* DONE SCREEN */
+.count-done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;}
+.count-done-icon{font-size:64px;}
+.count-done-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;}
+.count-done-sub{font-size:13px;color:var(--muted);line-height:1.5;}
+
+/* GENERAL COMPONENTS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px;}
+.section-title{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:16px 0 7px;}
 .section-title:first-child{margin-top:0;}
-.section-title .right{float:right;color:var(--gold);cursor:pointer;letter-spacing:.5px;}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.section-title .right{float:right;color:var(--gold);cursor:pointer;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;}
 .stat-card.full{grid-column:span 2;}
 .stat-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.stat-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1;}
-.stat-val.green{color:var(--green);}.stat-val.red{color:var(--red);}.stat-val.yellow{color:var(--yellow);}.stat-val.gold{color:var(--gold);}.stat-val.blue{color:var(--blue);}
-.stat-sub{font-size:10px;color:var(--muted);margin-top:3px;}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px 20px;border-radius:10px;border:none;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-bottom:10px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1;}
+.stat-val.green{color:var(--green);}.stat-val.red{color:var(--red);}.stat-val.gold{color:var(--gold);}.stat-val.yellow{color:var(--yellow);}
+.stat-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border-radius:10px;border:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px;}
 .btn-gold{background:var(--gold);color:#0a0b0d;}.btn-gold:hover{filter:brightness(1.1);}
 .btn-outline{background:none;border:1px solid var(--border);color:var(--muted);}.btn-outline:hover{border-color:var(--border2);color:var(--text);}
 .btn-green{background:var(--green-d);border:1px solid var(--green);color:var(--green);}
 .btn-red{background:var(--red-d);border:1px solid var(--red);color:var(--red);}
 .btn-blue{background:var(--blue-d);border:1px solid var(--blue);color:var(--blue);}
-.btn-purple{background:var(--purple-d);border:1px solid var(--purple);color:var(--purple);}
-.btn-sm{padding:8px 14px;font-size:11px;border-radius:8px;width:auto;margin-bottom:0;}
-.form-row{margin-bottom:12px;}
-.form-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;}
-.form-input,.form-select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.btn-sm{padding:7px 12px;font-size:11px;border-radius:8px;width:auto;margin-bottom:0;}
+.form-row{margin-bottom:11px;}
+.form-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.form-input,.form-select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
 .form-input:focus,.form-select:focus{border-color:var(--border2);}
 .form-input::placeholder{color:var(--muted);}
 .form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .input-suffix{position:relative;}
-.input-suffix .sfx{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;pointer-events:none;}
-.peso-wrap{background:var(--card2);border:2px solid var(--border);border-radius:14px;padding:18px;text-align:center;transition:border-color .2s;margin-bottom:12px;}
-.peso-wrap.ok{border-color:var(--green);}.peso-wrap.warn{border-color:var(--yellow);}.peso-wrap.error{border-color:var(--red);}
-.peso-input{font-family:'DM Mono',monospace;font-size:42px;font-weight:500;text-align:center;background:none;border:none;color:var(--text);outline:none;width:100%;}
-.peso-unit{font-size:16px;color:var(--muted);font-family:'DM Mono',monospace;}
-.peso-hint{font-size:11px;color:var(--muted);margin-top:6px;}
-.bottle-viz{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
-.bottle-shape{width:46px;height:96px;position:relative;flex-shrink:0;}
-.bottle-svg{width:100%;height:100%;}
-.bottle-info{flex:1;}
-.bottle-vol{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;line-height:1;}
-.bottle-pct{font-size:12px;color:var(--muted);margin-top:3px;}
-.bottle-extra{display:flex;gap:14px;margin-top:8px;}
-.bottle-extra-item .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.bottle-extra-item .v{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;margin-top:1px;}
-.valid-msg{padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:12px;display:none;align-items:center;gap:8px;}
-.valid-msg.show{display:flex;}
-.valid-msg.warn{background:var(--yellow-d);color:var(--yellow);}
-.valid-msg.error{background:var(--red-d);color:var(--red);}
-.valid-msg.ok{background:var(--green-d);color:var(--green);}
-.prod-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
-.prod-item:hover{border-color:var(--border2);}
+.input-suffix .sfx{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none;}
+.prod-item{display:flex;align-items:center;gap:11px;padding:11px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;}
+.prod-item:hover,.prod-item:active{border-color:var(--border2);}
 .prod-item.counted{border-color:var(--green);}
-.prod-item.counted .prod-check{background:var(--green);border-color:var(--green);color:#fff;}
-.prod-emoji{width:42px;height:42px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.prod-emoji{width:40px;height:40px;border-radius:9px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
 .prod-body{flex:1;min-width:0;}
 .prod-name{font-size:13px;font-weight:700;margin-bottom:1px;}
-.prod-meta{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .prod-right{text-align:right;flex-shrink:0;}
-.prod-stock{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;}
+.prod-stock{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
 .prod-stock.low{color:var(--red);}
-.prod-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;}
-.prod-val{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
-.count-progress{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
-.cp-bar{flex:1;height:7px;background:var(--border);border-radius:99px;overflow:hidden;}
-.cp-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .3s;}
-.cp-txt{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+.prod-val{font-size:10px;color:var(--muted);margin-top:1px;}
+.prod-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;}
+.prod-item.counted .prod-check{background:var(--green);border-color:var(--green);color:#fff;}
+.order-handle{font-size:18px;color:var(--muted);cursor:grab;padding:0 4px;flex-shrink:0;}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.pill{padding:5px 11px;border-radius:99px;border:1px solid var(--border);background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.pill.active{border-color:var(--gold);background:var(--gold-b);color:var(--gold);}
+.reorder-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:8px;margin-bottom:7px;}
+.reorder-item.critical{border-left-color:var(--red);}
+.reorder-name{font-size:13px;font-weight:700;}
+.reorder-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.reorder-qty{font-family:'DM Mono',monospace;font-size:13px;color:var(--yellow);text-align:right;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.show{display:flex;}
-.modal-box{background:var(--panel);border-radius:20px 20px 0 0;padding:22px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;border-top:1px solid var(--border2);}
-.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 18px;}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:.5px;margin-bottom:4px;}
-.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
-.ctx-option{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
+.modal-box{background:var(--panel);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;border-top:1px solid var(--border2);}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 16px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:19px;letter-spacing:.5px;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.ctx-option{display:flex;align-items:center;gap:11px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;}
 .ctx-option:hover{border-color:var(--border2);}
 .ctx-option.selected{border-color:var(--gold);background:var(--gold-b);}
-.ctx-option .em{font-size:22px;}
-.ctx-option .nm{font-weight:700;font-size:14px;}
-.ctx-option .mt{font-size:11px;color:var(--muted);}
-.calib-box{background:var(--blue-d);border:1px solid var(--blue);border-radius:10px;padding:14px;margin-bottom:12px;}
-.calib-title{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.pill{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
-.pill.active{border-color:var(--gold);background:var(--gold-b);color:var(--gold);}
-.reorder-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:8px;margin-bottom:8px;}
-.reorder-item.critical{border-left-color:var(--red);}
-.reorder-body{flex:1;}
-.reorder-name{font-size:13px;font-weight:700;}
-.reorder-meta{font-size:11px;color:var(--muted);margin-top:2px;}
-.reorder-qty{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--yellow);text-align:right;}
-.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:10px 18px;border-radius:8px;font-weight:700;font-size:12px;transition:transform .25s;z-index:9999;white-space:nowrap;max-width:90vw;}
-.toast.show{transform:translateX(-50%) translateY(0);}
-.empty{text-align:center;padding:36px 20px;color:var(--muted);}
-.empty .em{font-size:42px;margin-bottom:10px;}
-.empty .t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:5px;}
-.empty .s{font-size:12px;}
-.cat-bars{display:flex;flex-direction:column;gap:8px;}
-.cat-bar-row{display:flex;align-items:center;gap:10px;}
-.cat-bar-label{font-size:11px;width:78px;flex-shrink:0;color:var(--muted);}
-.cat-bar-track{flex:1;height:18px;background:var(--card2);border-radius:5px;overflow:hidden;}
-.cat-bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:6px;font-size:9px;font-family:'DM Mono',monospace;color:#fff;}
+.ctx-option .em{font-size:20px;}.ctx-option .nm{font-weight:700;font-size:13px;}.ctx-option .mt{font-size:10px;color:var(--muted);}
+.calib-box{background:var(--blue-d);border:1px solid var(--blue);border-radius:9px;padding:12px;margin-bottom:11px;}
+.calib-title{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:7px;}
+.area-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.area-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:border-color .15s;text-align:center;}
+.area-card:hover{border-color:var(--border2);}
+.area-card.has-count{border-color:var(--green);}
+.area-icon{font-size:28px;margin-bottom:6px;}
+.area-name{font-weight:700;font-size:14px;margin-bottom:3px;}
+.area-meta{font-size:11px;color:var(--muted);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;}
+.toggle-label{font-size:13px;font-weight:600;}
+.toggle-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.toggle-switch{width:46px;height:26px;border-radius:13px;background:var(--border2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle-switch.on{background:var(--green);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.toggle-switch.on .toggle-thumb{transform:translateX(20px);}
+.cat-bars{display:flex;flex-direction:column;gap:7px;}
+.cat-bar-row{display:flex;align-items:center;gap:9px;}
+.cat-bar-label{font-size:10px;width:72px;flex-shrink:0;color:var(--muted);}
+.cat-bar-track{flex:1;height:16px;background:var(--card2);border-radius:4px;overflow:hidden;}
+.cat-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:5px;font-size:8.5px;font-family:'DM Mono',monospace;color:#fff;}
 .loader{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
-.loader-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;letter-spacing:4px;color:var(--gold);}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+.loader-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:4px;color:var(--gold);}
+.spinner{width:30px;height:30px;border:2.5px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.recipe-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;}
-.recipe-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-.recipe-name{font-weight:700;font-size:14px;}
-.recipe-margin{font-family:'DM Mono',monospace;font-size:13px;}
-.recipe-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin:6px 0;}
-.recipe-ing{font-size:11px;color:var(--muted);}
-.var-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;}
-.var-bar{flex:1;}
-.var-name{font-size:12px;font-weight:600;margin-bottom:3px;}
-.var-track{height:6px;background:var(--card2);border-radius:99px;position:relative;overflow:hidden;}
-.var-fill{height:100%;border-radius:99px;}
-.scale-banner{background:var(--purple-d);border:1px solid var(--purple);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12px;}
-.scale-banner.connected{background:var(--green-d);border-color:var(--green);}
+.toast{position:fixed;bottom:68px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 16px;border-radius:8px;font-weight:700;font-size:12px;transition:transform .25s;z-index:9999;white-space:nowrap;max-width:90vw;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;padding:30px 16px;color:var(--muted);}
+.empty .em{font-size:38px;margin-bottom:8px;}.empty .t{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px;}.empty .s{font-size:12px;}
+.tipo-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;margin-left:5px;vertical-align:middle;}
+.tipo-peso{background:var(--blue-d);color:var(--blue);}
+.tipo-unidad{background:var(--green-d);color:var(--green);}
+.tipo-litro{background:var(--purple-d);color:var(--purple);}
+.tipo-kg{background:var(--yellow-d);color:var(--yellow);}
+.tipo-caja{background:var(--gold-d);color:var(--gold);}
 </style>
 </head>
 <body>
 
-<div class="loader" id="loader"><div class="loader-logo">PREP ≫</div><div class="spinner"></div><div style="color:var(--muted);font-size:12px">Conectando a Supabase...</div></div>
+<div class="loader" id="loader"><div class="loader-logo">PREP ≫</div><div class="spinner"></div><div style="color:var(--muted);font-size:12px">Cargando inventario...</div></div>
 
 <div class="topbar">
-  <div class="logo">PREP ≫</div>
-  <div class="ctx-pill" onclick="openCtxSelector()">
-    <span id="ctxBrand">—</span><span style="color:var(--muted)">·</span><span id="ctxLocation">—</span><span class="chev">▼</span>
+  <div class="logo">PREP</div>
+  <div class="ctx-pill" onclick="openCtx()">
+    <span id="ctxBrand" class="ctx-name">—</span><span style="color:var(--muted)">·</span><span id="ctxLoc" class="ctx-name">—</span><span class="chev">▼</span>
   </div>
-  <div class="top-spacer"></div>
-  <div class="sync-dot" id="syncDot" title="Sincronizado"></div>
-  <div class="top-val"><div class="top-val-label">Valor inv.</div><div class="top-val-num" id="topVal">S/0</div></div>
+  <div class="top-right">
+    <span class="bt-indicator" id="btIcon" onclick="toggleBluetooth()" title="Balanza Bluetooth">⚖️</span>
+    <div class="sync-dot" id="syncDot"></div>
+    <div class="top-val-num" id="topVal">S/0</div>
+  </div>
 </div>
 
+<!-- COUNTING SCREEN (fullscreen overlay) -->
+<div class="count-screen" id="countScreen">
+  <div class="count-header">
+    <button class="count-back" onclick="exitCounting()">←</button>
+    <div class="count-area-name" id="countAreaName">—</div>
+    <div class="count-progress-txt" id="countProgressTxt">0/0</div>
+    <button class="count-back" onclick="openOrdenModal()" title="Editar orden" style="font-size:16px">⋮</button>
+  </div>
+  <div class="count-prog-bar"><div class="count-prog-fill" id="countProgFill" style="width:0%"></div></div>
+
+  <!-- ACTIVE counting -->
+  <div id="countActive" class="count-body">
+    <div class="count-product-icon" id="cpIcon">🍾</div>
+    <div class="count-product-name" id="cpName">—</div>
+    <div class="count-product-ref" id="cpRef">—</div>
+
+    <!-- SELLADAS (solo peso) -->
+    <div class="selladas-row" id="selladasRow">
+      <div class="sell-label">🔒 Botellas selladas</div>
+      <div class="sell-stepper">
+        <button class="sell-btn" onclick="adjSell(-1)">−</button>
+        <div class="sell-val" id="sellVal">0</div>
+        <button class="sell-btn" onclick="adjSell(1)">+</button>
+      </div>
+    </div>
+
+    <!-- INPUT (weight / unit) -->
+    <div class="count-input-wrap" id="countInputWrap">
+      <input class="count-big-input" id="countInput" type="number" inputmode="decimal" placeholder="0" min="0">
+      <div class="count-unit-label" id="countUnitLabel">gramos</div>
+      <div class="count-validation" id="countValidation"></div>
+    </div>
+
+    <!-- RESULT (bottle visual for weight, simple for unit) -->
+    <div class="bottle-result" id="bottleResult" style="display:none">
+      <svg class="bottle-mini" viewBox="0 0 36 74"><defs><clipPath id="bc2"><path d="M12 3 h12 v14 q6 3 6 12 v38 q0 4 -4 4 h-16 q-4 0 -4 -4 v-38 q0 -9 6 -12 z"/></clipPath></defs><rect x="0" y="0" width="36" height="74" fill="#fff" clip-path="url(#bc2)" opacity="0.04"/><rect id="bfill" x="0" y="74" width="36" height="0" fill="var(--gold)" clip-path="url(#bc2)" opacity="0.75"/><path d="M12 3 h12 v14 q6 3 6 12 v38 q0 4 -4 4 h-16 q-4 0 -4 -4 v-38 q0 -9 6 -12 z" fill="none" stroke="var(--border2)" stroke-width="1.5"/></svg>
+      <div class="bottle-result-info">
+        <div class="res-vol" id="resVol">— ml</div>
+        <div class="res-pct" id="resPct">— %</div>
+        <div class="res-extras">
+          <div class="res-e">Total <b id="resTotal">—</b></div>
+          <div class="res-e">Botellas <b id="resBot">—</b></div>
+          <div class="res-e">Valor <b id="resVal">S/—</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="unit-result" id="unitResult" style="display:none">
+      <div class="ur-label" id="urLabel">Cantidad</div>
+      <div class="ur-val" id="urVal">— · S/—</div>
+    </div>
+
+    <button class="count-confirm-btn" id="confirmBtn" onclick="confirmCount()">✓ CONFIRMAR</button>
+    <div class="count-nav-row">
+      <button class="count-nav-btn" onclick="prevProduct()">← Anterior</button>
+      <button class="count-nav-btn" onclick="skipProduct()">Saltar →</button>
+    </div>
+  </div>
+
+  <!-- DONE state -->
+  <div class="count-done" id="countDone" style="display:none">
+    <div class="count-done-icon">✅</div>
+    <div class="count-done-title">¡Área completada!</div>
+    <div class="count-done-sub" id="countDoneSub">—</div>
+    <button class="btn btn-gold" onclick="exitCounting()" style="max-width:280px">← Volver al inicio</button>
+    <button class="btn btn-outline" onclick="reiniciarConteo()" style="max-width:280px">↩ Repasar de nuevo</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
 <div class="main">
+
   <!-- DASHBOARD -->
   <div class="screen active" id="screen-dashboard">
     <div class="stat-grid">
-      <div class="stat-card full"><div class="stat-label">Valor total del inventario</div><div class="stat-val gold" id="dash-valor" style="font-size:30px">S/0</div><div class="stat-sub" id="dash-valor-sub">en este local</div></div>
-      <div class="stat-card"><div class="stat-label">Productos</div><div class="stat-val" id="dash-productos">0</div><div class="stat-sub">en catálogo</div></div>
-      <div class="stat-card"><div class="stat-label">Bajo par</div><div class="stat-val red" id="dash-bajopar">0</div><div class="stat-sub">por reabastecer</div></div>
+      <div class="stat-card full"><div class="stat-label">Valor total del inventario</div><div class="stat-val gold" id="dash-valor" style="font-size:28px">S/0</div><div class="stat-sub" id="dash-sub">—</div></div>
+      <div class="stat-card"><div class="stat-label">Productos</div><div class="stat-val" id="dash-prods">0</div><div class="stat-sub">en catálogo</div></div>
+      <div class="stat-card"><div class="stat-label">Bajo par</div><div class="stat-val red" id="dash-bajo">0</div><div class="stat-sub">reabastecer</div></div>
     </div>
-    <div class="section-title">Acción rápida</div>
-    <button class="btn btn-gold" onclick="iniciarConteo()">⚖️ Iniciar conteo por peso</button>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button class="btn btn-blue" onclick="showScreen('facturas')">📄 Escanear factura</button>
-      <button class="btn btn-purple" onclick="showScreen('recetas')">🍹 Costeo recetas</button>
-    </div>
+    <div class="section-title">Iniciar conteo</div>
+    <div class="area-grid" id="dashAreas"></div>
     <div class="section-title">Valor por categoría</div>
-    <div class="card"><div class="cat-bars" id="dashCatBars"></div></div>
-    <div class="section-title">Alertas de stock <span class="right" onclick="showScreen('reportes')">ver todo →</span></div>
+    <div class="card"><div class="cat-bars" id="catBars"></div></div>
+    <div class="section-title">Alertas <span class="right" onclick="showScreen('reportes')">todo →</span></div>
     <div id="dashAlertas"></div>
-  </div>
-
-  <!-- CONTEO -->
-  <div class="screen" id="screen-conteo">
-    <div id="conteo-areas">
-      <div class="scale-banner" id="scaleBanner">
-        <span id="scaleIcon">⚖️</span>
-        <span id="scaleText" style="flex:1">Balanza Bluetooth no conectada</span>
-        <button class="btn btn-sm btn-purple" onclick="conectarBalanza()" id="scaleBtn">Conectar</button>
-      </div>
-      <div class="section-title">¿Qué área vas a contar?</div>
-      <div id="areaList"></div>
-    </div>
-    <div id="conteo-lista" style="display:none">
-      <div class="count-progress"><div class="cp-bar"><div class="cp-fill" id="cpFill" style="width:0%"></div></div><div class="cp-txt" id="cpTxt">0/0</div></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px" id="areaNombre">Área</div><button class="btn btn-sm btn-outline" onclick="volverAreas()">← Áreas</button></div>
-      <div class="valid-msg warn show" style="background:var(--blue-d);color:var(--blue)">⚖️ Tara la balanza en 0 antes de pesar cada botella</div>
-      <div id="prodCountList"></div>
-      <button class="btn btn-green" onclick="finalizarConteo()" style="margin-top:12px">✓ Finalizar conteo del área</button>
-    </div>
   </div>
 
   <!-- CATÁLOGO -->
   <div class="screen" id="screen-catalogo">
-    <div style="display:flex;gap:8px;margin-bottom:12px"><input class="form-input" id="catSearch" placeholder="🔍 Buscar producto..." oninput="renderCatalogo()" style="flex:1"><button class="btn btn-gold btn-sm" onclick="openNuevoProducto()" style="white-space:nowrap">+ Producto</button></div>
-    <div class="pill-row" id="catFilterPills"></div>
-    <div id="catalogoList"></div>
-  </div>
-
-  <!-- RECETAS (costeo) -->
-  <div class="screen" id="screen-recetas">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px">🍹 Costeo de recetas</div><button class="btn btn-purple btn-sm" onclick="openNuevaReceta()">+ Receta</button></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Costo por trago calculado del catálogo. Margen = (precio − costo) / precio.</div>
-    <div id="recetasList"></div>
-  </div>
-
-  <!-- FACTURAS (entrada IA) -->
-  <div class="screen" id="screen-facturas">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;margin-bottom:12px">📄 Entrada de stock por factura</div>
-    <div class="card" style="text-align:center;padding:24px;cursor:pointer" onclick="document.getElementById('facturaFile').click()">
-      <div style="font-size:38px;margin-bottom:8px">📸</div>
-      <div style="font-weight:700;margin-bottom:4px">Escanear factura / guía</div>
-      <div style="font-size:12px;color:var(--muted)">La IA extrae productos, cantidades y costos</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input class="form-input" id="catSearch" placeholder="🔍 Buscar..." oninput="renderCatalogo()" style="flex:1">
+      <button class="btn btn-gold btn-sm" onclick="openNuevoProd()">+ Producto</button>
     </div>
-    <input type="file" id="facturaFile" accept="image/*" capture="environment" style="display:none" onchange="analizarFactura(this)">
-    <div id="facturaLoading" style="display:none;text-align:center;padding:24px"><div style="font-size:34px;animation:pulse 1s infinite">🤖</div><div style="color:var(--muted);font-size:12px;margin-top:8px">Analizando factura con IA...</div></div>
-    <div id="facturaResult"></div>
-    <div class="section-title">Facturas recientes</div>
-    <div id="facturasList"></div>
-  </div>
-
-  <!-- TRANSFERENCIAS -->
-  <div class="screen" id="screen-transfer">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px">🔄 Transferencias</div><button class="btn btn-blue btn-sm" onclick="openNuevaTransfer()">+ Nueva</button></div>
-    <div id="transferList"></div>
+    <div class="pill-row" id="catPills"></div>
+    <div id="catalogoList"></div>
   </div>
 
   <!-- REPORTES -->
   <div class="screen" id="screen-reportes">
-    <div class="section-title">Valuación</div>
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-val gold" id="rep-valor">S/0</div></div>
-      <div class="stat-card"><div class="stat-label">Botellas equiv.</div><div class="stat-val" id="rep-botellas">0</div></div>
+      <div class="stat-card"><div class="stat-label">Ítems contados</div><div class="stat-val" id="rep-items">0</div></div>
     </div>
-    <div class="section-title">Variance vs Ventas (POS)</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Compara consumo real (conteos) vs ventas registradas. Diferencia = merma o robo.</div>
-    <div id="varianceList"></div>
-    <div class="section-title">Sugerencias de reorden</div>
+    <div class="section-title">Reorden sugerido</div>
     <div id="reordenList"></div>
-    <div class="section-title">Detalle por producto</div>
+    <div class="section-title">Detalle completo</div>
     <div id="detalleList"></div>
   </div>
+
+  <!-- AJUSTES -->
+  <div class="screen" id="screen-ajustes">
+    <div class="section-title">Balanza Bluetooth</div>
+    <div class="card">
+      <div class="toggle-row">
+        <div><div class="toggle-label">⚖️ Balanza Bluetooth</div><div class="toggle-sub" id="btSubtitle">Desactivada — ingreso manual de peso</div></div>
+        <div class="toggle-switch" id="btToggle" onclick="toggleBluetooth()"><div class="toggle-thumb"></div></div>
+      </div>
+      <div id="btStatusRow" style="display:none;padding:10px;background:var(--card2);border-radius:8px;font-size:12px;margin-top:6px">
+        <span id="btStatusTxt">Sin dispositivo</span>
+        <button class="btn btn-purple btn-sm" onclick="conectarBLE()" style="margin-top:8px;width:100%">Buscar y conectar balanza</button>
+      </div>
+    </div>
+
+    <div class="section-title">Marca y local activo</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:700" id="ajustesCtx">—</div><div style="font-size:11px;color:var(--muted)">Local activo</div></div>
+        <button class="btn btn-outline btn-sm" onclick="openCtx()">Cambiar</button>
+      </div>
+    </div>
+
+    <div class="section-title">Orden de conteo por área</div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">Define el orden en que aparecen los productos durante el conteo. Ordénalos como están físicamente en el local.</div>
+      <div id="areaOrdenList"></div>
+    </div>
+  </div>
+
 </div>
 
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="nav-item active" id="nav-dashboard" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Inicio</div></button>
-  <button class="nav-item" id="nav-conteo" onclick="showScreen('conteo')"><div class="ni">⚖️</div><div class="nl">Conteo</div></button>
   <button class="nav-item" id="nav-catalogo" onclick="showScreen('catalogo')"><div class="ni">🍾</div><div class="nl">Catálogo</div></button>
-  <button class="nav-item" id="nav-recetas" onclick="showScreen('recetas')"><div class="ni">🍹</div><div class="nl">Recetas</div></button>
-  <button class="nav-item" id="nav-transfer" onclick="showScreen('transfer')"><div class="ni">🔄</div><div class="nl">Transf.</div></button>
   <button class="nav-item" id="nav-reportes" onclick="showScreen('reportes')"><div class="ni">📋</div><div class="nl">Reportes</div></button>
+  <button class="nav-item" id="nav-ajustes" onclick="showScreen('ajustes')"><div class="ni">⚙️</div><div class="nl">Ajustes</div></button>
 </div>
 
-<!-- MODALS -->
-<div class="modal-overlay" id="modalCtx"><div class="modal-box"><div class="modal-handle"></div><div class="modal-title">Marca y local</div><div class="modal-sub">Selecciona dónde vas a trabajar</div><div class="section-title">Marca</div><div id="brandOptions"></div><div class="section-title">Local</div><div id="locationOptions"></div><button class="btn btn-gold" onclick="closeModal('modalCtx')" style="margin-top:8px">Confirmar</button></div></div>
+<!-- MODAL CONTEXTO -->
+<div class="modal-overlay" id="modalCtx"><div class="modal-box"><div class="modal-handle"></div><div class="modal-title">Seleccionar local</div><div class="section-title">Marca</div><div id="brandOpts"></div><div class="section-title">Local</div><div id="locOpts"></div><button class="btn btn-gold" onclick="closeModal('modalCtx')">Confirmar</button></div></div>
 
-<div class="modal-overlay" id="modalPesar"><div class="modal-box"><div class="modal-handle"></div>
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div class="prod-emoji" id="pesarEmoji" style="width:48px;height:48px;font-size:24px">🍾</div><div style="flex:1"><div class="modal-title" id="pesarNombre" style="margin-bottom:2px">Producto</div><div class="modal-sub" id="pesarRef" style="margin-bottom:0">—</div></div></div>
-  <div class="form-row"><label class="form-label">Botellas selladas (llenas)</label><div style="display:flex;align-items:center;gap:12px"><button class="btn btn-outline btn-sm" style="width:44px;font-size:18px" onclick="adjustSelladas(-1)">−</button><input class="form-input" id="selladasInput" type="number" value="0" min="0" style="text-align:center;font-family:'DM Mono',monospace;font-size:20px" oninput="recalcPesar()"><button class="btn btn-outline btn-sm" style="width:44px;font-size:18px" onclick="adjustSelladas(1)">+</button></div></div>
-  <div class="form-row"><label class="form-label">Botella abierta — peso bruto <span id="scaleLiveTag" style="color:var(--purple);display:none">⚖️ balanza en vivo</span></label><div class="peso-wrap" id="pesoWrap"><input class="peso-input" id="pesoInput" type="number" placeholder="0" min="0" oninput="recalcPesar()"><span class="peso-unit">gramos</span><div class="peso-hint" id="pesoHint">Coloca la botella abierta en la balanza</div></div></div>
-  <div class="valid-msg" id="pesarValid"></div>
-  <div class="bottle-viz"><div class="bottle-shape"><svg class="bottle-svg" viewBox="0 0 46 96"><defs><clipPath id="bottleClip"><path d="M16 4 h14 v18 q8 4 8 16 v50 q0 6 -6 6 h-18 q-6 0 -6 -6 v-50 q0 -12 8 -16 z"/></clipPath></defs><rect x="0" y="0" width="46" height="96" fill="#fff" clip-path="url(#bottleClip)" opacity="0.04"/><rect id="bottleFill" x="0" y="96" width="46" height="0" fill="var(--gold)" clip-path="url(#bottleClip)" opacity="0.7"/><path d="M16 4 h14 v18 q8 4 8 16 v50 q0 6 -6 6 h-18 q-6 0 -6 -6 v-50 q0 -12 8 -16 z" fill="none" stroke="var(--border2)" stroke-width="1.5"/></svg></div><div class="bottle-info"><div class="bottle-vol" id="vizVol">0 ml</div><div class="bottle-pct" id="vizPct">0% de botella abierta</div><div class="bottle-extra"><div class="bottle-extra-item"><div class="lbl">Total</div><div class="v" id="vizTotal">0 ml</div></div><div class="bottle-extra-item"><div class="lbl">Botellas</div><div class="v" id="vizBotellas">0</div></div><div class="bottle-extra-item"><div class="lbl">Valor</div><div class="v" id="vizValor">S/0</div></div></div></div></div>
-  <button class="btn btn-gold" onclick="guardarConteoProd()">✓ Guardar conteo</button>
-  <button class="btn btn-outline" onclick="marcarSinStock()">Marcar sin stock (0)</button>
-  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalPesar')">Cancelar</button>
-</div></div>
-
-<div class="modal-overlay" id="modalProducto"><div class="modal-box"><div class="modal-handle"></div><div class="modal-title" id="prodModalTitle">Nuevo producto</div><div class="modal-sub">El peso del vidrio es la clave del cálculo.</div>
+<!-- MODAL PRODUCTO -->
+<div class="modal-overlay" id="modalProd"><div class="modal-box"><div class="modal-handle"></div>
+  <div class="modal-title" id="prodTitle">Nuevo producto</div>
   <div class="form-row"><label class="form-label">Nombre</label><input class="form-input" id="np-nombre" placeholder="Ej: Vodka Absolut 750ml"></div>
-  <div class="form-grid2"><div class="form-row"><label class="form-label">Categoría</label><select class="form-select" id="np-categoria" onchange="onCategoriaChange()"></select></div><div class="form-row"><label class="form-label">Volumen nominal</label><div class="input-suffix"><input class="form-input" id="np-volumen" type="number" value="750"><span class="sfx">ml</span></div></div></div>
-  <div class="form-grid2"><div class="form-row"><label class="form-label">⭐ Peso vacía</label><div class="input-suffix"><input class="form-input" id="np-vacia" type="number" placeholder="485"><span class="sfx">g</span></div></div><div class="form-row"><label class="form-label">Densidad</label><div class="input-suffix"><input class="form-input" id="np-densidad" type="number" step="0.001" value="0.948"><span class="sfx">g/ml</span></div></div></div>
-  <div class="calib-box"><div class="calib-title">🎯 Calibración (recomendado · más preciso)</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Pesa una botella <b>llena y sellada</b>. Calculamos la densidad real — sin asumir.</div><div style="display:flex;gap:8px;align-items:flex-end"><div class="input-suffix" style="flex:1"><input class="form-input" id="np-pesollena" type="number" placeholder="Peso lleno"><span class="sfx">g</span></div><button class="btn btn-blue btn-sm" onclick="calibrar()" style="white-space:nowrap">Calcular</button></div><div id="calibResult" style="font-size:11px;color:var(--green);margin-top:8px;display:none"></div></div>
-  <div class="form-grid2"><div class="form-row"><label class="form-label">Costo/botella</label><div style="position:relative"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:'DM Mono',monospace;font-size:13px">S/</span><input class="form-input" id="np-costo" type="number" placeholder="0.00" style="padding-left:34px"></div></div><div class="form-row"><label class="form-label">Par (mín.)</label><input class="form-input" id="np-par" type="number" value="3"></div></div>
+  <div class="form-grid2">
+    <div class="form-row"><label class="form-label">Categoría</label><select class="form-select" id="np-cat" onchange="onCatChange()"></select></div>
+    <div class="form-row"><label class="form-label">Tipo de conteo</label><select class="form-select" id="np-tipo" onchange="onTipoChange()"><option value="peso">⚖️ Por peso</option><option value="unidad">🔢 Por unidad</option><option value="litro">🧴 Por litro</option><option value="kg">🌾 Por kg</option><option value="caja">📦 Por caja</option></select></div>
+  </div>
+  <div id="pesoCampos">
+    <div class="form-grid2">
+      <div class="form-row"><label class="form-label">Volumen nominal</label><div class="input-suffix"><input class="form-input" id="np-vol" type="number" value="750"><span class="sfx">ml</span></div></div>
+      <div class="form-row"><label class="form-label">⭐ Peso vacía</label><div class="input-suffix"><input class="form-input" id="np-vacia" type="number" placeholder="485"><span class="sfx">g</span></div></div>
+    </div>
+    <div class="form-row"><label class="form-label">Densidad</label><div class="input-suffix"><input class="form-input" id="np-den" type="number" step="0.001" value="0.948"><span class="sfx">g/ml</span></div></div>
+    <div class="calib-box"><div class="calib-title">🎯 Calibrar densidad (más preciso)</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">Pesa una botella sellada y llena → calculamos la densidad real</div><div style="display:flex;gap:8px"><div class="input-suffix" style="flex:1"><input class="form-input" id="np-llena" type="number" placeholder="Peso llena"><span class="sfx">g</span></div><button class="btn btn-blue btn-sm" onclick="calibrar()">Calcular</button></div><div id="calibMsg" style="font-size:11px;color:var(--green);margin-top:6px;display:none"></div></div>
+  </div>
+  <div id="unidadCampos" style="display:none">
+    <div class="form-row"><label class="form-label">Unidad</label><input class="form-input" id="np-unidad" placeholder="Ej: unidad, litro, kg, caja"></div>
+    <div class="form-row" id="cajaCampo" style="display:none"><label class="form-label">Unidades por caja</label><input class="form-input" id="np-porcaja" type="number" value="24"></div>
+  </div>
+  <div class="form-grid2">
+    <div class="form-row"><label class="form-label">Costo unitario</label><div style="position:relative"><span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">S/</span><input class="form-input" id="np-costo" type="number" placeholder="0" style="padding-left:32px"></div></div>
+    <div class="form-row"><label class="form-label">Par mínimo</label><input class="form-input" id="np-par" type="number" value="3"></div>
+  </div>
   <div class="form-row"><label class="form-label">Emoji</label><div class="pill-row" id="emojiPicker"></div></div>
-  <button class="btn btn-gold" onclick="guardarProducto()">✓ Guardar producto</button>
-  <button class="btn btn-red" id="deleteProdBtn" onclick="eliminarProducto()" style="display:none">Eliminar</button>
-  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalProducto')">Cancelar</button>
+  <button class="btn btn-gold" onclick="guardarProd()">✓ Guardar</button>
+  <button class="btn btn-red" id="delProdBtn" onclick="eliminarProd()" style="display:none">Eliminar</button>
+  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalProd')">Cancelar</button>
 </div></div>
 
-<div class="modal-overlay" id="modalReceta"><div class="modal-box"><div class="modal-handle"></div><div class="modal-title">Nueva receta</div><div class="modal-sub">Define ingredientes y precio de venta</div>
-  <div class="form-row"><label class="form-label">Nombre del trago</label><input class="form-input" id="nr-nombre" placeholder="Ej: Negroni"></div>
-  <div class="form-row"><label class="form-label">Precio de venta</label><div style="position:relative"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:'DM Mono',monospace;font-size:13px">S/</span><input class="form-input" id="nr-precio" type="number" placeholder="0.00" style="padding-left:34px"></div></div>
-  <div class="form-row"><label class="form-label">Ingredientes</label><div id="nr-ingredientes"></div><button class="btn btn-outline btn-sm" onclick="addIngrediente()" style="margin-top:6px">+ Ingrediente</button></div>
-  <div id="nr-costo" style="font-size:13px;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace"></div>
-  <button class="btn btn-purple" onclick="guardarReceta()">✓ Guardar receta</button>
-  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalReceta')">Cancelar</button>
-</div></div>
-
-<div class="modal-overlay" id="modalTransfer"><div class="modal-box"><div class="modal-handle"></div><div class="modal-title">Nueva transferencia</div><div class="modal-sub">Mover stock entre locales</div>
-  <div class="form-grid2"><div class="form-row"><label class="form-label">Desde</label><select class="form-select" id="nt-origen"></select></div><div class="form-row"><label class="form-label">Hacia</label><select class="form-select" id="nt-destino"></select></div></div>
-  <div class="form-row"><label class="form-label">Producto</label><select class="form-select" id="nt-producto"></select></div>
-  <div class="form-row"><label class="form-label">Cantidad (botellas)</label><input class="form-input" id="nt-cantidad" type="number" value="1"></div>
-  <button class="btn btn-blue" onclick="guardarTransfer()">✓ Registrar transferencia</button>
-  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalTransfer')">Cancelar</button>
+<!-- MODAL ORDEN -->
+<div class="modal-overlay" id="modalOrden"><div class="modal-box"><div class="modal-handle"></div>
+  <div class="modal-title" id="ordenTitle">Orden de conteo</div>
+  <div class="modal-sub">Toca ↑↓ para reordenar. El conteo seguirá este orden.</div>
+  <div id="ordenList"></div>
+  <button class="btn btn-gold" onclick="guardarOrden()">✓ Guardar orden</button>
+  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalOrden')">Cancelar</button>
 </div></div>
 
 <div id="toast" class="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ══ SUPABASE ══ */
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 
-const CATEGORIAS=[
-  {id:'vodka',nombre:'Vodka',emoji:'🍸',densidad:0.948},{id:'whisky',nombre:'Whisky',emoji:'🥃',densidad:0.948},
-  {id:'gin',nombre:'Gin',emoji:'🍸',densidad:0.940},{id:'ron',nombre:'Ron',emoji:'🥃',densidad:0.952},
-  {id:'tequila',nombre:'Tequila',emoji:'🌵',densidad:0.950},{id:'pisco',nombre:'Pisco',emoji:'🍇',densidad:0.945},
-  {id:'brandy',nombre:'Brandy / Cognac',emoji:'🥃',densidad:0.950},{id:'licor',nombre:'Licor',emoji:'🍷',densidad:1.080},
-  {id:'vino',nombre:'Vino',emoji:'🍷',densidad:0.990},{id:'espumante',nombre:'Espumante',emoji:'🍾',densidad:0.990},
-  {id:'cerveza',nombre:'Cerveza',emoji:'🍺',densidad:1.008},{id:'jarabe',nombre:'Jarabe / Mix',emoji:'🧴',densidad:1.300},
-  {id:'otros',nombre:'Otros',emoji:'🍾',densidad:1.000},
+const CATS=[
+  {id:'vodka',n:'Vodka',e:'🍸',d:0.948,tipo:'peso'},{id:'whisky',n:'Whisky',e:'🥃',d:0.948,tipo:'peso'},
+  {id:'gin',n:'Gin',e:'🍸',d:0.940,tipo:'peso'},{id:'ron',n:'Ron',e:'🥃',d:0.952,tipo:'peso'},
+  {id:'tequila',n:'Tequila',e:'🌵',d:0.950,tipo:'peso'},{id:'pisco',n:'Pisco',e:'🍇',d:0.945,tipo:'peso'},
+  {id:'brandy',n:'Brandy/Cognac',e:'🥃',d:0.950,tipo:'peso'},{id:'licor',n:'Licor',e:'🍷',d:1.080,tipo:'peso'},
+  {id:'vino',n:'Vino',e:'🍷',d:0.990,tipo:'peso'},{id:'espumante',n:'Espumante',e:'🍾',d:0.990,tipo:'peso'},
+  {id:'cerveza',n:'Cerveza',e:'🍺',d:1.008,tipo:'unidad'},{id:'jarabe',n:'Jarabe/Mix',e:'🧴',d:1.300,tipo:'litro'},
+  {id:'alimentos',n:'Alimentos',e:'🥩',d:null,tipo:'kg'},{id:'limpieza',n:'Limpieza',e:'🧹',d:null,tipo:'unidad'},
+  {id:'quimico',n:'Químico',e:'⚗️',d:null,tipo:'litro'},{id:'empaques',n:'Empaques',e:'📦',d:null,tipo:'caja'},
+  {id:'otros',n:'Otros',e:'📦',d:null,tipo:'unidad'},
 ];
-const EMOJIS=['🍾','🍸','🥃','🍷','🍺','🌵','🍇','🧴','🍹','🥂','🫗','🍶'];
-const AREAS=[{id:'barra',nombre:'Barra principal',emoji:'🍸'},{id:'barra2',nombre:'Barra terraza',emoji:'🍹'},{id:'almacen',nombre:'Almacén',emoji:'📦'},{id:'cava',nombre:'Cava / Refrigerado',emoji:'❄️'}];
-const CAT_COLORS={vodka:'#3b82f6',whisky:'#c4963a',gin:'#06b6d4',ron:'#f59e0b',tequila:'#22c55e',pisco:'#a855f7',brandy:'#ef4444',licor:'#ec4899',vino:'#8b1a3a',espumante:'#eab308',cerveza:'#d97706',jarabe:'#84cc16',otros:'#6b7280'};
+const CAT_COLS={vodka:'#3b82f6',whisky:'#c4963a',gin:'#06b6d4',ron:'#f59e0b',tequila:'#22c55e',pisco:'#a855f7',brandy:'#ef4444',licor:'#ec4899',vino:'#8b1a3a',espumante:'#eab308',cerveza:'#d97706',jarabe:'#84cc16',alimentos:'#f97316',limpieza:'#22d3ee',quimico:'#a78bfa',empaques:'#94a3b8',otros:'#6b7280'};
+const EMOJIS=['🍾','🍸','🥃','🍷','🍺','🌵','🍇','🧴','🧹','⚗️','📦','🧤','🫧','🥩','🌾','🧂','🥛','🍬'];
+const AREAS=[{id:'barra',n:'Barra principal',e:'🍸'},{id:'barra2',n:'Barra terraza',e:'🍹'},{id:'almacen',n:'Almacén',e:'📦'},{id:'cava',n:'Cava / Refrigerado',e:'❄️'}];
 
-let state={marcas:[],locales:[],productos:[],recetas:[],conteos:{},transferencias:[],ventas:{},
-  marcaActiva:'m1',localActivo:'l1',areaActiva:null,pesarProd:null,editProd:null,emojiSel:'🍾',catFilter:'todos',
-  scaleDevice:null,recetaIngs:[]};
+let state={
+  marcas:[],locales:[],productos:[],conteos:{},ordenConteo:{},
+  marcaActiva:'m1',localActivo:'l1',
+  countArea:null,countList:[],countIdx:0,countSell:0,
+  editProd:null,emojiSel:'🍾',catFilter:'todos',
+  bt:{enabled:false,device:null,peso:null},
+  ordenEditArea:null,ordenEditList:[]
+};
 
-/* ══ CÁLCULO ══ */
-function calcVolumen(g,vacia,dens){const l=g-vacia;return l<=0?0:l/dens;}
-function calcDensidad(llena,vacia,vol){return (llena-vacia)/vol;}
+// ── CALC ──
+function calcVol(g,vacia,dens){const l=g-vacia;return l<=0?0:l/dens;}
+function calcDens(llena,vacia,vol){return(llena-vacia)/vol;}
 function pesoLleno(p){return p.vacia+p.volumen*p.densidad;}
 
-/* ══ SYNC INDICATOR ══ */
-function syncing(){document.getElementById('syncDot').className='sync-dot syncing';}
-function synced(){document.getElementById('syncDot').className='sync-dot';}
-function syncErr(){document.getElementById('syncDot').className='sync-dot offline';}
+// ── SYNC ──
+function syncing(){const d=document.getElementById('syncDot');if(d)d.className='sync-dot syncing';}
+function synced(){const d=document.getElementById('syncDot');if(d)d.className='sync-dot';}
+function syncErr(){const d=document.getElementById('syncDot');if(d)d.className='sync-dot offline';}
 
-/* ══ LOAD DATA FROM SUPABASE ══ */
+// ── LOAD ──
 async function loadAll(){
   syncing();
   try{
-    const [m,l,p,r,t]=await Promise.all([
+    const[m,l,p,c]=await Promise.all([
       sb.from('inv_marcas').select('*').order('id'),
       sb.from('inv_locales').select('*').order('id'),
       sb.from('inv_productos').select('*').order('nombre'),
-      sb.from('inv_recetas').select('*'),
-      sb.from('inv_transferencias').select('*').order('created_at',{ascending:false}),
+      sb.from('inv_conteos').select('*').eq('local_id',state.localActivo),
     ]);
-    state.marcas=m.data||[];
-    state.locales=l.data||[];
-    state.productos=(p.data||[]).map(x=>({id:x.id,nombre:x.nombre,cat:x.categoria,emoji:x.emoji,volumen:Number(x.volumen_ml),vacia:Number(x.peso_vacia_g),densidad:Number(x.densidad),costo:Number(x.costo),par:Number(x.par_level)}));
-    state.recetas=(r.data||[]).map(x=>({id:x.id,nombre:x.nombre,precio:Number(x.precio_venta),ingredientes:x.ingredientes||[]}));
-    state.transferencias=t.data||[];
-    await loadConteos();
+    state.marcas=m.data||[];state.locales=l.data||[];
+    state.productos=(p.data||[]).map(x=>({
+      id:x.id,nombre:x.nombre,cat:x.categoria,emoji:x.emoji||'🍾',
+      volumen:Number(x.volumen_ml)||750,vacia:Number(x.peso_vacia_g)||0,
+      densidad:Number(x.densidad)||1,costo:Number(x.costo)||0,par:Number(x.par_level)||3,
+      tipo:x.tipo_conteo||'peso',unidad:x.unidad||'unidad',porCaja:Number(x.unidades_por_caja)||1
+    }));
+    const ct={};(c.data||[]).forEach(x=>{ct[x.producto_id]={selladas:x.selladas||0,openGross:Number(x.open_gross_g)||0,volumeMl:Number(x.volume_ml)||0,totalMl:Number(x.total_ml)||0,bottlesEquiv:Number(x.bottles_equiv)||0,valor:Number(x.valor)||0,area:x.area,ts:x.updated_at};});
+    state.conteos[state.localActivo]=ct;
+    // load orden
+    const o=await sb.from('inv_orden_conteo').select('*').eq('local_id',state.localActivo);
+    state.ordenConteo[state.localActivo]={};
+    (o.data||[]).forEach(x=>{state.ordenConteo[state.localActivo][x.area]=x.orden||[];});
     synced();
-  }catch(e){console.error(e);syncErr();showToast('⚠ Error de conexión — revisa internet');}
+  }catch(e){console.error(e);syncErr();showToast('⚠ Error de conexión');}
 }
-async function loadConteos(){
-  const {data}=await sb.from('inv_conteos').select('*').eq('local_id',state.localActivo);
-  const c={};(data||[]).forEach(e=>{c[e.producto_id]={selladas:e.selladas,openGross:Number(e.open_gross_g),volumeMl:Number(e.volume_ml),totalMl:Number(e.total_ml),bottlesEquiv:Number(e.bottles_equiv),valor:Number(e.valor),area:e.area,ts:e.updated_at};});
-  state.conteos[state.localActivo]=c;
-}
+
 function conteoLocal(){return state.conteos[state.localActivo]||{};}
 function valorTotal(){return Object.values(conteoLocal()).reduce((a,e)=>a+(e.valor||0),0);}
-function botellasTotal(){return Object.values(conteoLocal()).reduce((a,e)=>a+(e.bottlesEquiv||0),0);}
 
-/* ══ NAV ══ */
+// ── NAVIGATION ──
 function showScreen(s){
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
-  document.getElementById('screen-'+s).classList.add('active');
+  document.getElementById('screen-'+s)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('nav-'+s)?.classList.add('active');
   if(s==='dashboard')renderDashboard();
-  if(s==='conteo')renderConteoAreas();
   if(s==='catalogo')renderCatalogo();
-  if(s==='recetas')renderRecetas();
-  if(s==='facturas')renderFacturas();
-  if(s==='transfer')renderTransfer();
   if(s==='reportes')renderReportes();
+  if(s==='ajustes')renderAjustes();
 }
 
-/* ══ CONTEXTO ══ */
-function openCtxSelector(){renderCtxOptions();document.getElementById('modalCtx').classList.add('show');}
-function renderCtxOptions(){
-  document.getElementById('brandOptions').innerHTML=state.marcas.map(m=>`<div class="ctx-option${state.marcaActiva===m.id?' selected':''}" onclick="selBrand('${m.id}')"><span class="em">${m.emoji}</span><div style="flex:1"><div class="nm">${m.nombre}</div><div class="mt">${state.locales.filter(l=>l.marca_id===m.id).length} locales</div></div></div>`).join('');
-  const locs=state.locales.filter(l=>l.marca_id===state.marcaActiva);
-  document.getElementById('locationOptions').innerHTML=locs.map(l=>`<div class="ctx-option${state.localActivo===l.id?' selected':''}" onclick="selLocation('${l.id}')"><span class="em">📍</span><div style="flex:1"><div class="nm">${l.nombre}</div></div></div>`).join('');
+// ── CONTEXTO ──
+function openCtx(){renderCtxOpts();document.getElementById('modalCtx').classList.add('show');}
+function renderCtxOpts(){
+  document.getElementById('brandOpts').innerHTML=state.marcas.map(m=>`<div class="ctx-option${state.marcaActiva===m.id?' selected':''}" onclick="selBrand('${m.id}')"><span class="em">${m.emoji}</span><div style="flex:1"><div class="nm">${m.nombre}</div><div class="mt">${state.locales.filter(l=>l.marca_id===m.id).length} locales</div></div></div>`).join('');
+  document.getElementById('locOpts').innerHTML=state.locales.filter(l=>l.marca_id===state.marcaActiva).map(l=>`<div class="ctx-option${state.localActivo===l.id?' selected':''}" onclick="selLoc('${l.id}')"><span class="em">📍</span><div style="flex:1"><div class="nm">${l.nombre}</div></div></div>`).join('');
 }
-function selBrand(id){state.marcaActiva=id;const f=state.locales.find(l=>l.marca_id===id);if(f)state.localActivo=f.id;renderCtxOptions();}
-async function selLocation(id){state.localActivo=id;renderCtxOptions();renderCtxPill();await loadConteos();renderDashboard();}
+function selBrand(id){state.marcaActiva=id;const f=state.locales.find(l=>l.marca_id===id);if(f)state.localActivo=f.id;renderCtxOpts();}
+async function selLoc(id){state.localActivo=id;renderCtxOpts();renderCtxPill();await loadAll();renderDashboard();}
 function renderCtxPill(){
   const m=state.marcas.find(x=>x.id===state.marcaActiva),l=state.locales.find(x=>x.id===state.localActivo);
   document.getElementById('ctxBrand').textContent=m?m.nombre:'—';
-  document.getElementById('ctxLocation').textContent=l?l.nombre:'—';
+  document.getElementById('ctxLoc').textContent=l?l.nombre:'—';
+  document.getElementById('ajustesCtx').textContent=(m?m.nombre:'—')+' · '+(l?l.nombre:'—');
 }
 
-/* ══ DASHBOARD ══ */
+// ── DASHBOARD ──
 function renderDashboard(){
   renderCtxPill();
   const val=valorTotal();
   document.getElementById('topVal').textContent='S/'+Math.round(val).toLocaleString();
   document.getElementById('dash-valor').textContent='S/'+Math.round(val).toLocaleString();
   const l=state.locales.find(x=>x.id===state.localActivo);
-  document.getElementById('dash-valor-sub').textContent='en '+(l?l.nombre:'—');
-  document.getElementById('dash-productos').textContent=state.productos.length;
+  document.getElementById('dash-sub').textContent='en '+(l?l.nombre:'—');
+  document.getElementById('dash-prods').textContent=state.productos.length;
   const c=conteoLocal();
-  document.getElementById('dash-bajopar').textContent=state.productos.filter(p=>{const e=c[p.id];return (e?e.bottlesEquiv:0)<p.par;}).length;
-  const porCat={};state.productos.forEach(p=>{const e=c[p.id];if(e&&e.valor)porCat[p.cat]=(porCat[p.cat]||0)+e.valor;});
-  const cats=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);const maxV=Math.max(...cats.map(c=>c[1]),1);
-  const cb=document.getElementById('dashCatBars');
-  cb.innerHTML=cats.length?cats.map(([cat,v])=>{const c2=CATEGORIAS.find(x=>x.id===cat);return`<div class="cat-bar-row"><div class="cat-bar-label">${c2?c2.emoji:''} ${c2?c2.nombre:cat}</div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.max(12,(v/maxV)*100)}%;background:${CAT_COLORS[cat]||'#6b7280'}">S/${Math.round(v)}</div></div></div>`;}).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">Sin datos de conteo</div>';
-  const alertas=state.productos.filter(p=>{const e=c[p.id];return (e?e.bottlesEquiv:0)<p.par;}).slice(0,4);
-  document.getElementById('dashAlertas').innerHTML=alertas.length?alertas.map(p=>{const e=c[p.id];const bot=e?e.bottlesEquiv:0;return`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div class="reorder-body"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">${bot.toFixed(1)} de ${p.par} botellas</div></div><div class="reorder-qty">faltan ${Math.ceil(p.par-bot)}</div></div>`;}).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:14px">✓ Todo sobre el par</div>';
+  const bajo=state.productos.filter(p=>{const e=c[p.id];return(e?e.bottlesEquiv:0)<p.par;}).length;
+  document.getElementById('dash-bajo').textContent=bajo;
+  // Areas
+  const ag=document.getElementById('dashAreas');
+  ag.innerHTML=AREAS.map(a=>{const cont=state.productos.filter(p=>c[p.id]&&c[p.id].area===a.id).length;const pct=state.productos.length?Math.round(cont/state.productos.length*100):0;return`<div class="area-card${cont>0?' has-count':''}" onclick="startCounting('${a.id}')"><div class="area-icon">${a.e}</div><div class="area-name">${a.n}</div><div class="area-meta">${cont>0?pct+'% contado':'Sin contar'}</div></div>`;}).join('');
+  // Cat bars
+  const porCat={};state.productos.forEach(p=>{const e=c[p.id];if(e&&e.valor>0)porCat[p.cat]=(porCat[p.cat]||0)+e.valor;});
+  const cats=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
+  const maxV=Math.max(...cats.map(x=>x[1]),1);
+  const cb=document.getElementById('catBars');
+  cb.innerHTML=cats.length?cats.map(([cat,v])=>{const ct=CATS.find(x=>x.id===cat);return`<div class="cat-bar-row"><div class="cat-bar-label">${ct?ct.e:''} ${ct?ct.n:cat}</div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.max(10,(v/maxV)*100)}%;background:${CAT_COLS[cat]||'#6b7280'}">S/${Math.round(v)}</div></div></div>`;}).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:8px">Sin datos de conteo aún</div>';
+  // Alertas
+  const alertas=state.productos.filter(p=>{const e=c[p.id];return(e?e.bottlesEquiv:0)<p.par;}).slice(0,5);
+  document.getElementById('dashAlertas').innerHTML=alertas.length?alertas.map(p=>{const e=c[p.id];const bot=e?e.bottlesEquiv:0;return`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div style="flex:1"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">${bot.toFixed(1)} de ${p.par} (par) · ${p.unidad}</div></div><div class="reorder-qty">faltan ${Math.ceil(p.par-bot)}</div></div>`;}).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:12px">✓ Todo sobre el par</div>';
 }
 
-/* ══ CONTEO ══ */
-function iniciarConteo(){showScreen('conteo');}
-function renderConteoAreas(){
-  document.getElementById('conteo-areas').style.display='block';
-  document.getElementById('conteo-lista').style.display='none';
-  const c=conteoLocal();
-  document.getElementById('areaList').innerHTML=AREAS.map(a=>{const cont=state.productos.filter(p=>c[p.id]&&c[p.id].area===a.id).length;return`<div class="ctx-option" onclick="seleccionarArea('${a.id}')"><span class="em">${a.emoji}</span><div style="flex:1"><div class="nm">${a.nombre}</div><div class="mt">${cont} productos contados</div></div><span style="color:var(--muted)">→</span></div>`;}).join('');
+// ── COUNTING ──
+function buildCountList(area){
+  const orden=(state.ordenConteo[state.localActivo]||{})[area]||[];
+  const prods=state.productos;
+  const inOrder=orden.map(id=>prods.find(p=>p.id===id)).filter(Boolean);
+  const rest=prods.filter(p=>!orden.includes(p.id));
+  return[...inOrder,...rest];
 }
-function seleccionarArea(id){state.areaActiva=id;document.getElementById('conteo-areas').style.display='none';document.getElementById('conteo-lista').style.display='block';const a=AREAS.find(x=>x.id===id);document.getElementById('areaNombre').textContent=a.emoji+' '+a.nombre;renderProdCountList();}
-function volverAreas(){renderConteoAreas();}
-function renderProdCountList(){
-  const c=conteoLocal();
-  document.getElementById('prodCountList').innerHTML=state.productos.map(p=>{const e=c[p.id];const contado=e&&e.area===state.areaActiva;const bot=e?e.bottlesEquiv:0;return`<div class="prod-item${contado?' counted':''}" onclick="abrirPesar('${p.id}')"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}</div><div class="prod-meta">Vacía ${p.vacia}g · ${p.volumen}ml</div></div><div class="prod-right">${contado?`<div class="prod-stock">${bot.toFixed(1)} bot</div><div class="prod-val">S/${Math.round(e.valor)}</div>`:'<div class="prod-val">sin contar</div>'}</div><div class="prod-check">✓</div></div>`;}).join('');
-  const cont=state.productos.filter(p=>c[p.id]&&c[p.id].area===state.areaActiva).length,tot=state.productos.length;
-  document.getElementById('cpFill').style.width=(tot?cont/tot*100:0)+'%';
-  document.getElementById('cpTxt').textContent=cont+'/'+tot;
+
+function startCounting(area){
+  state.countArea=area;
+  state.countList=buildCountList(area);
+  state.countIdx=0;
+  const a=AREAS.find(x=>x.id===area);
+  document.getElementById('countAreaName').textContent=(a?a.e+' ':'')+( a?a.n:'');
+  document.getElementById('countDone').style.display='none';
+  document.getElementById('countActive').style.display='flex';
+  document.getElementById('countScreen').classList.add('active');
+  renderCurrentProduct();
 }
-function abrirPesar(id){
-  const p=state.productos.find(x=>x.id===id);state.pesarProd=p;
-  document.getElementById('pesarEmoji').textContent=p.emoji;
-  document.getElementById('pesarNombre').textContent=p.nombre;
-  document.getElementById('pesarRef').textContent=`Vacía: ${p.vacia}g · Llena: ${Math.round(pesoLleno(p))}g · ${p.volumen}ml`;
-  const e=conteoLocal()[id];
-  document.getElementById('selladasInput').value=e?e.selladas:0;
-  document.getElementById('pesoInput').value=e?e.openGross:'';
-  document.getElementById('scaleLiveTag').style.display=state.scaleDevice?'inline':'none';
-  recalcPesar();document.getElementById('modalPesar').classList.add('show');
-  if(state.scaleDevice)leerBalanza();else setTimeout(()=>document.getElementById('pesoInput').focus(),200);
+
+function exitCounting(){
+  document.getElementById('countScreen').classList.remove('active');
+  renderDashboard();
 }
-function adjustSelladas(d){const i=document.getElementById('selladasInput');i.value=Math.max(0,(parseInt(i.value)||0)+d);recalcPesar();}
-function recalcPesar(){
-  const p=state.pesarProd;if(!p)return;
-  const selladas=parseInt(document.getElementById('selladasInput').value)||0;
-  const gross=parseFloat(document.getElementById('pesoInput').value)||0;
-  const wrap=document.getElementById('pesoWrap'),valid=document.getElementById('pesarValid');
-  const lleno=pesoLleno(p);let volOpen=0;wrap.className='peso-wrap';valid.className='valid-msg';
+
+function reiniciarConteo(){
+  state.countIdx=0;
+  document.getElementById('countDone').style.display='none';
+  document.getElementById('countActive').style.display='flex';
+  renderCurrentProduct();
+}
+
+function renderCurrentProduct(){
+  const p=state.countList[state.countIdx];
+  const total=state.countList.length;
+  const idx=state.countIdx;
+  // Progress
+  document.getElementById('countProgressTxt').textContent=(idx+1)+'/'+total;
+  document.getElementById('countProgFill').style.width=(total?idx/total*100:0)+'%';
+  // Product info
+  document.getElementById('cpIcon').textContent=p.emoji;
+  document.getElementById('cpName').textContent=p.nombre;
+  const isPeso=p.tipo==='peso';
+  // Reference info
+  let ref='';
+  if(isPeso){ref=`Vacía: ${p.vacia}g · Llena: ${Math.round(pesoLleno(p))}g · ${p.volumen}ml`;}
+  else{ref=`${p.unidad}${p.porCaja>1?' · '+p.porCaja+' unidades por caja':''}${p.costo>0?' · S/'+p.costo:''}`;if(p.par)ref+=` · Par: ${p.par}`;}
+  document.getElementById('cpRef').textContent=ref;
+  // Selladas (solo para peso)
+  document.getElementById('selladasRow').style.display=isPeso?'flex':'none';
+  // Unit label
+  const unitLabels={peso:'gramos',litro:'litros',kg:'kg',unidad:p.unidad||'unidades',caja:'cajas'};
+  document.getElementById('countUnitLabel').textContent=unitLabels[p.tipo]||p.unidad;
+  // Preload existing count
+  const existing=conteoLocal()[p.id];
+  state.countSell=existing?existing.selladas:0;
+  document.getElementById('sellVal').textContent=state.countSell;
+  // Reset input
+  const inp=document.getElementById('countInput');
+  inp.value=(existing&&p.tipo==='peso')?existing.openGross:((existing&&p.tipo!=='peso')?existing.bottlesEquiv:'');
+  // Reset results
+  document.getElementById('bottleResult').style.display=isPeso?'flex':'none';
+  document.getElementById('unitResult').style.display=isPeso?'none':'flex';
+  document.getElementById('countInputWrap').className='count-input-wrap';
+  document.getElementById('countValidation').textContent='';
+  if(isPeso)recalcPeso();else recalcUnit();
+  // Focus input
+  setTimeout(()=>inp.focus(),50);
+  // If BLE scale active, start reading
+  if(state.bt.enabled&&state.bt.device&&isPeso)startBLERead();
+}
+
+function adjSell(d){state.countSell=Math.max(0,state.countSell+d);document.getElementById('sellVal').textContent=state.countSell;recalcPeso();}
+
+function recalcPeso(){
+  const p=state.countList[state.countIdx];if(!p||p.tipo!=='peso')return;
+  const gross=parseFloat(document.getElementById('countInput').value)||0;
+  const selladas=state.countSell;
+  const wrap=document.getElementById('countInputWrap');
+  const valid=document.getElementById('countValidation');
+  const lleno=pesoLleno(p);let volOpen=0;
+  wrap.className='count-input-wrap';valid.textContent='';valid.className='count-validation';
   if(gross>0){
-    if(gross<p.vacia){wrap.classList.add('error');valid.className='valid-msg error show';valid.innerHTML=`⚠️ ${gross}g es menos que la botella vacía (${p.vacia}g). ¿Tara en 0?`;}
-    else if(gross>lleno+15){wrap.classList.add('warn');valid.className='valid-msg warn show';valid.innerHTML=`💡 ${gross}g supera una botella llena (${Math.round(lleno)}g). Si hay varias, súmalas como selladas.`;volOpen=p.volumen;}
-    else{wrap.classList.add('ok');volOpen=calcVolumen(gross,p.vacia,p.densidad);valid.className='valid-msg ok show';valid.innerHTML=`✓ Botella abierta al ${Math.round(volOpen/p.volumen*100)}% — validado`;}
+    if(gross<p.vacia){wrap.classList.add('error');valid.textContent=`⚠ ${gross}g < botella vacía (${p.vacia}g) — revisa la tara`;valid.className='count-validation error';}
+    else if(gross>lleno+10){wrap.classList.add('warn');valid.textContent=`Supera botella llena (${Math.round(lleno)}g) — súmala a selladas`;valid.className='count-validation warn';volOpen=p.volumen;}
+    else{wrap.classList.add('ok');volOpen=calcVol(gross,p.vacia,p.densidad);const pct=Math.round(volOpen/p.volumen*100);valid.textContent=`✓ Al ${pct}%`;valid.className='count-validation ok';}
   }
-  const totalMl=selladas*p.volumen+volOpen,botellas=totalMl/p.volumen,valor=botellas*p.costo;
-  const pct=Math.min(100,Math.round(volOpen/p.volumen*100));
-  document.getElementById('bottleFill').setAttribute('y',96-(96*pct/100));
-  document.getElementById('bottleFill').setAttribute('height',96*pct/100);
-  document.getElementById('vizVol').textContent=Math.round(volOpen)+' ml';
-  document.getElementById('vizPct').textContent=pct+'% de botella abierta';
-  document.getElementById('vizTotal').textContent=Math.round(totalMl)+' ml';
-  document.getElementById('vizBotellas').textContent=botellas.toFixed(2);
-  document.getElementById('vizValor').textContent='S/'+Math.round(valor);
-  state._calc={selladas,openGross:gross,volumeMl:Math.round(volOpen),totalMl:Math.round(totalMl),bottlesEquiv:botellas,valor};
+  const totalMl=selladas*p.volumen+volOpen;const bots=totalMl/p.volumen;const val=bots*p.costo;
+  const pct2=Math.min(100,Math.round(volOpen/p.volumen*100));
+  document.getElementById('bfill').setAttribute('y',74-(74*pct2/100));
+  document.getElementById('bfill').setAttribute('height',74*pct2/100);
+  document.getElementById('resVol').textContent=Math.round(volOpen)+' ml';
+  document.getElementById('resPct').textContent=pct2+'% botella abierta';
+  document.getElementById('resTotal').textContent=Math.round(totalMl)+' ml';
+  document.getElementById('resBot').textContent=bots.toFixed(2);
+  document.getElementById('resVal').textContent='S/'+Math.round(val);
+  state._calc={selladas,openGross:gross,volumeMl:Math.round(volOpen),totalMl:Math.round(totalMl),bottlesEquiv:bots,valor:val};
 }
-async function guardarConteoProd(){
-  const p=state.pesarProd;if(!p)return;const calc=state._calc||{selladas:0,openGross:0,volumeMl:0,totalMl:0,bottlesEquiv:0,valor:0};
-  syncing();
-  const {error}=await sb.from('inv_conteos').upsert({local_id:state.localActivo,producto_id:p.id,area:state.areaActiva,selladas:calc.selladas,open_gross_g:calc.openGross,volume_ml:calc.volumeMl,total_ml:calc.totalMl,bottles_equiv:calc.bottlesEquiv,valor:calc.valor,contado_por:'App',updated_at:new Date().toISOString()},{onConflict:'local_id,producto_id'});
-  if(error){syncErr();showToast('⚠ No se guardó: '+error.message);return;}
-  if(!state.conteos[state.localActivo])state.conteos[state.localActivo]={};
-  state.conteos[state.localActivo][p.id]={...calc,area:state.areaActiva,ts:Date.now()};
-  synced();closeModal('modalPesar');renderProdCountList();
-  showToast(`✓ ${p.nombre}: ${calc.bottlesEquiv.toFixed(1)} bot · S/${Math.round(calc.valor)} · guardado en nube`);
-}
-async function marcarSinStock(){
-  const p=state.pesarProd;if(!p)return;syncing();
-  await sb.from('inv_conteos').upsert({local_id:state.localActivo,producto_id:p.id,area:state.areaActiva,selladas:0,open_gross_g:0,volume_ml:0,total_ml:0,bottles_equiv:0,valor:0,updated_at:new Date().toISOString()},{onConflict:'local_id,producto_id'});
-  if(!state.conteos[state.localActivo])state.conteos[state.localActivo]={};
-  state.conteos[state.localActivo][p.id]={selladas:0,openGross:0,volumeMl:0,totalMl:0,bottlesEquiv:0,valor:0,area:state.areaActiva,ts:Date.now()};
-  synced();closeModal('modalPesar');renderProdCountList();showToast(`${p.nombre} marcado sin stock`);
-}
-function finalizarConteo(){const c=conteoLocal();const cont=state.productos.filter(p=>c[p.id]&&c[p.id].area===state.areaActiva).length,tot=state.productos.length;if(cont<tot&&!confirm(`Faltan ${tot-cont} productos. ¿Finalizar igual?`))return;showToast('✓ Conteo del área finalizado');renderConteoAreas();}
 
-/* ══ BALANZA BLUETOOTH ══ */
-async function conectarBalanza(){
-  if(!navigator.bluetooth){showToast('⚠ Web Bluetooth no soportado en este navegador (usa Chrome/Edge)');return;}
+function recalcUnit(){
+  const p=state.countList[state.countIdx];if(!p||p.tipo==='peso')return;
+  const qty=parseFloat(document.getElementById('countInput').value)||0;
+  const val=qty*p.costo;
+  const unitLabels={litro:'L',kg:'kg',unidad:p.unidad||'u',caja:'cajas'};
+  document.getElementById('urLabel').textContent='Cantidad en '+(unitLabels[p.tipo]||p.unidad);
+  document.getElementById('urVal').textContent=qty+' '+unitLabels[p.tipo]+' · S/'+Math.round(val);
+  const wrap=document.getElementById('countInputWrap');
+  wrap.className='count-input-wrap'+(qty>0?' ok':'');
+  state._calc={selladas:0,openGross:0,volumeMl:0,totalMl:qty*1000,bottlesEquiv:qty,valor:val};
+}
+
+document.getElementById('countInput').addEventListener('input',()=>{
+  const p=state.countList[state.countIdx];
+  if(!p)return;
+  if(p.tipo==='peso')recalcPeso();else recalcUnit();
+});
+
+async function confirmCount(){
+  const p=state.countList[state.countIdx];if(!p)return;
+  const calc=state._calc||{selladas:0,openGross:0,volumeMl:0,totalMl:0,bottlesEquiv:0,valor:0};
+  syncing();
+  const{error}=await sb.from('inv_conteos').upsert({local_id:state.localActivo,producto_id:p.id,area:state.countArea,selladas:calc.selladas,open_gross_g:calc.openGross,volume_ml:calc.volumeMl,total_ml:calc.totalMl,bottles_equiv:calc.bottlesEquiv,valor:calc.valor,updated_at:new Date().toISOString()},{onConflict:'local_id,producto_id'});
+  if(error){syncErr();showToast('⚠ Error al guardar');}
+  else{
+    if(!state.conteos[state.localActivo])state.conteos[state.localActivo]={};
+    state.conteos[state.localActivo][p.id]={...calc,area:state.countArea,ts:Date.now()};
+    synced();
+    advanceCount();
+  }
+}
+
+function advanceCount(){
+  state.countIdx++;
+  document.getElementById('countProgFill').style.width=(state.countList.length?state.countIdx/state.countList.length*100:0)+'%';
+  if(state.countIdx>=state.countList.length){showDone();}
+  else{renderCurrentProduct();}
+}
+
+function prevProduct(){if(state.countIdx>0){state.countIdx--;renderCurrentProduct();}}
+function skipProduct(){advanceCount();}
+
+function showDone(){
+  document.getElementById('countActive').style.display='none';
+  document.getElementById('countDone').style.display='flex';
+  const c=conteoLocal();
+  const contados=state.countList.filter(p=>c[p.id]&&c[p.id].area===state.countArea).length;
+  const val=state.countList.filter(p=>c[p.id]&&c[p.id].area===state.countArea).reduce((a,p)=>a+(c[p.id].valor||0),0);
+  document.getElementById('countDoneSub').textContent=`${contados} de ${state.countList.length} productos · S/${Math.round(val).toLocaleString()} en inventario`;
+  document.getElementById('countProgFill').style.width='100%';
+}
+
+// Keyboard shortcuts during counting
+document.addEventListener('keydown',e=>{
+  const cs=document.getElementById('countScreen');
+  if(!cs.classList.contains('active'))return;
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='Enter')confirmCount();
+  if(e.key==='ArrowRight')skipProduct();
+  if(e.key==='ArrowLeft')prevProduct();
+});
+
+// ── ORDEN EDITOR ──
+function openOrdenModal(){
+  const area=state.countArea;const a=AREAS.find(x=>x.id===area);
+  document.getElementById('ordenTitle').textContent=(a?a.e+' '+a.n:'Orden')+' — Orden de conteo';
+  const orden=(state.ordenConteo[state.localActivo]||{})[area]||[];
+  const inOrder=orden.map(id=>state.productos.find(p=>p.id===id)).filter(Boolean);
+  const rest=state.productos.filter(p=>!orden.includes(p.id));
+  state.ordenEditArea=area;state.ordenEditList=[...inOrder,...rest];
+  renderOrdenList();document.getElementById('modalOrden').classList.add('show');
+}
+function renderOrdenList(){
+  document.getElementById('ordenList').innerHTML=state.ordenEditList.map((p,i)=>`<div class="prod-item" style="cursor:default"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}</div><div class="prod-meta">${p.tipo}</div></div><div style="display:flex;gap:4px"><button class="btn btn-sm btn-outline" onclick="moveOrden(${i},-1)" style="width:32px;padding:6px">↑</button><button class="btn btn-sm btn-outline" onclick="moveOrden(${i},1)" style="width:32px;padding:6px">↓</button></div></div>`).join('');
+}
+function moveOrden(i,d){
+  const j=i+d;if(j<0||j>=state.ordenEditList.length)return;
+  const t=state.ordenEditList[i];state.ordenEditList[i]=state.ordenEditList[j];state.ordenEditList[j]=t;
+  renderOrdenList();
+}
+async function guardarOrden(){
+  const area=state.ordenEditArea;const ids=state.ordenEditList.map(p=>p.id);
+  syncing();
+  await sb.from('inv_orden_conteo').upsert({local_id:state.localActivo,area,orden:ids,updated_at:new Date().toISOString()},{onConflict:'local_id,area'});
+  if(!state.ordenConteo[state.localActivo])state.ordenConteo[state.localActivo]={};
+  state.ordenConteo[state.localActivo][area]=ids;
+  state.countList=buildCountList(area);
+  synced();closeModal('modalOrden');showToast('✓ Orden guardado');
+  renderAjustes();
+}
+
+// ── BLUETOOTH ──
+function toggleBluetooth(){
+  state.bt.enabled=!state.bt.enabled;
+  updateBTUI();
+  if(state.bt.enabled)showToast('⚖️ Modo balanza activado — toca "Conectar"');
+  else showToast('Balanza desactivada — ingreso manual');
+}
+function updateBTUI(){
+  const on=state.bt.enabled;
+  document.getElementById('btIcon').classList.toggle('on',on);
+  document.getElementById('btToggle').classList.toggle('on',on);
+  document.getElementById('btSubtitle').textContent=on?(state.bt.device?'Conectada: '+state.bt.device.name:'Activada — sin dispositivo'):'Desactivada — ingreso manual';
+  document.getElementById('btStatusRow').style.display=on?'block':'none';
+  document.getElementById('btStatusTxt').textContent=state.bt.device?'✓ '+state.bt.device.name:'Sin dispositivo conectado';
+}
+async function conectarBLE(){
+  if(!navigator.bluetooth){showToast('⚠ Requiere Chrome/Edge con Bluetooth');return;}
   try{
     showToast('Buscando balanza...');
-    const device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:['weight_scale','0000181d-0000-1000-8000-00805f9b34fb']});
-    state.scaleDevice=device;
-    document.getElementById('scaleBanner').classList.add('connected');
-    document.getElementById('scaleIcon').textContent='✓';
-    document.getElementById('scaleText').textContent='Balanza conectada: '+(device.name||'BLE Scale');
-    document.getElementById('scaleBtn').textContent='Conectada';
-    showToast('✓ Balanza Bluetooth conectada');
-  }catch(e){showToast('No se conectó la balanza: '+e.message);}
+    const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:['weight_scale','0000181d-0000-1000-8000-00805f9b34fb']});
+    state.bt.device=dev;updateBTUI();showToast('✓ '+dev.name+' conectada');
+  }catch(e){showToast('No se conectó: '+e.message);}
 }
-async function leerBalanza(){
-  // Lectura BLE del peso (Weight Scale Service). Algunas balanzas notifican peso en vivo.
+async function startBLERead(){
+  if(!state.bt.device)return;
   try{
-    const server=await state.scaleDevice.gatt.connect();
-    const svc=await server.getPrimaryService('weight_scale');
+    const srv=await state.bt.device.gatt.connect();
+    const svc=await srv.getPrimaryService('weight_scale');
     const ch=await svc.getCharacteristic('weight_measurement');
     await ch.startNotifications();
-    ch.addEventListener('characteristicvaluechanged',e=>{
-      const v=e.target.value;const grams=v.getUint16(1,true)*5;// formato típico BLE
-      document.getElementById('pesoInput').value=grams;recalcPesar();
+    ch.addEventListener('characteristicvaluechanged',ev=>{
+      const v=ev.target.value;const g=v.getUint16(1,true)*5;
+      document.getElementById('countInput').value=g;recalcPeso();
     });
-  }catch(e){/* balanza sin notify estándar: entrada manual */}
+  }catch(e){/* manual fallback */}
 }
 
-/* ══ CATÁLOGO ══ */
+// ── CATÁLOGO ──
 function renderCatalogo(){
-  renderCatFilters();
+  renderCatPills();
   const q=(document.getElementById('catSearch').value||'').toLowerCase();
   let prods=state.productos;
   if(state.catFilter!=='todos')prods=prods.filter(p=>p.cat===state.catFilter);
   if(q)prods=prods.filter(p=>p.nombre.toLowerCase().includes(q));
-  document.getElementById('catalogoList').innerHTML=prods.length?prods.map(p=>{const cat=CATEGORIAS.find(c=>c.id===p.cat);return`<div class="prod-item" onclick="editarProducto('${p.id}')"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}</div><div class="prod-meta">${cat?cat.nombre:p.cat} · ${p.volumen}ml · vacía ${p.vacia}g · ${p.densidad}g/ml</div></div><div class="prod-right"><div class="prod-stock">S/${p.costo}</div><div class="prod-val">par ${p.par}</div></div></div>`;}).join(''):'<div class="empty"><div class="em">🍾</div><div class="t">Sin productos</div></div>';
+  const tipoBadge={peso:'tipo-peso',litro:'tipo-litro',kg:'tipo-kg',unidad:'tipo-unidad',caja:'tipo-caja'};
+  document.getElementById('catalogoList').innerHTML=prods.length?prods.map(p=>{const ct=CATS.find(x=>x.id===p.cat);return`<div class="prod-item" onclick="editarProd('${p.id}')"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}<span class="tipo-badge ${tipoBadge[p.tipo]||'tipo-unidad'}">${p.tipo}</span></div><div class="prod-meta">${ct?ct.n:p.cat} · ${p.tipo==='peso'?p.volumen+'ml · vac.'+p.vacia+'g':p.unidad}</div></div><div class="prod-right"><div class="prod-stock">S/${p.costo}</div><div class="prod-val">par ${p.par}</div></div></div>`;}).join(''):'<div class="empty"><div class="em">🍾</div><div class="t">Sin productos</div></div>';
 }
-function renderCatFilters(){
+function renderCatPills(){
   const used=[...new Set(state.productos.map(p=>p.cat))];
-  document.getElementById('catFilterPills').innerHTML=`<div class="pill${state.catFilter==='todos'?' active':''}" onclick="setCatFilter('todos')">Todos</div>`+used.map(cid=>{const c=CATEGORIAS.find(x=>x.id===cid);return`<div class="pill${state.catFilter===cid?' active':''}" onclick="setCatFilter('${cid}')">${c?c.emoji+' '+c.nombre:cid}</div>`;}).join('');
+  document.getElementById('catPills').innerHTML=`<div class="pill${state.catFilter==='todos'?' active':''}" onclick="setCatF('todos')">Todos</div>`+used.map(cid=>{const c=CATS.find(x=>x.id===cid);return`<div class="pill${state.catFilter===cid?' active':''}" onclick="setCatF('${cid}')">${c?c.e+' '+c.n:cid}</div>`;}).join('');
 }
-function setCatFilter(f){state.catFilter=f;renderCatalogo();}
-function openNuevoProducto(){state.editProd=null;document.getElementById('prodModalTitle').textContent='Nuevo producto';document.getElementById('deleteProdBtn').style.display='none';['np-nombre','np-vacia','np-costo','np-pesollena'].forEach(id=>document.getElementById(id).value='');document.getElementById('np-volumen').value='750';document.getElementById('np-par').value='3';document.getElementById('calibResult').style.display='none';renderCategoriaSelect();renderEmojiPicker();onCategoriaChange();document.getElementById('modalProducto').classList.add('show');}
-function editarProducto(id){const p=state.productos.find(x=>x.id===id);state.editProd=p;document.getElementById('prodModalTitle').textContent='Editar producto';document.getElementById('deleteProdBtn').style.display='flex';document.getElementById('np-nombre').value=p.nombre;document.getElementById('np-volumen').value=p.volumen;document.getElementById('np-vacia').value=p.vacia;document.getElementById('np-densidad').value=p.densidad;document.getElementById('np-costo').value=p.costo;document.getElementById('np-par').value=p.par;document.getElementById('np-pesollena').value='';document.getElementById('calibResult').style.display='none';state.emojiSel=p.emoji;renderCategoriaSelect();document.getElementById('np-categoria').value=p.cat;renderEmojiPicker();document.getElementById('modalProducto').classList.add('show');}
-function renderCategoriaSelect(){document.getElementById('np-categoria').innerHTML=CATEGORIAS.map(c=>`<option value="${c.id}">${c.emoji} ${c.nombre}</option>`).join('');}
-function onCategoriaChange(){const cid=document.getElementById('np-categoria').value;const c=CATEGORIAS.find(x=>x.id===cid);if(c&&!state.editProd){document.getElementById('np-densidad').value=c.densidad;state.emojiSel=c.emoji;renderEmojiPicker();}}
-function renderEmojiPicker(){document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>`<div class="pill${state.emojiSel===e?' active':''}" onclick="selEmoji('${e}')" style="font-size:16px">${e}</div>`).join('');}
+function setCatF(f){state.catFilter=f;renderCatalogo();}
+function openNuevoProd(){
+  state.editProd=null;state.emojiSel='🍾';
+  document.getElementById('prodTitle').textContent='Nuevo producto';
+  document.getElementById('delProdBtn').style.display='none';
+  ['np-nombre','np-vacia','np-costo','np-llena'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('np-vol').value='750';document.getElementById('np-den').value='0.948';document.getElementById('np-par').value='3';
+  document.getElementById('calibMsg').style.display='none';
+  renderCatSel();renderEmojiPicker();onCatChange();onTipoChange();
+  document.getElementById('modalProd').classList.add('show');
+}
+function editarProd(id){
+  const p=state.productos.find(x=>x.id===id);state.editProd=p;state.emojiSel=p.emoji;
+  document.getElementById('prodTitle').textContent='Editar producto';
+  document.getElementById('delProdBtn').style.display='flex';
+  document.getElementById('np-nombre').value=p.nombre;
+  document.getElementById('np-vol').value=p.volumen;
+  document.getElementById('np-vacia').value=p.vacia;
+  document.getElementById('np-den').value=p.densidad;
+  document.getElementById('np-costo').value=p.costo;
+  document.getElementById('np-par').value=p.par;
+  document.getElementById('np-tipo').value=p.tipo;
+  document.getElementById('np-unidad').value=p.unidad;
+  document.getElementById('calibMsg').style.display='none';
+  renderCatSel();document.getElementById('np-cat').value=p.cat;renderEmojiPicker();onTipoChange();
+  document.getElementById('modalProd').classList.add('show');
+}
+function renderCatSel(){document.getElementById('np-cat').innerHTML=CATS.map(c=>`<option value="${c.id}">${c.e} ${c.n}</option>`).join('');}
+function onCatChange(){const c=CATS.find(x=>x.id===document.getElementById('np-cat').value);if(c&&!state.editProd){state.emojiSel=c.e;document.getElementById('np-tipo').value=c.tipo||'peso';if(c.d)document.getElementById('np-den').value=c.d;renderEmojiPicker();onTipoChange();}}
+function onTipoChange(){
+  const t=document.getElementById('np-tipo').value;
+  document.getElementById('pesoCampos').style.display=t==='peso'?'block':'none';
+  document.getElementById('unidadCampos').style.display=t!=='peso'?'block':'none';
+  document.getElementById('cajaCampo').style.display=t==='caja'?'block':'none';
+}
+function renderEmojiPicker(){document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>`<div class="pill${state.emojiSel===e?' active':''}" onclick="selEmoji('${e}')" style="font-size:15px">${e}</div>`).join('');}
 function selEmoji(e){state.emojiSel=e;renderEmojiPicker();}
-function calibrar(){const llena=parseFloat(document.getElementById('np-pesollena').value),vacia=parseFloat(document.getElementById('np-vacia').value),vol=parseFloat(document.getElementById('np-volumen').value);if(!llena||!vacia||!vol){showToast('Completa vacío, volumen y lleno');return;}if(llena<=vacia){showToast('El lleno debe ser mayor al vacío');return;}const d=calcDensidad(llena,vacia,vol);document.getElementById('np-densidad').value=d.toFixed(3);const r=document.getElementById('calibResult');r.style.display='block';r.innerHTML=`✓ Densidad calibrada: <b>${d.toFixed(3)} g/ml</b> — medida real`;}
-async function guardarProducto(){
-  const nombre=document.getElementById('np-nombre').value.trim(),vacia=parseFloat(document.getElementById('np-vacia').value);
-  if(!nombre){showToast('Ingresa el nombre');return;}if(!vacia){showToast('⭐ El peso vacío es obligatorio');return;}
+function calibrar(){const ll=parseFloat(document.getElementById('np-llena').value),va=parseFloat(document.getElementById('np-vacia').value),vo=parseFloat(document.getElementById('np-vol').value);if(!ll||!va||!vo){showToast('Completa vacío, volumen y lleno');return;}if(ll<=va){showToast('El lleno debe ser > vacío');return;}const d=calcDens(ll,va,vo);document.getElementById('np-den').value=d.toFixed(3);const m=document.getElementById('calibMsg');m.style.display='block';m.textContent='✓ Densidad calibrada: '+d.toFixed(3)+' g/ml';}
+async function guardarProd(){
+  const nombre=document.getElementById('np-nombre').value.trim();const tipo=document.getElementById('np-tipo').value;
+  if(!nombre){showToast('Ingresa el nombre');return;}
+  const vacia=parseFloat(document.getElementById('np-vacia').value)||0;
+  if(tipo==='peso'&&!vacia){showToast('⭐ El peso vacío es obligatorio para botellas');return;}
   const id=state.editProd?state.editProd.id:'p'+Date.now();
-  const row={id,nombre,categoria:document.getElementById('np-categoria').value,emoji:state.emojiSel,volumen_ml:parseFloat(document.getElementById('np-volumen').value)||750,peso_vacia_g:vacia,densidad:parseFloat(document.getElementById('np-densidad').value)||0.95,costo:parseFloat(document.getElementById('np-costo').value)||0,par_level:parseInt(document.getElementById('np-par').value)||3};
-  syncing();const {error}=await sb.from('inv_productos').upsert(row);if(error){syncErr();showToast('⚠ '+error.message);return;}
-  synced();await loadAll();closeModal('modalProducto');renderCatalogo();showToast(`✓ ${nombre} guardado en nube`);
+  const row={id,nombre,categoria:document.getElementById('np-cat').value,emoji:state.emojiSel,volumen_ml:parseFloat(document.getElementById('np-vol').value)||750,peso_vacia_g:vacia,densidad:parseFloat(document.getElementById('np-den').value)||1,costo:parseFloat(document.getElementById('np-costo').value)||0,par_level:parseInt(document.getElementById('np-par').value)||3,tipo_conteo:tipo,unidad:document.getElementById('np-unidad').value||tipo,unidades_por_caja:parseInt(document.getElementById('np-porcaja').value)||1};
+  syncing();const{error}=await sb.from('inv_productos').upsert(row);if(error){syncErr();showToast('⚠ '+error.message);return;}
+  synced();await loadAll();closeModal('modalProd');renderCatalogo();showToast('✓ '+nombre+' guardado');
 }
-async function eliminarProducto(){if(!state.editProd)return;if(!confirm(`¿Eliminar ${state.editProd.nombre}?`))return;syncing();await sb.from('inv_productos').delete().eq('id',state.editProd.id);synced();await loadAll();closeModal('modalProducto');renderCatalogo();showToast('Producto eliminado');}
+async function eliminarProd(){if(!state.editProd||!confirm('¿Eliminar?'))return;await sb.from('inv_productos').delete().eq('id',state.editProd.id);await loadAll();closeModal('modalProd');renderCatalogo();showToast('Eliminado');}
 
-/* ══ RECETAS (costeo) ══ */
-function costoReceta(r){return r.ingredientes.reduce((a,ing)=>{const p=state.productos.find(x=>x.id===ing.producto_id);if(!p)return a;return a+(ing.ml/p.volumen)*p.costo;},0);}
-function renderRecetas(){
-  document.getElementById('recetasList').innerHTML=state.recetas.length?state.recetas.map(r=>{
-    const costo=costoReceta(r),margen=r.precio>0?(r.precio-costo)/r.precio*100:0;
-    const mColor=margen>=70?'var(--green)':margen>=50?'var(--yellow)':'var(--red)';
-    const ings=r.ingredientes.map(ing=>{const p=state.productos.find(x=>x.id===ing.producto_id);return p?`${ing.ml}ml ${p.nombre}`:'';}).filter(Boolean).join(' · ');
-    return`<div class="recipe-card" onclick="eliminarReceta('${r.id}')"><div class="recipe-head"><div><div class="recipe-name">🍹 ${r.nombre}</div><div class="recipe-ing">${ings}</div></div><div style="text-align:right"><div class="recipe-margin" style="color:${mColor}">${margen.toFixed(0)}% margen</div></div></div><div class="recipe-bar"><div style="height:100%;width:${Math.min(100,margen)}%;background:${mColor};border-radius:99px"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>Costo: S/${costo.toFixed(2)}</span><span>Venta: S/${r.precio}</span><span>Ganancia: S/${(r.precio-costo).toFixed(2)}</span></div></div>`;
-  }).join(''):'<div class="empty"><div class="em">🍹</div><div class="t">Sin recetas</div><div class="s">Agrega tragos para costear</div></div>';
-}
-function openNuevaReceta(){state.recetaIngs=[{producto_id:state.productos[0]?.id,ml:30}];document.getElementById('nr-nombre').value='';document.getElementById('nr-precio').value='';renderIngredientes();document.getElementById('modalReceta').classList.add('show');}
-function addIngrediente(){state.recetaIngs.push({producto_id:state.productos[0]?.id,ml:30});renderIngredientes();}
-function renderIngredientes(){
-  document.getElementById('nr-ingredientes').innerHTML=state.recetaIngs.map((ing,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center"><select class="form-select" style="flex:1" onchange="updIng(${i},'producto_id',this.value)">${state.productos.map(p=>`<option value="${p.id}" ${ing.producto_id===p.id?'selected':''}>${p.emoji} ${p.nombre}</option>`).join('')}</select><div class="input-suffix" style="width:90px"><input class="form-input" type="number" value="${ing.ml}" onchange="updIng(${i},'ml',this.value)" style="padding-right:30px"><span class="sfx">ml</span></div><button class="btn btn-sm btn-outline" style="width:36px;padding:8px" onclick="rmIng(${i})">×</button></div>`).join('');
-  updCostoReceta();
-}
-function updIng(i,k,v){state.recetaIngs[i][k]=k==='ml'?parseFloat(v):v;updCostoReceta();}
-function rmIng(i){state.recetaIngs.splice(i,1);renderIngredientes();}
-function updCostoReceta(){const costo=state.recetaIngs.reduce((a,ing)=>{const p=state.productos.find(x=>x.id===ing.producto_id);return p?a+(ing.ml/p.volumen)*p.costo:a;},0);const precio=parseFloat(document.getElementById('nr-precio').value)||0;document.getElementById('nr-costo').textContent=`Costo: S/${costo.toFixed(2)}${precio?` · Margen: ${((precio-costo)/precio*100).toFixed(0)}%`:''}`;}
-async function guardarReceta(){const nombre=document.getElementById('nr-nombre').value.trim();if(!nombre){showToast('Ingresa el nombre');return;}const precio=parseFloat(document.getElementById('nr-precio').value)||0;syncing();const {error}=await sb.from('inv_recetas').insert({nombre,precio_venta:precio,ingredientes:state.recetaIngs});if(error){syncErr();showToast('⚠ '+error.message);return;}synced();await loadAll();closeModal('modalReceta');renderRecetas();showToast(`✓ ${nombre} guardada`);}
-async function eliminarReceta(id){if(!confirm('¿Eliminar receta?'))return;await sb.from('inv_recetas').delete().eq('id',id);await loadAll();renderRecetas();showToast('Receta eliminada');}
-document.getElementById('nr-precio')?.addEventListener('input',updCostoReceta);
-
-/* ══ FACTURAS (entrada IA) ══ */
-function renderFacturas(){
-  sb.from('inv_facturas').select('*').eq('local_id',state.localActivo).order('created_at',{ascending:false}).then(({data})=>{
-    document.getElementById('facturasList').innerHTML=(data&&data.length)?data.map(f=>`<div class="prod-item" style="cursor:default"><div class="prod-emoji">📄</div><div class="prod-body"><div class="prod-name">${f.proveedor||'Proveedor'}</div><div class="prod-meta">${(f.items||[]).length} items · ${f.fecha||''}</div></div><div class="prod-right"><div class="prod-stock">S/${Math.round(f.total)}</div></div></div>`).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:14px">Sin facturas aún</div>';
-  });
-}
-function analizarFactura(input){
-  if(!input.files[0])return;
-  document.getElementById('facturaLoading').style.display='block';
-  document.getElementById('facturaResult').innerHTML='';
-  setTimeout(async()=>{
-    document.getElementById('facturaLoading').style.display='none';
-    // Simulación de extracción IA (en producción: Claude Vision API)
-    const items=[{nombre:'Vodka Absolut',cantidad:6,costo:48},{nombre:'Gin Tanqueray',cantidad:4,costo:72},{nombre:'Aperol',cantidad:3,costo:58}];
-    const total=items.reduce((a,i)=>a+i.cantidad*i.costo,0);
-    document.getElementById('facturaResult').innerHTML=`<div class="card"><div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">🤖 IA detectó ${items.length} productos</div>${items.map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--dim)"><span>${i.cantidad}× ${i.nombre}</span><b>S/${i.cantidad*i.costo}</b></div>`).join('')}<div style="display:flex;justify-content:space-between;padding-top:10px;font-weight:700"><span>Total</span><span style="color:var(--gold)">S/${total}</span></div></div><button class="btn btn-green" onclick='confirmarFactura(${JSON.stringify(items).replace(/'/g,"&#39;")},${total})'>✓ Ingresar al stock</button>`;
-  },2000);
-}
-async function confirmarFactura(items,total){
-  syncing();
-  await sb.from('inv_facturas').insert({local_id:state.localActivo,proveedor:'Distribuidora (IA)',fecha:new Date().toISOString().slice(0,10),items,total});
-  synced();showToast(`✓ Factura ingresada: ${items.length} productos, S/${total}`);
-  document.getElementById('facturaResult').innerHTML='';renderFacturas();
-}
-
-/* ══ TRANSFERENCIAS ══ */
-function renderTransfer(){
-  document.getElementById('transferList').innerHTML=state.transferencias.length?state.transferencias.map(t=>{
-    const o=state.locales.find(l=>l.id===t.origen_id),d=state.locales.find(l=>l.id===t.destino_id),p=state.productos.find(x=>x.id===t.producto_id);
-    const eColor=t.estado==='completada'?'var(--green)':t.estado==='pendiente'?'var(--yellow)':'var(--muted)';
-    return`<div class="prod-item" style="cursor:default"><div class="prod-emoji">🔄</div><div class="prod-body"><div class="prod-name">${p?p.emoji+' '+p.nombre:'Producto'}</div><div class="prod-meta">${o?o.nombre:'?'} → ${d?d.nombre:'?'} · ${t.cantidad} bot</div></div><div class="prod-right"><div style="font-size:10px;font-weight:700;color:${eColor};text-transform:uppercase">${t.estado}</div>${t.estado==='pendiente'?`<button class="btn btn-sm btn-green" style="margin-top:4px;font-size:10px" onclick="completarTransfer('${t.id}')">Completar</button>`:''}</div></div>`;
-  }).join(''):'<div class="empty"><div class="em">🔄</div><div class="t">Sin transferencias</div></div>';
-}
-function openNuevaTransfer(){
-  const locOpts=state.locales.map(l=>`<option value="${l.id}">${state.marcas.find(m=>m.id===l.marca_id)?.nombre} · ${l.nombre}</option>`).join('');
-  document.getElementById('nt-origen').innerHTML=locOpts;document.getElementById('nt-destino').innerHTML=locOpts;
-  document.getElementById('nt-origen').value=state.localActivo;
-  document.getElementById('nt-producto').innerHTML=state.productos.map(p=>`<option value="${p.id}">${p.emoji} ${p.nombre}</option>`).join('');
-  document.getElementById('nt-cantidad').value=1;document.getElementById('modalTransfer').classList.add('show');
-}
-async function guardarTransfer(){
-  const origen=document.getElementById('nt-origen').value,destino=document.getElementById('nt-destino').value;
-  if(origen===destino){showToast('Origen y destino deben ser distintos');return;}
-  syncing();const {error}=await sb.from('inv_transferencias').insert({origen_id:origen,destino_id:destino,producto_id:document.getElementById('nt-producto').value,cantidad:parseFloat(document.getElementById('nt-cantidad').value)||1,estado:'pendiente'});
-  if(error){syncErr();showToast('⚠ '+error.message);return;}
-  synced();await loadAll();closeModal('modalTransfer');renderTransfer();showToast('✓ Transferencia registrada');
-}
-async function completarTransfer(id){await sb.from('inv_transferencias').update({estado:'completada'}).eq('id',id);await loadAll();renderTransfer();showToast('✓ Transferencia completada');}
-
-/* ══ REPORTES + VARIANCE ══ */
+// ── REPORTES ──
 function renderReportes(){
-  document.getElementById('rep-valor').textContent='S/'+Math.round(valorTotal()).toLocaleString();
-  document.getElementById('rep-botellas').textContent=botellasTotal().toFixed(1);
-  const c=conteoLocal();
-  // Variance demo (consumo teórico vs ventas POS) — simulado
-  const variance=state.productos.slice(0,5).map(p=>{const e=c[p.id];const stock=e?e.bottlesEquiv:0;const teorico=Math.random()*2;const real=teorico*(0.85+Math.random()*0.2);const merma=(teorico-real)/teorico*100;return{p,merma};});
-  document.getElementById('varianceList').innerHTML=variance.map(({p,merma})=>{const mc=merma>10?'var(--red)':merma>5?'var(--yellow)':'var(--green)';return`<div class="var-row"><div class="prod-emoji">${p.emoji}</div><div class="var-bar"><div class="var-name">${p.nombre}</div><div class="var-track"><div class="var-fill" style="width:${Math.min(100,merma*4)}%;background:${mc}"></div></div></div><div style="font-family:'DM Mono',monospace;font-size:13px;color:${mc}">${merma.toFixed(1)}%</div></div>`;}).join('');
-  // Reorden
+  const c=conteoLocal();const val=valorTotal();
+  document.getElementById('rep-valor').textContent='S/'+Math.round(val).toLocaleString();
+  document.getElementById('rep-items').textContent=Object.keys(c).length;
   const reorden=state.productos.map(p=>{const e=c[p.id];const bot=e?e.bottlesEquiv:0;return{p,bot,falta:p.par-bot};}).filter(x=>x.falta>0).sort((a,b)=>b.falta-a.falta);
-  document.getElementById('reordenList').innerHTML=reorden.length?reorden.map(({p,bot,falta})=>`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div class="reorder-body"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">Tienes ${bot.toFixed(1)} · par ${p.par}</div></div><div class="reorder-qty">pedir ${Math.ceil(falta)}<div style="font-size:9px;color:var(--muted)">S/${Math.round(Math.ceil(falta)*p.costo)}</div></div></div>`).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:14px">✓ Todo sobre el par</div>';
-  // Detalle
-  const detalle=state.productos.map(p=>({p,e:c[p.id]})).filter(x=>x.e).sort((a,b)=>(b.e.valor||0)-(a.e.valor||0));
-  document.getElementById('detalleList').innerHTML=detalle.length?detalle.map(({p,e})=>`<div class="prod-item" style="cursor:default"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}</div><div class="prod-meta">${e.selladas} selladas + ${e.volumeMl}ml = ${Math.round(e.totalMl)}ml</div></div><div class="prod-right"><div class="prod-stock">${e.bottlesEquiv.toFixed(1)} bot</div><div class="prod-val">S/${Math.round(e.valor)}</div></div></div>`).join(''):'<div class="empty"><div class="em">📋</div><div class="t">Sin conteos</div></div>';
+  document.getElementById('reordenList').innerHTML=reorden.length?reorden.map(({p,bot,falta})=>`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div style="flex:1"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">Tienes ${bot.toFixed(1)} · par ${p.par} · S/${p.costo}</div></div><div class="reorder-qty">pedir ${Math.ceil(falta)}<div style="font-size:9px;color:var(--muted)">S/${Math.round(Math.ceil(falta)*p.costo)}</div></div></div>`).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:12px">✓ Todo sobre el par</div>';
+  const det=state.productos.map(p=>({p,e:c[p.id]})).filter(x=>x.e&&x.e.valor>0).sort((a,b)=>(b.e.valor||0)-(a.e.valor||0));
+  const tipoBadge={peso:'tipo-peso',litro:'tipo-litro',kg:'tipo-kg',unidad:'tipo-unidad',caja:'tipo-caja'};
+  document.getElementById('detalleList').innerHTML=det.length?det.map(({p,e})=>`<div class="prod-item" style="cursor:default"><div class="prod-emoji">${p.emoji}</div><div class="prod-body"><div class="prod-name">${p.nombre}<span class="tipo-badge ${tipoBadge[p.tipo]||'tipo-unidad'}">${p.tipo}</span></div><div class="prod-meta">${p.tipo==='peso'?`${e.selladas} sell. + ${e.volumeMl}ml = ${Math.round(e.totalMl)}ml`:e.bottlesEquiv+' '+p.unidad}</div></div><div class="prod-right"><div class="prod-stock">${e.bottlesEquiv.toFixed(p.tipo==='peso'?2:0)} ${p.tipo==='peso'?'bot':p.unidad}</div><div class="prod-val">S/${Math.round(e.valor)}</div></div></div>`).join(''):'<div class="empty"><div class="em">📋</div><div class="t">Sin conteos</div></div>';
 }
 
-/* ══ MODALS / TOAST ══ */
+// ── AJUSTES ──
+function renderAjustes(){
+  renderCtxPill();updateBTUI();
+  const ae=document.getElementById('areaOrdenList');
+  ae.innerHTML=AREAS.map(a=>{const orden=(state.ordenConteo[state.localActivo]||{})[a.id]||[];return`<div class="ctx-option" onclick="openOrdenForArea('${a.id}')"><span class="em">${a.e}</span><div style="flex:1"><div class="nm">${a.n}</div><div class="mt">${orden.length>0?orden.length+' productos en orden definido':'Sin orden definido — usa el predeterminado'}</div></div><span style="color:var(--muted)">✏️</span></div>`;}).join('');
+}
+function openOrdenForArea(area){
+  const a=AREAS.find(x=>x.id===area);
+  document.getElementById('ordenTitle').textContent=(a?a.e+' '+a.n:'')+' — Orden de conteo';
+  const orden=(state.ordenConteo[state.localActivo]||{})[area]||[];
+  const inOrder=orden.map(id=>state.productos.find(p=>p.id===id)).filter(Boolean);
+  const rest=state.productos.filter(p=>!orden.includes(p.id));
+  state.ordenEditArea=area;state.ordenEditList=[...inOrder,...rest];
+  renderOrdenList();document.getElementById('modalOrden').classList.add('show');
+}
+
+// ── MODALS / TOAST ──
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
-let _tt;function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2800);}
+let _tt;function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600);}
 
-/* ══ INIT ══ */
+// ── INIT ──
 (async()=>{
   await loadAll();
-  renderCtxPill();renderDashboard();
+  renderCtxPill();renderDashboard();updateBTUI();
   document.getElementById('loader').style.display='none';
 })();
 </script>
