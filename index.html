@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Casa Italia · PREP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#faf6ee;--surface:#fff;--surface2:#f5f0e5;--border:#e8e0d0;--border2:#d4c8b0;
+  --text:#1c1a14;--muted:#8a7a60;--dim:#c4b898;
+  --red:#7a1818;--red-l:#8b1a1a;--red-d:rgba(122,24,24,.08);
+  --gold:#b8941e;--gold-l:#c4a030;--gold-d:rgba(184,148,30,.10);
+  --green:#2a4a1e;--green-d:rgba(42,74,30,.08);
+  --dark:#1c1a14;
+  --libre:#22c55e;--ocupada:#b8941e;--reservada:#2563eb;--sucia:#9ca3af;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;display:flex;flex-direction:column;}
+
+/* ── TOP BAR ── */
+.topbar{height:54px;background:var(--dark);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-ci{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;color:#fff;letter-spacing:1px;}
+.logo-sep{width:1px;height:24px;background:rgba(255,255,255,.15);}
+.logo-prep{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:3px;color:var(--gold);opacity:.8;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.top-stat{display:flex;flex-direction:column;align-items:flex-end;}
+.top-stat strong{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
+.top-stat span{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;}
+.clock{font-family:'DM Mono',monospace;font-size:15px;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:6px;letter-spacing:1px;}
+.user-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:5px 10px;font-size:12px;color:#fff;}
+.urole{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--gold-d);color:var(--gold);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── MODULE NAV ── */
+.modnav{height:46px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:2px;flex-shrink:0;}
+.modnav-item{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--muted);white-space:nowrap;}
+.modnav-item:hover{background:var(--surface2);color:var(--text);}
+.modnav-item.active{background:var(--red-d);color:var(--red-l);font-weight:700;}
+.modnav-item.active .mi{opacity:1;}
+.mi{font-size:16px;}
+
+/* ── WORKSPACE ── */
+.workspace{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.module-screen{display:none;flex:1;overflow:hidden;}
+.module-screen.active{display:flex;}
+
+/* ════════════════════════════════════
+   POS MODULE
+════════════════════════════════════ */
+.pos-layout{display:flex;flex:1;overflow:hidden;}
+.map-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;transition:flex .25s;}
+.order-open .map-panel{flex:0 0 55%;}
+.zone-bar{height:44px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:4px;flex-shrink:0;}
+.zone-tab{padding:6px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid transparent;color:var(--muted);transition:all .15s;}
+.zone-tab:hover{color:var(--text);}
+.zone-tab.active{background:var(--red-d);border-color:rgba(122,24,24,.2);color:var(--red-l);}
+.legend{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.ld{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:600;}
+.ldot{width:8px;height:8px;border-radius:2px;}
+.map-area{flex:1;overflow:auto;padding:20px;background:var(--bg);}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
+.tc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.tc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.tc.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-d);}
+.tsbar{height:4px;}
+.tc.libre .tsbar{background:var(--libre);}
+.tc.ocupada .tsbar{background:var(--ocupada);}
+.tc.reservada .tsbar{background:var(--reservada);}
+.tc.sucia .tsbar{background:var(--sucia);}
+.tc-inner{padding:12px;}
+.tnum{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;line-height:1;margin-bottom:4px;}
+.tc.libre .tnum{color:var(--libre);}
+.tc.ocupada .tnum{color:var(--gold);}
+.tc.reservada .tnum{color:var(--reservada);}
+.tc.sucia .tnum{color:var(--muted);}
+.tpax{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:3px;margin-bottom:6px;}
+.tamt{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--gold);}
+.ttim{font-size:10px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;}
+.tbadge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 6px;border-radius:3px;text-transform:uppercase;}
+.tc{position:relative;}
+.badge-libre{background:rgba(34,197,94,.1);color:var(--libre);}
+.badge-ocupada{background:var(--gold-d);color:var(--gold);}
+.badge-reservada{background:rgba(37,99,235,.08);color:var(--reservada);}
+.badge-sucia{background:rgba(156,163,175,.1);color:var(--sucia);}
+
+/* ORDER PANEL */
+.order-panel{width:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s;}
+.order-open .order-panel{width:45%;min-width:380px;}
+.op-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.op-tname{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:1px;}
+.op-meta{font-size:11px;color:var(--muted);}
+.close-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s;}
+.close-btn:hover{border-color:var(--red-l);color:var(--red-l);}
+.order-items{flex:1;overflow-y:auto;}
+.oi{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .1s;}
+.oi:hover{background:var(--surface2);}
+.oi-name{font-weight:600;font-size:13px;}
+.qty-ctrl{display:flex;align-items:center;gap:5px;}
+.qb{width:24px;height:24px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;}
+.qb:hover{border-color:var(--gold);color:var(--gold);}
+.qn{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;min-width:18px;text-align:center;}
+.ipr{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--gold);min-width:60px;text-align:right;}
+.oempty{padding:40px 20px;text-align:center;color:var(--muted);}
+.oeicon{font-size:40px;margin-bottom:10px;opacity:.3;}
+.op-footer{border-top:1px solid var(--border);padding:14px 16px;flex-shrink:0;}
+.sub-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:3px;}
+.tot-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.tot-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.5px;}
+.tot-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--gold);}
+.oa{display:flex;gap:8px;}
+.btn{border:none;border-radius:8px;padding:10px 16px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
+.btn-gold{background:var(--gold);color:#fff;flex:2;font-size:14px;}
+.btn-gold:hover{background:var(--gold-l);}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text);flex:1;}
+.btn-ghost:hover{border-color:var(--border2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.w100{width:100%;}
+.btn.sm{padding:6px 12px;font-size:12px;}
+.btn-red{background:var(--red-l);color:#fff;}
+.btn-green{background:var(--libre);color:#fff;}
+
+/* MENU SECTION */
+.menu-sec{border-top:1px solid var(--border);max-height:300px;display:flex;flex-direction:column;flex-shrink:0;}
+.mcats{display:flex;gap:4px;padding:10px 12px;border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;}
+.ccat{padding:5px 12px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .12s;font-family:'Barlow',sans-serif;}
+.ccat:hover{color:var(--text);}
+.ccat.active{background:var(--red-d);border-color:rgba(122,24,24,.2);color:var(--red-l);}
+.mitems{overflow-y:auto;padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mib{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;transition:all .12s;font-family:'Barlow',sans-serif;}
+.mib:hover{border-color:var(--gold);}
+.mib:active{transform:scale(.97);}
+.mib-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.2;}
+.mib-desc{font-size:10px;color:var(--muted);margin-bottom:4px;font-style:italic;}
+.mib-price{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--gold);}
+
+/* ════════════════════════════════════
+   RESERVAS MODULE
+════════════════════════════════════ */
+.res-layout{display:flex;flex:1;overflow:hidden;}
+
+/* HOST PANEL */
+.host-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.host-toolbar{height:44px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;}
+.host-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.5px;}
+.host-day{font-size:12px;color:var(--muted);}
+.host-body{flex:1;overflow-y:auto;padding:16px;}
+.res-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s;}
+.res-card:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.res-card.urgente{border-left:3px solid var(--red-l);}
+.res-time{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--dark);min-width:52px;}
+.res-info{flex:1;}
+.res-name{font-weight:700;font-size:14px;}
+.res-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.res-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}
+.rtag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.rtag-vip{background:var(--gold-d);color:var(--gold);}
+.rtag-bd{background:var(--red-d);color:var(--red-l);}
+.rtag-ann{background:rgba(37,99,235,.08);color:#2563eb;}
+.rtag-alg{background:rgba(239,68,68,.08);color:#dc2626;}
+.rtag-first{background:var(--green-d);color:var(--green);}
+.res-action{display:flex;gap:6px;}
+.res-seat-btn{background:var(--green-d);color:var(--green);border:1px solid rgba(34,197,94,.2);padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;}
+.res-seat-btn:hover{background:rgba(34,197,94,.2);}
+.res-tbl{font-size:11px;color:var(--muted);padding:5px 10px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);}
+
+/* WIDGET PANEL (right side) */
+.widget-side{width:420px;border-left:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.ws-header{padding:14px 16px;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;}
+.widget-embed{flex:1;overflow-y:auto;padding:16px;}
+.we-banner{background:var(--dark);border-radius:12px;padding:20px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.we-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;color:#fff;}
+.we-meta{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
+.we-badge{font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);background:rgba(184,148,30,.15);border:1px solid rgba(184,148,30,.2);border-radius:20px;padding:4px 10px;}
+.we-step{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;}
+.we-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;display:block;}
+.we-input{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;color:var(--text);width:100%;outline:none;transition:border-color .15s;margin-bottom:12px;}
+.we-input:focus{border-color:var(--gold);}
+.pax-row{display:flex;gap:6px;margin-bottom:14px;}
+.px-btn{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;font-weight:700;font-size:13px;font-family:'Barlow Condensed',sans-serif;transition:all .15s;}
+.px-btn.sel{border-color:var(--dark);background:var(--dark);color:#fff;}
+.slot-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.slot{border:1.5px solid var(--border);border-radius:7px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .15s;}
+.slot:hover{border-color:var(--gold);}
+.slot.sel{border-color:var(--dark);background:var(--dark);color:#fff;}
+.slot.full{color:var(--dim);text-decoration:line-through;cursor:default;border-style:dashed;}
+.we-cta{width:100%;background:var(--dark);color:var(--gold);border:none;border-radius:10px;padding:13px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;cursor:pointer;transition:all .15s;margin-top:4px;}
+.we-cta:hover{background:#2d2a1e;}
+
+/* ════════════════════════════════════
+   BOH MODULE
+════════════════════════════════════ */
+.boh-layout{display:flex;flex:1;overflow:hidden;}
+.boh-left{width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.boh-right{flex:1;overflow-y:auto;padding:20px;background:var(--bg);}
+.boh-tab{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.btab{flex:1;padding:10px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;}
+.btab.active{color:var(--red-l);border-bottom-color:var(--red-l);}
+.boh-list{flex:1;overflow-y:auto;padding:10px;}
+.boh-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:6px;cursor:pointer;transition:all .15s;}
+.boh-card:hover{border-color:var(--border2);}
+.boh-card.sel{border-color:var(--gold);background:var(--gold-d);}
+.boh-card.urgente{border-left:3px solid var(--red-l);}
+.bc-header{display:flex;justify-content:space-between;margin-bottom:4px;}
+.bc-area{font-weight:700;font-size:13px;}
+.bc-meta{font-size:10px;color:var(--muted);}
+.boh-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;margin-bottom:4px;}
+.boh-section-sub{color:var(--muted);font-size:12px;margin-bottom:20px;}
+.stock-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surface);border-radius:10px;overflow:hidden;}
+.stock-table th{text-align:left;padding:9px 14px;background:var(--surface2);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);border-bottom:1px solid var(--border);}
+.stock-table td{padding:10px 14px;border-bottom:1px solid var(--border);}
+.stock-table tr:last-child td{border:none;}
+.stock-table tr:hover td{background:var(--surface2);}
+.sstat.ok{color:var(--libre);font-weight:700;}
+.sstat.low{color:var(--gold);font-weight:700;}
+.sstat.zero{color:var(--red-l);font-weight:700;}
+.price-row{display:grid;grid-template-columns:1fr 80px 80px 80px 80px 130px;gap:0;align-items:center;}
+.pr-head{background:var(--surface2);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);}
+.pr-cell{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;}
+.pr-best{color:var(--libre);font-weight:700;font-family:'DM Mono',monospace;}
+.pr-ok{color:var(--muted);font-family:'DM Mono',monospace;}
+.pr-high{color:var(--dim);font-family:'DM Mono',monospace;}
+.assign-sel{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:11px;font-family:'Barlow',sans-serif;color:var(--text);cursor:pointer;outline:none;width:100%;}
+
+/* ════════════════════════════════════
+   KDS MODULE
+════════════════════════════════════ */
+.kds-layout{display:flex;flex:1;overflow:hidden;background:#0f1117;}
+.kds-col{flex:1;display:flex;flex-direction:column;border-right:1px solid #1f2230;overflow:hidden;}
+.kds-col:last-child{border-right:none;}
+.kds-header{padding:12px 16px;border-bottom:1px solid #1f2230;display:flex;align-items:center;justify-content:space-between;}
+.kds-zone{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;}
+.kds-count{font-family:'DM Mono',monospace;font-size:12px;color:#5a6080;}
+.kds-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.kds-ticket{background:#181b22;border:1px solid #2a2d3e;border-radius:10px;overflow:hidden;}
+.kds-ticket.urgent{border-color:#ef4444;}
+.kt-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #2a2d3e;}
+.kt-mesa{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#e4e8f8;}
+.kt-timer{font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;border-radius:4px;}
+.kt-timer.ok{background:rgba(34,197,94,.1);color:#22c55e;}
+.kt-timer.warn{background:rgba(245,158,11,.1);color:#f59e0b;}
+.kt-timer.late{background:rgba(239,68,68,.1);color:#ef4444;}
+.kt-items{padding:10px 14px;}
+.kt-item{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1f2230;font-size:13px;color:#c4c8e0;}
+.kt-item:last-child{border:none;}
+.kt-qty{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:var(--gold-l);min-width:20px;}
+.kt-done{display:flex;justify-content:flex-end;padding:8px 14px 12px;}
+.kds-done-btn{background:#22c55e;border:none;color:#fff;padding:7px 18px;border-radius:7px;font-family:'Barlow',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s;}
+.kds-done-btn:hover{background:#16a34a;}
+
+/* ════════════════════════════════════
+   DASHBOARD MODULE
+════════════════════════════════════ */
+.dash-layout{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.dstat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.dstat-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:4px;}
+.dstat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.dstat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.dc-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.dc-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;background:var(--green-d);color:var(--green);}
+.dc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dc-row:last-child{border:none;}
+.dc-num{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--gold);}
+.fc-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:6px;}
+.fc-fill{height:100%;border-radius:99px;}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.alert-item:last-child{border:none;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.alert-text{flex:1;line-height:1.5;}
+.alert-time{font-size:10px;color:var(--dim);margin-top:2px;}
+
+/* ════════════════════════════════════
+   MODALS
+════════════════════════════════════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fi .15s ease;}
+.overlay.hidden{display:none;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;animation:su .2s ease;}
+@keyframes su{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.mh{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mh-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;}
+.mclose{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:4px 8px;}
+.mclose:hover{color:var(--text);}
+.mb{padding:20px 24px;}
+.mf{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;}
+.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;display:block;}
+.finput{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .15s;margin-bottom:12px;}
+.finput:focus{border-color:var(--gold);}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.pmethod{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all .15s;}
+.pmethod:hover{border-color:var(--border2);}
+.pmethod.sel{border-color:var(--gold);background:var(--gold-d);}
+.pm-icon{font-size:24px;margin-bottom:4px;}
+.pm-name{font-weight:700;font-size:12px;}
+.comp-toggle{display:flex;background:var(--surface2);border-radius:8px;padding:4px;margin-bottom:16px;}
+.ctbtn{flex:1;padding:8px;border-radius:6px;border:none;font-family:'Barlow',sans-serif;font-weight:700;font-size:13px;cursor:pointer;background:none;color:var(--muted);transition:all .15s;}
+.ctbtn.active{background:var(--dark);color:var(--gold);}
+.co-sum{background:var(--surface2);border-radius:8px;padding:12px 14px;margin-bottom:14px;}
+.cs-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:var(--muted);}
+.cs-total{display:flex;justify-content:space-between;padding-top:8px;margin-top:6px;border-top:1px solid var(--border);font-weight:700;font-size:14px;}
+.cs-total span:last-child{font-family:'DM Mono',monospace;color:var(--gold);}
+.success-screen{text-align:center;padding:32px 24px;}
+.sicon{width:70px;height:70px;background:var(--green-d);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:34px;animation:pop .3s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.stitle{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:24px;margin-bottom:6px;}
+.scdr{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface2);border-radius:6px;padding:8px 12px;display:inline-block;margin:10px 0;}
+.pax-sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pxb{width:44px;height:44px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;}
+.pxb.sel{border-color:var(--gold);background:var(--gold-d);color:var(--gold);}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);border:1px solid rgba(255,255,255,.1);color:#fff;padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--libre);border-color:var(--libre);}
+.seclabel{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:16px 0 10px;display:flex;align-items:center;gap:10px;}
+.seclabel::after{content:'';flex:1;height:1px;background:var(--border);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-ci">Casa Italia</div>
+    <div class="logo-sep"></div>
+    <div class="logo-prep">PREP ≫</div>
+  </div>
+  <div class="topbar-right">
+    <div class="top-stat"><strong id="topMesas">9/16</strong><span>Mesas</span></div>
+    <div class="top-stat"><strong id="topVentas">S/ 2,341</strong><span>Hoy</span></div>
+    <div class="top-stat"><strong id="topRes">12</strong><span>Reservas noche</span></div>
+    <div style="width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 4px;"></div>
+    <div class="clock" id="clock">--:--</div>
+    <div class="user-pill"><span>🧑‍💼</span><span>Marco B.</span><span class="urole">Admin</span></div>
+    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,.35);">
+      <div class="status-dot"></div>online
+    </div>
+  </div>
+</div>
+
+<!-- MODULE NAV -->
+<div class="modnav">
+  <div class="modnav-item active" onclick="switchMod('pos',this)"><span class="mi">🖥️</span>POS · Mesas</div>
+  <div class="modnav-item" onclick="switchMod('reservas',this)"><span class="mi">📅</span>Reservas</div>
+  <div class="modnav-item" onclick="switchMod('boh',this)"><span class="mi">🛒</span>Compras BOH</div>
+  <div class="modnav-item" onclick="switchMod('kds',this)"><span class="mi">📺</span>KDS Cocina</div>
+  <div class="modnav-item" onclick="switchMod('dash',this)"><span class="mi">📊</span>Dashboard</div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:10px;color:var(--muted)">Casa Italia · Miraflores</span>
+    <span style="font-size:10px;background:var(--red-d);color:var(--red-l);padding:3px 8px;border-radius:4px;font-weight:700;">Cena · Turno activo</span>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+<!-- ══ POS MODULE ══ -->
+<div id="mod-pos" class="module-screen active">
+<div class="pos-layout" id="posLayout">
+  <div class="map-panel" id="mapPanel">
+    <div class="zone-bar">
+      <div class="zone-tab active" onclick="switchZone('salon',this)">Salón Principale</div>
+      <div class="zone-tab" onclick="switchZone('terraza',this)">Terrazza</div>
+      <div class="zone-tab" onclick="switchZone('bar',this)">Bar & Lounge</div>
+      <div class="legend">
+        <div class="ld"><div class="ldot" style="background:var(--libre)"></div>Libre</div>
+        <div class="ld"><div class="ldot" style="background:var(--ocupada)"></div>Ocupada</div>
+        <div class="ld"><div class="ldot" style="background:var(--reservada)"></div>Reservada</div>
+        <div class="ld"><div class="ldot" style="background:var(--sucia)"></div>Sucia</div>
+      </div>
+    </div>
+    <div class="map-area"><div class="tgrid" id="tablesGrid"></div></div>
+  </div>
+  <div class="order-panel" id="orderPanel">
+    <div class="op-header">
+      <div>
+        <div class="op-tname" id="opTname">Mesa —</div>
+        <div class="op-meta" id="opMeta">0 ítems</div>
+      </div>
+      <button class="close-btn" onclick="closeOrder()">✕</button>
+    </div>
+    <div class="order-items" id="orderItems"><div class="oempty"><div class="oeicon">🍝</div><div>Agrega platos del menú</div></div></div>
+    <div class="op-footer">
+      <div class="sub-row"><span>Subtotal</span><span id="opSub">S/ 0.00</span></div>
+      <div class="sub-row"><span>IGV (18%)</span><span id="opIgv">S/ 0.00</span></div>
+      <div class="tot-row"><div class="tot-label">TOTAL</div><div class="tot-val" id="opTot">S/ 0.00</div></div>
+      <div class="oa">
+        <button class="btn btn-ghost" onclick="sendKDS()">👨‍🍳 Cucina</button>
+        <button class="btn btn-gold" onclick="openCheckout()">💳 Cobrar</button>
+      </div>
+    </div>
+    <div class="menu-sec">
+      <div class="mcats" id="menuCats"></div>
+      <div class="mitems" id="menuItems"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ RESERVAS MODULE ══ -->
+<div id="mod-reservas" class="module-screen">
+<div class="res-layout">
+  <div class="host-panel">
+    <div class="host-toolbar">
+      <div class="host-title">📋 Libro de Reservas</div>
+      <div class="host-day">Viernes 22 Mayo · Turno Cena</div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <span style="font-size:12px;background:var(--green-d);color:var(--green);padding:4px 10px;border-radius:6px;font-weight:700;">12 reservas confirmadas</span>
+        <span style="font-size:12px;background:var(--gold-d);color:var(--gold);padding:4px 10px;border-radius:6px;font-weight:700;">38 cubiertos</span>
+      </div>
+    </div>
+    <div class="host-body" id="resList"></div>
+  </div>
+  <div class="widget-side">
+    <div class="ws-header">🌐 Widget público <span style="font-size:10px;color:var(--muted);font-weight:400">— lo que ve el cliente</span></div>
+    <div class="widget-embed">
+      <div class="we-banner">
+        <div><div class="we-name">Casa Italia</div><div class="we-meta">Cucina italiana · Miraflores, Lima</div></div>
+        <div class="we-badge">⚡ PREP</div>
+      </div>
+      <div class="we-step">Paso 1 — Fecha y personas</div>
+      <label class="we-label">Fecha de la reserva</label>
+      <input class="we-input" value="Sábado 23 mayo 2026" type="text">
+      <label class="we-label">Número de personas</label>
+      <div class="pax-row">
+        <div class="px-btn">1</div><div class="px-btn sel">2</div><div class="px-btn">3</div><div class="px-btn">4</div><div class="px-btn">6</div>
+      </div>
+      <div class="we-step">Paso 2 — Horario</div>
+      <div class="slot-row">
+        <div class="slot">12:30</div><div class="slot">13:00</div><div class="slot full">13:30</div>
+        <div class="slot sel">20:00</div><div class="slot">20:30</div><div class="slot full">21:00</div><div class="slot">21:30</div>
+      </div>
+      <div class="we-step">Paso 3 — Tus datos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><label class="we-label">Nombre</label><input class="we-input" value="Lucía"></div>
+        <div><label class="we-label">Apellido</label><input class="we-input" value="Santini"></div>
+      </div>
+      <label class="we-label">WhatsApp</label>
+      <input class="we-input" value="987 654 321">
+      <button class="we-cta" onclick="showToast('✓ Reserva confirmada por WhatsApp','ok')">CONFIRMAR RESERVA →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ BOH MODULE ══ -->
+<div id="mod-boh" class="module-screen">
+<div class="boh-layout">
+  <div class="boh-left">
+    <div class="boh-tab">
+      <div class="btab active" id="btab1" onclick="switchBohTab(1)">Solicitudes</div>
+      <div class="btab" id="btab2" onclick="switchBohTab(2)">Stock</div>
+    </div>
+    <div class="boh-list" id="bohList"></div>
+  </div>
+  <div class="boh-right" id="bohRight">
+    <div class="boh-section-title">Selecciona una solicitud</div>
+    <div class="boh-section-sub">Elige una requisición del panel izquierdo para gestionar stock y precios.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ KDS MODULE ══ -->
+<div id="mod-kds" class="module-screen">
+<div class="kds-layout">
+  <div class="kds-col">
+    <div class="kds-header"><div class="kds-zone" style="color:#f59e0b">🔥 Cocina Caliente</div><div class="kds-count" id="kds1count">3 órdenes</div></div>
+    <div class="kds-body" id="kds1"></div>
+  </div>
+  <div class="kds-col">
+    <div class="kds-header"><div class="kds-zone" style="color:#22c55e">🥗 Entrantes & Fríos</div><div class="kds-count" id="kds2count">2 órdenes</div></div>
+    <div class="kds-body" id="kds2"></div>
+  </div>
+  <div class="kds-col">
+    <div class="kds-header"><div class="kds-zone" style="color:#a855f7">🍷 Bar & Bebidas</div><div class="kds-count" id="kds3count">2 órdenes</div></div>
+    <div class="kds-body" id="kds3"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ DASHBOARD MODULE ══ -->
+<div id="mod-dash" class="module-screen">
+<div class="dash-layout">
+  <div class="dash-grid">
+    <div class="dstat"><div class="dstat-val" style="color:var(--gold)">S/ 4,820</div><div class="dstat-label">Ventas hoy</div><div class="dstat-sub" style="color:var(--green)">↑ 18% vs lunes</div></div>
+    <div class="dstat"><div class="dstat-val" style="color:var(--libre)">127</div><div class="dstat-label">Cubiertos hoy</div><div class="dstat-sub">3 turnos completados</div></div>
+    <div class="dstat"><div class="dstat-val" style="color:var(--red-l)">31.4%</div><div class="dstat-label">Food cost</div><div class="dstat-sub" style="color:var(--red-l)">↑ Meta: 28%</div></div>
+    <div class="dstat"><div class="dstat-val" style="color:var(--reservada)">S/ 37.9</div><div class="dstat-label">Ticket promedio</div><div class="dstat-sub">↑ S/2.3 vs ayer</div></div>
+  </div>
+  <div class="dash-row">
+    <div class="dash-card">
+      <div class="dc-title">Platos más vendidos hoy <span class="dc-badge">TOP 5</span></div>
+      <div class="dc-row"><span>Spaghetti Carbonara</span><span class="dc-num">34 platos · S/1,632</span></div>
+      <div class="dc-row"><span>Bruschetta al Pomodoro</span><span class="dc-num">28 platos · S/784</span></div>
+      <div class="dc-row"><span>Osso Buco Milanese</span><span class="dc-num">19 platos · S/1,482</span></div>
+      <div class="dc-row"><span>Tiramisù della Casa</span><span class="dc-num">41 platos · S/1,148</span></div>
+      <div class="dc-row"><span>Risotto ai Porcini</span><span class="dc-num">22 platos · S/1,232</span></div>
+    </div>
+    <div class="dash-card">
+      <div class="dc-title">Food Cost por categoría</div>
+      <div class="dc-row"><span>Antipasti</span><span class="dc-num">24.2%</span></div>
+      <div style="padding:0 0 8px"><div class="fc-bar"><div class="fc-fill" style="width:24%;background:var(--libre)"></div></div></div>
+      <div class="dc-row"><span>Primi piatti</span><span class="dc-num">32.1%</span></div>
+      <div style="padding:0 0 8px"><div class="fc-bar"><div class="fc-fill" style="width:32%;background:var(--gold)"></div></div></div>
+      <div class="dc-row"><span>Secondi piatti</span><span class="dc-num">38.5%</span></div>
+      <div style="padding:0 0 8px"><div class="fc-bar"><div class="fc-fill" style="width:38%;background:var(--red-l)"></div></div></div>
+      <div class="dc-row"><span>Dolci</span><span class="dc-num">22.8%</span></div>
+      <div style="padding:0 0 8px"><div class="fc-bar"><div class="fc-fill" style="width:22%;background:var(--libre)"></div></div></div>
+    </div>
+  </div>
+  <div class="dash-row">
+    <div class="dash-card">
+      <div class="dc-title">Reservas esta noche</div>
+      <div class="dc-row"><span>Confirmadas</span><span class="dc-num" style="color:var(--libre)">12</span></div>
+      <div class="dc-row"><span>Cubiertos esperados</span><span class="dc-num">38</span></div>
+      <div class="dc-row"><span>En lista de espera</span><span class="dc-num" style="color:var(--gold)">3</span></div>
+      <div class="dc-row"><span>Walk-ins estimados</span><span class="dc-num">~8</span></div>
+      <div class="dc-row"><span>VIPs esta noche</span><span class="dc-num" style="color:var(--gold)">2</span></div>
+    </div>
+    <div class="dash-card">
+      <div class="dc-title">Alertas del sistema</div>
+      <div class="alert-item"><div class="alert-icon">⚠️</div><div><div class="alert-text"><strong>Stock bajo:</strong> Porcini secos — quedan 200g. Pedir mañana.</div><div class="alert-time">Hace 2 horas</div></div></div>
+      <div class="alert-item"><div class="alert-icon">🎂</div><div><div class="alert-text"><strong>Cumpleaños:</strong> Mesa 8 (Rossi, 20:00) — preparar detalle.</div><div class="alert-time">Brief turno 18:00</div></div></div>
+      <div class="alert-item"><div class="alert-icon">💳</div><div><div class="alert-text"><strong>Cierre de caja:</strong> Diferencia de S/12.50 en turno almuerzo.</div><div class="alert-time">Hace 1 hora</div></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /workspace -->
+
+<!-- MODALS -->
+<div class="overlay hidden" id="checkoutModal">
+<div class="modal">
+  <div class="mh"><div class="mh-title">💳 Cobro · <span id="coMesa">Mesa —</span></div><button class="mclose" onclick="closeModal('checkoutModal')">×</button></div>
+  <div class="mb">
+    <div class="co-sum" id="coSummary"></div>
+    <div class="seclabel">Método de pago</div>
+    <div class="pay-grid">
+      <div class="pmethod sel" onclick="selPay('efectivo',this)"><div class="pm-icon">💵</div><div class="pm-name">Efectivo</div></div>
+      <div class="pmethod" onclick="selPay('tarjeta',this)"><div class="pm-icon">💳</div><div class="pm-name">Tarjeta</div></div>
+      <div class="pmethod" onclick="selPay('yape',this)"><div class="pm-icon">📱</div><div class="pm-name">Yape</div></div>
+      <div class="pmethod" onclick="selPay('plin',this)"><div class="pm-icon">🔵</div><div class="pm-name">Plin</div></div>
+    </div>
+  </div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeModal('checkoutModal')" style="flex:1">Cancelar</button>
+    <button class="btn btn-gold" style="flex:2;font-size:14px" onclick="openSunat()">Continuar → Comprobante</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay hidden" id="sunatModal">
+<div class="modal">
+  <div class="mh"><div class="mh-title">🧾 Comprobante SUNAT</div><button class="mclose" onclick="closeModal('sunatModal')">×</button></div>
+  <div class="mb">
+    <div class="comp-toggle">
+      <button class="ctbtn active" id="bboletaBtn" onclick="setComp('boleta')">Boleta de Venta</button>
+      <button class="ctbtn" id="bfacturaBtn" onclick="setComp('factura')">Factura</button>
+    </div>
+    <div id="factFields" style="display:none">
+      <label class="flabel">RUC</label><input class="finput" placeholder="20xxxxxxxxx" maxlength="11">
+      <label class="flabel">Razón Social</label><input class="finput" placeholder="Empresa SAC">
+    </div>
+    <div class="co-sum" id="sunatSummary"></div>
+    <div style="background:var(--red-d);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7;">
+      <strong style="color:var(--red-l)">↗ Nubefact API:</strong> Firmado digitalmente y enviado a SUNAT en segundos.
+    </div>
+  </div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeModal('sunatModal')" style="flex:1">← Atrás</button>
+    <button class="btn btn-gold" style="flex:2;font-size:14px" id="emitBtn" onclick="emitir()">Emitir comprobante →</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay hidden" id="successModal">
+<div class="modal">
+  <div class="mb">
+    <div class="success-screen">
+      <div class="sicon">✓</div>
+      <div class="stitle">¡Cobro registrado!</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:6px" id="successSub">Boleta emitida · SUNAT validado</div>
+      <div class="scdr" id="successCdr"></div>
+      <div style="font-size:11px;color:var(--muted)">Mesa liberada automáticamente</div>
+    </div>
+  </div>
+  <div class="mf">
+    <button class="btn btn-ghost" style="flex:1" onclick="printRec()">🖨️ Imprimir</button>
+    <button class="btn btn-gold" style="flex:1" onclick="closeSuccess()">✓ Listo</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay hidden" id="newTableModal">
+<div class="modal">
+  <div class="mh"><div class="mh-title">🪑 Abrir Mesa</div><button class="mclose" onclick="closeModal('newTableModal')">×</button></div>
+  <div class="mb">
+    <label class="flabel">Número de comensales</label>
+    <div class="pax-sel" id="paxSel">
+      <div class="pxb sel" onclick="selPax(1,this)">1</div>
+      <div class="pxb" onclick="selPax(2,this)">2</div>
+      <div class="pxb" onclick="selPax(3,this)">3</div>
+      <div class="pxb" onclick="selPax(4,this)">4</div>
+      <div class="pxb" onclick="selPax(5,this)">5</div>
+      <div class="pxb" onclick="selPax(6,this)">6</div>
+      <div class="pxb" onclick="selPax(8,this)">8</div>
+      <div class="pxb" onclick="selPax(10,this)">10+</div>
+    </div>
+  </div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeModal('newTableModal')" style="flex:1">Cancelar</button>
+    <button class="btn btn-gold" style="flex:2" onclick="confirmNewTable()">Abrir mesa →</button>
+  </div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA — CASA ITALIA
+══════════════════════════════════════════ */
+const MENU = {
+  'Antipasti':[
+    {id:'a1',name:'Bruschetta al Pomodoro',desc:'Pan tostado, tomate, albahaca',price:28},
+    {id:'a2',name:'Carpaccio di Manzo',desc:'Res, rúcula, parmesano, alcaparras',price:42},
+    {id:'a3',name:'Burrata & Prosciutto',desc:'Burrata cremosa, jamón crudo',price:48},
+    {id:'a4',name:'Calamari Fritti',desc:'Calamar frito, mayonesa de limón',price:36},
+  ],
+  'Pasta & Risotto':[
+    {id:'p1',name:'Spaghetti Carbonara',desc:'Guanciale, huevo, pecorino',price:48},
+    {id:'p2',name:'Penne Arrabbiata',desc:'Salsa picante, ajo, tomate',price:38},
+    {id:'p3',name:'Tagliatelle Bolognese',desc:'Ragù de ternera, 4 horas',price:52},
+    {id:'p4',name:'Risotto ai Porcini',desc:'Hongos porcini, mantequilla, parmesano',price:56},
+    {id:'p5',name:'Fettuccine al Pesto',desc:'Albahaca fresca, piñones',price:44},
+  ],
+  'Secondi':[
+    {id:'s1',name:'Osso Buco Milanese',desc:'Jarrete de ternera, gremolata',price:78},
+    {id:'s2',name:'Saltimbocca Romana',desc:'Ternera, prosciutto, salvia',price:72},
+    {id:'s3',name:'Branzino al Forno',desc:'Lubina, limón, alcaparras',price:68},
+    {id:'s4',name:'Pollo alla Cacciatora',desc:'Pollo, vino, aceitunas, tomate',price:58},
+  ],
+  'Dolci':[
+    {id:'d1',name:'Tiramisù della Casa',desc:'Receta original 1970',price:28},
+    {id:'d2',name:'Panna Cotta',desc:'Frutti di bosco, coulis',price:24},
+    {id:'d3',name:'Cannoli Siciliani',desc:'Ricotta, pistacchio, x2',price:22},
+    {id:'d4',name:'Gelato Artigianale',desc:'2 bolas, cono o copa',price:18},
+  ],
+  'Vini & Bevande':[
+    {id:'v1',name:'Copa Vino Tinto',desc:'Chianti / Malbec / Cabernet',price:28},
+    {id:'v2',name:'Copa Vino Blanco',desc:'Pinot Grigio / Sauvignon',price:24},
+    {id:'v3',name:'Prosecco (copa)',desc:'Extra dry, Veneto',price:22},
+    {id:'v4',name:'Limonata Italiana',desc:'Limón, menta, San Pellegrino',price:14},
+    {id:'v5',name:'Espresso / Cappuccino',desc:'Blend de granos italianos',price:12},
+  ],
+};
+
+const TABLES = {
+  salon:[
+    {id:'T1',num:1,pax:4,status:'ocupada',start:Date.now()-72*60000,order:[{id:'a1',name:'Bruschetta al Pomodoro',price:28,qty:2},{id:'p1',name:'Spaghetti Carbonara',price:48,qty:2},{id:'v1',name:'Copa Vino Tinto',price:28,qty:2}]},
+    {id:'T2',num:2,pax:0,status:'libre',start:null,order:[]},
+    {id:'T3',num:3,pax:2,status:'ocupada',start:Date.now()-28*60000,order:[{id:'a3',name:'Burrata & Prosciutto',price:48,qty:1},{id:'p4',name:'Risotto ai Porcini',price:56,qty:1},{id:'v2',name:'Copa Vino Blanco',price:24,qty:2}]},
+    {id:'T4',num:4,pax:0,status:'reservada',start:null,order:[],reserva:'20:00 · Rossi · 4 pax · 🎂'},
+    {id:'T5',num:5,pax:6,status:'ocupada',start:Date.now()-55*60000,order:[{id:'a2',name:'Carpaccio di Manzo',price:42,qty:2},{id:'p3',name:'Tagliatelle Bolognese',price:52,qty:2},{id:'s1',name:'Osso Buco Milanese',price:78,qty:2},{id:'v1',name:'Copa Vino Tinto',price:28,qty:4}]},
+    {id:'T6',num:6,pax:0,status:'sucia',start:null,order:[]},
+    {id:'T7',num:7,pax:0,status:'libre',start:null,order:[]},
+    {id:'T8',num:8,pax:3,status:'ocupada',start:Date.now()-14*60000,order:[{id:'a4',name:'Calamari Fritti',price:36,qty:1},{id:'p5',name:'Fettuccine al Pesto',price:44,qty:2}]},
+    {id:'T9',num:9,pax:0,status:'reservada',start:null,order:[],reserva:'21:00 · Ferri · 6 pax'},
+    {id:'T10',num:10,pax:0,status:'libre',start:null,order:[]},
+    {id:'T11',num:11,pax:0,status:'libre',start:null,order:[]},
+    {id:'T12',num:12,pax:2,status:'ocupada',start:Date.now()-40*60000,order:[{id:'d1',name:'Tiramisù della Casa',price:28,qty:2},{id:'v3',name:'Prosecco (copa)',price:22,qty:2}]},
+  ],
+  terraza:[
+    {id:'T13',num:13,pax:0,status:'libre',start:null,order:[]},
+    {id:'T14',num:14,pax:2,status:'ocupada',start:Date.now()-65*60000,order:[{id:'p1',name:'Spaghetti Carbonara',price:48,qty:1},{id:'s2',name:'Saltimbocca Romana',price:72,qty:1},{id:'v1',name:'Copa Vino Tinto',price:28,qty:2}]},
+    {id:'T15',num:15,pax:0,status:'libre',start:null,order:[]},
+    {id:'T16',num:16,pax:0,status:'reservada',start:null,order:[],reserva:'20:30 · Conti · 4 pax'},
+  ],
+  bar:[
+    {id:'B1',num:'B1',pax:1,status:'ocupada',start:Date.now()-22*60000,order:[{id:'v3',name:'Prosecco (copa)',price:22,qty:1},{id:'a1',name:'Bruschetta al Pomodoro',price:28,qty:1}]},
+    {id:'B2',num:'B2',pax:1,status:'ocupada',start:Date.now()-8*60000,order:[{id:'v1',name:'Copa Vino Tinto',price:28,qty:1}]},
+    {id:'B3',num:'B3',pax:0,status:'libre',start:null,order:[]},
+    {id:'B4',num:'B4',pax:0,status:'libre',start:null,order:[]},
+  ],
+};
+
+const RESERVAS = [
+  {time:'19:30',name:'Famiglia Bianchi',pax:6,tags:['vip'],note:'Aniversario de bodas 25 años',table:'T5'},
+  {time:'20:00',name:'Marco Rossi',pax:4,tags:['bd'],note:'Cumpleaños — mesa con velas',table:'T4',urgente:true},
+  {time:'20:00',name:'Lucia & Carlo',pax:2,tags:['ann'],note:'Aniversario, pidan la reserva de vino'},
+  {time:'20:30',name:'Famiglia Conti',pax:4,tags:[],note:'Mesa en terrazza si posible',table:'T16'},
+  {time:'20:30',name:'Dr. Ferrari',pax:2,tags:['vip'],note:'3a visita este mes · le gusta el Barolo'},
+  {time:'21:00',name:'Studio Legale',pax:8,tags:[],note:'Cena de negocios, factura RUC 20512345',table:'T9',urgente:true},
+  {time:'21:00',name:'Carmen Valdivia',pax:1,tags:['alg'],note:'Alergia al gluten — confirmar con cocina'},
+  {time:'21:30',name:'Juan Torres',pax:3,tags:['first'],note:'Primera visita, referido por Bianchi'},
+];
+
+const BOH_ITEMS = [
+  {area:'Cucina',icon:'🍳',items:['Porcini sechi 500g','Pasta fresca 2kg','Burrata 6 un','Prosciutto 1kg'],urgency:'urgente',note:'Para el servicio de esta noche'},
+  {area:'Bar',icon:'🍷',items:['Prosecco 4 bot','Vino Chianti 6 bot','San Pellegrino 24 bot'],urgency:'normal',note:''},
+  {area:'Pastelería',icon:'🍮',items:['Mascarpone 1kg','Savoiardi 2 paq','Cacao amaro 200g'],urgency:'normal',note:'Tiramisù para mañana'},
+];
+
+const STOCK = {
+  'Porcini sechi':{stock:0.2,unit:'kg',min:0.5,status:'zero'},
+  'Pasta fresca':{stock:1.2,unit:'kg',min:2,status:'low'},
+  'Burrata':{stock:8,unit:'un',min:6,status:'ok'},
+  'Prosciutto':{stock:0.4,unit:'kg',min:1,status:'low'},
+  'Prosecco':{stock:3,unit:'bot',min:6,status:'low'},
+  'Chianti Classico':{stock:12,unit:'bot',min:8,status:'ok'},
+  'Mascarpone':{stock:0,unit:'kg',min:1,status:'zero'},
+  'San Pellegrino':{stock:24,unit:'bot',min:12,status:'ok'},
+  'Aceite EVO':{stock:3,unit:'L',min:2,status:'ok'},
+  'Harina 00':{stock:5,unit:'kg',min:4,status:'ok'},
+};
+
+const KDS_DATA = {
+  hot:[
+    {mesa:'T5',time:18,items:['Osso Buco ×2','Tagliatelle Bolognese ×2']},
+    {mesa:'T14',time:32,items:['Saltimbocca ×1','Spaghetti Carbonara ×1']},
+    {mesa:'T3',time:8,items:['Risotto ai Porcini ×1']},
+  ],
+  cold:[
+    {mesa:'T1',time:4,items:['Bruschetta ×2','Carpaccio ×1']},
+    {mesa:'T8',time:6,items:['Calamari Fritti ×1']},
+  ],
+  bar:[
+    {mesa:'T5',time:18,items:['Copa Vino Tinto ×4']},
+    {mesa:'T3',time:8,items:['Copa Vino Blanco ×2']},
+  ],
+};
+
+/* ══ STATE ══ */
+let st = {zone:'salon',selTable:null,menuCat:'Antipasti',payMethod:'efectivo',comp:'boleta',newPax:1,bohTab:1,selBoh:null};
+
+/* ══ CLOCK ══ */
+function tick(){const n=new Date();document.getElementById('clock').textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;}
+setInterval(tick,1000);tick();
+
+/* ══ MODULE SWITCH ══ */
+function switchMod(id,el){
+  document.querySelectorAll('.module-screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.modnav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('mod-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+}
+
+/* ══ POS ══ */
+function allTables(){return[...TABLES.salon,...TABLES.terraza,...TABLES.bar];}
+function getTable(id){return allTables().find(t=>t.id===id);}
+function elapsed(ms){if(!ms)return'';const m=Math.floor((Date.now()-ms)/60000);return m<60?`${m}m`:`${Math.floor(m/60)}h ${m%60}m`;}
+function tableTotal(t){return t.order.reduce((s,i)=>s+i.price*i.qty,0);}
+
+function renderTables(){
+  const grid=document.getElementById('tablesGrid');
+  const data=TABLES[st.zone];
+  grid.innerHTML=data.map(t=>{
+    const tot=tableTotal(t),el=elapsed(t.start),sel=st.selTable&&st.selTable.id===t.id;
+    const badgeMap={libre:'badge-libre',ocupada:'badge-ocupada',reservada:'badge-reservada',sucia:'badge-sucia'};
+    const badgeTxt={libre:'Libre',ocupada:'Ocupada',reservada:'Reservada',sucia:'Sucia'};
+    return`<div class="tc ${t.status}${sel?' sel':''}" onclick="selectTable('${t.id}')">
+      <div class="tsbar"></div>
+      <span class="tbadge ${badgeMap[t.status]}">${badgeTxt[t.status]}</span>
+      <div class="tc-inner">
+        <div class="tnum">${t.num}</div>
+        ${t.status==='ocupada'?`<div class="tpax">👥 ${t.pax} pax</div><div class="tamt">S/ ${tot.toFixed(2)}</div><div class="ttim">${el}</div>`:
+          t.status==='reservada'?`<div class="tpax" style="color:var(--reservada)">📅 Reservada</div><div class="ttim" style="color:var(--reservada);font-size:9px">${t.reserva||''}</div>`:
+          t.status==='sucia'?`<div class="tpax">🧹 Limpiar</div>`:`<div class="tpax" style="color:var(--dim)">Disponible</div>`}
+      </div>
+    </div>`;
+  }).join('');
+  updateStats();
+}
+
+function updateStats(){
+  const all=allTables();
+  const occ=all.filter(t=>t.status==='ocupada').length;
+  document.getElementById('topMesas').textContent=`${occ}/${all.length}`;
+}
+
+function selectTable(id){
+  const t=getTable(id);
+  if(t.status==='sucia'){if(confirm(`¿Marcar Mesa ${t.num} como limpia?`)){t.status='libre';renderTables();showToast('✓ Mesa lista',`ok`);}return;}
+  if(t.status==='reservada'){if(confirm(`¿Abrir la reserva de Mesa ${t.num}?`)){t.status='ocupada';t.pax=2;t.start=Date.now();selectTable(id);}return;}
+  if(t.status==='libre'){st._openingTable=t;document.getElementById('paxSel').querySelectorAll('.pxb')[0].click();openModal('newTableModal');return;}
+  st.selTable=t;
+  renderTables();
+  renderOrderPanel();
+  document.getElementById('posLayout').classList.add('order-open');
+}
+
+function closeOrder(){
+  st.selTable=null;
+  document.getElementById('posLayout').classList.remove('order-open');
+  renderTables();
+}
+
+function renderOrderPanel(){
+  const t=st.selTable;if(!t)return;
+  document.getElementById('opTname').textContent=`Mesa ${t.num}`;
+  document.getElementById('opMeta').textContent=`${t.order.length} ítem${t.order.length!==1?'s':''} · ${t.pax} pax · ${elapsed(t.start)}`;
+  const list=document.getElementById('orderItems');
+  list.innerHTML=t.order.length===0?`<div class="oempty"><div class="oeicon">🍝</div><div>Agrega platos del menú</div></div>`:
+    t.order.map(i=>`<div class="oi">
+      <div><div class="oi-name">${i.name}</div></div>
+      <div class="qty-ctrl">
+        <button class="qb" onclick="chgQty('${i.id}',-1)">−</button>
+        <div class="qn">${i.qty}</div>
+        <button class="qb" onclick="chgQty('${i.id}',1)">+</button>
+      </div>
+      <div class="ipr">S/${(i.price*i.qty).toFixed(2)}</div>
+    </div>`).join('');
+  updateTotals();
+  renderMenuPanel();
+}
+
+function updateTotals(){
+  const t=st.selTable;if(!t)return;
+  const sub=t.order.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('opSub').textContent=`S/ ${sub.toFixed(2)}`;
+  document.getElementById('opIgv').textContent=`S/ ${(sub*.18).toFixed(2)}`;
+  document.getElementById('opTot').textContent=`S/ ${(sub*1.18).toFixed(2)}`;
+}
+
+function chgQty(itemId,d){
+  const t=st.selTable;const idx=t.order.findIndex(i=>i.id===itemId);
+  if(idx===-1)return;t.order[idx].qty+=d;
+  if(t.order[idx].qty<=0)t.order.splice(idx,1);
+  renderOrderPanel();renderTables();
+}
+
+function renderMenuPanel(){
+  const cats=document.getElementById('menuCats');
+  cats.innerHTML=Object.keys(MENU).map(c=>`<div class="ccat${c===st.menuCat?' active':''}" onclick="switchCat('${c}')">${c}</div>`).join('');
+  const items=document.getElementById('menuItems');
+  items.innerHTML=MENU[st.menuCat].map(i=>`<button class="mib" onclick="addItem('${i.id}','${i.name}',${i.price})">
+    <div class="mib-name">${i.name}</div>
+    <div class="mib-desc">${i.desc}</div>
+    <div class="mib-price">S/ ${i.price.toFixed(2)}</div>
+  </button>`).join('');
+}
+
+function switchCat(c){st.menuCat=c;renderMenuPanel();}
+
+function addItem(id,name,price){
+  const t=st.selTable;if(!t)return;
+  const ex=t.order.find(i=>i.id===id);
+  ex?ex.qty++:t.order.push({id,name,price,qty:1});
+  renderOrderPanel();renderTables();
+  showToast(`+ ${name}`);
+}
+
+function switchZone(z,el){
+  st.zone=z;
+  document.querySelectorAll('.zone-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  st.selTable=null;
+  document.getElementById('posLayout').classList.remove('order-open');
+  renderTables();
+}
+
+function sendKDS(){
+  const t=st.selTable;if(!t||!t.order.length){showToast('⚠ Sin ítems');return;}
+  showToast('👨‍🍳 Enviado a cucina · KDS actualizado','ok');
+}
+
+/* ══ CHECKOUT ══ */
+function openCheckout(){
+  const t=st.selTable;if(!t||!t.order.length){showToast('⚠ Cuenta vacía');return;}
+  document.getElementById('coMesa').textContent=`Mesa ${t.num}`;
+  buildCoSummary('coSummary');
+  openModal('checkoutModal');
+}
+
+function buildCoSummary(id){
+  const t=st.selTable;
+  const sub=t.order.reduce((s,i)=>s+i.price*i.qty,0);
+  const igv=sub*.18;const tot=sub+igv;
+  document.getElementById(id).innerHTML=t.order.map(i=>`<div class="cs-row"><span>${i.name} ×${i.qty}</span><span style="font-family:DM Mono,monospace">S/${(i.price*i.qty).toFixed(2)}</span></div>`).join('')+
+    `<div class="cs-total"><span>TOTAL (inc. IGV)</span><span>S/ ${tot.toFixed(2)}</span></div>`;
+  return tot;
+}
+
+function selPay(m,el){
+  st.payMethod=m;
+  document.querySelectorAll('.pmethod').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function openSunat(){
+  closeModal('checkoutModal');
+  buildCoSummary('sunatSummary');
+  setComp('boleta');
+  openModal('sunatModal');
+}
+
+function setComp(c){
+  st.comp=c;
+  document.getElementById('bboletaBtn').classList.toggle('active',c==='boleta');
+  document.getElementById('bfacturaBtn').classList.toggle('active',c==='factura');
+  document.getElementById('factFields').style.display=c==='factura'?'block':'none';
+}
+
+function emitir(){
+  const btn=document.getElementById('emitBtn');
+  btn.textContent='⏳ Enviando a SUNAT…';btn.disabled=true;
+  setTimeout(()=>{
+    const t=st.selTable;
+    const tot=(t.order.reduce((s,i)=>s+i.price*i.qty,0)*1.18).toFixed(2);
+    const cdr='CDR-'+Date.now().toString(36).toUpperCase()+'-SUNAT';
+    document.getElementById('successSub').textContent=`${st.comp==='boleta'?'Boleta':'Factura'} emitida · S/ ${tot}`;
+    document.getElementById('successCdr').textContent=cdr;
+    t.status='libre';t.pax=0;t.order=[];t.start=null;delete t.reserva;
+    st.selTable=null;
+    document.getElementById('posLayout').classList.remove('order-open');
+    renderTables();
+    closeModal('sunatModal');
+    openModal('successModal');
+    btn.textContent='Emitir comprobante →';btn.disabled=false;
+  },1800);
+}
+
+function closeSuccess(){closeModal('successModal');}
+function printRec(){showToast('🖨️ Enviando a impresora…','ok');setTimeout(()=>closeModal('successModal'),400);}
+
+/* ══ NEW TABLE ══ */
+function selPax(n,el){
+  st.newPax=n;
+  document.querySelectorAll('.pxb').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function confirmNewTable(){
+  const t=st._openingTable;if(!t)return;
+  t.status='ocupada';t.pax=st.newPax;t.start=Date.now();t.order=[];
+  closeModal('newTableModal');
+  st.selTable=t;
+  renderTables();renderOrderPanel();
+  document.getElementById('posLayout').classList.add('order-open');
+  showToast(`✓ Mesa ${t.num} abierta · ${st.newPax} pax`,'ok');
+}
+
+/* ══ RESERVAS ══ */
+function renderReservations(){
+  const list=document.getElementById('resList');
+  list.innerHTML=RESERVAS.map(r=>{
+    const tagHtml=r.tags.map(tag=>({
+      vip:'<span class="rtag rtag-vip">VIP</span>',
+      bd:'<span class="rtag rtag-bd">🎂 Cumpleaños</span>',
+      ann:'<span class="rtag rtag-ann">💑 Aniversario</span>',
+      alg:'<span class="rtag rtag-alg">⚠ Alergia</span>',
+      first:'<span class="rtag rtag-first">Primera visita</span>',
+    }[tag]||'')).join('');
+    return`<div class="res-card${r.urgente?' urgente':''}">
+      <div class="res-time">${r.time}</div>
+      <div class="res-info">
+        <div class="res-name">${r.name}</div>
+        <div class="res-meta">${r.pax} personas · ${r.note}</div>
+        ${tagHtml?`<div class="res-tags">${tagHtml}</div>`:''}
+      </div>
+      <div class="res-action">
+        ${r.table?`<div class="res-tbl">Mesa ${r.table.replace('T','')}</div>`:
+          `<button class="res-seat-btn" onclick="assignTable('${r.name}')">Asignar mesa</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function assignTable(name){showToast(`↔ Asignando mesa a ${name}…`);}
+
+/* ══ BOH ══ */
+function renderBoh(){
+  const list=document.getElementById('bohList');
+  if(st.bohTab===1){
+    list.innerHTML=BOH_ITEMS.map((b,i)=>`<div class="boh-card${b.urgency==='urgente'?' urgente':''}${st.selBoh===i?' sel':''}" onclick="selectBoh(${i})">
+      <div class="bc-header">
+        <div class="bc-area">${b.icon} ${b.area}</div>
+        <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;${b.urgency==='urgente'?'background:rgba(122,24,24,.1);color:var(--red-l)':'background:var(--surface);color:var(--muted)'}">${b.urgency==='urgente'?'🔴 Urgente':'Normal'}</span>
+      </div>
+      <div class="bc-meta">${b.items.length} ítems${b.note?` · "${b.note.slice(0,30)}"`:''}</div>
+    </div>`).join('');
+  } else {
+    list.innerHTML=Object.entries(STOCK).map(([k,v])=>`<div class="boh-card">
+      <div class="bc-header"><div class="bc-area" style="font-size:12px">${k}</div>
+      <span class="sstat ${v.status}" style="font-size:10px">${v.stock} ${v.unit}</span></div>
+    </div>`).join('');
+  }
+}
+
+function selectBoh(i){
+  st.selBoh=i;
+  renderBoh();
+  const b=BOH_ITEMS[i];
+  const right=document.getElementById('bohRight');
+  right.innerHTML=`<div class="boh-section-title">${b.icon} ${b.area} — Solicitud</div>
+    <div class="boh-section-sub">${b.urgency==='urgente'?'🔴 URGENTE':'Normal'} · ${b.items.length} ítems${b.note?` · "${b.note}"`:''}${b.items.map(it=>`
+    <div class="price-row pr-head"><div class="pr-cell">Ítem</div><div class="pr-cell">Wong</div><div class="pr-cell">Metro</div><div class="pr-cell">Makro</div><div class="pr-cell">Proveedor</div><div class="pr-cell">Asignar a</div></div>`).join('')}</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:8px">
+      <div class="price-row pr-head"><div class="pr-cell">Ítem</div><div class="pr-cell">Wong</div><div class="pr-cell">Metro</div><div class="pr-cell">Makro</div><div class="pr-cell">Proveedor</div><div class="pr-cell">Asignar a</div></div>
+      ${b.items.map(it=>{
+        const prices={w:(Math.random()*20+10).toFixed(2),m:(Math.random()*20+10).toFixed(2),mk:(Math.random()*20+8).toFixed(2),p:(Math.random()*20+8).toFixed(2)};
+        const min=Math.min(parseFloat(prices.w),parseFloat(prices.m),parseFloat(prices.mk),parseFloat(prices.p));
+        const cl=(p)=>parseFloat(p)===min?'pr-best':'pr-ok';
+        return`<div class="price-row">
+          <div class="pr-cell" style="font-weight:600">${it}</div>
+          <div class="pr-cell ${cl(prices.w)}">S/${prices.w}${parseFloat(prices.w)===min?' ★':''}</div>
+          <div class="pr-cell ${cl(prices.m)}">S/${prices.m}${parseFloat(prices.m)===min?' ★':''}</div>
+          <div class="pr-cell ${cl(prices.mk)}">S/${prices.mk}${parseFloat(prices.mk)===min?' ★':''}</div>
+          <div class="pr-cell ${cl(prices.p)}">S/${prices.p}${parseFloat(prices.p)===min?' ★':''}</div>
+          <div class="pr-cell"><select class="assign-sel"><option>Wong</option><option>Metro</option><option>Makro</option><option>Proveedor ABC</option></select></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-ghost" onclick="showToast('📄 PDF generado y descargado','ok')">📄 PDF Orden de Compra</button>
+      <button class="btn" style="background:rgba(37,211,102,.15);color:#25d366;border:1px solid rgba(37,211,102,.3)" onclick="showToast('📱 Abriendo WhatsApp…','ok')">📱 WhatsApp al proveedor</button>
+      <button class="btn btn-gold" onclick="showToast('🛒 Abriendo carrito en Wong…','ok')">🛒 Carrito Wong</button>
+    </div>`;
+}
+
+function switchBohTab(n){
+  st.bohTab=n;
+  document.getElementById('btab1').classList.toggle('active',n===1);
+  document.getElementById('btab2').classList.toggle('active',n===2);
+  renderBoh();
+}
+
+/* ══ KDS ══ */
+function timerCls(t){return t<10?'ok':t<25?'warn':'late';}
+function renderKds(){
+  const render=(data,id,countId)=>{
+    document.getElementById(id).innerHTML=data.map((ticket,i)=>`
+      <div class="kds-ticket${ticket.time>=25?' urgent':''}">
+        <div class="kt-header">
+          <div class="kt-mesa">Mesa ${ticket.mesa.replace('T','').replace('B','Bar ')}</div>
+          <div class="kt-timer ${timerCls(ticket.time)}">${ticket.time} min</div>
+        </div>
+        <div class="kt-items">${ticket.items.map(it=>`<div class="kt-item"><span class="kt-qty">${it.split('×')[1]||1}</span><span>${it.split(' ×')[0]}</span></div>`).join('')}</div>
+        <div class="kt-done"><button class="kds-done-btn" onclick="doneKds(${i},'${id}')">✓ Listo</button></div>
+      </div>`).join('');
+    document.getElementById(countId).textContent=`${data.length} órdenes`;
+  };
+  render(KDS_DATA.hot,'kds1','kds1count');
+  render(KDS_DATA.cold,'kds2','kds2count');
+  render(KDS_DATA.bar,'kds3','kds3count');
+}
+
+function doneKds(i,colId){
+  const map={kds1:'hot',kds2:'cold',kds3:'bar'};
+  KDS_DATA[map[colId]].splice(i,1);
+  renderKds();
+  showToast('✓ Plato marcado como listo','ok');
+}
+
+/* ══ MODALS ══ */
+function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+
+/* ══ TOAST ══ */
+let tt;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast show ${type}`;
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ══ INIT ══ */
+renderTables();
+renderReservations();
+renderBoh();
+renderKds();
+renderMenuPanel();
+setInterval(()=>{renderTables();if(st.selTable)renderOrderPanel();},30000);
+</script>
+</body>
+</html>
