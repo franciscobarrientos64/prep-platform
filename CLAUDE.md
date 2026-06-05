@@ -197,17 +197,38 @@ sb.channel('floor')
 8. **NO inventes nombres de módulos** — los nombres son: Pase, POS (antes Caja), Línea, Bienvenida (antes Mesa), Mercado, Recetas, RRHH, Delivery, Contabilidad, Vuelto, El Libro, Directorio, Engagement.
 9. **NO uses "clientes"** para referirse a los comensales del restaurante — usar "comensales", "invitados" o "huéspedes" según contexto.
 10. **NO uses estas palabras en la UI:** revolucionario, game changer, AI-powered, disruptivo, innovador, artesanal, gastro (en inglés suena a gastroenterología).
+11. **NO toques la landing (prep-landing)** desde un chat de módulo — la landing es un repo separado y se actualiza en su propio chat.
 
-## 8. DOMINIOS Y REPOS
+## 8. PROTOCOLO DE ACTUALIZACIÓN
+
+Cuando construyas o modifiques un módulo:
+1. **Edita el archivo .html del módulo** y pushea al repo `prep-platform`
+2. **Si agregas un feature nuevo**, actualiza este CLAUDE.md: agrega el ID del feature (ej: CA-24) a la lista del módulo correspondiente en la sección de features
+3. **NO actualices la landing** (prep.rest / repo prep-landing) — eso se hace en un chat separado de Landing que lee este CLAUDE.md como fuente de verdad
+4. **NO modifiques archivos de otros módulos** a menos que el feature lo requiera explícitamente (ej: POS necesita leer inv_recetas, pero NO edita recetas.html)
+
+La fuente de verdad del producto es este archivo. La landing se sincroniza desde aquí.
+
+## 9. ARQUITECTURA MULTI-CLIENTE
+
+```
+prep.rest                     → Landing + Hub (/hub) — repo: prep-landing
+casa-italia.prep.rest         → App operativa Casa Italia — repo: prep-platform
+[restaurante].prep.rest       → App operativa de otro cliente — mismo repo: prep-platform
+```
+
+- Cada restaurante = subdominio apuntando al mismo `prep-platform`
+- `marca_id` de la sesión filtra datos. Estética siempre igual.
+- Nuevo cliente: INSERT marca+local+config en Supabase + CNAME en GoDaddy + dominio en Vercel
 
 | Recurso | URL |
 |---------|-----|
-| Landing | prep.rest → repo `prep-landing` |
-| App | casa-italia.prep.rest → repo `prep-platform` |
+| Landing + Hub | prep.rest → repo `prep-landing` |
+| App (todos) | [nombre].prep.rest → repo `prep-platform` |
 | Supabase | jmkvphayyhwzootlybde.supabase.co |
 | GitHub | github.com/franciscobarrientos64/ |
 
-## 9. CASA ITALIA — DATOS SEED
+## 10. CASA ITALIA — DATOS SEED
 
 - marca_id: `m6`, local_id: `l11`
 - 13 mesas (M1-M12 + Barra) en 4 zonas (salón, terraza, reservado, barra)
@@ -217,7 +238,7 @@ sb.channel('floor')
 - Master password: `casaitalia2026`
 - Geofence: lat -12.0931, lng -77.0465, radio 100m
 
-## 10. TEMPLATE PARA NUEVO MÓDULO
+## 11. TEMPLATE PARA NUEVO MÓDULO
 
 Cada módulo nuevo debe seguir esta estructura HTML:
 ```html
