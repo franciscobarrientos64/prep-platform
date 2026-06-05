@@ -9,60 +9,176 @@
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>" />
 
-  <!-- Material Symbols -->
+  <!-- Fonts del brand: cargados aquí explícitamente para garantizar disponibilidad -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Bagel+Fat+One&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
   <link rel="stylesheet" href="./css/brand.css" />
   <link rel="stylesheet" href="./css/pos.css" />
 
+  <style>
+    /* Estilos del loading/error screen INLINE (no dependen de brand.css) */
+    .boot {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #fcf9f8;
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      color: #171c20;
+      padding: 24px;
+      text-align: center;
+    }
+    .boot__logo {
+      font-family: 'Bagel Fat One', sans-serif;
+      font-size: 4rem;
+      color: #1e5af9;
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+    .boot__msg {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.85rem;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .boot__spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e8e3df;
+      border-top-color: #1e5af9;
+      border-radius: 50%;
+      animation: bspin 0.8s linear infinite;
+    }
+    @keyframes bspin { to { transform: rotate(360deg); } }
+    .boot--error .boot__logo { color: #ff3b30; }
+    .boot__error-box {
+      max-width: 560px;
+      background: #fff;
+      border: 2px solid #171c20;
+      box-shadow: 6px 6px 0 #171c20;
+      padding: 20px;
+      text-align: left;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      word-break: break-word;
+      margin-top: 12px;
+    }
+    .boot__error-box strong {
+      display: block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #ff3b30;
+    }
+    .boot__retry {
+      margin-top: 16px;
+      padding: 12px 24px;
+      background: #1e5af9;
+      color: #fcf9f8;
+      border: 2px solid #171c20;
+      box-shadow: 3px 3px 0 #171c20;
+      border-radius: 999px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+
   <script src="./env.js"></script>
 </head>
 <body>
   <div id="app">
-    <!-- Loading skeleton inicial -->
-    <div style="min-height: 100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 16px;">
-      <div style="font-family: 'Bagel Fat One', sans-serif; font-size: 3rem; color: #1e5af9; line-height: 1;">prep!</div>
-      <div class="mono" style="font-size: 0.75rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.1em;">Mise en place…</div>
+    <div class="boot" id="boot">
+      <div class="boot__logo">prep!</div>
+      <div class="boot__spinner"></div>
+      <div class="boot__msg">Cargando…</div>
     </div>
   </div>
 
   <script type="module">
-    import { restaurarSesion, CTX } from './js/supabase-client.js';
-    import { bootstrap } from './js/state.js';
-    import { renderLogin } from './js/login.js';
-    import { renderFloorPlan } from './js/floor-plan.js';
-    import { toast } from './js/utils.js';
+    // Capturar TODOS los errores de módulo (incluidos los de import)
+    window.addEventListener('error', e => mostrarError('Error de módulo', e.message + '\n' + (e.filename || '') + ':' + (e.lineno || '')));
+    window.addEventListener('unhandledrejection', e => mostrarError('Promesa rechazada', String(e.reason?.message || e.reason)));
 
-    const app = document.getElementById('app');
-
-    async function start() {
-      // Recuperar nombre del operador (separado de la sesión)
-      try {
-        const raw = localStorage.getItem('prep_sesion');
-        if (raw) {
-          const s = JSON.parse(raw);
-          if (s.nombre) CTX.nombre = s.nombre;
-        }
-      } catch {}
-
-      const sesionOk = await restaurarSesion();
-      if (!sesionOk) {
-        renderLogin(app, () => start());
-        return;
-      }
-
-      try {
-        await bootstrap();
-        renderFloorPlan(app);
-      } catch (err) {
-        console.error('[bootstrap]', err);
-        toast('Error cargando datos: ' + err.message, 'error', 5000);
-      }
+    function mostrarError(titulo, detalle) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      app.innerHTML = `
+        <div class="boot boot--error">
+          <div class="boot__logo">prep!</div>
+          <div class="boot__msg" style="color:#ff3b30">Atrás — no se pudo iniciar</div>
+          <div class="boot__error-box">
+            <strong>${titulo}</strong>
+            <code style="white-space:pre-wrap">${detalle || '(sin detalles)'}</code>
+          </div>
+          <button class="boot__retry" onclick="location.reload()">Reintentar</button>
+          <div class="boot__msg" style="font-size:0.7rem; margin-top: 8px;">Abre la consola (F12) para más info</div>
+        </div>
+      `;
     }
 
-    start();
+    // Verificar que env.js cargó
+    if (!window.PREP_ENV || !window.PREP_ENV.SUPABASE_ANON_KEY) {
+      mostrarError('Configuración faltante', 'env.js no se cargó o no contiene SUPABASE_ANON_KEY. Verifica que el archivo /pos/env.js exista y esté accesible.');
+    } else {
+      // Cargar la app
+      (async () => {
+        try {
+          const [
+            sbClient,
+            state,
+            login,
+            floorPlan,
+            utils
+          ] = await Promise.all([
+            import('./js/supabase-client.js'),
+            import('./js/state.js'),
+            import('./js/login.js'),
+            import('./js/floor-plan.js'),
+            import('./js/utils.js')
+          ]);
 
-    // Prevenir gestos de zoom en iOS al hacer doble-tap
+          const app = document.getElementById('app');
+
+          // Recuperar nombre del operador
+          try {
+            const raw = localStorage.getItem('prep_sesion');
+            if (raw) {
+              const s = JSON.parse(raw);
+              if (s.nombre) sbClient.CTX.nombre = s.nombre;
+            }
+          } catch {}
+
+          const sesionOk = await sbClient.restaurarSesion();
+          if (!sesionOk) {
+            login.renderLogin(app, async () => {
+              try {
+                await state.bootstrap();
+                floorPlan.renderFloorPlan(app);
+              } catch (err) {
+                mostrarError('Error cargando datos del local', err.message + '\n\nStack:\n' + (err.stack || ''));
+              }
+            });
+            return;
+          }
+
+          await state.bootstrap();
+          floorPlan.renderFloorPlan(app);
+
+        } catch (err) {
+          console.error('[start]', err);
+          mostrarError('Error al iniciar el POS', (err.message || String(err)) + '\n\nStack:\n' + (err.stack || ''));
+        }
+      })();
+    }
+
     document.addEventListener('gesturestart', e => e.preventDefault());
   </script>
 </body>
