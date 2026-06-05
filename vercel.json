@@ -15,7 +15,11 @@
     },
     {
       "source": "/pos",
-      "destination": "/pos.html"
+      "destination": "/pos/index.html"
+    },
+    {
+      "source": "/pos-legacy",
+      "destination": "/pos-legacy.html"
     },
     {
       "source": "/boh-compras",
@@ -60,6 +64,22 @@
     {
       "source": "/nav",
       "destination": "/nav.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" }
+      ]
+    },
+    {
+      "source": "/pos/env.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
     }
   ]
 }
