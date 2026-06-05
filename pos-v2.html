@@ -905,6 +905,233 @@ button { font-family: inherit; cursor: pointer; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ============ COBRO SCREEN (BLOQUE 3) ============ */
+.cobro-screen {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "head head"
+    "left right"
+    "foot foot";
+  background: var(--bg);
+  overflow: hidden;
+}
+.cobro-head {
+  grid-area: head;
+  background: var(--secondary);
+  color: white;
+  border-bottom: 2px solid var(--outline);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.cobro-head .ticket-mark {
+  width: 52px; height: 52px;
+  border: 2px solid var(--outline); border-radius: 12px;
+  background: var(--tertiary); color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 18px;
+}
+.cobro-head .info { flex: 1; min-width: 180px; }
+.cobro-head h2 { font-family: var(--font-display); font-size: 22px; line-height: 1; }
+.cobro-head .meta {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.85;
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px;
+}
+
+.cobro-left {
+  grid-area: left;
+  border-right: 2px solid var(--outline);
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 16px;
+}
+.cobro-right {
+  grid-area: right;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+
+.cobro-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 2px solid var(--outline); border-radius: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.cobro-item.cortesia { background: var(--green-soft); }
+.cobro-item.cortesia .price { text-decoration: line-through; opacity: 0.5; }
+.cobro-item .qty {
+  font-family: var(--font-mono); font-weight: 700; font-size: 12px;
+  background: var(--ink); color: var(--bg);
+  padding: 2px 7px; border-radius: 6px; flex-shrink: 0;
+}
+.cobro-item .nm { flex: 1; font-weight: 600; }
+.cobro-item .price { font-family: var(--font-mono); font-weight: 700; font-size: 13px; }
+.cobro-item .cortesia-tag {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  background: var(--green); color: white;
+  padding: 2px 6px; border-radius: 999px; border: 1.5px solid var(--outline);
+  text-transform: uppercase;
+}
+.cobro-item .ico-btn {
+  width: 28px; height: 28px;
+  border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--surface); box-shadow: 2px 2px 0 0 var(--outline);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* PAYMENT METHODS GRID */
+.pay-methods {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.pay-method-btn {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  padding: 14px 8px;
+  min-height: 80px;
+  border: 2px solid var(--outline); border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body); font-weight: 700; font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.pay-method-btn:active { transform: translate(2px,2px); box-shadow: none; }
+.pay-method-btn .emoji { font-size: 26px; line-height: 1; }
+.pay-method-btn .lbl { line-height: 1.1; }
+.pay-method-btn.active {
+  background: var(--primary); color: white;
+  transform: translate(2px,2px); box-shadow: none;
+}
+
+/* Numpad estilo POS */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+.numpad button {
+  padding: 16px;
+  border: 2px solid var(--outline); border-radius: 10px;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-family: var(--font-display); font-size: 22px;
+  cursor: pointer;
+  min-height: 56px;
+}
+.numpad button:active { transform: translate(2px,2px); box-shadow: none; }
+.numpad button.action { background: var(--tertiary); }
+.numpad button.del { background: var(--secondary); color: white; }
+
+.monto-display {
+  background: var(--ink); color: var(--bg);
+  border: 2px solid var(--outline); border-radius: 12px;
+  padding: 14px 18px;
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 32px;
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+.monto-display.warn { background: var(--secondary); color: white; }
+.monto-display .currency {
+  font-family: var(--font-mono); font-size: 14px;
+  opacity: 0.55; margin-right: 8px;
+}
+
+.vuelto-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 8px 0;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.vuelto-row strong {
+  font-family: var(--font-display); font-size: 22px; color: var(--green);
+}
+
+.pagos-list { margin-top: 10px; }
+.pago-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--green-soft);
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.pago-row .met { font-weight: 700; flex-shrink: 0; }
+.pago-row .det { font-family: var(--font-mono); font-size: 11px; opacity: 0.75; flex: 1; }
+.pago-row .mon { font-family: var(--font-mono); font-weight: 700; }
+.pago-row .del {
+  background: transparent; border: none;
+  color: var(--secondary); cursor: pointer; padding: 2px 4px;
+  font-size: 18px;
+}
+
+.propina-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.propina-chip {
+  padding: 10px 14px;
+  border: 2px solid var(--outline); border-radius: 999px;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-family: var(--font-body); font-weight: 700; font-size: 13px;
+}
+.propina-chip:active { transform: translate(1px,1px); box-shadow: none; }
+.propina-chip.active { background: var(--tertiary); }
+
+.split-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.split-chip {
+  width: 44px; height: 44px;
+  border: 2px solid var(--outline); border-radius: 12px;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-family: var(--font-display); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.split-chip.active {
+  background: var(--primary); color: white;
+  transform: translate(2px,2px); box-shadow: none;
+}
+
+.comprobante-tabs {
+  display: flex; gap: 6px; margin-top: 8px;
+}
+.comprobante-tab {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid var(--outline); border-radius: 10px;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-family: var(--font-body); font-weight: 700; font-size: 12px;
+  text-align: center;
+}
+.comprobante-tab.active {
+  background: var(--ink); color: var(--bg);
+  transform: translate(2px,2px); box-shadow: none;
+}
+
+.cobro-foot {
+  grid-area: foot;
+  background: var(--surface);
+  border-top: 2px solid var(--outline);
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 18px;
+  flex-wrap: wrap;
+}
+.cobro-foot .totals { display: flex; gap: 18px; flex-wrap: wrap; flex: 1; font-family: var(--font-mono); font-size: 12px; }
+.cobro-foot .totals .t { display: flex; flex-direction: column; }
+.cobro-foot .totals .t .lbl { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; }
+.cobro-foot .totals .t .val { font-weight: 700; font-size: 14px; }
+.cobro-foot .totals .t.big .val { font-family: var(--font-display); font-size: 24px; color: var(--primary); }
+.cobro-foot .totals .t.pendiente .val { color: var(--secondary); }
+.cobro-foot .totals .t.cubierto .val { color: var(--green); }
+.cobro-foot .btn { width: auto; min-width: 200px; }
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .pedido-screen {
@@ -913,6 +1140,13 @@ button { font-family: inherit; cursor: pointer; }
   }
   .items-col { border-right: none; border-top: 2px solid var(--outline); max-height: 38vh; }
   .menu-col { max-height: 50vh; }
+  .cobro-screen {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "right" "left" "foot";
+  }
+  .cobro-left { border-right: none; border-top: 2px solid var(--outline); max-height: 32vh; }
+  .cobro-right { max-height: 55vh; }
+  .pay-methods { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
   :root { --canvas-scale: 1.2; }
@@ -1035,6 +1269,21 @@ const state = {
     dirtyMuebles: false,
     deletedMesas: new Set(),
     nuevasMesas: [],        // crear cuando guardar
+  },
+
+  // cobro (Bloque 3)
+  cobro: {
+    pagos: [],              // [{ metodo, monto, recibido?, vuelto?, ref_externa?, gift_card?: {id,codigo,saldo_previo} }]
+    cortesias: [],          // [{ item_id, monto, motivo, tmp_id }] — sólo locales hasta confirmar
+    propina_pct: 10,
+    propina_custom: null,   // si !=null usa este valor en lugar del %
+    comprobante: { tipo: 'sin_comprobante', doc: '', nombre: '', email: '' },
+    split_n: 1,
+    metodo_actual: 'efectivo',
+    monto_input: '',        // string del numpad
+    ref_input: '',
+    recibido_input: '',
+    gift_input: { codigo:'', saldo:null, gift_id:null, error:null },
   },
 };
 
@@ -1183,12 +1432,33 @@ function render() {
     renderFloorScreen();
   } else if (state.screen === 'pedido') {
     renderPedidoScreen();
+  } else if (state.screen === 'cobro') {
+    renderCobroScreen();
   }
 }
 
 /* ========= HEADER ========= */
 function renderHeader() {
   const h = $('#app-header');
+  if (state.screen === 'cobro') {
+    const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+    const mesa = ped ? state.mesas.find(m => m.id === ped.mesa_id) : null;
+    h.innerHTML = `
+      <button class="btn-ico" id="back-to-pedido">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>Volver al pedido</span>
+      </button>
+      <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">COBRANDO #${ped?.ticket_num||'?'}</span></div>
+      <div class="header-info">
+        <span class="pill" style="background:var(--secondary);color:white;border-color:var(--outline)">
+          <span class="material-symbols-outlined" style="font-size:14px">point_of_sale</span>
+          ${mesa ? 'Mesa '+mesa.numero : 'Pedido'}
+        </span>
+      </div>
+    `;
+    $('#back-to-pedido').onclick = () => { state.screen = 'pedido'; render(); };
+    return;
+  }
   if (state.screen === 'pedido') {
     const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
     const mesa = ped ? state.mesas.find(m => m.id === ped.mesa_id) : null;
@@ -1216,7 +1486,7 @@ function renderHeader() {
     `;
     $('#back-floor').onclick = () => { state.screen = 'floor'; state.pedidoAbiertoId = null; render(); };
     $('#btn-marchar-todo').onclick = () => marcharTodoPendientes();
-    $('#btn-cobrar-ped').onclick = () => toast('Cobro · llega en bloque 3', 'warn');
+    $('#btn-cobrar-ped').onclick = () => abrirCobroScreen(state.pedidoAbiertoId);
     return;
   }
 
@@ -1470,7 +1740,7 @@ function renderSheetOcupada(mesa, ped) {
   $('#btn-mover').onclick = () => abrirMover(ped, mesa);
   if ($('#btn-suspender')) $('#btn-suspender').onclick = () => suspender(ped.id);
   if ($('#btn-cancelar')) $('#btn-cancelar').onclick = () => cancelar(ped.id);
-  if ($('#btn-cobrar')) $('#btn-cobrar').onclick = () => toast('Cobro · llega en bloque 3', 'warn');
+  if ($('#btn-cobrar')) $('#btn-cobrar').onclick = () => { closeSheet(); abrirCobroScreen(ped.id); };
 }
 function abrirMover(ped, mesaActual) {
   const libres = state.mesas.filter(m => m.id !== mesaActual.id && !pedidoDeMesa(m.id));
@@ -2270,6 +2540,579 @@ async function recalcularYPersistirTotales(pedidoId) {
   await sb.from('ca_pedidos').update({
     subtotal: sub, servicio_monto, igv, total,
   }).eq('id', pedidoId);
+}
+
+/* ========= COBRO (BLOQUE 3) ========= */
+
+async function abrirCobroScreen(pedidoId) {
+  if (!pedidoId) return;
+  if (!state.pedidoItemsCache[pedidoId]) await loadPedidoItems(pedidoId);
+  // Cargar pagos / cortesías previamente persistidos (en caso de pagos parciales)
+  const [pagosRes, cortesiasRes] = await Promise.all([
+    sb.from('ca_pagos').select('*').eq('pedido_id', pedidoId),
+    sb.from('ca_cortesias').select('*').eq('pedido_id', pedidoId),
+  ]);
+  state.cobro = {
+    pagos: [],
+    pagosPersistidos: pagosRes.data || [],
+    cortesias: [],
+    cortesiasPersistidas: cortesiasRes.data || [],
+    propina_pct: 10,
+    propina_custom: null,
+    comprobante: { tipo: 'sin_comprobante', doc: '', nombre: '', email: '' },
+    split_n: 1,
+    metodo_actual: 'efectivo',
+    monto_input: '',
+    ref_input: '',
+    recibido_input: '',
+    gift_input: { codigo:'', saldo:null, gift_id:null, error:null },
+  };
+  // Si el pedido aún no está en 'cuenta_pedida' y no está pagado, marcarlo
+  const ped = state.pedidos.find(p => p.id === pedidoId);
+  if (ped && ped.estado_servicio !== 'cuenta_pedida' && ped.estado_servicio !== 'pagada') {
+    await sb.from('ca_pedidos').update({ estado_servicio: 'cuenta_pedida' }).eq('id', pedidoId);
+    ped.estado_servicio = 'cuenta_pedida';
+  }
+  state.pedidoAbiertoId = pedidoId;
+  state.screen = 'cobro';
+  render();
+}
+
+function calcularTotalesCobro(ped) {
+  const items = state.pedidoItemsCache[ped.id] || [];
+  const todasCortesias = [...state.cobro.cortesiasPersistidas, ...state.cobro.cortesias];
+  const cortesiasMontoPorItem = {};
+  todasCortesias.forEach(c => {
+    if (c.item_id) cortesiasMontoPorItem[c.item_id] = (cortesiasMontoPorItem[c.item_id]||0) + Number(c.monto);
+  });
+  const cortesiasGlobalMonto = todasCortesias.filter(c => !c.item_id).reduce((a,c)=>a+Number(c.monto),0);
+
+  const sub_bruto = items.reduce((a,it) => a + Number(it.precio_total||0), 0);
+  const cortesias_total = items.reduce((a,it) => a + (cortesiasMontoPorItem[it.id]||0), 0) + cortesiasGlobalMonto;
+  const sub_neto = Math.max(0, +(sub_bruto - cortesias_total).toFixed(2));
+  const servicio_monto = +(sub_neto * 0.10).toFixed(2);
+  const igv_incl = +(sub_neto * 18 / 118).toFixed(2);
+  let propina;
+  if (state.cobro.propina_custom != null) propina = +(Number(state.cobro.propina_custom) || 0).toFixed(2);
+  else propina = +(sub_neto * (state.cobro.propina_pct/100)).toFixed(2);
+  const total = +(sub_neto + servicio_monto + propina).toFixed(2);
+  const pagado_persistido = state.cobro.pagosPersistidos.reduce((a,p)=>a+Number(p.monto),0);
+  const pagado_local = state.cobro.pagos.reduce((a,p)=>a+Number(p.monto),0);
+  const pagado = +(pagado_persistido + pagado_local).toFixed(2);
+  const pendiente = Math.max(0, +(total - pagado).toFixed(2));
+  return { sub_bruto, cortesias_total, sub_neto, servicio_monto, igv_incl, propina, total, pagado, pendiente, cortesiasMontoPorItem };
+}
+
+function pagoLabel(m) {
+  const map = { efectivo:'💵 Efectivo', yape:'📱 Yape', plin:'📱 Plin', visa:'💳 Visa', mastercard:'💳 MC', amex:'💳 Amex', mercadopago:'🟦 MP', izipay:'📲 Izipay', gift_card:'🎫 GC' };
+  return map[m] || m;
+}
+
+function renderCobroScreen() {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) { state.screen = 'floor'; render(); return; }
+  const items = state.pedidoItemsCache[ped.id] || [];
+  const T = calcularTotalesCobro(ped);
+  const sugerido = state.cobro.split_n > 1 ? +(T.pendiente / state.cobro.split_n).toFixed(2) : T.pendiente;
+
+  // Items (con cortesía marcada)
+  const itemsHtml = items.map(it => {
+    const cMonto = T.cortesiasMontoPorItem[it.id] || 0;
+    const isCortesia = cMonto > 0;
+    return `
+      <div class="cobro-item ${isCortesia?'cortesia':''}" data-iid="${it.id}">
+        <span class="qty">×${it.qty}</span>
+        <span class="nm">${it.nombre}${it.notas ? '<br><span style="font-size:10px;font-family:var(--font-mono);opacity:0.6">'+it.notas+'</span>' : ''}</span>
+        ${isCortesia ? '<span class="cortesia-tag">cortesía</span>' : ''}
+        <span class="price">${money(it.precio_total)}</span>
+        <button class="ico-btn" data-act="cortesia" title="${isCortesia?'Quitar cortesía':'Aplicar cortesía'}">
+          <span class="material-symbols-outlined" style="font-size:16px">${isCortesia?'restart_alt':'card_giftcard'}</span>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Métodos de pago
+  const metodos = [
+    { k:'efectivo',  e:'💵', l:'Efectivo' },
+    { k:'yape',      e:'📱', l:'Yape' },
+    { k:'plin',      e:'📱', l:'Plin' },
+    { k:'visa',      e:'💳', l:'Visa' },
+    { k:'mastercard',e:'💳', l:'Mastercard' },
+    { k:'amex',      e:'💳', l:'Amex' },
+    { k:'mercadopago', e:'🟦', l:'Mercado Pago' },
+    { k:'izipay',    e:'📲', l:'Izipay' },
+    { k:'gift_card', e:'🎫', l:'Gift card' },
+  ];
+  const metHtml = metodos.map(m => `
+    <button class="pay-method-btn ${state.cobro.metodo_actual===m.k?'active':''}" data-met="${m.k}">
+      <span class="emoji">${m.e}</span>
+      <span class="lbl">${m.l}</span>
+    </button>
+  `).join('');
+
+  // Pagos
+  const pagosPersistHtml = state.cobro.pagosPersistidos.map(p => `
+    <div class="pago-row" style="background:var(--gray-soft);border-color:var(--outline)">
+      <span class="met">${pagoLabel(p.metodo)}</span>
+      <span class="det">${p.ref_externa?('ref '+p.ref_externa+' · '):''}previo</span>
+      <span class="mon">${money(p.monto)}</span>
+    </div>
+  `).join('');
+  const pagosLocalHtml = state.cobro.pagos.map((p, idx) => `
+    <div class="pago-row">
+      <span class="met">${pagoLabel(p.metodo)}</span>
+      <span class="det">
+        ${p.recibido ? 'recibió '+money(p.recibido)+' · vuelto '+money(p.vuelto) :
+          p.ref_externa ? 'ref '+p.ref_externa :
+          p.gift_card ? 'GC '+p.gift_card.codigo : ''}
+      </span>
+      <span class="mon">${money(p.monto)}</span>
+      <button class="del" data-pidx="${idx}" title="Quitar">×</button>
+    </div>
+  `).join('');
+
+  // Propinas
+  const propinaPcts = [0, 5, 10, 15, 20];
+  const propinaHtml = propinaPcts.map(p => `
+    <button class="propina-chip ${state.cobro.propina_custom==null && state.cobro.propina_pct===p?'active':''}" data-pct="${p}">${p}%</button>
+  `).join('') + `<button class="propina-chip ${state.cobro.propina_custom!=null?'active':''}" id="propina-custom-btn">Custom${state.cobro.propina_custom!=null?(' · '+money(state.cobro.propina_custom)):''}</button>`;
+
+  // Split
+  const splitHtml = [1,2,3,4,5,6].map(n => `
+    <button class="split-chip ${state.cobro.split_n===n?'active':''}" data-n="${n}">${n}</button>
+  `).join('');
+
+  // Comprobante
+  const C = state.cobro.comprobante;
+  const comprobHtml = `
+    <div class="comprobante-tabs">
+      <button class="comprobante-tab ${C.tipo==='sin_comprobante'?'active':''}" data-c="sin_comprobante">Sin comprobante</button>
+      <button class="comprobante-tab ${C.tipo==='boleta'?'active':''}" data-c="boleta">Boleta · DNI</button>
+      <button class="comprobante-tab ${C.tipo==='factura'?'active':''}" data-c="factura">Factura · RUC</button>
+    </div>
+    ${C.tipo==='boleta' ? `
+      <div style="margin-top:10px;display:grid;gap:8px">
+        <input class="input" placeholder="DNI (opcional)" id="comp-doc" value="${C.doc||''}" inputmode="numeric" maxlength="8">
+        <input class="input" placeholder="Nombre del comensal (opcional)" id="comp-nombre" value="${C.nombre||''}">
+        <input class="input" placeholder="Email para envío (opcional)" id="comp-email" value="${C.email||''}" inputmode="email">
+      </div>
+    ` : ''}
+    ${C.tipo==='factura' ? `
+      <div style="margin-top:10px;display:grid;gap:8px">
+        <input class="input" placeholder="RUC (11 dígitos) *" id="comp-doc" value="${C.doc||''}" inputmode="numeric" maxlength="11">
+        <input class="input" placeholder="Razón social *" id="comp-nombre" value="${C.nombre||''}">
+        <input class="input" placeholder="Email para envío" id="comp-email" value="${C.email||''}" inputmode="email">
+      </div>
+    ` : ''}
+  `;
+
+  // Form de pago según método
+  const M = state.cobro.metodo_actual;
+  const monto = +(Number(state.cobro.monto_input || sugerido) || 0);
+  const recibido = +(Number(state.cobro.recibido_input || monto) || 0);
+  const vuelto = Math.max(0, +(recibido - monto).toFixed(2));
+
+  let formExtraHtml = '';
+  if (M === 'efectivo') {
+    formExtraHtml = `
+      <div class="sheet-section-label" style="margin-top:14px">Recibido del comensal</div>
+      <input class="input" id="recibido-input" inputmode="decimal" placeholder="${monto.toFixed(2)}" value="${state.cobro.recibido_input}">
+      <div class="vuelto-row">
+        <span>Vuelto a entregar</span>
+        <strong>${money(vuelto)}</strong>
+      </div>
+    `;
+  } else if (M === 'gift_card') {
+    const G = state.cobro.gift_input;
+    formExtraHtml = `
+      <div class="sheet-section-label" style="margin-top:14px">Código de gift card</div>
+      <div style="display:flex;gap:8px">
+        <input class="input" id="gift-codigo" placeholder="GC-XXXX" value="${G.codigo||''}" style="flex:1">
+        <button class="btn dark" id="gift-validar" style="width:auto;min-height:44px;padding:0 16px">Validar</button>
+      </div>
+      ${G.saldo!=null ? `<div class="vuelto-row"><span>Saldo disponible</span><strong style="color:var(--primary)">${money(G.saldo)}</strong></div>` : ''}
+      ${G.error ? `<div class="vuelto-row" style="color:var(--secondary)"><span>${G.error}</span></div>` : ''}
+    `;
+  } else if (['yape','plin','mercadopago','izipay'].includes(M)) {
+    formExtraHtml = `
+      <div class="sheet-section-label" style="margin-top:14px">Código de operación (ref)</div>
+      <input class="input" id="ref-input" placeholder="ej. 12345678" value="${state.cobro.ref_input}" inputmode="numeric">
+    `;
+  } else if (['visa','mastercard','amex'].includes(M)) {
+    formExtraHtml = `
+      <div class="sheet-section-label" style="margin-top:14px">Últimos 4 dígitos / voucher</div>
+      <input class="input" id="ref-input" placeholder="ej. 4321" value="${state.cobro.ref_input}" maxlength="20">
+    `;
+  }
+
+  // Numpad
+  const numpadHtml = `
+    <div class="numpad">
+      ${[1,2,3,4,5,6,7,8,9].map(n => `<button data-np="${n}">${n}</button>`).join('')}
+      <button data-np=".">.</button>
+      <button data-np="0">0</button>
+      <button class="del" data-np="DEL">←</button>
+      <button class="action" data-np="CLR" style="grid-column:span 2">Limpiar</button>
+      <button class="action" data-np="SUG">Sugerido</button>
+    </div>
+  `;
+
+  $('#screen').innerHTML = `
+    <div class="cobro-screen">
+      <div class="cobro-head">
+        <div class="ticket-mark">${state.mesas.find(m => m.id === ped.mesa_id)?.numero || '?'}</div>
+        <div class="info">
+          <h2>Cobrando #${ped.ticket_num}</h2>
+          <div class="meta">
+            <span>${items.length} ítem${items.length===1?'':'s'}</span>
+            ${(state.cobro.cortesiasPersistidas.length+state.cobro.cortesias.length) ? '<span>'+(state.cobro.cortesiasPersistidas.length+state.cobro.cortesias.length)+' cortesía(s)</span>' : ''}
+            <span>${ped.comensales} comensal${ped.comensales===1?'':'es'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cobro-left">
+        <div class="sheet-section-label">Ítems del pedido · tap 🎁 para cortesía</div>
+        ${itemsHtml || '<div class="empty-state">Sin ítems</div>'}
+      </div>
+
+      <div class="cobro-right">
+        <div class="sheet-section-label">Dividir cuenta</div>
+        <div class="split-chips">${splitHtml}</div>
+        ${state.cobro.split_n>1 ? `<div style="font-family:var(--font-mono);font-size:11px;opacity:0.6;margin-top:6px">Cada cuenta: ${money(T.pendiente/state.cobro.split_n)}</div>` : ''}
+
+        <div class="sheet-section-label" style="margin-top:16px">Método de pago</div>
+        <div class="pay-methods">${metHtml}</div>
+
+        <div class="sheet-section-label" style="margin-top:14px">Monto del pago</div>
+        <div class="monto-display ${monto > T.pendiente + 0.01 ? 'warn':''}">
+          <span class="currency">S/</span>${monto.toFixed(2)}
+        </div>
+        ${numpadHtml}
+
+        ${formExtraHtml}
+
+        <div style="margin-top:14px">
+          <button class="btn primary" id="agregar-pago" ${monto<=0?'disabled':''}>
+            <span class="material-symbols-outlined">add_circle</span>
+            Agregar pago de ${money(monto)}
+          </button>
+        </div>
+
+        ${(state.cobro.pagos.length || state.cobro.pagosPersistidos.length) ? `
+          <div class="sheet-section-label" style="margin-top:18px">Pagos agregados</div>
+          <div class="pagos-list">
+            ${pagosPersistHtml}
+            ${pagosLocalHtml}
+          </div>
+        ` : ''}
+
+        <div class="sheet-section-label" style="margin-top:18px">Propina al mozo</div>
+        <div class="propina-chips">${propinaHtml}</div>
+
+        <div class="sheet-section-label" style="margin-top:18px">Comprobante</div>
+        ${comprobHtml}
+      </div>
+
+      <div class="cobro-foot">
+        <div class="totals">
+          <div class="t"><span class="lbl">Subtotal</span><span class="val">${money(T.sub_bruto)}</span></div>
+          ${T.cortesias_total>0?`<div class="t"><span class="lbl">Cortesías</span><span class="val" style="color:var(--green)">−${money(T.cortesias_total)}</span></div>`:''}
+          <div class="t"><span class="lbl">Servicio 10%</span><span class="val">${money(T.servicio_monto)}</span></div>
+          ${T.propina>0?`<div class="t"><span class="lbl">Propina</span><span class="val">${money(T.propina)}</span></div>`:''}
+          <div class="t big"><span class="lbl">Total</span><span class="val">${money(T.total)}</span></div>
+          <div class="t cubierto"><span class="lbl">Pagado</span><span class="val">${money(T.pagado)}</span></div>
+          <div class="t pendiente"><span class="lbl">Pendiente</span><span class="val">${money(T.pendiente)}</span></div>
+        </div>
+        <button class="btn primary" id="confirmar-cobro" ${T.pendiente>0.01?'disabled':''}>
+          <span class="material-symbols-outlined">check_circle</span>
+          Cobrar y cerrar mesa
+        </button>
+      </div>
+    </div>
+  `;
+
+  // WIRES
+  $$('.cobro-item [data-act="cortesia"]').forEach(b => b.onclick = () => {
+    const iid = b.closest('.cobro-item').dataset.iid;
+    abrirDialogoCortesia(iid);
+  });
+  $$('.pay-method-btn').forEach(b => b.onclick = () => {
+    state.cobro.metodo_actual = b.dataset.met;
+    state.cobro.ref_input = '';
+    state.cobro.recibido_input = '';
+    state.cobro.gift_input = { codigo:'', saldo:null, gift_id:null, error:null };
+    render();
+  });
+  $$('.numpad button').forEach(b => b.onclick = () => {
+    const k = b.dataset.np;
+    if (k === 'CLR') state.cobro.monto_input = '';
+    else if (k === 'DEL') state.cobro.monto_input = (state.cobro.monto_input || sugerido.toString()).slice(0, -1);
+    else if (k === 'SUG') state.cobro.monto_input = sugerido.toString();
+    else if (k === '.') { if (!(state.cobro.monto_input||'').includes('.')) state.cobro.monto_input = (state.cobro.monto_input||'0') + '.'; }
+    else state.cobro.monto_input = (state.cobro.monto_input || '') + k;
+    render();
+  });
+  if ($('#recibido-input')) $('#recibido-input').oninput = (e) => { state.cobro.recibido_input = e.target.value; render(); };
+  if ($('#ref-input')) $('#ref-input').oninput = (e) => { state.cobro.ref_input = e.target.value; };
+  if ($('#gift-codigo')) $('#gift-codigo').oninput = (e) => { state.cobro.gift_input.codigo = e.target.value.toUpperCase(); };
+  if ($('#gift-validar')) $('#gift-validar').onclick = () => validarGiftCard();
+  $$('.split-chip').forEach(b => b.onclick = () => { state.cobro.split_n = +b.dataset.n; state.cobro.monto_input = ''; render(); });
+  $$('.propina-chip[data-pct]').forEach(b => b.onclick = () => { state.cobro.propina_pct = +b.dataset.pct; state.cobro.propina_custom = null; render(); });
+  if ($('#propina-custom-btn')) $('#propina-custom-btn').onclick = () => {
+    const v = prompt('Propina personalizada (S/)', state.cobro.propina_custom || '0');
+    if (v != null && !isNaN(+v)) { state.cobro.propina_custom = +v; render(); }
+  };
+  $$('.comprobante-tab').forEach(b => b.onclick = () => {
+    state.cobro.comprobante.tipo = b.dataset.c;
+    if (b.dataset.c === 'sin_comprobante') { state.cobro.comprobante.doc=''; state.cobro.comprobante.nombre=''; }
+    render();
+  });
+  if ($('#comp-doc')) $('#comp-doc').oninput = (e) => { state.cobro.comprobante.doc = e.target.value; };
+  if ($('#comp-nombre')) $('#comp-nombre').oninput = (e) => { state.cobro.comprobante.nombre = e.target.value; };
+  if ($('#comp-email')) $('#comp-email').oninput = (e) => { state.cobro.comprobante.email = e.target.value; };
+  if ($('#agregar-pago')) $('#agregar-pago').onclick = () => agregarPagoLocal(monto, recibido, vuelto);
+  if ($('#confirmar-cobro')) $('#confirmar-cobro').onclick = () => confirmarCobro();
+  $$('.pago-row .del').forEach(b => b.onclick = () => { state.cobro.pagos.splice(+b.dataset.pidx, 1); render(); });
+}
+
+async function validarGiftCard() {
+  const codigo = (state.cobro.gift_input.codigo || '').trim().toUpperCase();
+  if (!codigo) { state.cobro.gift_input.error = 'Ingresa un código'; render(); return; }
+  const { data, error } = await sb.from('ca_gift_cards')
+    .select('id, saldo, estado, expira_at')
+    .eq('marca_id', MARCA).eq('codigo', codigo).maybeSingle();
+  if (error || !data) {
+    state.cobro.gift_input = { codigo, saldo:null, gift_id:null, error:'No existe esta gift card' }; render(); return;
+  }
+  if (data.estado !== 'activa') {
+    state.cobro.gift_input = { codigo, saldo:null, gift_id:null, error:'Gift card ' + data.estado }; render(); return;
+  }
+  if (data.expira_at && new Date(data.expira_at) < new Date()) {
+    state.cobro.gift_input = { codigo, saldo:null, gift_id:null, error:'Gift card expirada' }; render(); return;
+  }
+  if (Number(data.saldo) <= 0) {
+    state.cobro.gift_input = { codigo, saldo:0, gift_id:data.id, error:'Sin saldo' }; render(); return;
+  }
+  state.cobro.gift_input = { codigo, saldo:Number(data.saldo), gift_id:data.id, error:null };
+  render();
+}
+
+function agregarPagoLocal(monto, recibido, vuelto) {
+  if (monto <= 0) { toast('Monto inválido', 'warn'); return; }
+  const M = state.cobro.metodo_actual;
+  const pago = { metodo: M, monto: +monto.toFixed(2) };
+  if (M === 'efectivo') {
+    if (recibido < monto) { toast('Recibido menor al monto', 'warn'); return; }
+    pago.recibido = +recibido.toFixed(2);
+    pago.vuelto = +vuelto.toFixed(2);
+  } else if (M === 'gift_card') {
+    const G = state.cobro.gift_input;
+    if (!G.gift_id) { toast('Valida la gift card primero', 'warn'); return; }
+    if (monto > G.saldo) { toast('Monto excede el saldo de la gift card', 'warn'); return; }
+    pago.gift_card = { id: G.gift_id, codigo: G.codigo, saldo_previo: G.saldo };
+  } else if (['yape','plin','mercadopago','izipay'].includes(M)) {
+    if (!state.cobro.ref_input) { toast('Ingresa el código de operación', 'warn'); return; }
+    pago.ref_externa = state.cobro.ref_input;
+  } else if (['visa','mastercard','amex'].includes(M)) {
+    pago.ref_externa = state.cobro.ref_input || null;
+  }
+  state.cobro.pagos.push(pago);
+  state.cobro.monto_input = '';
+  state.cobro.ref_input = '';
+  state.cobro.recibido_input = '';
+  state.cobro.gift_input = { codigo:'', saldo:null, gift_id:null, error:null };
+  toast('Va · pago de ' + money(monto) + ' (' + pagoLabel(M) + ')', 'ok');
+  render();
+}
+
+function abrirDialogoCortesia(itemId) {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  const items = state.pedidoItemsCache[ped.id] || [];
+  const item = items.find(it => it.id === itemId);
+  if (!item) return;
+
+  const cortesiaLocal = state.cobro.cortesias.find(c => c.item_id === itemId);
+  const cortesiaPersist = state.cobro.cortesiasPersistidas.find(c => c.item_id === itemId);
+
+  if (cortesiaLocal) {
+    if (confirm('Quitar cortesía de "' + item.nombre + '"?')) {
+      state.cobro.cortesias = state.cobro.cortesias.filter(c => c.item_id !== itemId);
+      render();
+    }
+    return;
+  }
+  if (cortesiaPersist) {
+    toast('Esta cortesía ya fue aprobada y registrada', 'warn');
+    return;
+  }
+
+  $('#sheet-mark').textContent = '🎁';
+  $('#sheet-mark').style.background = 'var(--green-soft)';
+  $('#sheet-mark').style.color = 'var(--ink)';
+  $('#sheet-title').textContent = 'Cortesía';
+  $('#sheet-meta').textContent = item.nombre + ' · ' + money(item.precio_total);
+  const motivos = ['Cumpleaños', 'Cliente recurrente', 'Demora en cocina', 'Plato no satisfactorio', 'Cortesía de la casa', 'Promoción', 'Otra'];
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">¿Por qué se invita este ítem?</div>
+      <div class="chips" id="motivo-chips">
+        ${motivos.map(m => `<button class="chip" data-m="${m}">${m}</button>`).join('')}
+      </div>
+      <textarea class="input" id="motivo-notas" rows="2" placeholder="Notas adicionales (opcional)" style="margin-top:10px"></textarea>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">Monto a invitar</div>
+      <div class="prop-row">
+        <label>Invitar 100% (${money(item.precio_total)})</label>
+        <button class="btn primary" style="width:auto;min-width:120px" id="cort-full">Aplicar</button>
+      </div>
+      <div class="prop-row" style="gap:8px">
+        <label style="flex:0 0 auto">Parcial</label>
+        <input class="input" id="cort-parcial" type="number" step="0.10" max="${item.precio_total}" placeholder="0.00" style="max-width:120px">
+        <button class="btn warn" id="cort-parcial-go" style="width:auto;min-width:100px">Aplicar</button>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div style="font-size:11px;font-family:var(--font-mono);opacity:0.65;padding:10px;background:var(--amber-soft);border:1px dashed var(--outline);border-radius:8px">
+        ⚠ La cortesía queda registrada en auditoría con el mozo en turno como solicitante. En producción debe aprobarla un gerente.
+      </div>
+    </div>
+    <div class="sheet-section">
+      <button class="btn ghost" id="cort-cancel">Atrás</button>
+    </div>
+  `;
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+
+  let motivoSel = null;
+  $$('#motivo-chips .chip').forEach(b => b.onclick = () => {
+    $$('#motivo-chips .chip').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    motivoSel = b.dataset.m;
+  });
+  const aplicar = (montoCort) => {
+    if (!motivoSel) { toast('Selecciona un motivo', 'warn'); return; }
+    if (!(montoCort > 0) || montoCort > Number(item.precio_total) + 0.01) { toast('Monto inválido', 'warn'); return; }
+    const notas = $('#motivo-notas').value;
+    state.cobro.cortesias.push({
+      tmp_id: 'cort_' + Date.now(),
+      item_id: itemId,
+      monto: +montoCort.toFixed(2),
+      motivo: motivoSel + (notas ? ' · ' + notas : ''),
+    });
+    closeSheet();
+    render();
+    toast('Va · cortesía aplicada', 'ok');
+  };
+  $('#cort-full').onclick = () => aplicar(Number(item.precio_total));
+  $('#cort-parcial-go').onclick = () => aplicar(+$('#cort-parcial').value);
+  $('#cort-cancel').onclick = closeSheet;
+}
+
+async function confirmarCobro() {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) return;
+  const T = calcularTotalesCobro(ped);
+  if (T.pendiente > 0.01) { toast('Aún falta ' + money(T.pendiente), 'warn'); return; }
+
+  const C = state.cobro.comprobante;
+  if (C.tipo === 'factura') {
+    if (!(C.doc||'').match(/^\d{11}$/)) { toast('RUC inválido (11 dígitos)', 'err'); return; }
+    if (!(C.nombre||'').trim()) { toast('Razón social requerida', 'err'); return; }
+  }
+  if (C.tipo === 'boleta' && C.doc && !(C.doc||'').match(/^\d{8}$/)) {
+    toast('DNI inválido (8 dígitos) — déjalo vacío si no aplica', 'err'); return;
+  }
+  if (!confirm('Cerrar mesa y registrar cobro?\nTotal: ' + money(T.total) + '\nPagos: ' + (state.cobro.pagos.length+state.cobro.pagosPersistidos.length))) return;
+
+  const pagado_at = new Date().toISOString();
+  try {
+    // 1. ca_pagos
+    const pagosInsert = state.cobro.pagos.map(p => ({
+      pedido_id: ped.id,
+      metodo: p.metodo,
+      monto: p.monto,
+      moneda: 'PEN',
+      ref_externa: p.ref_externa || null,
+      gift_card_id: p.gift_card ? p.gift_card.id : null,
+      recibido: p.recibido || null,
+      vuelto: p.vuelto || null,
+      pagado_at,
+    }));
+    if (pagosInsert.length) {
+      const r = await sb.from('ca_pagos').insert(pagosInsert);
+      if (r.error) throw new Error('Pagos: ' + r.error.message);
+    }
+    // 2. Gift cards (decrementar saldo)
+    for (const p of state.cobro.pagos) {
+      if (p.gift_card) {
+        const nuevoSaldo = +(p.gift_card.saldo_previo - p.monto).toFixed(2);
+        const r = await sb.from('ca_gift_cards').update({
+          saldo: nuevoSaldo,
+          estado: nuevoSaldo <= 0.01 ? 'agotada' : 'activa',
+        }).eq('id', p.gift_card.id);
+        if (r.error) throw new Error('Gift card: ' + r.error.message);
+      }
+    }
+    // 3. ca_cortesias
+    const cortesiasInsert = state.cobro.cortesias.map(c => ({
+      pedido_id: ped.id,
+      item_id: c.item_id || null,
+      tipo: c.item_id ? 'item' : 'global',
+      monto: c.monto,
+      motivo: c.motivo,
+      solicitada_por: state.mozoId || null,
+      aprobada_por: state.mozoId || null,
+      aprobada_at: pagado_at,
+    }));
+    if (cortesiasInsert.length) {
+      const r = await sb.from('ca_cortesias').insert(cortesiasInsert);
+      if (r.error) throw new Error('Cortesías: ' + r.error.message);
+    }
+    // 4. ca_propinas
+    if (T.propina > 0) {
+      const metodoPropina = state.cobro.pagos[0]?.metodo || 'mixto';
+      const r = await sb.from('ca_propinas').insert({
+        pedido_id: ped.id,
+        mozo_id: ped.mozo_id,
+        turno_id: state.turno?.id || null,
+        monto: T.propina,
+        metodo: metodoPropina,
+      });
+      if (r.error) throw new Error('Propina: ' + r.error.message);
+    }
+    // 5. Cierre del pedido
+    const updPed = {
+      subtotal: T.sub_neto,
+      descuento: T.cortesias_total,
+      igv: T.igv_incl,
+      servicio_monto: T.servicio_monto,
+      propina_monto: T.propina,
+      total: T.total,
+      estado: 'pagada',
+      estado_servicio: 'pagada',
+      cerrada_at: pagado_at,
+      pagado_at,
+      comprobante_tipo: C.tipo,
+      comprobante_doc: C.doc || null,
+      comprobante_nombre: C.nombre || null,
+      comprobante_email: C.email || null,
+      comprobante_emitido: false,
+    };
+    const r5 = await sb.from('ca_pedidos').update(updPed).eq('id', ped.id);
+    if (r5.error) throw new Error('Pedido: ' + r5.error.message);
+
+    toast('Servido · mesa cerrada · ' + money(T.total), 'ok');
+    await loadPedidos();
+    state.screen = 'floor';
+    state.pedidoAbiertoId = null;
+    render();
+  } catch (err) {
+    console.error(err);
+    toast('Atrás · ' + (err.message || 'fallo al cobrar'), 'err');
+  }
 }
 
 /* ========= REALTIME ========= */
