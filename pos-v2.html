@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#fcf9f8">
+<title>POS · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ============ TOKENS ============ */
+:root {
+  --primary: #1e5af9;
+  --secondary: #ff3b30;
+  --tertiary: #ffcc00;
+  --bg: #fcf9f8;
+  --surface: #ffffff;
+  --ink: #171c20;
+  --outline: #000000;
+  --primary-soft: #d6e2ff;
+  --primary-dark: #001a47;
+  --gray-soft: #dfe3e8;
+  --green: #10b981;
+  --green-soft: #d1fae5;
+  --amber-soft: #fef3c7;
+  --red-soft: #fee2e2;
+  --shadow-sm: 4px 4px 0 0 #000;
+  --shadow: 6px 6px 0 0 #000;
+  --shadow-lg: 10px 10px 0 0 #000;
+  --font-display: 'Bagel Fat One', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --canvas-scale: 1.6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+button { font-family: inherit; cursor: pointer; }
+.material-symbols-outlined { font-size: 20px; line-height: 1; }
+
+/* ============ HEADER ============ */
+.header {
+  flex-shrink: 0;
+  background: var(--bg);
+  border-bottom: 2px solid var(--outline);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.brand .logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--primary);
+  line-height: 0.9;
+}
+.brand .logo .accent { color: var(--secondary); }
+.brand .mod {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+.header-info {
+  display: flex; align-items: center; gap: 12px;
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.header-info .pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+}
+.header-info .pill.live { background: var(--primary); color: white; }
+.header-info .pill.live::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--tertiary);
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+
+.mozo-select {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.mozo-select:active { transform: translate(2px,2px); box-shadow: none; }
+.mozo-select .material-symbols-outlined { font-size: 18px; }
+
+/* ============ ZONE TABS ============ */
+.zonas {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg);
+  border-bottom: 2px solid var(--outline);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.zonas::-webkit-scrollbar { display: none; }
+.zona-tab {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.zona-tab.active {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translate(2px,2px);
+  box-shadow: none;
+}
+.zona-tab .count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--tertiary);
+  color: var(--ink);
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1.5px solid var(--outline);
+}
+.zona-tab.active .count { background: var(--tertiary); color: var(--ink); }
+
+/* ============ FLOOR CANVAS ============ */
+.floor-wrap {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  padding: 24px;
+}
+.floor-canvas {
+  position: relative;
+  width: calc(580px * var(--canvas-scale));
+  height: calc(320px * var(--canvas-scale));
+  margin: 0 auto;
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(0,0,0,0.04) 39px, rgba(0,0,0,0.04) 40px),
+    repeating-linear-gradient(90deg, transparent 0, transparent 39px, rgba(0,0,0,0.04) 39px, rgba(0,0,0,0.04) 40px),
+    var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ZONE markers / labels */
+.zona-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* MESAS */
+.mesa {
+  position: absolute;
+  border: 2px solid var(--outline);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  padding: 4px;
+  overflow: hidden;
+  text-align: center;
+}
+.mesa:active {
+  transform: translate(2px,2px);
+  box-shadow: none;
+}
+.mesa .num {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 0.9;
+}
+.mesa .cap {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+.mesa .timer {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-top: 2px;
+}
+.mesa .badge-com {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px; height: 22px;
+  background: var(--tertiary);
+  border: 2px solid var(--outline);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mesa.circular { border-radius: 50%; }
+.mesa.rectangular { border-radius: 10px; }
+.mesa.barra {
+  border-radius: 10px;
+  background: var(--primary-dark);
+  color: var(--bg);
+}
+.mesa.barra .cap { opacity: 0.8; }
+
+/* ESTADOS */
+.mesa[data-estado="libre"] { background: var(--surface); }
+.mesa[data-estado="abierta"] {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+.mesa[data-estado="marchada"] {
+  background: var(--tertiary);
+}
+.mesa[data-estado="cuenta_pedida"] {
+  background: var(--secondary);
+  color: white;
+}
+.mesa[data-estado="cuenta_pedida"] .cap { opacity: 0.85; }
+.mesa[data-estado="cuenta_pedida"] .timer { background: white; color: var(--ink); }
+.mesa[data-estado="suspendida"] {
+  background: var(--surface);
+  border-style: dashed;
+  opacity: 0.7;
+}
+.mesa.hidden { display: none; }
+
+/* LEGEND */
+.legend {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot {
+  width: 14px; height: 14px;
+  border: 1.5px solid var(--outline);
+  border-radius: 4px;
+}
+.legend-dot.libre { background: var(--surface); }
+.legend-dot.abierta { background: var(--primary-soft); }
+.legend-dot.marchada { background: var(--tertiary); }
+.legend-dot.cuenta { background: var(--secondary); }
+.legend-dot.suspendida { background: var(--surface); border-style: dashed; }
+
+/* ============ BOTTOM SHEET ============ */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 80;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+.sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 90;
+  background: var(--surface);
+  border-top: 3px solid var(--outline);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 0 0 var(--outline);
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.sheet.open { transform: translateY(0); }
+
+.sheet-handle {
+  width: 48px;
+  height: 5px;
+  background: var(--outline);
+  border-radius: 999px;
+  margin: 12px auto 8px;
+  opacity: 0.3;
+}
+.sheet-head {
+  padding: 8px 24px 16px;
+  border-bottom: 2px solid var(--outline);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sheet-mesa-mark {
+  width: 56px; height: 56px;
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  background: var(--primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.sheet-title { flex: 1; }
+.sheet-title h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.sheet-title .meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+  display: flex;
+  gap: 10px;
+}
+.sheet-close {
+  width: 40px; height: 40px;
+  border: 2px solid var(--outline);
+  border-radius: 50%;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.sheet-close:active { transform: translate(2px,2px); box-shadow: none; }
+
+.sheet-body {
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+.sheet-section + .sheet-section { margin-top: 20px; }
+.sheet-section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  margin-bottom: 8px;
+}
+.sheet-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--gray-soft);
+  font-size: 14px;
+}
+.sheet-info-row strong { font-family: var(--font-mono); font-weight: 600; }
+
+/* COMENSALES STEPPER */
+.com-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin: 12px 0;
+}
+.com-stepper button {
+  width: 56px; height: 56px;
+  border: 2px solid var(--outline);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+.com-stepper button:active { transform: translate(2px,2px); box-shadow: none; }
+.com-stepper button:disabled { opacity: 0.3; }
+.com-stepper .com-num {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* BUTTON BANK */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 20px;
+  border: 2px solid var(--outline);
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
+  width: 100%;
+  min-height: 56px;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: none; }
+.btn.primary { background: var(--primary); color: white; }
+.btn.danger { background: var(--secondary); color: white; }
+.btn.warn { background: var(--tertiary); color: var(--ink); }
+.btn.dark { background: var(--ink); color: var(--bg); }
+.btn.ghost { background: transparent; box-shadow: none; border-style: dashed; }
+.btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.btn-grid .btn.span-2 { grid-column: span 2; }
+
+/* MOZO PICKER (dialog) */
+.dialog-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.dialog-backdrop.open { display: flex; }
+.dialog {
+  background: var(--surface);
+  border: 3px solid var(--outline);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.dialog-head {
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--outline);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dialog-head h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  flex: 1;
+}
+.dialog-body { padding: 16px; overflow-y: auto; }
+.mozo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  background: var(--surface);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.mozo-item:active { transform: translate(2px,2px); box-shadow: none; }
+.mozo-item.active { background: var(--primary); color: white; }
+.mozo-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--outline);
+  background: var(--tertiary);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.mozo-info { flex: 1; }
+.mozo-info .name { font-weight: 700; font-size: 15px; }
+.mozo-info .rol {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+/* TOASTS */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--ink);
+  color: var(--bg);
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 320px;
+}
+.toast.ok { background: var(--primary); color: white; }
+.toast.err { background: var(--secondary); color: white; }
+.toast.warn { background: var(--tertiary); color: var(--ink); }
+@keyframes toast-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* LOADING SCREEN */
+.boot {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 300;
+  transition: opacity 0.3s;
+}
+.boot.gone { opacity: 0; pointer-events: none; }
+.boot .logo {
+  font-family: var(--font-display);
+  font-size: 72px;
+  color: var(--primary);
+  line-height: 1;
+}
+.boot .logo .accent { color: var(--secondary); }
+.boot .msg {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.6;
+}
+.boot .spinner {
+  width: 36px; height: 36px;
+  border: 4px solid var(--outline);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  :root { --canvas-scale: 1.2; }
+  .header { padding: 8px 12px; gap: 8px; }
+  .brand .logo { font-size: 22px; }
+  .brand .mod { display: none; }
+  .header-info .pill { font-size: 10px; padding: 4px 8px; }
+  .floor-wrap { padding: 12px; }
+}
+@media (min-width: 1100px) {
+  :root { --canvas-scale: 2.0; }
+}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot" class="boot">
+  <div class="logo">prep<span class="accent">!</span></div>
+  <div class="spinner"></div>
+  <div class="msg">Oído · cargando salón</div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="brand">
+    <span class="logo">prep<span class="accent">!</span></span>
+    <span class="mod">POS · Casa Italia</span>
+  </div>
+  <div class="header-info">
+    <span class="pill" id="turno-pill">
+      <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
+      <span id="turno-label">—</span>
+    </span>
+    <span class="pill live" id="abiertas-pill">
+      <span id="abiertas-count">0</span> abiertas
+    </span>
+  </div>
+  <button class="mozo-select" id="mozo-select">
+    <span class="material-symbols-outlined">person</span>
+    <span id="mozo-label">Elegir mozo</span>
+  </button>
+</header>
+
+<!-- ZONE TABS -->
+<nav class="zonas" id="zonas"></nav>
+
+<!-- FLOOR -->
+<main class="floor-wrap">
+  <div class="floor-canvas" id="floor"></div>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot libre"></span>Libre</span>
+    <span class="legend-item"><span class="legend-dot abierta"></span>Abierta</span>
+    <span class="legend-item"><span class="legend-dot marchada"></span>En fuego</span>
+    <span class="legend-item"><span class="legend-dot cuenta"></span>Cuenta pedida</span>
+    <span class="legend-item"><span class="legend-dot suspendida"></span>Suspendida</span>
+  </div>
+</main>
+
+<!-- BOTTOM SHEET (mesa actions) -->
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+<aside class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div class="sheet-mesa-mark" id="sheet-mark">M—</div>
+    <div class="sheet-title">
+      <h2 id="sheet-title">Mesa</h2>
+      <div class="meta" id="sheet-meta">—</div>
+    </div>
+    <button class="sheet-close" id="sheet-close" aria-label="Cerrar">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</aside>
+
+<!-- MOZO PICKER -->
+<div class="dialog-backdrop" id="mozo-dialog">
+  <div class="dialog">
+    <div class="dialog-head">
+      <span class="material-symbols-outlined" style="color:var(--primary)">badge</span>
+      <h3>¿Quién está en turno?</h3>
+      <button class="sheet-close" id="mozo-dialog-close"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="dialog-body" id="mozo-list"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const MARCA = 'm6';
+const LOCAL = 'l11';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* ============ STATE ============ */
+const state = {
+  mesas: [],
+  pedidos: [],
+  empleados: [],
+  turno: null,
+  mozoId: localStorage.getItem('prep_pos_mozo') || null,
+  zonaActiva: 'todas',
+  mesaAbierta: null,
+  channel: null,
+};
+
+/* ============ UTILS ============ */
+const $ = (s, root = document) => root.querySelector(s);
+const $$ = (s, root = document) => root.querySelectorAll(s);
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '—';
+  const ms = Date.now() - new Date(dateStr).getTime();
+  const min = Math.floor(ms / 60000);
+  if (min < 1) return 'ahora';
+  if (min < 60) return min + ' min';
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h + 'h ' + m + 'm';
+}
+
+function fmtMozo(emp) {
+  if (!emp) return '—';
+  const apellido = (emp.apellidos || '').split(' ')[0];
+  return emp.nombre + (apellido ? ' ' + apellido : '');
+}
+
+function avatarLetters(emp) {
+  return ((emp.nombre || '?').charAt(0) + (emp.apellidos || '').charAt(0)).toUpperCase();
+}
+
+function toast(msg, tipo = '') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + tipo;
+  el.innerHTML = `<span class="material-symbols-outlined">${
+    tipo === 'ok' ? 'check_circle' : tipo === 'err' ? 'error' : tipo === 'warn' ? 'warning' : 'info'
+  }</span><span>${msg}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 0.3s, transform 0.3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(120%)';
+    setTimeout(() => el.remove(), 300);
+  }, 2800);
+}
+
+/* ============ DATA LOAD ============ */
+async function loadAll() {
+  await Promise.all([loadMesas(), loadEmpleados(), loadTurno()]);
+  await loadPedidos();
+  render();
+  subscribe();
+  setInterval(updateTimers, 30000); // refresh time-ago every 30s
+  $('#boot').classList.add('gone');
+}
+
+async function loadMesas() {
+  const { data, error } = await sb.from('ca_mesas')
+    .select('*')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('activa', true);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.mesas = data || [];
+}
+
+async function loadPedidos() {
+  const { data, error } = await sb.from('ca_pedidos')
+    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL)
+    .in('estado', ['abierta', 'suspended']);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.pedidos = data || [];
+}
+
+async function loadEmpleados() {
+  const { data, error } = await sb.from('rrhh_empleados')
+    .select('id, nombre, apellidos, rol, area')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
+    .in('area', ['Salón', 'Bar']);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.empleados = data || [];
+}
+
+async function loadTurno() {
+  const { data, error } = await sb.from('ca_turnos')
+    .select('id, nombre, fecha, estado, hora_inicio')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'abierto')
+    .order('fecha', { ascending: false })
+    .limit(1);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.turno = (data && data[0]) || null;
+}
+
+/* ============ DERIVED ============ */
+function pedidoDeMesa(mesaId) {
+  return state.pedidos.find(p => p.mesa_id === mesaId);
+}
+
+function estadoMesa(mesa) {
+  const p = pedidoDeMesa(mesa.id);
+  if (!p) return 'libre';
+  if (p.estado === 'suspended') return 'suspendida';
+  return p.estado_servicio || 'abierta';
+}
+
+function zonasCount() {
+  const map = { todas: state.mesas.length };
+  state.mesas.forEach(m => {
+    const z = m.zona || 'sin_zona';
+    map[z] = (map[z] || 0) + 1;
+  });
+  return map;
+}
+
+/* ============ RENDER ============ */
+function render() {
+  renderHeader();
+  renderZonas();
+  renderFloor();
+}
+
+function renderHeader() {
+  // turno
+  $('#turno-label').textContent = state.turno
+    ? state.turno.nombre + ' · ' + state.turno.fecha
+    : 'Sin turno';
+  if (!state.turno) {
+    $('#turno-pill').style.background = 'var(--secondary)';
+    $('#turno-pill').style.color = 'white';
+  } else {
+    $('#turno-pill').style.background = 'var(--surface)';
+    $('#turno-pill').style.color = 'var(--ink)';
+  }
+  // abiertas
+  const abiertas = state.pedidos.filter(p => p.estado === 'abierta').length;
+  $('#abiertas-count').textContent = abiertas;
+  // mozo
+  const mozo = state.empleados.find(e => e.id === state.mozoId);
+  $('#mozo-label').textContent = mozo ? fmtMozo(mozo) : 'Elegir mozo';
+}
+
+function renderZonas() {
+  const counts = zonasCount();
+  const orden = ['todas', 'salón', 'terraza', 'reservado', 'barra'];
+  const labels = { todas: 'Todas', 'salón': 'Salón', terraza: 'Terraza', reservado: 'Reservado', barra: 'Barra' };
+  const html = orden
+    .filter(z => z === 'todas' || counts[z])
+    .map(z => `
+      <button class="zona-tab ${state.zonaActiva === z ? 'active' : ''}" data-z="${z}">
+        ${labels[z]}
+        <span class="count">${counts[z] || 0}</span>
+      </button>
+    `).join('');
+  $('#zonas').innerHTML = html;
+  $$('#zonas .zona-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.zonaActiva = btn.dataset.z;
+      render();
+    });
+  });
+}
+
+function renderFloor() {
+  const floor = $('#floor');
+  // Zone labels
+  const zonaLabels = [
+    { txt: 'Salón', x: 20, y: 200 },
+    { txt: 'Terraza', x: 300, y: 200 },
+    { txt: 'Reservado', x: 420, y: 100 },
+    { txt: 'Barra', x: 420, y: 0 },
+  ];
+  const labelHtml = zonaLabels.map(l => `
+    <span class="zona-label" style="left:${l.x}px; top:${l.y}px">${l.txt}</span>
+  `).join('');
+
+  const mesasHtml = state.mesas.map(m => {
+    const ped = pedidoDeMesa(m.id);
+    const est = estadoMesa(m);
+    const visible = state.zonaActiva === 'todas' || (m.zona || 'sin_zona') === state.zonaActiva;
+    return `
+      <button class="mesa ${m.forma || 'rectangular'}" data-id="${m.id}" data-estado="${est}"
+              style="left:${m.pos_x}px; top:${m.pos_y}px; width:${m.ancho}px; height:${m.alto}px; ${visible ? '' : 'display:none'}">
+        <span class="num">${m.numero}</span>
+        <span class="cap">×${m.capacidad}</span>
+        ${ped ? `<span class="timer">${timeAgo(ped.abierta_at)}</span>` : ''}
+        ${ped && ped.comensales ? `<span class="badge-com">${ped.comensales}</span>` : ''}
+      </button>
+    `;
+  }).join('');
+
+  floor.innerHTML = labelHtml + mesasHtml;
+  $$('#floor .mesa').forEach(btn => {
+    btn.addEventListener('click', () => openSheet(btn.dataset.id));
+  });
+}
+
+function updateTimers() {
+  state.mesas.forEach(m => {
+    const ped = pedidoDeMesa(m.id);
+    if (!ped) return;
+    const btn = $(`.mesa[data-id="${m.id}"]`);
+    if (!btn) return;
+    const t = btn.querySelector('.timer');
+    if (t) t.textContent = timeAgo(ped.abierta_at);
+  });
+}
+
+/* ============ SHEET ============ */
+function openSheet(mesaId) {
+  const mesa = state.mesas.find(m => m.id === mesaId);
+  if (!mesa) return;
+  state.mesaAbierta = mesa;
+  const ped = pedidoDeMesa(mesaId);
+  const est = estadoMesa(mesa);
+
+  $('#sheet-mark').textContent = mesa.numero;
+  $('#sheet-mark').style.background =
+    est === 'libre' ? 'var(--primary-soft)' :
+    est === 'abierta' ? 'var(--primary-soft)' :
+    est === 'marchada' ? 'var(--tertiary)' :
+    est === 'cuenta_pedida' ? 'var(--secondary)' :
+    'var(--surface)';
+  $('#sheet-mark').style.color =
+    est === 'cuenta_pedida' ? 'white' : 'var(--ink)';
+
+  $('#sheet-title').textContent =
+    mesa.zona === 'barra' ? 'Barra' : 'Mesa ' + mesa.numero;
+  const meta = [];
+  meta.push((mesa.zona || '').toUpperCase());
+  meta.push('CAP ' + mesa.capacidad);
+  if (ped) meta.push('TICKET #' + (ped.ticket_num || '?'));
+  $('#sheet-meta').textContent = meta.join(' · ');
+
+  if (est === 'libre') renderSheetLibre(mesa);
+  else renderSheetOcupada(mesa, ped);
+
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+}
+
+function closeSheet() {
+  $('#sheet-backdrop').classList.remove('open');
+  $('#sheet').classList.remove('open');
+  state.mesaAbierta = null;
+}
+
+function renderSheetLibre(mesa) {
+  const cap = mesa.capacidad;
+  const maxCom = Math.max(cap + 4, 12);
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Estado</div>
+      <div class="sheet-info-row">
+        <span>Libre — lista para abrir</span>
+        <strong>${cap} ${cap === 1 ? 'silla' : 'sillas'}</strong>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">¿Cuántos comensales?</div>
+      <div class="com-stepper">
+        <button id="com-minus">−</button>
+        <span class="com-num" id="com-num">${Math.min(2, cap)}</span>
+        <button id="com-plus">+</button>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="btn-grid">
+        <button class="btn ghost span-2" id="btn-cancel">Atrás</button>
+        <button class="btn primary span-2" id="btn-abrir">
+          <span class="material-symbols-outlined">play_arrow</span>
+          Abrir pedido · Va
+        </button>
+      </div>
+    </div>
+  `;
+  let com = Math.min(2, cap);
+  const upd = () => { $('#com-num').textContent = com; };
+  $('#com-minus').onclick = () => { if (com > 1) com--; upd(); };
+  $('#com-plus').onclick = () => { if (com < maxCom) com++; upd(); };
+  $('#btn-cancel').onclick = closeSheet;
+  $('#btn-abrir').onclick = () => abrirPedido(mesa, com);
+}
+
+function renderSheetOcupada(mesa, ped) {
+  const mozo = state.empleados.find(e => e.id === ped.mozo_id);
+  const sus = ped.estado === 'suspended';
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Pedido actual</div>
+      <div class="sheet-info-row"><span>Ticket</span><strong>#${ped.ticket_num || '?'}</strong></div>
+      <div class="sheet-info-row"><span>Mozo</span><strong>${fmtMozo(mozo)}</strong></div>
+      <div class="sheet-info-row"><span>Comensales</span><strong>${ped.comensales || '—'}</strong></div>
+      <div class="sheet-info-row"><span>Abierta hace</span><strong>${timeAgo(ped.abierta_at)}</strong></div>
+      <div class="sheet-info-row"><span>Total acumulado</span><strong>S/ ${Number(ped.total || 0).toFixed(2)}</strong></div>
+      ${sus ? '<div class="sheet-info-row" style="color:var(--secondary)"><span>⏸ Estado</span><strong>Suspendida</strong></div>' : ''}
+    </div>
+    <div class="sheet-section">
+      <div class="btn-grid">
+        <button class="btn primary span-2" id="btn-ver">
+          <span class="material-symbols-outlined">restaurant_menu</span>
+          ${sus ? 'Reanudar pedido' : 'Ver y agregar al pedido'}
+        </button>
+        <button class="btn warn" id="btn-mover">
+          <span class="material-symbols-outlined">swap_horiz</span>
+          Mover mesa
+        </button>
+        ${sus
+          ? `<button class="btn dark" id="btn-cancelar">
+              <span class="material-symbols-outlined">cancel</span>
+              Cancelar pedido
+            </button>`
+          : `<button class="btn" id="btn-suspender">
+              <span class="material-symbols-outlined">pause</span>
+              Suspender
+            </button>`}
+        <button class="btn danger span-2" id="btn-cobrar" ${sus ? 'disabled' : ''}>
+          <span class="material-symbols-outlined">point_of_sale</span>
+          Cobrar
+        </button>
+      </div>
+    </div>
+  `;
+  $('#btn-ver').onclick = () => sus ? reanudar(ped.id) : stubFlujo('Toma de pedido');
+  $('#btn-mover').onclick = () => abrirMover(ped, mesa);
+  if ($('#btn-suspender')) $('#btn-suspender').onclick = () => suspender(ped.id);
+  if ($('#btn-cancelar')) $('#btn-cancelar').onclick = () => cancelar(ped.id);
+  if ($('#btn-cobrar')) $('#btn-cobrar').onclick = () => stubFlujo('Cobro');
+}
+
+function abrirMover(ped, mesaActual) {
+  const libres = state.mesas.filter(m => m.id !== mesaActual.id && !pedidoDeMesa(m.id));
+  if (!libres.length) { toast('Atrás · no hay mesas libres', 'warn'); return; }
+  const html = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Elegir nueva mesa</div>
+      <div class="btn-grid">
+        ${libres.map(m => `
+          <button class="btn" data-target="${m.id}">
+            <span class="material-symbols-outlined">table_restaurant</span>
+            ${m.numero} · ${m.zona} · ${m.capacidad}p
+          </button>
+        `).join('')}
+        <button class="btn ghost span-2" id="btn-mover-cancel">Atrás</button>
+      </div>
+    </div>
+  `;
+  $('#sheet-body').innerHTML = html;
+  $('#btn-mover-cancel').onclick = () => openSheet(mesaActual.id);
+  $$('#sheet-body button[data-target]').forEach(b => {
+    b.onclick = () => moverMesa(ped.id, b.dataset.target);
+  });
+}
+
+function stubFlujo(nombre) {
+  toast(nombre + ' · siguiente bloque', 'warn');
+}
+
+/* ============ ACCIONES (DB) ============ */
+async function abrirPedido(mesa, comensales) {
+  if (!state.mozoId) {
+    closeSheet();
+    abrirPickerMozo();
+    toast('Primero elige el mozo en turno', 'warn');
+    return;
+  }
+  if (!state.turno) {
+    toast('Atrás · no hay turno abierto', 'err');
+    return;
+  }
+
+  // Calcular next ticket + insertar. Reintentar 1x si hay race.
+  const intentar = async () => {
+    const { data: nums } = await sb.from('ca_pedidos')
+      .select('ticket_num')
+      .eq('local_id', LOCAL)
+      .eq('turno_id', state.turno.id)
+      .order('ticket_num', { ascending: false })
+      .limit(1);
+    const nextTicket = ((nums && nums[0]?.ticket_num) || 0) + 1;
+
+    const payload = {
+      ticket_num: nextTicket,
+      marca_id: MARCA,
+      local_id: LOCAL,
+      turno_id: state.turno.id,
+      mesa_id: mesa.id,
+      comensales,
+      mozo_id: state.mozoId,
+      estado: 'abierta',
+      estado_servicio: 'abierta',
+      origen: 'salon',
+      abierta_at: new Date().toISOString(),
+      subtotal: 0, igv: 0, servicio_pct: 10, servicio_monto: 0,
+      descuento: 0, propina_monto: 0, total: 0,
+      moneda: 'PEN',
+      alergias_por_silla: {},
+    };
+    return await sb.from('ca_pedidos').insert(payload).select().single();
+  };
+
+  let { data, error } = await intentar();
+  if (error && error.code === '23505') {
+    // unique violation → race con otro tablet, reintentar 1x
+    ({ data, error } = await intentar());
+  }
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.pedidos.push(data);
+  toast('Va · pedido #' + data.ticket_num + ' en mesa ' + mesa.numero, 'ok');
+  closeSheet();
+  render();
+}
+
+async function suspender(pedidoId) {
+  const { error } = await sb.from('ca_pedidos').update({
+    estado: 'suspended',
+    suspended_at: new Date().toISOString(),
+  }).eq('id', pedidoId);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  toast('Servido · pedido suspendido', 'ok');
+  await loadPedidos();
+  closeSheet();
+  render();
+}
+
+async function reanudar(pedidoId) {
+  const { error } = await sb.from('ca_pedidos').update({
+    estado: 'abierta',
+    suspended_at: null,
+  }).eq('id', pedidoId);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  toast('Va · pedido reanudado', 'ok');
+  await loadPedidos();
+  closeSheet();
+  render();
+}
+
+async function cancelar(pedidoId) {
+  if (!confirm('¿Cancelar pedido definitivamente? No se podrá recuperar.')) return;
+  const { error } = await sb.from('ca_pedidos').update({
+    estado: 'cancelada',
+    cerrada_at: new Date().toISOString(),
+  }).eq('id', pedidoId);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  toast('Servido · pedido cancelado', 'ok');
+  await loadPedidos();
+  closeSheet();
+  render();
+}
+
+async function moverMesa(pedidoId, nuevaMesaId) {
+  const { error } = await sb.from('ca_pedidos').update({
+    mesa_id: nuevaMesaId,
+  }).eq('id', pedidoId);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  const nueva = state.mesas.find(m => m.id === nuevaMesaId);
+  toast('Va · movido a ' + nueva.numero, 'ok');
+  await loadPedidos();
+  closeSheet();
+  render();
+}
+
+/* ============ MOZO PICKER ============ */
+function abrirPickerMozo() {
+  const items = state.empleados.map(e => `
+    <button class="mozo-item ${e.id === state.mozoId ? 'active' : ''}" data-id="${e.id}">
+      <span class="mozo-avatar">${avatarLetters(e)}</span>
+      <span class="mozo-info">
+        <span class="name">${e.nombre} ${e.apellidos || ''}</span>
+        <span class="rol">${e.rol}</span>
+      </span>
+      ${e.id === state.mozoId ? '<span class="material-symbols-outlined">check_circle</span>' : ''}
+    </button>
+  `).join('');
+  $('#mozo-list').innerHTML = items || '<p style="text-align:center; padding:24px; opacity:0.6;">Sin empleados en salón/bar</p>';
+  $('#mozo-dialog').classList.add('open');
+  $$('#mozo-list .mozo-item').forEach(b => {
+    b.onclick = () => {
+      state.mozoId = b.dataset.id;
+      localStorage.setItem('prep_pos_mozo', state.mozoId);
+      $('#mozo-dialog').classList.remove('open');
+      renderHeader();
+      toast('En turno: ' + fmtMozo(state.empleados.find(e => e.id === b.dataset.id)), 'ok');
+    };
+  });
+}
+
+/* ============ REALTIME ============ */
+function subscribe() {
+  if (state.channel) sb.removeChannel(state.channel);
+  state.channel = sb.channel('pos_v2_floor_' + LOCAL)
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'ca_pedidos', filter: 'local_id=eq.' + LOCAL },
+        async () => {
+          await loadPedidos();
+          render();
+          // refresh sheet if open
+          if (state.mesaAbierta) {
+            const id = state.mesaAbierta.id;
+            const stillOpen = $('#sheet').classList.contains('open');
+            if (stillOpen) openSheet(id);
+          }
+        })
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'ca_mesas', filter: 'local_id=eq.' + LOCAL },
+        async () => { await loadMesas(); render(); })
+    .subscribe();
+}
+
+/* ============ WIRE UP ============ */
+$('#sheet-backdrop').addEventListener('click', closeSheet);
+$('#sheet-close').addEventListener('click', closeSheet);
+$('#mozo-select').addEventListener('click', abrirPickerMozo);
+$('#mozo-dialog-close').addEventListener('click', () => $('#mozo-dialog').classList.remove('open'));
+$('#mozo-dialog').addEventListener('click', (e) => {
+  if (e.target === $('#mozo-dialog')) $('#mozo-dialog').classList.remove('open');
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeSheet();
+    $('#mozo-dialog').classList.remove('open');
+  }
+});
+
+/* ============ BOOT ============ */
+loadAll().catch(err => {
+  console.error(err);
+  $('#boot .msg').textContent = 'Atrás · ' + (err.message || 'fallo de conexión');
+  $('#boot .spinner').style.borderTopColor = 'var(--secondary)';
+});
+</script>
+
+</body>
+</html>

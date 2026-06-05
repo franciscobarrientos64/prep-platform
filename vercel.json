@@ -18,6 +18,10 @@
       "destination": "/pos/index.html"
     },
     {
+      "source": "/pos-v2",
+      "destination": "/pos-v2.html"
+    },
+    {
       "source": "/pos-legacy",
       "destination": "/pos-legacy.html"
     },
