@@ -49,9 +49,10 @@ body {
   user-select: none;
   display: flex;
   flex-direction: column;
+  touch-action: manipulation;
 }
 button { font-family: inherit; cursor: pointer; }
-.material-symbols-outlined { font-size: 20px; line-height: 1; }
+.material-symbols-outlined { font-size: 20px; line-height: 1; user-select: none; }
 
 /* ============ HEADER ============ */
 .header {
@@ -62,139 +63,192 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 14px;
+  min-height: 64px;
 }
-.brand {
-  display: flex; align-items: baseline; gap: 8px;
-}
-.brand .logo {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: var(--primary);
-  line-height: 0.9;
-}
+.brand { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+.brand .logo { font-family: var(--font-display); font-size: 28px; color: var(--primary); line-height: 0.9; }
 .brand .logo .accent { color: var(--secondary); }
 .brand .mod {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.55;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55;
 }
 .header-info {
-  display: flex; align-items: center; gap: 12px;
-  flex: 1;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  display: flex; align-items: center; gap: 10px; flex: 1;
+  font-family: var(--font-mono); font-size: 12px;
 }
-.header-info .pill {
+.pill {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px;
-  border: 2px solid var(--outline);
-  border-radius: 999px;
+  border: 2px solid var(--outline); border-radius: 999px;
   background: var(--surface);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
   font-size: 11px;
 }
-.header-info .pill.live { background: var(--primary); color: white; }
-.header-info .pill.live::before {
+.pill.live { background: var(--primary); color: white; }
+.pill.live::before {
   content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--tertiary);
-  animation: pulse 1.4s infinite;
+  background: var(--tertiary); animation: pulse 1.4s infinite;
 }
 @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
 
-.mozo-select {
+.btn-ico {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 14px;
-  border: 2px solid var(--outline);
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--bg);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
+  padding: 8px 14px;
+  border: 2px solid var(--outline); border-radius: 999px;
+  background: var(--surface); color: var(--ink);
+  font-family: var(--font-body); font-weight: 600; font-size: 13px;
   box-shadow: var(--shadow-sm);
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.mozo-select:active { transform: translate(2px,2px); box-shadow: none; }
-.mozo-select .material-symbols-outlined { font-size: 18px; }
+.btn-ico:active { transform: translate(2px,2px); box-shadow: none; }
+.btn-ico.dark { background: var(--ink); color: var(--bg); }
+.btn-ico.warn { background: var(--tertiary); color: var(--ink); }
+.btn-ico.primary { background: var(--primary); color: white; }
+.btn-ico.danger { background: var(--secondary); color: white; }
+.btn-ico.ghost { background: transparent; box-shadow: none; border-style: dashed; }
 
 /* ============ ZONE TABS ============ */
 .zonas {
   flex-shrink: 0;
-  display: flex;
-  gap: 8px;
+  display: flex; gap: 8px;
   padding: 12px 16px;
   background: var(--bg);
   border-bottom: 2px solid var(--outline);
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow-x: auto; scrollbar-width: none;
 }
 .zonas::-webkit-scrollbar { display: none; }
 .zona-tab {
   flex-shrink: 0;
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 18px;
-  border: 2px solid var(--outline);
-  border-radius: 999px;
+  border: 2px solid var(--outline); border-radius: 999px;
   background: var(--surface);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
+  font-family: var(--font-body); font-weight: 600; font-size: 13px;
   box-shadow: var(--shadow-sm);
   transition: transform 0.1s, box-shadow 0.1s;
 }
 .zona-tab.active {
-  background: var(--ink);
-  color: var(--bg);
-  transform: translate(2px,2px);
-  box-shadow: none;
+  background: var(--ink); color: var(--bg);
+  transform: translate(2px,2px); box-shadow: none;
 }
 .zona-tab .count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  background: var(--tertiary);
-  color: var(--ink);
-  padding: 1px 7px;
-  border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--tertiary); color: var(--ink);
+  padding: 1px 7px; border-radius: 999px;
   border: 1.5px solid var(--outline);
 }
-.zona-tab.active .count { background: var(--tertiary); color: var(--ink); }
 
 /* ============ FLOOR CANVAS ============ */
 .floor-wrap {
-  flex: 1;
-  overflow: auto;
-  position: relative;
-  padding: 24px;
+  flex: 1; overflow: auto; position: relative; padding: 24px;
 }
 .floor-canvas {
   position: relative;
   width: calc(580px * var(--canvas-scale));
   height: calc(320px * var(--canvas-scale));
   margin: 0 auto;
-  background:
-    repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(0,0,0,0.04) 39px, rgba(0,0,0,0.04) 40px),
-    repeating-linear-gradient(90deg, transparent 0, transparent 39px, rgba(0,0,0,0.04) 39px, rgba(0,0,0,0.04) 40px),
-    var(--surface);
+  background: var(--surface);
   border: 2px solid var(--outline);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.floor-canvas.editing {
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent calc(20px * var(--canvas-scale) - 1px), rgba(30,90,249,0.1) calc(20px * var(--canvas-scale) - 1px), rgba(30,90,249,0.1) calc(20px * var(--canvas-scale))),
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(20px * var(--canvas-scale) - 1px), rgba(30,90,249,0.1) calc(20px * var(--canvas-scale) - 1px), rgba(30,90,249,0.1) calc(20px * var(--canvas-scale))),
+    var(--surface);
 }
 
-/* ZONE markers / labels */
+/* Canvas inner: aplica el scale transform en lugar de manualmente en cada elemento */
+.canvas-inner {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--canvas-scale));
+  transform-origin: 0 0;
+  width: 580px;
+  height: 320px;
+}
+
+/* ZONA backgrounds */
+.zona-bg {
+  position: absolute;
+  pointer-events: none;
+}
 .zona-label {
   position: absolute;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.4;
+  letter-spacing: 0.14em;
+  opacity: 0.5;
   pointer-events: none;
+  color: var(--ink);
+}
+
+/* MUEBLES */
+.mueble {
+  position: absolute;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  overflow: hidden;
+}
+.mueble.pared {
+  background: repeating-linear-gradient(45deg, var(--ink) 0, var(--ink) 3px, #333 3px, #333 6px);
+}
+.mueble.entrada {
+  background: var(--tertiary);
+  border: 1px solid var(--outline);
+  font-size: 7px;
+}
+.mueble.cocina {
+  background: var(--red-soft);
+  border: 1.5px solid var(--secondary);
+  font-size: 11px;
+  color: var(--secondary);
+  font-weight: 800;
+}
+.mueble.pase {
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--outline);
+  font-size: 7px;
+}
+.mueble.baño {
+  background: var(--gray-soft);
+  border: 1.5px solid var(--outline);
+  color: var(--ink);
+}
+.mueble.columna {
+  background: var(--ink);
+  border-radius: 50%;
+}
+.mueble.planta {
+  background: var(--green-soft);
+  border: 1.5px solid var(--green);
+  border-radius: 50%;
+}
+.mueble.barra_fisica {
+  background: var(--primary-dark);
+  color: var(--bg);
+  border: 1px solid var(--outline);
+}
+/* En modo edit, los muebles son interactivos */
+.editing .mueble { pointer-events: auto; cursor: grab; }
+.editing .mueble:active { cursor: grabbing; }
+.editing .mueble.selected {
+  outline: 3px dashed var(--primary);
+  outline-offset: 2px;
+  z-index: 50;
 }
 
 /* MESAS */
@@ -207,128 +261,101 @@ button { font-family: inherit; cursor: pointer; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s;
-  padding: 4px;
+  transition: box-shadow 0.12s, background 0.15s;
+  padding: 3px;
   overflow: hidden;
   text-align: center;
+  font-family: var(--font-body);
+  -webkit-touch-callout: none;
 }
-.mesa:active {
-  transform: translate(2px,2px);
-  box-shadow: none;
-}
-.mesa .num {
-  font-family: var(--font-display);
-  font-size: 18px;
-  line-height: 0.9;
-}
-.mesa .cap {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  opacity: 0.6;
-  text-transform: uppercase;
-}
+.mesa:active { transform: translate(2px,2px); box-shadow: none; }
+.mesa .num { font-family: var(--font-display); font-size: 16px; line-height: 0.9; }
+.mesa .cap { font-family: var(--font-mono); font-size: 8px; font-weight: 600; opacity: 0.6; text-transform: uppercase; }
 .mesa .timer {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  background: var(--ink);
-  color: var(--bg);
-  padding: 1px 6px;
-  border-radius: 999px;
-  margin-top: 2px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  background: var(--ink); color: var(--bg);
+  padding: 1px 5px; border-radius: 999px; margin-top: 1px;
 }
 .mesa .badge-com {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 22px; height: 22px;
-  background: var(--tertiary);
-  border: 2px solid var(--outline);
+  position: absolute; top: -7px; right: -7px;
+  width: 18px; height: 18px;
+  background: var(--tertiary); border: 2px solid var(--outline);
   border-radius: 50%;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
 }
 .mesa.circular { border-radius: 50%; }
-.mesa.rectangular { border-radius: 10px; }
-.mesa.barra {
-  border-radius: 10px;
-  background: var(--primary-dark);
-  color: var(--bg);
-}
+.mesa.rectangular { border-radius: 8px; }
+.mesa.barra { border-radius: 8px; background: var(--primary-dark); color: var(--bg); }
 .mesa.barra .cap { opacity: 0.8; }
 
-/* ESTADOS */
 .mesa[data-estado="libre"] { background: var(--surface); }
-.mesa[data-estado="abierta"] {
-  background: var(--primary-soft);
-  border-color: var(--primary);
-}
-.mesa[data-estado="marchada"] {
-  background: var(--tertiary);
-}
-.mesa[data-estado="cuenta_pedida"] {
-  background: var(--secondary);
-  color: white;
-}
+.mesa[data-estado="abierta"] { background: var(--primary-soft); border-color: var(--primary); }
+.mesa[data-estado="marchada"] { background: var(--tertiary); }
+.mesa[data-estado="cuenta_pedida"] { background: var(--secondary); color: white; }
 .mesa[data-estado="cuenta_pedida"] .cap { opacity: 0.85; }
 .mesa[data-estado="cuenta_pedida"] .timer { background: white; color: var(--ink); }
-.mesa[data-estado="suspendida"] {
-  background: var(--surface);
-  border-style: dashed;
-  opacity: 0.7;
-}
-.mesa.hidden { display: none; }
+.mesa[data-estado="suspendida"] { background: var(--surface); border-style: dashed; opacity: 0.7; }
+
+.editing .mesa { cursor: grab; }
+.editing .mesa:active { cursor: grabbing; transform: none; box-shadow: var(--shadow-sm); }
+.editing .mesa.selected { outline: 3px dashed var(--primary); outline-offset: 3px; z-index: 50; }
+.editing .mesa:hover { box-shadow: var(--shadow); }
 
 /* LEGEND */
 .legend {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 16px;
+  display: flex; gap: 14px; flex-wrap: wrap;
+  padding: 12px 16px;
   background: var(--bg);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-top: 1px solid var(--gray-soft);
 }
 .legend-item { display: inline-flex; align-items: center; gap: 6px; }
-.legend-dot {
-  width: 14px; height: 14px;
-  border: 1.5px solid var(--outline);
-  border-radius: 4px;
-}
+.legend-dot { width: 14px; height: 14px; border: 1.5px solid var(--outline); border-radius: 4px; }
 .legend-dot.libre { background: var(--surface); }
 .legend-dot.abierta { background: var(--primary-soft); }
 .legend-dot.marchada { background: var(--tertiary); }
 .legend-dot.cuenta { background: var(--secondary); }
 .legend-dot.suspendida { background: var(--surface); border-style: dashed; }
 
+/* ============ FAB EN EDIT MODE ============ */
+.fab-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 60;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.fab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 12px 16px;
+  border: 2px solid var(--outline);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  font-family: var(--font-body); font-weight: 700; font-size: 13px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.fab:active { transform: translate(2px,2px); box-shadow: var(--shadow-sm); }
+.fab.primary { background: var(--primary); color: white; }
+.fab.dark { background: var(--ink); color: var(--bg); }
+.fab.warn { background: var(--tertiary); color: var(--ink); }
+
 /* ============ BOTTOM SHEET ============ */
 .sheet-backdrop {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(0,0,0,0.45);
   z-index: 80;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0; pointer-events: none;
   transition: opacity 0.18s;
 }
 .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
 
 .sheet {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
+  position: fixed; bottom: 0; left: 0; right: 0;
   z-index: 90;
   background: var(--surface);
   border-top: 3px solid var(--outline);
@@ -337,15 +364,13 @@ button { font-family: inherit; cursor: pointer; }
   transform: translateY(100%);
   transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
   max-height: 85vh;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .sheet.open { transform: translateY(0); }
 
 .sheet-handle {
-  width: 48px;
-  height: 5px;
+  width: 48px; height: 5px;
   background: var(--outline);
   border-radius: 999px;
   margin: 12px auto 8px;
@@ -354,68 +379,42 @@ button { font-family: inherit; cursor: pointer; }
 .sheet-head {
   padding: 8px 24px 16px;
   border-bottom: 2px solid var(--outline);
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: flex; align-items: center; gap: 14px;
 }
 .sheet-mesa-mark {
-  width: 56px; height: 56px;
+  width: 52px; height: 52px;
   border: 2px solid var(--outline);
   border-radius: 12px;
   background: var(--primary-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 20px;
   flex-shrink: 0;
 }
 .sheet-title { flex: 1; }
-.sheet-title h2 {
-  font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 1;
-  margin-bottom: 4px;
-}
+.sheet-title h2 { font-family: var(--font-display); font-size: 22px; line-height: 1; margin-bottom: 4px; }
 .sheet-title .meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.65;
-  display: flex;
-  gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.65;
+  display: flex; gap: 10px; flex-wrap: wrap;
 }
 .sheet-close {
   width: 40px; height: 40px;
-  border: 2px solid var(--outline);
-  border-radius: 50%;
+  border: 2px solid var(--outline); border-radius: 50%;
   background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-sm);
 }
 .sheet-close:active { transform: translate(2px,2px); box-shadow: none; }
 
-.sheet-body {
-  padding: 20px 24px 24px;
-  overflow-y: auto;
-  flex: 1;
-}
-.sheet-section + .sheet-section { margin-top: 20px; }
+.sheet-body { padding: 20px 24px 24px; overflow-y: auto; flex: 1; }
+.sheet-section + .sheet-section { margin-top: 18px; }
 .sheet-section-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.55;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55;
   margin-bottom: 8px;
 }
 .sheet-info-row {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px dashed var(--gray-soft);
   font-size: 14px;
@@ -423,52 +422,34 @@ button { font-family: inherit; cursor: pointer; }
 .sheet-info-row strong { font-family: var(--font-mono); font-weight: 600; }
 
 /* COMENSALES STEPPER */
-.com-stepper {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-  margin: 12px 0;
-}
+.com-stepper { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 12px 0; }
 .com-stepper button {
   width: 56px; height: 56px;
-  border: 2px solid var(--outline);
-  border-radius: 50%;
+  border: 2px solid var(--outline); border-radius: 50%;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  font-size: 28px;
-  font-weight: 700;
-  font-family: var(--font-display);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 28px; font-weight: 700; font-family: var(--font-display);
+  display: flex; align-items: center; justify-content: center;
   line-height: 0;
 }
 .com-stepper button:active { transform: translate(2px,2px); box-shadow: none; }
 .com-stepper button:disabled { opacity: 0.3; }
 .com-stepper .com-num {
-  font-family: var(--font-display);
-  font-size: 56px;
-  line-height: 1;
-  min-width: 80px;
-  text-align: center;
+  font-family: var(--font-display); font-size: 56px; line-height: 1;
+  min-width: 80px; text-align: center;
 }
 
 /* BUTTON BANK */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 20px;
-  border: 2px solid var(--outline);
-  border-radius: 14px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 15px;
-  background: var(--surface);
-  color: var(--ink);
+  padding: 14px 18px;
+  border: 2px solid var(--outline); border-radius: 14px;
+  font-family: var(--font-body); font-weight: 600; font-size: 14px;
+  background: var(--surface); color: var(--ink);
   box-shadow: var(--shadow-sm);
   transition: transform 0.1s, box-shadow 0.1s;
   width: 100%;
-  min-height: 56px;
+  min-height: 52px;
 }
 .btn:active { transform: translate(2px,2px); box-shadow: none; }
 .btn.primary { background: var(--primary); color: white; }
@@ -477,14 +458,46 @@ button { font-family: inherit; cursor: pointer; }
 .btn.dark { background: var(--ink); color: var(--bg); }
 .btn.ghost { background: transparent; box-shadow: none; border-style: dashed; }
 .btn[disabled] { opacity: 0.4; pointer-events: none; }
-
-.btn-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
-}
+.btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .btn-grid .btn.span-2 { grid-column: span 2; }
+
+/* PROP EDITOR (modo edit) */
+.prop-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--gray-soft);
+}
+.prop-row label {
+  flex: 1; font-size: 13px; font-weight: 600;
+}
+.stepper-mini {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.stepper-mini button {
+  width: 36px; height: 36px;
+  border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-size: 18px; font-weight: 700; line-height: 0;
+}
+.stepper-mini button:active { transform: translate(1px,1px); box-shadow: none; }
+.stepper-mini .val {
+  font-family: var(--font-mono); font-weight: 700; min-width: 30px; text-align: center;
+}
+.select {
+  padding: 8px 12px;
+  border: 2px solid var(--outline); border-radius: 10px;
+  background: var(--surface); font-family: var(--font-body); font-weight: 600;
+  font-size: 13px;
+  box-shadow: var(--shadow-sm);
+}
+.input {
+  padding: 8px 12px;
+  border: 2px solid var(--outline); border-radius: 10px;
+  background: var(--surface);
+  font-family: var(--font-body); font-size: 14px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
 
 /* MOZO PICKER (dialog) */
 .dialog-backdrop {
@@ -492,43 +505,29 @@ button { font-family: inherit; cursor: pointer; }
   background: rgba(0,0,0,0.55);
   z-index: 100;
   display: none;
-  align-items: center;
-  justify-content: center;
+  align-items: center; justify-content: center;
   padding: 24px;
 }
 .dialog-backdrop.open { display: flex; }
 .dialog {
   background: var(--surface);
-  border: 3px solid var(--outline);
-  border-radius: 18px;
+  border: 3px solid var(--outline); border-radius: 18px;
   box-shadow: var(--shadow-lg);
-  width: 100%;
-  max-width: 480px;
-  max-height: 80vh;
+  width: 100%; max-width: 480px; max-height: 80vh;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
 }
 .dialog-head {
   padding: 16px 20px;
   border-bottom: 2px solid var(--outline);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex; align-items: center; gap: 10px;
 }
-.dialog-head h3 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  flex: 1;
-}
-.dialog-body { padding: 16px; overflow-y: auto; }
+.dialog-head h3 { font-family: var(--font-display); font-size: 20px; flex: 1; }
+.dialog-body { padding: 16px; overflow-y: auto; flex: 1; }
 .mozo-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; align-items: center; gap: 12px;
   padding: 14px;
-  border: 2px solid var(--outline);
-  border-radius: 12px;
+  border: 2px solid var(--outline); border-radius: 12px;
   background: var(--surface);
   margin-bottom: 8px;
   box-shadow: var(--shadow-sm);
@@ -537,87 +536,366 @@ button { font-family: inherit; cursor: pointer; }
 .mozo-item:active { transform: translate(2px,2px); box-shadow: none; }
 .mozo-item.active { background: var(--primary); color: white; }
 .mozo-avatar {
-  width: 40px; height: 40px;
-  border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   border: 2px solid var(--outline);
   background: var(--tertiary);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: 16px;
-  color: var(--ink);
+  font-family: var(--font-display); font-size: 16px; color: var(--ink);
   flex-shrink: 0;
 }
 .mozo-info { flex: 1; }
 .mozo-info .name { font-weight: 700; font-size: 15px; }
 .mozo-info .rol {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.7;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7;
 }
+
+/* ============ PEDIDO SCREEN ============ */
+.pedido-screen {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(360px, 1.2fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "head head"
+    "items menu"
+    "foot foot";
+  background: var(--bg);
+  overflow: hidden;
+}
+.pedido-head {
+  grid-area: head;
+  background: var(--surface);
+  border-bottom: 2px solid var(--outline);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+}
+.pedido-head .ticket-mark {
+  width: 52px; height: 52px;
+  border: 2px solid var(--outline); border-radius: 12px;
+  background: var(--primary-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 18px;
+  flex-shrink: 0;
+}
+.pedido-head .info { flex: 1; min-width: 180px; }
+.pedido-head h2 { font-family: var(--font-display); font-size: 22px; line-height: 1; }
+.pedido-head .meta {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.65;
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-top: 2px;
+}
+.pedido-head .actions {
+  display: flex; gap: 8px; align-items: center;
+}
+
+/* Items column */
+.items-col {
+  grid-area: items;
+  background: var(--bg);
+  border-right: 2px solid var(--outline);
+  overflow-y: auto;
+  padding: 16px;
+}
+.silla-group {
+  background: var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.silla-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--primary-soft);
+  border-bottom: 2px solid var(--outline);
+}
+.silla-head .badge {
+  width: 28px; height: 28px;
+  border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px;
+}
+.silla-head .badge.centro { background: var(--tertiary); }
+.silla-head h3 {
+  font-family: var(--font-body); font-size: 14px; font-weight: 700; flex: 1;
+}
+.silla-head .total {
+  font-family: var(--font-mono); font-weight: 700; font-size: 13px;
+}
+.silla-head .alergias {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px;
+  background: var(--secondary); color: white;
+  padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); text-transform: uppercase;
+  border: 1px solid var(--outline);
+}
+.item-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px dashed var(--gray-soft);
+}
+.item-row:last-child { border-bottom: none; }
+.item-row .qty {
+  font-family: var(--font-mono); font-weight: 700; font-size: 13px;
+  background: var(--ink); color: var(--bg);
+  padding: 3px 8px; border-radius: 6px;
+  flex-shrink: 0;
+}
+.item-row .emoji { font-size: 18px; flex-shrink: 0; }
+.item-row .nm { flex: 1; font-size: 14px; font-weight: 600; }
+.item-row .nm .notas {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  font-weight: 500; opacity: 0.7;
+  margin-top: 2px;
+}
+.item-row .price {
+  font-family: var(--font-mono); font-weight: 600; font-size: 13px;
+  text-align: right;
+}
+.item-row .estado {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 2px 7px; border-radius: 999px; border: 1.5px solid var(--outline);
+}
+.item-row .estado.pendiente { background: var(--tertiary); color: var(--ink); }
+.item-row .estado.enviado   { background: var(--secondary); color: white; }
+.item-row .estado.servido   { background: var(--green); color: white; }
+.item-row.urgente {
+  background: var(--red-soft);
+  border-left: 4px solid var(--secondary);
+}
+.item-row .ico-btn {
+  width: 32px; height: 32px;
+  border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.item-row .ico-btn:active { transform: translate(1px,1px); box-shadow: none; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Menu column */
+.menu-col {
+  grid-area: menu;
+  background: var(--bg);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.menu-tabs {
+  display: flex; gap: 6px;
+  padding: 12px 14px 0;
+  background: var(--surface);
+  border-bottom: 2px solid var(--outline);
+}
+.menu-tab {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--outline);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  background: var(--gray-soft);
+  font-family: var(--font-display); font-size: 14px;
+  font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.menu-tab.active { background: var(--ink); color: var(--bg); }
+
+.menu-subtabs {
+  display: flex; gap: 6px; padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--outline);
+  overflow-x: auto; scrollbar-width: none;
+}
+.menu-subtabs::-webkit-scrollbar { display: none; }
+.menu-subtab {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 2px solid var(--outline); border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-body); font-weight: 600; font-size: 12px;
+  box-shadow: 2px 2px 0 0 var(--outline);
+}
+.menu-subtab.active {
+  background: var(--primary); color: white;
+  transform: translate(1px,1px); box-shadow: none;
+}
+
+.menu-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+.menu-item {
+  background: var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 12px 10px 10px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.menu-item:active { transform: translate(2px,2px); box-shadow: none; }
+.menu-item .emoji { font-size: 32px; line-height: 1; }
+.menu-item .name {
+  font-family: var(--font-body); font-weight: 700; font-size: 13px;
+  line-height: 1.2;
+  flex: 1;
+}
+.menu-item .price {
+  font-family: var(--font-mono); font-weight: 700; font-size: 13px;
+  color: var(--primary);
+}
+.menu-item .alergenos {
+  display: flex; gap: 3px; flex-wrap: wrap; justify-content: center;
+}
+.menu-item .alergenos span {
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+  padding: 1px 5px; border-radius: 999px;
+  background: var(--amber-soft); color: var(--ink);
+  border: 1px solid var(--outline);
+  text-transform: uppercase;
+}
+
+/* Footer totals */
+.pedido-foot {
+  grid-area: foot;
+  background: var(--surface);
+  border-top: 2px solid var(--outline);
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 18px;
+  flex-wrap: wrap;
+}
+.totals { display: flex; gap: 18px; flex-wrap: wrap; flex: 1; font-family: var(--font-mono); font-size: 12px; }
+.totals .t { display: flex; flex-direction: column; }
+.totals .t .lbl { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; }
+.totals .t .val { font-weight: 700; font-size: 14px; }
+.totals .t.big .val { font-family: var(--font-display); font-size: 22px; color: var(--primary); }
+
+/* Item picker modal */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 110;
+  display: none;
+  align-items: flex-end; justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border-top: 3px solid var(--outline);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 0 0 var(--outline);
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  animation: slide-up 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-head {
+  padding: 14px 20px;
+  border-bottom: 2px solid var(--outline);
+  display: flex; align-items: center; gap: 12px;
+}
+.modal-head .icon { font-size: 32px; }
+.modal-head h3 { font-family: var(--font-display); font-size: 20px; flex: 1; line-height: 1; }
+.modal-head .price {
+  font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--primary);
+}
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+.modal-foot {
+  padding: 12px 20px;
+  border-top: 2px solid var(--outline);
+  display: flex; gap: 10px;
+}
+
+.silla-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.silla-pick-btn {
+  min-width: 52px; height: 52px;
+  border: 2px solid var(--outline); border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 10px;
+  flex-direction: column; line-height: 1;
+}
+.silla-pick-btn .sub { font-family: var(--font-mono); font-size: 8px; font-weight: 600; opacity: 0.6; margin-top: 2px; }
+.silla-pick-btn:active { transform: translate(2px,2px); box-shadow: none; }
+.silla-pick-btn.active { background: var(--primary); color: white; }
+.silla-pick-btn.centro { background: var(--tertiary); }
+.silla-pick-btn.centro.active { background: var(--primary); color: white; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 12px;
+  border: 2px solid var(--outline); border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  box-shadow: 2px 2px 0 0 var(--outline);
+}
+.chip:active { transform: translate(1px,1px); box-shadow: none; }
+.chip.active { background: var(--ink); color: var(--bg); }
 
 /* TOASTS */
 .toast-container {
-  position: fixed;
-  top: 80px;
-  right: 16px;
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  position: fixed; top: 80px; right: 16px; z-index: 200;
+  display: flex; flex-direction: column; gap: 8px;
   pointer-events: none;
 }
 .toast {
-  background: var(--ink);
-  color: var(--bg);
-  border: 2px solid var(--outline);
-  border-radius: 12px;
+  background: var(--ink); color: var(--bg);
+  border: 2px solid var(--outline); border-radius: 12px;
   padding: 12px 18px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 14px; font-weight: 600;
   box-shadow: var(--shadow);
   animation: toast-in 0.3s ease-out;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex; align-items: center; gap: 10px;
   max-width: 320px;
 }
 .toast.ok { background: var(--primary); color: white; }
 .toast.err { background: var(--secondary); color: white; }
 .toast.warn { background: var(--tertiary); color: var(--ink); }
-@keyframes toast-in {
-  from { transform: translateX(120%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+@keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 /* LOADING SCREEN */
 .boot {
   position: fixed; inset: 0;
   background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
   z-index: 300;
   transition: opacity 0.3s;
 }
 .boot.gone { opacity: 0; pointer-events: none; }
-.boot .logo {
-  font-family: var(--font-display);
-  font-size: 72px;
-  color: var(--primary);
-  line-height: 1;
-}
+.boot .logo { font-family: var(--font-display); font-size: 72px; color: var(--primary); line-height: 1; }
 .boot .logo .accent { color: var(--secondary); }
-.boot .msg {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.6;
-}
+.boot .msg { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
 .boot .spinner {
   width: 36px; height: 36px;
   border: 4px solid var(--outline);
@@ -628,65 +906,54 @@ button { font-family: inherit; cursor: pointer; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* RESPONSIVE */
+@media (max-width: 900px) {
+  .pedido-screen {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "menu" "items" "foot";
+  }
+  .items-col { border-right: none; border-top: 2px solid var(--outline); max-height: 38vh; }
+  .menu-col { max-height: 50vh; }
+}
 @media (max-width: 640px) {
   :root { --canvas-scale: 1.2; }
   .header { padding: 8px 12px; gap: 8px; }
   .brand .logo { font-size: 22px; }
   .brand .mod { display: none; }
-  .header-info .pill { font-size: 10px; padding: 4px 8px; }
+  .pill { font-size: 10px; padding: 4px 8px; }
   .floor-wrap { padding: 12px; }
+  .btn-ico span:not(.material-symbols-outlined) { display: none; }
+  .btn-ico { padding: 8px; }
 }
-@media (min-width: 1100px) {
-  :root { --canvas-scale: 2.0; }
-}
+@media (min-width: 1200px) { :root { --canvas-scale: 2.0; } }
 </style>
 </head>
 <body>
 
-<!-- BOOT -->
 <div id="boot" class="boot">
   <div class="logo">prep<span class="accent">!</span></div>
   <div class="spinner"></div>
-  <div class="msg">Oído · cargando salón</div>
+  <div class="msg">Oído · mise en place</div>
 </div>
 
 <!-- HEADER -->
-<header class="header">
-  <div class="brand">
-    <span class="logo">prep<span class="accent">!</span></span>
-    <span class="mod">POS · Casa Italia</span>
-  </div>
-  <div class="header-info">
-    <span class="pill" id="turno-pill">
-      <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
-      <span id="turno-label">—</span>
-    </span>
-    <span class="pill live" id="abiertas-pill">
-      <span id="abiertas-count">0</span> abiertas
-    </span>
-  </div>
-  <button class="mozo-select" id="mozo-select">
-    <span class="material-symbols-outlined">person</span>
-    <span id="mozo-label">Elegir mozo</span>
-  </button>
-</header>
+<header class="header" id="app-header"></header>
 
-<!-- ZONE TABS -->
-<nav class="zonas" id="zonas"></nav>
+<!-- MAIN SCREEN MOUNT -->
+<div id="screen" style="flex:1; display:flex; flex-direction:column; overflow:hidden;"></div>
 
-<!-- FLOOR -->
-<main class="floor-wrap">
-  <div class="floor-canvas" id="floor"></div>
-  <div class="legend">
-    <span class="legend-item"><span class="legend-dot libre"></span>Libre</span>
-    <span class="legend-item"><span class="legend-dot abierta"></span>Abierta</span>
-    <span class="legend-item"><span class="legend-dot marchada"></span>En fuego</span>
-    <span class="legend-item"><span class="legend-dot cuenta"></span>Cuenta pedida</span>
-    <span class="legend-item"><span class="legend-dot suspendida"></span>Suspendida</span>
-  </div>
-</main>
+<!-- LEGEND (solo en floor view) -->
+<div id="legend" class="legend" style="display:none">
+  <span class="legend-item"><span class="legend-dot libre"></span>Libre</span>
+  <span class="legend-item"><span class="legend-dot abierta"></span>Abierta</span>
+  <span class="legend-item"><span class="legend-dot marchada"></span>En fuego</span>
+  <span class="legend-item"><span class="legend-dot cuenta"></span>Cuenta pedida</span>
+  <span class="legend-item"><span class="legend-dot suspendida"></span>Suspendida</span>
+</div>
 
-<!-- BOTTOM SHEET (mesa actions) -->
+<!-- FAB stack (solo modo edit) -->
+<div class="fab-stack" id="fab-stack" style="display:none"></div>
+
+<!-- BOTTOM SHEET -->
 <div class="sheet-backdrop" id="sheet-backdrop"></div>
 <aside class="sheet" id="sheet">
   <div class="sheet-handle"></div>
@@ -703,7 +970,7 @@ button { font-family: inherit; cursor: pointer; }
   <div class="sheet-body" id="sheet-body"></div>
 </aside>
 
-<!-- MOZO PICKER -->
+<!-- DIALOGS (mozo + item) -->
 <div class="dialog-backdrop" id="mozo-dialog">
   <div class="dialog">
     <div class="dialog-head">
@@ -715,31 +982,65 @@ button { font-family: inherit; cursor: pointer; }
   </div>
 </div>
 
+<!-- ITEM PICKER MODAL -->
+<div class="modal-backdrop" id="item-modal">
+  <div class="modal" id="item-modal-inner"></div>
+</div>
+
 <div class="toast-container" id="toasts"></div>
 
 <script>
-/* ============ CONFIG ============ */
+/* =========================================================================
+   PREP! POS v2 · Bloque 2
+   Floor plan + Editor + Toma de pedido (CA-01, CA-02 básico, CA-10 básico,
+   CA-19, CA-20, CA-21, CA-22 lectura)
+   ========================================================================= */
 const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const MARCA = 'm6';
 const LOCAL = 'l11';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
-/* ============ STATE ============ */
+/* ========= STATE ========= */
 const state = {
+  // catálogo
   mesas: [],
-  pedidos: [],
   empleados: [],
+  recetas: [],
+  estaciones: [],
+  floorPlan: null,
+  muebles: [],
+  zonas: [],
+
+  // operación
   turno: null,
+  pedidos: [],
+  pedidoItemsCache: {}, // pedido_id → items[]
   mozoId: localStorage.getItem('prep_pos_mozo') || null,
   zonaActiva: 'todas',
+
+  // UI
+  screen: 'floor',          // 'floor' | 'edit' | 'pedido'
   mesaAbierta: null,
+  pedidoAbiertoId: null,
+  menuTab: 'cocina',        // 'cocina' | 'bar'
+  menuSubtab: null,
+  sillaActiva: 1,           // contexto para agregar items
   channel: null,
+
+  // editor
+  edit: {
+    selected: null,         // { kind: 'mesa'|'mueble', id }
+    dirtyMesas: {},         // id → { pos_x, pos_y, ancho, alto, capacidad, forma, zona, activa }
+    dirtyMuebles: false,
+    deletedMesas: new Set(),
+    nuevasMesas: [],        // crear cuando guardar
+  },
 };
 
-/* ============ UTILS ============ */
+/* ========= UTILS ========= */
 const $ = (s, root = document) => root.querySelector(s);
-const $$ = (s, root = document) => root.querySelectorAll(s);
+const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
 
 function timeAgo(dateStr) {
   if (!dateStr) return '—';
@@ -748,26 +1049,18 @@ function timeAgo(dateStr) {
   if (min < 1) return 'ahora';
   if (min < 60) return min + ' min';
   const h = Math.floor(min / 60);
-  const m = min % 60;
-  return h + 'h ' + m + 'm';
+  return h + 'h ' + (min % 60) + 'm';
 }
+function fmtMozo(emp) { if (!emp) return '—'; const a = (emp.apellidos||'').split(' ')[0]; return emp.nombre + (a ? ' '+a : ''); }
+function avatarLetters(emp) { return ((emp.nombre||'?').charAt(0) + (emp.apellidos||'').charAt(0)).toUpperCase(); }
+function money(n) { return 'S/ ' + Number(n||0).toFixed(2); }
+function uuid() { return crypto.randomUUID ? crypto.randomUUID() : 'tmp_' + Math.random().toString(36).slice(2); }
 
-function fmtMozo(emp) {
-  if (!emp) return '—';
-  const apellido = (emp.apellidos || '').split(' ')[0];
-  return emp.nombre + (apellido ? ' ' + apellido : '');
-}
-
-function avatarLetters(emp) {
-  return ((emp.nombre || '?').charAt(0) + (emp.apellidos || '').charAt(0)).toUpperCase();
-}
-
-function toast(msg, tipo = '') {
+function toast(msg, tipo='') {
   const el = document.createElement('div');
   el.className = 'toast ' + tipo;
-  el.innerHTML = `<span class="material-symbols-outlined">${
-    tipo === 'ok' ? 'check_circle' : tipo === 'err' ? 'error' : tipo === 'warn' ? 'warning' : 'info'
-  }</span><span>${msg}</span>`;
+  const ico = tipo==='ok'?'check_circle':tipo==='err'?'error':tipo==='warn'?'warning':'info';
+  el.innerHTML = `<span class="material-symbols-outlined">${ico}</span><span>${msg}</span>`;
   $('#toasts').appendChild(el);
   setTimeout(() => {
     el.style.transition = 'opacity 0.3s, transform 0.3s';
@@ -777,215 +1070,339 @@ function toast(msg, tipo = '') {
   }, 2800);
 }
 
-/* ============ DATA LOAD ============ */
+/* ========= DATA LOAD ========= */
 async function loadAll() {
-  await Promise.all([loadMesas(), loadEmpleados(), loadTurno()]);
+  await Promise.all([
+    loadMesas(), loadEmpleados(), loadTurno(),
+    loadRecetas(), loadEstaciones(), loadFloorPlan(),
+  ]);
   await loadPedidos();
+  // determinar subtab default del menú
+  const cats = subcategoriasMenu('cocina');
+  state.menuSubtab = cats[0] || null;
   render();
   subscribe();
-  setInterval(updateTimers, 30000); // refresh time-ago every 30s
+  setInterval(updateTimers, 30000);
   $('#boot').classList.add('gone');
 }
 
 async function loadMesas() {
-  const { data, error } = await sb.from('ca_mesas')
-    .select('*')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('activa', true);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  state.mesas = data || [];
+  const { data, error } = await sb.from('ca_mesas').select('*')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL);
+  if (error) return toast('Atrás: ' + error.message, 'err');
+  state.mesas = (data || []).filter(m => m.activa !== false);
 }
-
 async function loadPedidos() {
   const { data, error } = await sb.from('ca_pedidos')
-    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal')
+    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla')
     .eq('marca_id', MARCA).eq('local_id', LOCAL)
     .in('estado', ['abierta', 'suspended']);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  if (error) return toast('Atrás: ' + error.message, 'err');
   state.pedidos = data || [];
 }
-
 async function loadEmpleados() {
   const { data, error } = await sb.from('rrhh_empleados')
     .select('id, nombre, apellidos, rol, area')
     .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
     .in('area', ['Salón', 'Bar']);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  if (error) return toast('Atrás: ' + error.message, 'err');
   state.empleados = data || [];
 }
-
 async function loadTurno() {
   const { data, error } = await sb.from('ca_turnos')
     .select('id, nombre, fecha, estado, hora_inicio')
     .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'abierto')
-    .order('fecha', { ascending: false })
-    .limit(1);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+    .order('fecha', { ascending: false }).limit(1);
+  if (error) return toast('Atrás: ' + error.message, 'err');
   state.turno = (data && data[0]) || null;
 }
-
-/* ============ DERIVED ============ */
-function pedidoDeMesa(mesaId) {
-  return state.pedidos.find(p => p.mesa_id === mesaId);
+async function loadRecetas() {
+  const { data, error } = await sb.from('inv_recetas')
+    .select('id, nombre, precio_venta, tipo, categoria_menu, sub_categoria, modulo, emoji, estacion_id, alergenos, activo, orden_menu, descripcion')
+    .eq('marca_id', MARCA);
+  if (error) return toast('Atrás: ' + error.message, 'err');
+  state.recetas = (data || []).filter(r => r.activo !== false);
+}
+async function loadEstaciones() {
+  const { data, error } = await sb.from('li_estaciones')
+    .select('id, nombre, emoji, color, es_delivery, orden_pase')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL);
+  if (error) return toast('Atrás: ' + error.message, 'err');
+  state.estaciones = data || [];
+}
+async function loadFloorPlan() {
+  const { data, error } = await sb.from('ms_floor_plans')
+    .select('*')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('activo', true)
+    .limit(1);
+  if (error) return toast('Atrás: ' + error.message, 'err');
+  state.floorPlan = (data && data[0]) || null;
+  if (state.floorPlan && state.floorPlan.layout) {
+    state.muebles = state.floorPlan.layout.muebles || [];
+    state.zonas = state.floorPlan.layout.zonas || [];
+  }
+}
+async function loadPedidoItems(pedidoId) {
+  const { data, error } = await sb.from('ca_pedido_items')
+    .select('*')
+    .eq('pedido_id', pedidoId)
+    .order('created_at', { ascending: true });
+  if (error) { toast('Atrás: ' + error.message, 'err'); return []; }
+  state.pedidoItemsCache[pedidoId] = data || [];
+  return data || [];
 }
 
+/* ========= DERIVED ========= */
+function pedidoDeMesa(mesaId) { return state.pedidos.find(p => p.mesa_id === mesaId); }
 function estadoMesa(mesa) {
   const p = pedidoDeMesa(mesa.id);
   if (!p) return 'libre';
   if (p.estado === 'suspended') return 'suspendida';
   return p.estado_servicio || 'abierta';
 }
-
 function zonasCount() {
   const map = { todas: state.mesas.length };
-  state.mesas.forEach(m => {
-    const z = m.zona || 'sin_zona';
-    map[z] = (map[z] || 0) + 1;
-  });
+  state.mesas.forEach(m => { const z = m.zona || 'sin_zona'; map[z] = (map[z]||0) + 1; });
   return map;
 }
+function subcategoriasMenu(modulo) {
+  const set = new Set();
+  state.recetas.filter(r => r.modulo === modulo).forEach(r => set.add(r.sub_categoria || r.categoria_menu || 'Otros'));
+  return Array.from(set);
+}
+function recetasDe(modulo, subcategoria) {
+  return state.recetas
+    .filter(r => r.modulo === modulo && (r.sub_categoria || r.categoria_menu) === subcategoria)
+    .sort((a,b) => (a.orden_menu||0) - (b.orden_menu||0) || a.nombre.localeCompare(b.nombre));
+}
 
-/* ============ RENDER ============ */
+/* ========= ROUTER ========= */
 function render() {
   renderHeader();
-  renderZonas();
-  renderFloor();
-}
-
-function renderHeader() {
-  // turno
-  $('#turno-label').textContent = state.turno
-    ? state.turno.nombre + ' · ' + state.turno.fecha
-    : 'Sin turno';
-  if (!state.turno) {
-    $('#turno-pill').style.background = 'var(--secondary)';
-    $('#turno-pill').style.color = 'white';
-  } else {
-    $('#turno-pill').style.background = 'var(--surface)';
-    $('#turno-pill').style.color = 'var(--ink)';
+  if (state.screen === 'floor' || state.screen === 'edit') {
+    renderFloorScreen();
+  } else if (state.screen === 'pedido') {
+    renderPedidoScreen();
   }
-  // abiertas
-  const abiertas = state.pedidos.filter(p => p.estado === 'abierta').length;
-  $('#abiertas-count').textContent = abiertas;
-  // mozo
-  const mozo = state.empleados.find(e => e.id === state.mozoId);
-  $('#mozo-label').textContent = mozo ? fmtMozo(mozo) : 'Elegir mozo';
 }
 
-function renderZonas() {
-  const counts = zonasCount();
-  const orden = ['todas', 'salón', 'terraza', 'reservado', 'barra'];
-  const labels = { todas: 'Todas', 'salón': 'Salón', terraza: 'Terraza', reservado: 'Reservado', barra: 'Barra' };
-  const html = orden
-    .filter(z => z === 'todas' || counts[z])
-    .map(z => `
-      <button class="zona-tab ${state.zonaActiva === z ? 'active' : ''}" data-z="${z}">
-        ${labels[z]}
-        <span class="count">${counts[z] || 0}</span>
+/* ========= HEADER ========= */
+function renderHeader() {
+  const h = $('#app-header');
+  if (state.screen === 'pedido') {
+    const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+    const mesa = ped ? state.mesas.find(m => m.id === ped.mesa_id) : null;
+    const mozo = ped ? state.empleados.find(e => e.id === ped.mozo_id) : null;
+    h.innerHTML = `
+      <button class="btn-ico" id="back-floor">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>Floor</span>
       </button>
-    `).join('');
-  $('#zonas').innerHTML = html;
-  $$('#zonas .zona-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.zonaActiva = btn.dataset.z;
-      render();
-    });
-  });
-}
-
-function renderFloor() {
-  const floor = $('#floor');
-  // Zone labels
-  const zonaLabels = [
-    { txt: 'Salón', x: 20, y: 200 },
-    { txt: 'Terraza', x: 300, y: 200 },
-    { txt: 'Reservado', x: 420, y: 100 },
-    { txt: 'Barra', x: 420, y: 0 },
-  ];
-  const labelHtml = zonaLabels.map(l => `
-    <span class="zona-label" style="left:${l.x}px; top:${l.y}px">${l.txt}</span>
-  `).join('');
-
-  const mesasHtml = state.mesas.map(m => {
-    const ped = pedidoDeMesa(m.id);
-    const est = estadoMesa(m);
-    const visible = state.zonaActiva === 'todas' || (m.zona || 'sin_zona') === state.zonaActiva;
-    return `
-      <button class="mesa ${m.forma || 'rectangular'}" data-id="${m.id}" data-estado="${est}"
-              style="left:${m.pos_x}px; top:${m.pos_y}px; width:${m.ancho}px; height:${m.alto}px; ${visible ? '' : 'display:none'}">
-        <span class="num">${m.numero}</span>
-        <span class="cap">×${m.capacidad}</span>
-        ${ped ? `<span class="timer">${timeAgo(ped.abierta_at)}</span>` : ''}
-        ${ped && ped.comensales ? `<span class="badge-com">${ped.comensales}</span>` : ''}
+      <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">PEDIDO #${ped?.ticket_num||'?'}</span></div>
+      <div class="header-info">
+        <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">table_restaurant</span>${mesa?'Mesa '+mesa.numero:'—'}</span>
+        <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">person</span>${fmtMozo(mozo)}</span>
+        <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">group</span>${ped?.comensales||'—'}</span>
+        <span class="pill live"><span id="ped-timer">${timeAgo(ped?.abierta_at)}</span></span>
+      </div>
+      <button class="btn-ico warn" id="btn-marchar-todo">
+        <span class="material-symbols-outlined">local_fire_department</span>
+        <span>Marchar todo</span>
+      </button>
+      <button class="btn-ico danger" id="btn-cobrar-ped">
+        <span class="material-symbols-outlined">point_of_sale</span>
+        <span>Cobrar</span>
       </button>
     `;
-  }).join('');
+    $('#back-floor').onclick = () => { state.screen = 'floor'; state.pedidoAbiertoId = null; render(); };
+    $('#btn-marchar-todo').onclick = () => marcharTodoPendientes();
+    $('#btn-cobrar-ped').onclick = () => toast('Cobro · llega en bloque 3', 'warn');
+    return;
+  }
 
-  floor.innerHTML = labelHtml + mesasHtml;
-  $$('#floor .mesa').forEach(btn => {
-    btn.addEventListener('click', () => openSheet(btn.dataset.id));
+  // floor o edit
+  const editing = state.screen === 'edit';
+  h.innerHTML = `
+    <div class="brand">
+      <span class="logo">prep<span class="accent">!</span></span>
+      <span class="mod">POS · Casa Italia</span>
+    </div>
+    <div class="header-info">
+      <span class="pill" id="turno-pill">
+        <span class="material-symbols-outlined" style="font-size:14px">schedule</span>
+        <span id="turno-label">${state.turno ? state.turno.nombre+' · '+state.turno.fecha : 'Sin turno'}</span>
+      </span>
+      <span class="pill live"><span id="abiertas-count">${state.pedidos.filter(p => p.estado==='abierta').length}</span> abiertas</span>
+    </div>
+    ${editing
+      ? `<button class="btn-ico ghost" id="btn-discard-edit"><span class="material-symbols-outlined">undo</span><span>Descartar</span></button>
+         <button class="btn-ico primary" id="btn-save-edit"><span class="material-symbols-outlined">save</span><span>Guardar plano</span></button>`
+      : `<button class="btn-ico" id="btn-edit-floor"><span class="material-symbols-outlined">edit</span><span>Editar plano</span></button>
+         <button class="btn-ico dark" id="mozo-select"><span class="material-symbols-outlined">person</span><span id="mozo-label">${
+           (() => { const m = state.empleados.find(e => e.id === state.mozoId); return m ? fmtMozo(m) : 'Elegir mozo'; })()
+         }</span></button>`
+    }
+  `;
+  if (!state.turno) { $('#turno-pill').style.background = 'var(--secondary)'; $('#turno-pill').style.color = 'white'; }
+  if (editing) {
+    $('#btn-discard-edit').onclick = () => exitEditMode(false);
+    $('#btn-save-edit').onclick = () => exitEditMode(true);
+  } else {
+    $('#btn-edit-floor').onclick = enterEditMode;
+    $('#mozo-select').onclick = abrirPickerMozo;
+  }
+}
+
+/* ========= FLOOR SCREEN ========= */
+function renderFloorScreen() {
+  const editing = state.screen === 'edit';
+  const counts = zonasCount();
+  const orden = ['todas', 'salón', 'terraza', 'reservado', 'barra'];
+  const labels = { todas:'Todas', 'salón':'Salón', terraza:'Terraza', reservado:'Reservado', barra:'Barra' };
+  const zonaTabsHtml = editing ? '' : `
+    <nav class="zonas">
+      ${orden.filter(z => z === 'todas' || counts[z]).map(z => `
+        <button class="zona-tab ${state.zonaActiva===z?'active':''}" data-z="${z}">
+          ${labels[z]} <span class="count">${counts[z]||0}</span>
+        </button>
+      `).join('')}
+    </nav>
+  `;
+
+  // Render canvas con muebles + zonas + mesas
+  const mueblesHtml = state.muebles.map(mu => renderMuebleEl(mu, editing)).join('');
+  const zonasHtml = state.zonas.map(z => {
+    if (z.x == null) return '';
+    const isActive = !editing && (state.zonaActiva === 'todas' || state.zonaActiva === z.nombre);
+    return `<div class="zona-bg" style="
+      left:${z.x}px; top:${z.y}px; width:${z.w}px; height:${z.h}px;
+      background:${z.color||'transparent'};
+      opacity:${isActive?0.7:0.25};
+      transition:opacity 0.2s;
+    "></div>
+    <div class="zona-label" style="left:${z.x+8}px; top:${z.y+6}px">${z.nombre}</div>`;
+  }).join('');
+  const mesasHtml = state.mesas.map(m => renderMesaEl(m, editing)).join('');
+
+  $('#screen').innerHTML = `
+    ${zonaTabsHtml}
+    <div class="floor-wrap">
+      <div class="floor-canvas ${editing ? 'editing' : ''}" id="floor-canvas">
+        <div class="canvas-inner" id="canvas-inner">
+          ${zonasHtml}
+          ${mueblesHtml}
+          ${mesasHtml}
+        </div>
+      </div>
+    </div>
+  `;
+  $('#legend').style.display = editing ? 'none' : 'flex';
+
+  // FAB stack en edit
+  if (editing) {
+    $('#fab-stack').style.display = 'flex';
+    $('#fab-stack').innerHTML = `
+      <button class="fab primary" id="fab-add-mesa">
+        <span class="material-symbols-outlined">table_restaurant</span>+ Mesa
+      </button>
+      <button class="fab dark" id="fab-add-mueble">
+        <span class="material-symbols-outlined">view_in_ar</span>+ Mueble
+      </button>
+      <button class="fab warn" id="fab-edit-help">
+        <span class="material-symbols-outlined">help</span>Ayuda
+      </button>
+    `;
+    $('#fab-add-mesa').onclick = addMesa;
+    $('#fab-add-mueble').onclick = addMueble;
+    $('#fab-edit-help').onclick = mostrarAyudaEditor;
+  } else {
+    $('#fab-stack').style.display = 'none';
+  }
+
+  // Wire interactions
+  $$('#screen .zona-tab').forEach(b => b.onclick = () => { state.zonaActiva = b.dataset.z; render(); });
+
+  $$('#canvas-inner .mesa').forEach(b => {
+    b.addEventListener('click', () => {
+      if (editing) openEditPanel('mesa', b.dataset.id);
+      else openSheet(b.dataset.id);
+    });
   });
+  $$('#canvas-inner .mueble').forEach(b => {
+    if (editing) b.addEventListener('click', (e) => {
+      if (b.dataset.justDragged) { delete b.dataset.justDragged; return; }
+      openEditPanel('mueble', b.dataset.id);
+    });
+  });
+
+  if (editing) setupDragAndDrop();
+}
+
+function renderMesaEl(m, editing) {
+  const ped = pedidoDeMesa(m.id);
+  const est = estadoMesa(m);
+  const visible = editing || state.zonaActiva === 'todas' || (m.zona || 'sin_zona') === state.zonaActiva;
+  const selected = editing && state.edit.selected && state.edit.selected.kind === 'mesa' && state.edit.selected.id === m.id;
+  return `
+    <button class="mesa ${m.forma || 'rectangular'} ${selected?'selected':''}" data-id="${m.id}" data-estado="${est}" data-kind="mesa"
+            style="left:${m.pos_x}px; top:${m.pos_y}px; width:${m.ancho}px; height:${m.alto}px; ${visible?'':'display:none'}">
+      <span class="num">${m.numero}</span>
+      <span class="cap">×${m.capacidad}</span>
+      ${ped && !editing ? `<span class="timer">${timeAgo(ped.abierta_at)}</span>` : ''}
+      ${ped && ped.comensales && !editing ? `<span class="badge-com">${ped.comensales}</span>` : ''}
+    </button>
+  `;
+}
+
+function renderMuebleEl(mu, editing) {
+  const selected = editing && state.edit.selected && state.edit.selected.kind === 'mueble' && state.edit.selected.id === mu.id;
+  return `<div class="mueble ${mu.tipo} ${selected?'selected':''}" data-id="${mu.id}" data-kind="mueble"
+       style="left:${mu.x}px; top:${mu.y}px; width:${mu.w}px; height:${mu.h}px">${mu.label||''}</div>`;
 }
 
 function updateTimers() {
+  if (state.screen !== 'floor') return;
   state.mesas.forEach(m => {
-    const ped = pedidoDeMesa(m.id);
-    if (!ped) return;
-    const btn = $(`.mesa[data-id="${m.id}"]`);
-    if (!btn) return;
-    const t = btn.querySelector('.timer');
-    if (t) t.textContent = timeAgo(ped.abierta_at);
+    const ped = pedidoDeMesa(m.id); if (!ped) return;
+    const btn = $(`.mesa[data-id="${m.id}"]`); if (!btn) return;
+    const t = btn.querySelector('.timer'); if (t) t.textContent = timeAgo(ped.abierta_at);
   });
+  if (state.screen === 'pedido' && state.pedidoAbiertoId) {
+    const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+    if (ped && $('#ped-timer')) $('#ped-timer').textContent = timeAgo(ped.abierta_at);
+  }
 }
 
-/* ============ SHEET ============ */
+/* ========= BOTTOM SHEET (floor mode) ========= */
 function openSheet(mesaId) {
-  const mesa = state.mesas.find(m => m.id === mesaId);
-  if (!mesa) return;
+  const mesa = state.mesas.find(m => m.id === mesaId); if (!mesa) return;
   state.mesaAbierta = mesa;
   const ped = pedidoDeMesa(mesaId);
   const est = estadoMesa(mesa);
-
   $('#sheet-mark').textContent = mesa.numero;
-  $('#sheet-mark').style.background =
-    est === 'libre' ? 'var(--primary-soft)' :
-    est === 'abierta' ? 'var(--primary-soft)' :
-    est === 'marchada' ? 'var(--tertiary)' :
-    est === 'cuenta_pedida' ? 'var(--secondary)' :
-    'var(--surface)';
-  $('#sheet-mark').style.color =
-    est === 'cuenta_pedida' ? 'white' : 'var(--ink)';
-
-  $('#sheet-title').textContent =
-    mesa.zona === 'barra' ? 'Barra' : 'Mesa ' + mesa.numero;
-  const meta = [];
-  meta.push((mesa.zona || '').toUpperCase());
-  meta.push('CAP ' + mesa.capacidad);
-  if (ped) meta.push('TICKET #' + (ped.ticket_num || '?'));
+  $('#sheet-mark').style.background = est==='libre'?'var(--primary-soft)':est==='abierta'?'var(--primary-soft)':est==='marchada'?'var(--tertiary)':est==='cuenta_pedida'?'var(--secondary)':'var(--surface)';
+  $('#sheet-mark').style.color = est==='cuenta_pedida'?'white':'var(--ink)';
+  $('#sheet-title').textContent = mesa.zona === 'barra' ? 'Barra' : 'Mesa ' + mesa.numero;
+  const meta = [(mesa.zona||'').toUpperCase(), 'CAP '+mesa.capacidad];
+  if (ped) meta.push('TICKET #' + (ped.ticket_num||'?'));
   $('#sheet-meta').textContent = meta.join(' · ');
-
   if (est === 'libre') renderSheetLibre(mesa);
   else renderSheetOcupada(mesa, ped);
-
   $('#sheet-backdrop').classList.add('open');
   $('#sheet').classList.add('open');
 }
-
 function closeSheet() {
   $('#sheet-backdrop').classList.remove('open');
   $('#sheet').classList.remove('open');
   state.mesaAbierta = null;
 }
-
 function renderSheetLibre(mesa) {
   const cap = mesa.capacidad;
   const maxCom = Math.max(cap + 4, 12);
   $('#sheet-body').innerHTML = `
     <div class="sheet-section">
       <div class="sheet-section-label">Estado</div>
-      <div class="sheet-info-row">
-        <span>Libre — lista para abrir</span>
-        <strong>${cap} ${cap === 1 ? 'silla' : 'sillas'}</strong>
-      </div>
+      <div class="sheet-info-row"><span>Libre — lista para abrir</span><strong>${cap} ${cap===1?'silla':'sillas'}</strong></div>
     </div>
     <div class="sheet-section">
       <div class="sheet-section-label">¿Cuántos comensales?</div>
@@ -1012,57 +1429,53 @@ function renderSheetLibre(mesa) {
   $('#btn-cancel').onclick = closeSheet;
   $('#btn-abrir').onclick = () => abrirPedido(mesa, com);
 }
-
 function renderSheetOcupada(mesa, ped) {
   const mozo = state.empleados.find(e => e.id === ped.mozo_id);
   const sus = ped.estado === 'suspended';
   $('#sheet-body').innerHTML = `
     <div class="sheet-section">
       <div class="sheet-section-label">Pedido actual</div>
-      <div class="sheet-info-row"><span>Ticket</span><strong>#${ped.ticket_num || '?'}</strong></div>
+      <div class="sheet-info-row"><span>Ticket</span><strong>#${ped.ticket_num||'?'}</strong></div>
       <div class="sheet-info-row"><span>Mozo</span><strong>${fmtMozo(mozo)}</strong></div>
-      <div class="sheet-info-row"><span>Comensales</span><strong>${ped.comensales || '—'}</strong></div>
+      <div class="sheet-info-row"><span>Comensales</span><strong>${ped.comensales||'—'}</strong></div>
       <div class="sheet-info-row"><span>Abierta hace</span><strong>${timeAgo(ped.abierta_at)}</strong></div>
-      <div class="sheet-info-row"><span>Total acumulado</span><strong>S/ ${Number(ped.total || 0).toFixed(2)}</strong></div>
+      <div class="sheet-info-row"><span>Total acumulado</span><strong>${money(ped.total)}</strong></div>
       ${sus ? '<div class="sheet-info-row" style="color:var(--secondary)"><span>⏸ Estado</span><strong>Suspendida</strong></div>' : ''}
     </div>
     <div class="sheet-section">
       <div class="btn-grid">
         <button class="btn primary span-2" id="btn-ver">
           <span class="material-symbols-outlined">restaurant_menu</span>
-          ${sus ? 'Reanudar pedido' : 'Ver y agregar al pedido'}
+          ${sus ? 'Reanudar y ver pedido' : 'Ver y agregar al pedido'}
         </button>
         <button class="btn warn" id="btn-mover">
           <span class="material-symbols-outlined">swap_horiz</span>
           Mover mesa
         </button>
         ${sus
-          ? `<button class="btn dark" id="btn-cancelar">
-              <span class="material-symbols-outlined">cancel</span>
-              Cancelar pedido
-            </button>`
-          : `<button class="btn" id="btn-suspender">
-              <span class="material-symbols-outlined">pause</span>
-              Suspender
-            </button>`}
-        <button class="btn danger span-2" id="btn-cobrar" ${sus ? 'disabled' : ''}>
+          ? `<button class="btn dark" id="btn-cancelar"><span class="material-symbols-outlined">cancel</span>Cancelar pedido</button>`
+          : `<button class="btn" id="btn-suspender"><span class="material-symbols-outlined">pause</span>Suspender</button>`}
+        <button class="btn danger span-2" id="btn-cobrar" ${sus?'disabled':''}>
           <span class="material-symbols-outlined">point_of_sale</span>
           Cobrar
         </button>
       </div>
     </div>
   `;
-  $('#btn-ver').onclick = () => sus ? reanudar(ped.id) : stubFlujo('Toma de pedido');
+  $('#btn-ver').onclick = async () => {
+    if (sus) await reanudar(ped.id);
+    closeSheet();
+    abrirPedidoScreen(ped.id);
+  };
   $('#btn-mover').onclick = () => abrirMover(ped, mesa);
   if ($('#btn-suspender')) $('#btn-suspender').onclick = () => suspender(ped.id);
   if ($('#btn-cancelar')) $('#btn-cancelar').onclick = () => cancelar(ped.id);
-  if ($('#btn-cobrar')) $('#btn-cobrar').onclick = () => stubFlujo('Cobro');
+  if ($('#btn-cobrar')) $('#btn-cobrar').onclick = () => toast('Cobro · llega en bloque 3', 'warn');
 }
-
 function abrirMover(ped, mesaActual) {
   const libres = state.mesas.filter(m => m.id !== mesaActual.id && !pedidoDeMesa(m.id));
-  if (!libres.length) { toast('Atrás · no hay mesas libres', 'warn'); return; }
-  const html = `
+  if (!libres.length) { toast('No hay mesas libres', 'warn'); return; }
+  $('#sheet-body').innerHTML = `
     <div class="sheet-section">
       <div class="sheet-section-label">Elegir nueva mesa</div>
       <div class="btn-grid">
@@ -1076,185 +1489,829 @@ function abrirMover(ped, mesaActual) {
       </div>
     </div>
   `;
-  $('#sheet-body').innerHTML = html;
   $('#btn-mover-cancel').onclick = () => openSheet(mesaActual.id);
-  $$('#sheet-body button[data-target]').forEach(b => {
-    b.onclick = () => moverMesa(ped.id, b.dataset.target);
-  });
+  $$('#sheet-body button[data-target]').forEach(b => b.onclick = () => moverMesa(ped.id, b.dataset.target));
 }
 
-function stubFlujo(nombre) {
-  toast(nombre + ' · siguiente bloque', 'warn');
-}
-
-/* ============ ACCIONES (DB) ============ */
+/* ========= ACCIONES DB (pedido shell) ========= */
 async function abrirPedido(mesa, comensales) {
-  if (!state.mozoId) {
-    closeSheet();
-    abrirPickerMozo();
-    toast('Primero elige el mozo en turno', 'warn');
-    return;
-  }
-  if (!state.turno) {
-    toast('Atrás · no hay turno abierto', 'err');
-    return;
-  }
-
-  // Calcular next ticket + insertar. Reintentar 1x si hay race.
+  if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige el mozo en turno', 'warn'); return; }
+  if (!state.turno) { toast('No hay turno abierto', 'err'); return; }
   const intentar = async () => {
     const { data: nums } = await sb.from('ca_pedidos')
-      .select('ticket_num')
-      .eq('local_id', LOCAL)
-      .eq('turno_id', state.turno.id)
-      .order('ticket_num', { ascending: false })
-      .limit(1);
+      .select('ticket_num').eq('local_id', LOCAL).eq('turno_id', state.turno.id)
+      .order('ticket_num',{ascending:false}).limit(1);
     const nextTicket = ((nums && nums[0]?.ticket_num) || 0) + 1;
-
-    const payload = {
-      ticket_num: nextTicket,
-      marca_id: MARCA,
-      local_id: LOCAL,
-      turno_id: state.turno.id,
-      mesa_id: mesa.id,
-      comensales,
-      mozo_id: state.mozoId,
-      estado: 'abierta',
-      estado_servicio: 'abierta',
-      origen: 'salon',
+    return await sb.from('ca_pedidos').insert({
+      ticket_num: nextTicket, marca_id: MARCA, local_id: LOCAL, turno_id: state.turno.id,
+      mesa_id: mesa.id, comensales, mozo_id: state.mozoId,
+      estado:'abierta', estado_servicio:'abierta', origen:'salon',
       abierta_at: new Date().toISOString(),
-      subtotal: 0, igv: 0, servicio_pct: 10, servicio_monto: 0,
-      descuento: 0, propina_monto: 0, total: 0,
-      moneda: 'PEN',
-      alergias_por_silla: {},
-    };
-    return await sb.from('ca_pedidos').insert(payload).select().single();
+      subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
+      descuento:0, propina_monto:0, total:0,
+      moneda:'PEN', alergias_por_silla:{},
+    }).select().single();
   };
-
   let { data, error } = await intentar();
-  if (error && error.code === '23505') {
-    // unique violation → race con otro tablet, reintentar 1x
-    ({ data, error } = await intentar());
-  }
+  if (error && error.code === '23505') ({ data, error } = await intentar());
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
   state.pedidos.push(data);
   toast('Va · pedido #' + data.ticket_num + ' en mesa ' + mesa.numero, 'ok');
   closeSheet();
-  render();
+  // Pasar directo a la pantalla de pedido
+  abrirPedidoScreen(data.id);
 }
-
 async function suspender(pedidoId) {
   const { error } = await sb.from('ca_pedidos').update({
-    estado: 'suspended',
-    suspended_at: new Date().toISOString(),
+    estado:'suspended', suspended_at:new Date().toISOString(),
   }).eq('id', pedidoId);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  toast('Servido · pedido suspendido', 'ok');
-  await loadPedidos();
-  closeSheet();
-  render();
+  if (error) return toast('Atrás: '+error.message,'err');
+  toast('Servido · pedido suspendido','ok');
+  await loadPedidos(); closeSheet(); render();
 }
-
 async function reanudar(pedidoId) {
   const { error } = await sb.from('ca_pedidos').update({
-    estado: 'abierta',
-    suspended_at: null,
+    estado:'abierta', suspended_at:null,
   }).eq('id', pedidoId);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  toast('Va · pedido reanudado', 'ok');
+  if (error) return toast('Atrás: '+error.message,'err');
   await loadPedidos();
-  closeSheet();
-  render();
 }
-
 async function cancelar(pedidoId) {
   if (!confirm('¿Cancelar pedido definitivamente? No se podrá recuperar.')) return;
   const { error } = await sb.from('ca_pedidos').update({
-    estado: 'cancelada',
-    cerrada_at: new Date().toISOString(),
+    estado:'cancelada', cerrada_at:new Date().toISOString(),
   }).eq('id', pedidoId);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  toast('Servido · pedido cancelado', 'ok');
-  await loadPedidos();
-  closeSheet();
-  render();
+  if (error) return toast('Atrás: '+error.message,'err');
+  toast('Servido · pedido cancelado','ok');
+  await loadPedidos(); closeSheet(); render();
 }
-
 async function moverMesa(pedidoId, nuevaMesaId) {
-  const { error } = await sb.from('ca_pedidos').update({
-    mesa_id: nuevaMesaId,
-  }).eq('id', pedidoId);
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  const { error } = await sb.from('ca_pedidos').update({ mesa_id: nuevaMesaId }).eq('id', pedidoId);
+  if (error) return toast('Atrás: '+error.message,'err');
   const nueva = state.mesas.find(m => m.id === nuevaMesaId);
   toast('Va · movido a ' + nueva.numero, 'ok');
-  await loadPedidos();
-  closeSheet();
-  render();
+  await loadPedidos(); closeSheet(); render();
 }
 
-/* ============ MOZO PICKER ============ */
+/* ========= MOZO PICKER ========= */
 function abrirPickerMozo() {
   const items = state.empleados.map(e => `
-    <button class="mozo-item ${e.id === state.mozoId ? 'active' : ''}" data-id="${e.id}">
+    <button class="mozo-item ${e.id===state.mozoId?'active':''}" data-id="${e.id}">
       <span class="mozo-avatar">${avatarLetters(e)}</span>
       <span class="mozo-info">
-        <span class="name">${e.nombre} ${e.apellidos || ''}</span>
+        <span class="name">${e.nombre} ${e.apellidos||''}</span>
         <span class="rol">${e.rol}</span>
       </span>
-      ${e.id === state.mozoId ? '<span class="material-symbols-outlined">check_circle</span>' : ''}
+      ${e.id===state.mozoId?'<span class="material-symbols-outlined">check_circle</span>':''}
     </button>
   `).join('');
-  $('#mozo-list').innerHTML = items || '<p style="text-align:center; padding:24px; opacity:0.6;">Sin empleados en salón/bar</p>';
+  $('#mozo-list').innerHTML = items || '<p style="text-align:center;padding:24px;opacity:0.6">Sin empleados en salón/bar</p>';
   $('#mozo-dialog').classList.add('open');
-  $$('#mozo-list .mozo-item').forEach(b => {
-    b.onclick = () => {
-      state.mozoId = b.dataset.id;
-      localStorage.setItem('prep_pos_mozo', state.mozoId);
-      $('#mozo-dialog').classList.remove('open');
-      renderHeader();
-      toast('En turno: ' + fmtMozo(state.empleados.find(e => e.id === b.dataset.id)), 'ok');
-    };
+  $$('#mozo-list .mozo-item').forEach(b => b.onclick = () => {
+    state.mozoId = b.dataset.id;
+    localStorage.setItem('prep_pos_mozo', state.mozoId);
+    $('#mozo-dialog').classList.remove('open');
+    renderHeader();
+    toast('En turno: ' + fmtMozo(state.empleados.find(e => e.id === b.dataset.id)), 'ok');
   });
 }
 
-/* ============ REALTIME ============ */
+/* ========= EDIT MODE ========= */
+function enterEditMode() {
+  state.screen = 'edit';
+  state.edit = { selected:null, dirtyMesas:{}, dirtyMuebles:false, deletedMesas:new Set(), nuevasMesas:[] };
+  render();
+  toast('Modo edición · arrastra para mover, tap para editar', 'ok');
+}
+
+async function exitEditMode(save) {
+  if (!save) {
+    if (state.edit.dirtyMuebles || Object.keys(state.edit.dirtyMesas).length || state.edit.deletedMesas.size || state.edit.nuevasMesas.length) {
+      if (!confirm('Descartar cambios al plano?')) return;
+    }
+    await loadMesas(); await loadFloorPlan();
+    state.screen = 'floor';
+    state.edit = { selected:null, dirtyMesas:{}, dirtyMuebles:false, deletedMesas:new Set(), nuevasMesas:[] };
+    render();
+    closeSheet();
+    return;
+  }
+  await saveLayout();
+}
+
+async function saveLayout() {
+  const tasks = [];
+  // UPDATE mesas dirty
+  for (const id in state.edit.dirtyMesas) {
+    tasks.push(sb.from('ca_mesas').update(state.edit.dirtyMesas[id]).eq('id', id));
+  }
+  // DELETE-style: soft delete via activa=false
+  state.edit.deletedMesas.forEach(id => {
+    tasks.push(sb.from('ca_mesas').update({ activa: false }).eq('id', id));
+  });
+  // INSERT nuevas mesas
+  for (const m of state.edit.nuevasMesas) {
+    tasks.push(sb.from('ca_mesas').insert({ ...m, marca_id: MARCA, local_id: LOCAL, activa: true }));
+  }
+  // UPSERT layout
+  if (state.edit.dirtyMuebles && state.floorPlan) {
+    const newLayout = {
+      ...(state.floorPlan.layout || {}),
+      muebles: state.muebles,
+      canvas: { ancho: 580, alto: 320 },
+    };
+    if (state.zonas) newLayout.zonas = state.zonas;
+    tasks.push(sb.from('ms_floor_plans').update({
+      layout: newLayout, updated_at: new Date().toISOString(),
+    }).eq('id', state.floorPlan.id));
+  }
+
+  if (tasks.length === 0) {
+    toast('Sin cambios', 'warn');
+    state.screen = 'floor'; render(); closeSheet(); return;
+  }
+
+  const results = await Promise.all(tasks);
+  const failed = results.find(r => r.error);
+  if (failed) { toast('Atrás: ' + failed.error.message, 'err'); return; }
+
+  toast('Servido · plano guardado · ' + tasks.length + ' cambio(s)', 'ok');
+  await loadMesas(); await loadFloorPlan();
+  state.screen = 'floor';
+  state.edit = { selected:null, dirtyMesas:{}, dirtyMuebles:false, deletedMesas:new Set(), nuevasMesas:[] };
+  render();
+  closeSheet();
+}
+
+function setupDragAndDrop() {
+  const canvas = $('#canvas-inner');
+  if (!canvas) return;
+  let drag = null;
+  const SNAP = 5; // snap a 5px
+
+  canvas.addEventListener('pointerdown', (e) => {
+    const target = e.target.closest('.mesa, .mueble');
+    if (!target) return;
+    e.preventDefault();
+    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--canvas-scale')) || 1;
+    drag = {
+      el: target,
+      kind: target.dataset.kind,
+      id: target.dataset.id,
+      startX: e.clientX, startY: e.clientY,
+      origX: parseFloat(target.style.left), origY: parseFloat(target.style.top),
+      scale,
+      moved: false,
+    };
+    try { target.setPointerCapture(e.pointerId); } catch(_) {}
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = (e.clientX - drag.startX) / drag.scale;
+    const dy = (e.clientY - drag.startY) / drag.scale;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) drag.moved = true;
+    let nx = Math.round((drag.origX + dx) / SNAP) * SNAP;
+    let ny = Math.round((drag.origY + dy) / SNAP) * SNAP;
+    drag.el.style.left = nx + 'px';
+    drag.el.style.top  = ny + 'px';
+  });
+  canvas.addEventListener('pointerup', (e) => {
+    if (!drag) return;
+    if (drag.moved) {
+      const nx = parseFloat(drag.el.style.left);
+      const ny = parseFloat(drag.el.style.top);
+      if (drag.kind === 'mesa') {
+        const m = state.mesas.find(x => x.id === drag.id);
+        if (m) { m.pos_x = nx; m.pos_y = ny; }
+        state.edit.dirtyMesas[drag.id] = { ...(state.edit.dirtyMesas[drag.id]||{}), pos_x: nx, pos_y: ny };
+      } else {
+        const mu = state.muebles.find(x => x.id === drag.id);
+        if (mu) { mu.x = nx; mu.y = ny; state.edit.dirtyMuebles = true; }
+      }
+      drag.el.dataset.justDragged = '1'; // bloquea el click subsiguiente
+    }
+    drag = null;
+  });
+  canvas.addEventListener('pointercancel', () => { drag = null; });
+}
+
+function openEditPanel(kind, id) {
+  state.edit.selected = { kind, id };
+  if (kind === 'mesa') {
+    const m = state.mesas.find(x => x.id === id); if (!m) return;
+    $('#sheet-mark').textContent = m.numero;
+    $('#sheet-mark').style.background = 'var(--primary-soft)';
+    $('#sheet-mark').style.color = 'var(--ink)';
+    $('#sheet-title').textContent = 'Editar mesa ' + m.numero;
+    $('#sheet-meta').textContent = 'ID ' + m.id + ' · ' + (m.zona||'—').toUpperCase();
+    renderMesaPropPanel(m);
+  } else {
+    const mu = state.muebles.find(x => x.id === id); if (!mu) return;
+    $('#sheet-mark').textContent = (mu.tipo||'?').charAt(0).toUpperCase();
+    $('#sheet-mark').style.background = 'var(--gray-soft)';
+    $('#sheet-title').textContent = 'Editar mueble';
+    $('#sheet-meta').textContent = mu.tipo.toUpperCase() + ' · ID ' + mu.id;
+    renderMueblePropPanel(mu);
+  }
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+  render(); // refresca selected outline
+}
+
+function renderMesaPropPanel(m) {
+  const formaOpts = ['rectangular','circular','barra'].map(f => `<option value="${f}" ${m.forma===f?'selected':''}>${f}</option>`).join('');
+  const zonaOpts = ['salón','terraza','reservado','barra','sin_zona'].map(z => `<option value="${z}" ${m.zona===z?'selected':''}>${z}</option>`).join('');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Identificación</div>
+      <div class="prop-row">
+        <label>Número / etiqueta</label>
+        <input class="input" style="max-width:160px" id="ed-numero" value="${m.numero||''}">
+      </div>
+      <div class="prop-row">
+        <label>Zona</label>
+        <select class="select" id="ed-zona">${zonaOpts}</select>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">Geometría</div>
+      <div class="prop-row">
+        <label>Capacidad ${m.zona==='barra'?'(sillas de barra)':'(comensales)'}</label>
+        <div class="stepper-mini">
+          <button id="ed-cap-minus">−</button>
+          <span class="val" id="ed-cap">${m.capacidad}</span>
+          <button id="ed-cap-plus">+</button>
+        </div>
+      </div>
+      <div class="prop-row">
+        <label>Forma</label>
+        <select class="select" id="ed-forma">${formaOpts}</select>
+      </div>
+      <div class="prop-row">
+        <label>Ancho (px)</label>
+        <div class="stepper-mini">
+          <button id="ed-w-minus">−</button>
+          <span class="val" id="ed-w">${m.ancho}</span>
+          <button id="ed-w-plus">+</button>
+        </div>
+      </div>
+      <div class="prop-row">
+        <label>Alto (px)</label>
+        <div class="stepper-mini">
+          <button id="ed-h-minus">−</button>
+          <span class="val" id="ed-h">${m.alto}</span>
+          <button id="ed-h-plus">+</button>
+        </div>
+      </div>
+      <div class="prop-row" style="opacity:0.7">
+        <label>Posición</label>
+        <span style="font-family:var(--font-mono);font-size:12px">x: ${m.pos_x}, y: ${m.pos_y} <em>(arrastra la mesa)</em></span>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="btn-grid">
+        <button class="btn ghost span-2" id="ed-cerrar">Cerrar</button>
+        <button class="btn danger span-2" id="ed-eliminar">
+          <span class="material-symbols-outlined">delete</span>
+          Eliminar esta mesa
+        </button>
+      </div>
+    </div>
+  `;
+  const markDirty = (k, v) => {
+    m[k] = v;
+    state.edit.dirtyMesas[m.id] = { ...(state.edit.dirtyMesas[m.id]||{}), [k]: v };
+    renderFloorScreen();
+  };
+  const upd = (id, attr, dx, min, max) => {
+    let v = +$(id).textContent + dx;
+    if (min!=null) v = Math.max(min, v); if (max!=null) v = Math.min(max, v);
+    $(id).textContent = v; markDirty(attr, v);
+  };
+  $('#ed-cap-minus').onclick = () => upd('#ed-cap','capacidad',-1,1,30);
+  $('#ed-cap-plus').onclick  = () => upd('#ed-cap','capacidad',+1,1,30);
+  $('#ed-w-minus').onclick = () => upd('#ed-w','ancho',-10,30,400);
+  $('#ed-w-plus').onclick  = () => upd('#ed-w','ancho',+10,30,400);
+  $('#ed-h-minus').onclick = () => upd('#ed-h','alto',-10,30,300);
+  $('#ed-h-plus').onclick  = () => upd('#ed-h','alto',+10,30,300);
+  $('#ed-numero').onchange = () => markDirty('numero', $('#ed-numero').value);
+  $('#ed-zona').onchange   = () => markDirty('zona',   $('#ed-zona').value);
+  $('#ed-forma').onchange  = () => markDirty('forma',  $('#ed-forma').value);
+  $('#ed-cerrar').onclick  = () => { state.edit.selected = null; closeSheet(); renderFloorScreen(); };
+  $('#ed-eliminar').onclick = () => {
+    if (!confirm('Eliminar mesa ' + m.numero + '? Se ocultará del plano.')) return;
+    if (m.id.startsWith('new_')) {
+      // era nueva, simplemente quitar
+      state.edit.nuevasMesas = state.edit.nuevasMesas.filter(x => x.id !== m.id);
+    } else {
+      state.edit.deletedMesas.add(m.id);
+    }
+    state.mesas = state.mesas.filter(x => x.id !== m.id);
+    state.edit.selected = null;
+    closeSheet(); renderFloorScreen();
+    toast('Mesa marcada para eliminar (guarda para aplicar)', 'warn');
+  };
+}
+
+function renderMueblePropPanel(mu) {
+  const tipos = ['pared','entrada','cocina','pase','baño','columna','planta','barra_fisica'];
+  const tiposOpts = tipos.map(t => `<option value="${t}" ${mu.tipo===t?'selected':''}>${t}</option>`).join('');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Mueble</div>
+      <div class="prop-row">
+        <label>Tipo</label>
+        <select class="select" id="ed-tipo">${tiposOpts}</select>
+      </div>
+      <div class="prop-row">
+        <label>Etiqueta (opcional)</label>
+        <input class="input" style="max-width:200px" id="ed-label" value="${mu.label||''}">
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">Dimensiones</div>
+      <div class="prop-row">
+        <label>Ancho</label>
+        <div class="stepper-mini">
+          <button id="ed-w-minus">−</button><span class="val" id="ed-w">${mu.w}</span><button id="ed-w-plus">+</button>
+        </div>
+      </div>
+      <div class="prop-row">
+        <label>Alto</label>
+        <div class="stepper-mini">
+          <button id="ed-h-minus">−</button><span class="val" id="ed-h">${mu.h}</span><button id="ed-h-plus">+</button>
+        </div>
+      </div>
+      <div class="prop-row" style="opacity:0.7">
+        <label>Posición</label>
+        <span style="font-family:var(--font-mono);font-size:12px">x: ${mu.x}, y: ${mu.y} <em>(arrastra)</em></span>
+      </div>
+    </div>
+    <div class="sheet-section">
+      <div class="btn-grid">
+        <button class="btn ghost span-2" id="ed-cerrar">Cerrar</button>
+        <button class="btn danger span-2" id="ed-eliminar">
+          <span class="material-symbols-outlined">delete</span>
+          Eliminar mueble
+        </button>
+      </div>
+    </div>
+  `;
+  const markDirty = (k, v) => { mu[k] = v; state.edit.dirtyMuebles = true; renderFloorScreen(); };
+  const upd = (id, attr, dx, min) => {
+    let v = +$(id).textContent + dx;
+    if (min!=null) v = Math.max(min, v);
+    $(id).textContent = v; markDirty(attr, v);
+  };
+  $('#ed-w-minus').onclick = () => upd('#ed-w','w',-10,4);
+  $('#ed-w-plus').onclick  = () => upd('#ed-w','w',+10);
+  $('#ed-h-minus').onclick = () => upd('#ed-h','h',-10,4);
+  $('#ed-h-plus').onclick  = () => upd('#ed-h','h',+10);
+  $('#ed-tipo').onchange  = () => markDirty('tipo',  $('#ed-tipo').value);
+  $('#ed-label').onchange = () => markDirty('label', $('#ed-label').value);
+  $('#ed-cerrar').onclick = () => { state.edit.selected = null; closeSheet(); renderFloorScreen(); };
+  $('#ed-eliminar').onclick = () => {
+    if (!confirm('Eliminar este mueble?')) return;
+    state.muebles = state.muebles.filter(x => x.id !== mu.id);
+    state.edit.dirtyMuebles = true;
+    state.edit.selected = null;
+    closeSheet(); renderFloorScreen();
+  };
+}
+
+function addMesa() {
+  const existingNums = state.mesas.map(m => m.numero);
+  let n = 1;
+  while (existingNums.includes('M' + n)) n++;
+  const id = 'new_' + uuid().slice(0, 8);
+  const nueva = {
+    id, numero: 'M' + n, capacidad: 4, forma: 'rectangular', zona: 'salón',
+    pos_x: 200, pos_y: 150, ancho: 80, alto: 60, activa: true,
+  };
+  state.mesas.push(nueva);
+  state.edit.nuevasMesas.push(nueva);
+  state.edit.selected = { kind:'mesa', id };
+  renderFloorScreen();
+  openEditPanel('mesa', id);
+  toast('Mesa nueva creada · ajusta posición y propiedades', 'ok');
+}
+
+function addMueble() {
+  const id = 'fnew_' + uuid().slice(0, 8);
+  const nuevo = { id, tipo:'pared', x:200, y:150, w:80, h:8, label:null };
+  state.muebles.push(nuevo);
+  state.edit.dirtyMuebles = true;
+  state.edit.selected = { kind:'mueble', id };
+  renderFloorScreen();
+  openEditPanel('mueble', id);
+}
+
+function mostrarAyudaEditor() {
+  $('#sheet-mark').textContent = '?';
+  $('#sheet-mark').style.background = 'var(--tertiary)';
+  $('#sheet-title').textContent = 'Cómo editar el plano';
+  $('#sheet-meta').textContent = '';
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-info-row"><span><strong>Arrastrar</strong> mesa o mueble</span><span>mueve a nueva posición (snap 5px)</span></div>
+      <div class="sheet-info-row"><span><strong>Tap</strong> sobre mesa o mueble</span><span>abre propiedades para editar</span></div>
+      <div class="sheet-info-row"><span><strong>+ Mesa</strong></span><span>agrega una nueva mesa al centro</span></div>
+      <div class="sheet-info-row"><span><strong>+ Mueble</strong></span><span>agrega pared/cocina/baño/columna</span></div>
+      <div class="sheet-info-row"><span><strong>Eliminar</strong></span><span>desde el panel de propiedades</span></div>
+      <div class="sheet-info-row"><span><strong>Sillas de barra</strong></span><span>edita la mesa "Barra" y aumenta capacidad</span></div>
+      <div class="sheet-info-row"><span><strong>Guardar</strong></span><span>persiste todo a la BD</span></div>
+      <div class="sheet-info-row"><span><strong>Descartar</strong></span><span>vuelve al estado previo</span></div>
+    </div>
+    <div class="sheet-section">
+      <button class="btn primary" id="ayuda-ok">Va</button>
+    </div>
+  `;
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+  $('#ayuda-ok').onclick = closeSheet;
+}
+
+/* ========= PEDIDO SCREEN (BLOQUE 2) ========= */
+async function abrirPedidoScreen(pedidoId) {
+  state.pedidoAbiertoId = pedidoId;
+  state.screen = 'pedido';
+  state.sillaActiva = 1;
+  await loadPedidoItems(pedidoId);
+  render();
+}
+
+function renderPedidoScreen() {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) { state.screen = 'floor'; render(); return; }
+  const items = state.pedidoItemsCache[ped.id] || [];
+
+  // Lista agrupada por silla
+  const grupos = {};
+  items.forEach(it => {
+    const s = it.seat_position == null ? 0 : it.seat_position; // 0 = centro/compartido
+    if (!grupos[s]) grupos[s] = [];
+    grupos[s].push(it);
+  });
+  const sillas = Object.keys(grupos).map(Number).sort((a,b)=>a-b);
+
+  const totalSilla = (s) => grupos[s].filter(it => !it.es_cortesia).reduce((acc, it) => acc + Number(it.precio_total||0), 0);
+
+  // Alergias por silla (CA-22)
+  const alergias = ped.alergias_por_silla || {};
+
+  const grupoHtml = sillas.length === 0
+    ? '<div class="empty-state">Pedido vacío.<br>Tap un ítem del menú para agregarlo.</div>'
+    : sillas.map(s => {
+        const items = grupos[s];
+        const alergS = (alergias[String(s)] || []).join(', ');
+        const isCentro = s === 0;
+        const label = isCentro ? 'Centro · compartido' : 'Silla ' + s;
+        return `
+          <div class="silla-group">
+            <div class="silla-head">
+              <span class="badge ${isCentro?'centro':''}">${isCentro ? '★' : s}</span>
+              <h3>${label}</h3>
+              ${alergS ? `<span class="alergias"><span class="material-symbols-outlined" style="font-size:11px">warning</span>${alergS}</span>` : ''}
+              <span class="total">${money(totalSilla(s))}</span>
+            </div>
+            ${items.map(it => `
+              <div class="item-row ${it.urgente?'urgente':''}" data-iid="${it.id}">
+                <span class="qty">×${it.qty}</span>
+                <span class="nm">
+                  ${it.nombre}
+                  ${it.notas ? `<span class="notas"><span class="material-symbols-outlined" style="font-size:10px">edit_note</span> ${it.notas}</span>` : ''}
+                </span>
+                <span class="estado ${it.estado}">${it.estado==='pendiente'?'pendiente':it.estado==='enviado'?'En fuego':'servido'}</span>
+                <span class="price">${money(it.precio_total)}</span>
+                ${it.estado === 'pendiente' ? `
+                  <button class="ico-btn" title="Eliminar" data-act="del">
+                    <span class="material-symbols-outlined" style="font-size:16px">delete</span>
+                  </button>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+
+  // Menú
+  const cats = subcategoriasMenu(state.menuTab);
+  if (!cats.includes(state.menuSubtab)) state.menuSubtab = cats[0] || null;
+  const recetasShown = recetasDe(state.menuTab, state.menuSubtab);
+
+  // Sillas que existen en el pedido (CA-19): centro + 1..comensales
+  const numSillas = ped.comensales || 1;
+  const sillaBtns = [
+    `<button class="silla-pick-btn centro ${state.sillaActiva===0?'active':''}" data-s="0">★<span class="sub">CENTRO</span></button>`,
+    ...Array.from({length: numSillas}, (_, i) => i + 1).map(s =>
+      `<button class="silla-pick-btn ${state.sillaActiva===s?'active':''}" data-s="${s}">${s}</button>`)
+  ].join('');
+
+  // Totals
+  const sub = items.filter(it => !it.es_cortesia).reduce((a,it) => a + Number(it.precio_total||0), 0);
+  const serv = sub * 0.10;
+  const total = sub + serv;
+  const igvIncluido = sub * 18 / 118;
+
+  $('#screen').innerHTML = `
+    <div class="pedido-screen">
+      <div class="pedido-head">
+        <div class="ticket-mark">${state.mesas.find(m => m.id === ped.mesa_id)?.numero || '?'}</div>
+        <div class="info">
+          <h2>Pedido #${ped.ticket_num}</h2>
+          <div class="meta">
+            <span>${(state.mesas.find(m => m.id === ped.mesa_id)?.zona || '').toUpperCase()}</span>
+            <span>${items.length} ítem${items.length===1?'':'s'}</span>
+            <span>${items.filter(it=>it.estado==='pendiente').length} sin marchar</span>
+            <span>Silla activa: ${state.sillaActiva===0?'CENTRO':state.sillaActiva}</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-ico ghost" id="btn-suspender-ped">
+            <span class="material-symbols-outlined">pause</span>
+            <span>Suspender</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="items-col">
+        <div class="sheet-section-label" style="padding:0 4px 8px">
+          Asignar siguiente ítem a:
+        </div>
+        <div class="silla-picker" style="margin-bottom:14px; padding:0 4px">
+          ${sillaBtns}
+        </div>
+        ${grupoHtml}
+      </div>
+
+      <div class="menu-col">
+        <div class="menu-tabs">
+          <button class="menu-tab ${state.menuTab==='cocina'?'active':''}" data-m="cocina">Cocina</button>
+          <button class="menu-tab ${state.menuTab==='bar'?'active':''}" data-m="bar">Bar</button>
+        </div>
+        <div class="menu-subtabs">
+          ${cats.map(c => `<button class="menu-subtab ${state.menuSubtab===c?'active':''}" data-c="${c}">${c}</button>`).join('')}
+        </div>
+        <div class="menu-grid">
+          ${recetasShown.map(r => `
+            <div class="menu-item" data-rid="${r.id}">
+              <div class="emoji">${r.emoji || '🍽️'}</div>
+              <div class="name">${r.nombre}</div>
+              <div class="price">${money(r.precio_venta)}</div>
+              ${(r.alergenos&&r.alergenos.length)?`<div class="alergenos">${r.alergenos.map(a=>`<span>${a}</span>`).join('')}</div>`:''}
+            </div>
+          `).join('') || '<div class="empty-state">Sin ítems en esta sub-categoría</div>'}
+        </div>
+      </div>
+
+      <div class="pedido-foot">
+        <div class="totals">
+          <div class="t"><span class="lbl">Ítems</span><span class="val">${items.length}</span></div>
+          <div class="t"><span class="lbl">Subtotal</span><span class="val">${money(sub)}</span></div>
+          <div class="t"><span class="lbl">Servicio 10%</span><span class="val">${money(serv)}</span></div>
+          <div class="t" style="opacity:0.6"><span class="lbl">IGV incl.</span><span class="val">${money(igvIncluido)}</span></div>
+          <div class="t big"><span class="lbl">Total</span><span class="val">${money(total)}</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $$('.menu-tab').forEach(b => b.onclick = () => {
+    state.menuTab = b.dataset.m;
+    const cs = subcategoriasMenu(state.menuTab);
+    state.menuSubtab = cs[0] || null;
+    render();
+  });
+  $$('.menu-subtab').forEach(b => b.onclick = () => { state.menuSubtab = b.dataset.c; render(); });
+  $$('.silla-pick-btn').forEach(b => b.onclick = () => { state.sillaActiva = +b.dataset.s; render(); });
+  $$('.menu-item').forEach(c => c.onclick = () => {
+    const r = state.recetas.find(x => x.id === c.dataset.rid);
+    if (r) openItemPicker(r, ped);
+  });
+  $$('.item-row [data-act="del"]').forEach(b => b.onclick = () => {
+    const id = b.closest('.item-row').dataset.iid;
+    eliminarItem(id, ped.id);
+  });
+  $('#btn-suspender-ped').onclick = async () => {
+    await suspender(ped.id);
+    state.screen = 'floor'; render();
+  };
+}
+
+/* ========= ITEM PICKER (modal) ========= */
+function openItemPicker(r, ped) {
+  let qty = 1;
+  let notas = '';
+  let seat = state.sillaActiva;
+  let urgente = false;
+
+  // términos de carne / vuelta para platos relevantes
+  const esCarne = /carne|osso|carpaccio|prosciutto|risotto/i.test(r.nombre + ' ' + (r.categoria_menu||''));
+  const terminos = ['Jugoso','A punto','Bien cocido','Sin sal','Sin gluten','Para llevar'];
+
+  const sillaPicker = [
+    `<button class="silla-pick-btn centro ${seat===0?'active':''}" data-s="0">★<span class="sub">CENTRO</span></button>`,
+    ...Array.from({length: ped.comensales || 1}, (_, i) => i + 1).map(s =>
+      `<button class="silla-pick-btn ${seat===s?'active':''}" data-s="${s}">${s}</button>`)
+  ].join('');
+
+  $('#item-modal-inner').innerHTML = `
+    <div class="modal-head">
+      <span class="icon">${r.emoji || '🍽️'}</span>
+      <h3>${r.nombre}</h3>
+      <span class="price">${money(r.precio_venta)}</span>
+      <button class="sheet-close" id="im-close"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="sheet-section">
+        <div class="sheet-section-label">Para qué silla</div>
+        <div class="silla-picker">${sillaPicker}</div>
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Cantidad</div>
+        <div class="com-stepper">
+          <button id="im-minus">−</button>
+          <span class="com-num" id="im-qty">1</span>
+          <button id="im-plus">+</button>
+        </div>
+      </div>
+      ${esCarne ? `
+        <div class="sheet-section">
+          <div class="sheet-section-label">Término / preferencia</div>
+          <div class="chips" id="im-chips">
+            ${terminos.map(t => `<button class="chip" data-t="${t}">${t}</button>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+      <div class="sheet-section">
+        <div class="sheet-section-label">Notas de cocina (opcional)</div>
+        <textarea class="input" id="im-notas" rows="2" placeholder="Sin cebolla, alergia maní, en pan aparte..."></textarea>
+      </div>
+      <div class="sheet-section">
+        <div class="prop-row">
+          <label>Marcar como urgente</label>
+          <button class="chip" id="im-urgente">Normal</button>
+        </div>
+      </div>
+      ${(r.alergenos&&r.alergenos.length)?`
+        <div class="sheet-section">
+          <div class="sheet-section-label">⚠ Alérgenos del plato</div>
+          <div class="chips">${r.alergenos.map(a=>`<span class="chip" style="background:var(--amber-soft)">${a}</span>`).join('')}</div>
+        </div>
+      `:''}
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="im-cancel">Atrás</button>
+      <button class="btn primary" id="im-add" style="flex:1">
+        <span class="material-symbols-outlined">add_circle</span>
+        Agregar
+      </button>
+    </div>
+  `;
+  $('#item-modal').classList.add('open');
+
+  const updQty = () => $('#im-qty').textContent = qty;
+  const updSillas = () => $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.s === seat);
+  });
+  $('#im-minus').onclick = () => { if (qty>1) qty--; updQty(); };
+  $('#im-plus').onclick = () => { if (qty<20) qty++; updQty(); };
+  $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => b.onclick = () => { seat = +b.dataset.s; updSillas(); });
+  if ($('#im-chips')) $$('#im-chips .chip').forEach(b => b.onclick = () => {
+    b.classList.toggle('active');
+    notas = $$('#im-chips .chip.active').map(x => x.dataset.t).join(' · ');
+    const taNotas = $('#im-notas').value;
+    if (taNotas && !taNotas.includes(notas) && notas) $('#im-notas').value = notas + (taNotas?(' · '+taNotas):'');
+  });
+  $('#im-urgente').onclick = () => {
+    urgente = !urgente;
+    $('#im-urgente').textContent = urgente ? 'Urgente · va primero' : 'Normal';
+    $('#im-urgente').classList.toggle('active', urgente);
+    if (urgente) $('#im-urgente').style.background = 'var(--secondary)';
+    else $('#im-urgente').style.background = '';
+    if (urgente) $('#im-urgente').style.color = 'white';
+    else $('#im-urgente').style.color = '';
+  };
+  $('#im-cancel').onclick = () => $('#item-modal').classList.remove('open');
+  $('#im-close').onclick = () => $('#item-modal').classList.remove('open');
+  $('#im-add').onclick = async () => {
+    const notasFinal = $('#im-notas').value.trim();
+    await agregarItem(r, qty, seat, notasFinal, urgente, ped);
+    $('#item-modal').classList.remove('open');
+    state.sillaActiva = seat;
+  };
+}
+
+async function agregarItem(r, qty, seat, notas, urgente, ped) {
+  const precio_unit = Number(r.precio_venta) || 0;
+  const payload = {
+    pedido_id: ped.id,
+    receta_id: r.id,
+    nombre: r.nombre,
+    qty,
+    precio_unit,
+    precio_total: precio_unit * qty,
+    modificadores: {},
+    estado: 'pendiente',
+    station: r.estacion_id || null,
+    course_step: 1,
+    es_cortesia: false,
+    notas: notas || null,
+    seat_position: seat === 0 ? null : seat, // null = centro/compartido
+    urgente: !!urgente,
+  };
+  const { data, error } = await sb.from('ca_pedido_items').insert(payload).select().single();
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.pedidoItemsCache[ped.id] = [...(state.pedidoItemsCache[ped.id]||[]), data];
+  await recalcularYPersistirTotales(ped.id);
+  await loadPedidos();
+  render();
+  toast('Va · ' + r.nombre + (seat?' · silla '+seat:' · centro'), 'ok');
+}
+
+async function eliminarItem(itemId, pedidoId) {
+  if (!confirm('Eliminar este ítem?')) return;
+  const { error } = await sb.from('ca_pedido_items').delete().eq('id', itemId);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  state.pedidoItemsCache[pedidoId] = (state.pedidoItemsCache[pedidoId]||[]).filter(x => x.id !== itemId);
+  await recalcularYPersistirTotales(pedidoId);
+  await loadPedidos();
+  render();
+  toast('Servido · ítem eliminado', 'ok');
+}
+
+async function marcharTodoPendientes() {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) return;
+  const items = state.pedidoItemsCache[ped.id] || [];
+  const pendientes = items.filter(it => it.estado === 'pendiente');
+  if (!pendientes.length) { toast('Nada que marchar', 'warn'); return; }
+  // Update todos a 'enviado'
+  const now = new Date().toISOString();
+  const { error } = await sb.from('ca_pedido_items').update({
+    estado: 'enviado', enviado_cocina_at: now,
+  }).in('id', pendientes.map(it => it.id));
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  // Si el pedido estaba en 'abierta', pasar a 'marchada' (estado_servicio)
+  if (ped.estado_servicio === 'abierta') {
+    await sb.from('ca_pedidos').update({ estado_servicio: 'marchada' }).eq('id', ped.id);
+  }
+  toast('En fuego · ' + pendientes.length + ' ítem(s) a cocina', 'ok');
+  await loadPedidoItems(ped.id);
+  await loadPedidos();
+  render();
+}
+
+async function recalcularYPersistirTotales(pedidoId) {
+  const items = state.pedidoItemsCache[pedidoId] || [];
+  const sub = items.filter(it => !it.es_cortesia).reduce((a, it) => a + Number(it.precio_total||0), 0);
+  const servicio_monto = +(sub * 0.10).toFixed(2);
+  const igv = +(sub * 18 / 118).toFixed(2); // IGV ya incluido en sub
+  const total = +(sub + servicio_monto).toFixed(2);
+  await sb.from('ca_pedidos').update({
+    subtotal: sub, servicio_monto, igv, total,
+  }).eq('id', pedidoId);
+}
+
+/* ========= REALTIME ========= */
 function subscribe() {
   if (state.channel) sb.removeChannel(state.channel);
   state.channel = sb.channel('pos_v2_floor_' + LOCAL)
-    .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'ca_pedidos', filter: 'local_id=eq.' + LOCAL },
+    .on('postgres_changes', { event: '*', schema:'public', table:'ca_pedidos', filter:'local_id=eq.'+LOCAL },
         async () => {
           await loadPedidos();
           render();
-          // refresh sheet if open
-          if (state.mesaAbierta) {
-            const id = state.mesaAbierta.id;
-            const stillOpen = $('#sheet').classList.contains('open');
-            if (stillOpen) openSheet(id);
+          if (state.mesaAbierta && $('#sheet').classList.contains('open')) openSheet(state.mesaAbierta.id);
+        })
+    .on('postgres_changes', { event: '*', schema:'public', table:'ca_mesas', filter:'local_id=eq.'+LOCAL },
+        async () => { if (state.screen !== 'edit') { await loadMesas(); render(); } })
+    .on('postgres_changes', { event: '*', schema:'public', table:'ca_pedido_items' },
+        async (payload) => {
+          // Solo reaccionar si el pedido afectado está en cache o abierto
+          const pedidoId = payload.new?.pedido_id || payload.old?.pedido_id;
+          if (state.pedidoItemsCache[pedidoId] || state.pedidoAbiertoId === pedidoId) {
+            await loadPedidoItems(pedidoId);
+            if (state.screen === 'pedido' && state.pedidoAbiertoId === pedidoId) render();
           }
         })
-    .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'ca_mesas', filter: 'local_id=eq.' + LOCAL },
-        async () => { await loadMesas(); render(); })
     .subscribe();
 }
 
-/* ============ WIRE UP ============ */
-$('#sheet-backdrop').addEventListener('click', closeSheet);
-$('#sheet-close').addEventListener('click', closeSheet);
-$('#mozo-select').addEventListener('click', abrirPickerMozo);
+/* ========= WIRE UP ========= */
+$('#sheet-backdrop').addEventListener('click', () => { closeSheet(); if (state.screen==='edit') { state.edit.selected=null; renderFloorScreen(); } });
+$('#sheet-close').addEventListener('click', () => { closeSheet(); if (state.screen==='edit') { state.edit.selected=null; renderFloorScreen(); } });
 $('#mozo-dialog-close').addEventListener('click', () => $('#mozo-dialog').classList.remove('open'));
-$('#mozo-dialog').addEventListener('click', (e) => {
-  if (e.target === $('#mozo-dialog')) $('#mozo-dialog').classList.remove('open');
-});
-
+$('#mozo-dialog').addEventListener('click', (e) => { if (e.target === $('#mozo-dialog')) $('#mozo-dialog').classList.remove('open'); });
+$('#item-modal').addEventListener('click', (e) => { if (e.target === $('#item-modal')) $('#item-modal').classList.remove('open'); });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeSheet();
     $('#mozo-dialog').classList.remove('open');
+    $('#item-modal').classList.remove('open');
+    if (state.screen==='edit') { state.edit.selected=null; renderFloorScreen(); }
   }
 });
 
-/* ============ BOOT ============ */
+/* ========= BOOT ========= */
 loadAll().catch(err => {
   console.error(err);
   $('#boot .msg').textContent = 'Atrás · ' + (err.message || 'fallo de conexión');

@@ -15,11 +15,15 @@
     },
     {
       "source": "/pos",
-      "destination": "/pos/index.html"
+      "destination": "/pos-v2.html"
     },
     {
       "source": "/pos-v2",
       "destination": "/pos-v2.html"
+    },
+    {
+      "source": "/pos2",
+      "destination": "/pos/index.html"
     },
     {
       "source": "/pos-legacy",
