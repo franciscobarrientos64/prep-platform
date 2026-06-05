@@ -1,5 +1,5 @@
 {
-  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/",
@@ -78,7 +78,22 @@
     {
       "source": "/pos/env.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+        { "key": "Cache-Control", "value": "no-store, max-age=0" },
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/pos/js/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    },
+    {
+      "source": "/pos/css/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "text/css; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
       ]
     }
   ]
