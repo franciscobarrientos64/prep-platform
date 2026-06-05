@@ -664,9 +664,12 @@ button { font-family: inherit; cursor: pointer; }
   text-transform: uppercase; letter-spacing: 0.05em;
   padding: 2px 7px; border-radius: 999px; border: 1.5px solid var(--outline);
 }
-.item-row .estado.pendiente { background: var(--tertiary); color: var(--ink); }
-.item-row .estado.enviado   { background: var(--secondary); color: white; }
+/* Estados reales de cocina Prep! — alineados con CHECK constraint de ca_pedido_items */
+.item-row .estado.oido      { background: var(--tertiary); color: var(--ink); }
+.item-row .estado.va        { background: var(--primary); color: white; }
+.item-row .estado.fuego     { background: var(--secondary); color: white; }
 .item-row .estado.servido   { background: var(--green); color: white; }
+.item-row .estado.cancelado { background: var(--gray-soft); color: var(--ink); opacity: 0.6; }
 .item-row.urgente {
   background: var(--red-soft);
   border-left: 4px solid var(--secondary);
@@ -1407,7 +1410,9 @@ function estadoMesa(mesa) {
   const p = pedidoDeMesa(mesa.id);
   if (!p) return 'libre';
   if (p.estado === 'suspended') return 'suspendida';
-  return p.estado_servicio || 'abierta';
+  // BD usa abierta|ordenando|comiendo|cuenta_pedida|pagando
+  const map = { abierta:'abierta', ordenando:'abierta', comiendo:'marchada', cuenta_pedida:'cuenta_pedida', pagando:'cuenta_pedida' };
+  return map[p.estado_servicio] || 'abierta';
 }
 function zonasCount() {
   const map = { todas: state.mesas.length };
@@ -2251,9 +2256,9 @@ function renderPedidoScreen() {
                   ${it.nombre}
                   ${it.notas ? `<span class="notas"><span class="material-symbols-outlined" style="font-size:10px">edit_note</span> ${it.notas}</span>` : ''}
                 </span>
-                <span class="estado ${it.estado}">${it.estado==='pendiente'?'pendiente':it.estado==='enviado'?'En fuego':'servido'}</span>
+                <span class="estado ${it.estado}">${({oido:'Oído',va:'Va',fuego:'En fuego',servido:'Servido',cancelado:'Cancelado'})[it.estado] || it.estado}</span>
                 <span class="price">${money(it.precio_total)}</span>
-                ${it.estado === 'pendiente' ? `
+                ${it.estado === 'oido' ? `
                   <button class="ico-btn" title="Eliminar" data-act="del">
                     <span class="material-symbols-outlined" style="font-size:16px">delete</span>
                   </button>` : ''}
@@ -2291,7 +2296,7 @@ function renderPedidoScreen() {
           <div class="meta">
             <span>${(state.mesas.find(m => m.id === ped.mesa_id)?.zona || '').toUpperCase()}</span>
             <span>${items.length} ítem${items.length===1?'':'s'}</span>
-            <span>${items.filter(it=>it.estado==='pendiente').length} sin marchar</span>
+            <span>${items.filter(it=>it.estado==='oido').length} sin marchar</span>
             <span>Silla activa: ${state.sillaActiva===0?'CENTRO':state.sillaActiva}</span>
           </div>
         </div>
@@ -2481,7 +2486,7 @@ async function agregarItem(r, qty, seat, notas, urgente, ped) {
     precio_unit,
     precio_total: precio_unit * qty,
     modificadores: {},
-    estado: 'pendiente',
+    estado: 'oido',
     station: r.estacion_id || null,
     course_step: 1,
     es_cortesia: false,
@@ -2513,19 +2518,25 @@ async function marcharTodoPendientes() {
   const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
   if (!ped) return;
   const items = state.pedidoItemsCache[ped.id] || [];
-  const pendientes = items.filter(it => it.estado === 'pendiente');
-  if (!pendientes.length) { toast('Nada que marchar', 'warn'); return; }
-  // Update todos a 'enviado'
+  const oidos = items.filter(it => it.estado === 'oido');
+  if (!oidos.length) { toast('Nada que marchar', 'warn'); return; }
   const now = new Date().toISOString();
-  const { error } = await sb.from('ca_pedido_items').update({
-    estado: 'enviado', enviado_cocina_at: now,
-  }).in('id', pendientes.map(it => it.id));
-  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  // Si el pedido estaba en 'abierta', pasar a 'marchada' (estado_servicio)
-  if (ped.estado_servicio === 'abierta') {
-    await sb.from('ca_pedidos').update({ estado_servicio: 'marchada' }).eq('id', ped.id);
+  // BD: items en oido pasan a 'fuego' (urgentes) o 'va' (normal)
+  const urgentes = oidos.filter(it => it.urgente).map(it => it.id);
+  const normales = oidos.filter(it => !it.urgente).map(it => it.id);
+  if (urgentes.length) {
+    const r = await sb.from('ca_pedido_items').update({ estado: 'fuego', enviado_cocina_at: now }).in('id', urgentes);
+    if (r.error) { toast('Atrás: ' + r.error.message, 'err'); return; }
   }
-  toast('En fuego · ' + pendientes.length + ' ítem(s) a cocina', 'ok');
+  if (normales.length) {
+    const r = await sb.from('ca_pedido_items').update({ estado: 'va', enviado_cocina_at: now }).in('id', normales);
+    if (r.error) { toast('Atrás: ' + r.error.message, 'err'); return; }
+  }
+  // estado_servicio: BD acepta abierta|ordenando|comiendo|cuenta_pedida|pagando
+  if (['abierta','ordenando'].includes(ped.estado_servicio)) {
+    await sb.from('ca_pedidos').update({ estado_servicio: 'comiendo' }).eq('id', ped.id);
+  }
+  toast('En fuego · ' + oidos.length + ' ítem(s) a cocina', 'ok');
   await loadPedidoItems(ped.id);
   await loadPedidos();
   render();
@@ -2569,7 +2580,7 @@ async function abrirCobroScreen(pedidoId) {
   };
   // Si el pedido aún no está en 'cuenta_pedida' y no está pagado, marcarlo
   const ped = state.pedidos.find(p => p.id === pedidoId);
-  if (ped && ped.estado_servicio !== 'cuenta_pedida' && ped.estado_servicio !== 'pagada') {
+  if (ped && ped.estado_servicio !== 'cuenta_pedida' && ped.estado_servicio !== 'pagando') {
     await sb.from('ca_pedidos').update({ estado_servicio: 'cuenta_pedida' }).eq('id', pedidoId);
     ped.estado_servicio = 'cuenta_pedida';
   }
@@ -3091,8 +3102,10 @@ async function confirmarCobro() {
       servicio_monto: T.servicio_monto,
       propina_monto: T.propina,
       total: T.total,
-      estado: 'pagada',
-      estado_servicio: 'pagada',
+      // BD: ca_pedidos.estado IN (abierta|cerrada|suspended|cancelada)
+      // BD: estado_servicio IN (abierta|ordenando|comiendo|cuenta_pedida|pagando)
+      estado: 'cerrada',
+      estado_servicio: 'pagando',
       cerrada_at: pagado_at,
       pagado_at,
       comprobante_tipo: C.tipo,
