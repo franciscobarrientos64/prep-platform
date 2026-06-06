@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Bienvenida · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ============ TOKENS ============ */
+:root {
+  --primary: #1e5af9;
+  --secondary: #ff3b30;
+  --tertiary: #ffcc00;
+  --bg: #fcf9f8;
+  --surface: #ffffff;
+  --ink: #171c20;
+  --outline: #000000;
+  --primary-soft: #d6e2ff;
+  --primary-dark: #001a47;
+  --gray-soft: #dfe3e8;
+  --green: #10b981;
+  --green-soft: #d1fae5;
+  --amber-soft: #fef3c7;
+  --red-soft: #fee2e2;
+  --shadow-sm: 4px 4px 0 0 #000;
+  --shadow: 6px 6px 0 0 #000;
+  --shadow-lg: 10px 10px 0 0 #000;
+  --font-display: 'Bagel Fat One', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body); background: var(--bg); color: var(--ink);
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  display: flex; flex-direction: column; min-height: 100%;
+}
+button { font-family: inherit; cursor: pointer; }
+.material-symbols-outlined { font-size: 20px; line-height: 1; user-select: none; vertical-align: middle; }
+.mono { font-family: var(--font-mono); }
+
+/* ============ HEADER ============ */
+.header {
+  flex-shrink: 0; background: var(--bg); border-bottom: 2px solid var(--outline);
+  padding: 10px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; min-height: 60px;
+}
+.brand { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+.brand .logo { font-family: var(--font-display); font-size: 26px; color: var(--primary); line-height: 0.9; }
+.brand .logo .accent { color: var(--secondary); }
+.brand .mod { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55; }
+.header-info { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border: 2px solid var(--outline); border-radius: 999px; background: var(--surface);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; font-family: var(--font-mono);
+}
+.pill.live { background: var(--primary); color: white; }
+.pill.live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--tertiary); animation: pulse 1.4s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+.btn-ico {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border: 2px solid var(--outline); border-radius: 999px; background: var(--surface); color: var(--ink);
+  font-family: var(--font-body); font-weight: 600; font-size: 13px; box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-ico:active { transform: translate(2px,2px); box-shadow: none; }
+.btn-ico.dark { background: var(--ink); color: var(--bg); }
+.btn-ico.primary { background: var(--primary); color: white; }
+.btn-ico.warn { background: var(--tertiary); color: var(--ink); }
+.btn-ico.danger { background: var(--secondary); color: white; }
+.btn-ico.ghost { background: transparent; box-shadow: none; border-style: dashed; }
+
+/* ============ TABS NAV ============ */
+.tabs {
+  flex-shrink: 0; display: flex; gap: 8px; padding: 10px 16px; background: var(--bg);
+  border-bottom: 2px solid var(--outline); overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border: 2px solid var(--outline); border-radius: 999px; background: var(--surface);
+  font-weight: 600; font-size: 13px; box-shadow: var(--shadow-sm); transition: transform 0.1s, box-shadow 0.1s;
+}
+.tab.active { background: var(--ink); color: var(--bg); transform: translate(2px,2px); box-shadow: none; }
+.tab .count {
+  font-family: var(--font-mono); font-size: 11px; background: var(--tertiary); color: var(--ink);
+  padding: 1px 7px; border-radius: 999px; border: 1.5px solid var(--outline);
+}
+
+/* ============ MAIN ============ */
+.main { flex: 1; overflow-y: auto; padding: 16px; }
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.date-nav { display: inline-flex; align-items: center; gap: 6px; }
+.date-nav .date-lbl { font-family: var(--font-display); font-size: 18px; min-width: 180px; text-align: center; }
+.round-btn {
+  width: 40px; height: 40px; border: 2px solid var(--outline); border-radius: 50%; background: var(--surface);
+  display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
+}
+.round-btn:active { transform: translate(2px,2px); box-shadow: none; }
+.seg { display: inline-flex; border: 2px solid var(--outline); border-radius: 999px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.seg button { padding: 8px 14px; background: var(--surface); border: none; font-weight: 600; font-size: 13px; border-right: 2px solid var(--outline); }
+.seg button:last-child { border-right: none; }
+.seg button.active { background: var(--primary); color: white; }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.kpi {
+  background: var(--surface); border: 2px solid var(--outline); border-radius: 14px;
+  box-shadow: var(--shadow-sm); padding: 12px 14px;
+}
+.kpi .val { font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--primary); }
+.kpi .lbl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; margin-top: 4px; }
+.kpi.alert .val { color: var(--secondary); }
+
+/* RESERVA CARDS */
+.res-list { display: flex; flex-direction: column; gap: 10px; }
+.res-card {
+  background: var(--surface); border: 2px solid var(--outline); border-radius: 14px; box-shadow: var(--shadow-sm);
+  padding: 14px; display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: start;
+}
+.res-card.estado-sentada { background: #fffdf2; border-color: var(--tertiary); }
+.res-card.estado-completada { opacity: 0.7; }
+.res-card.estado-no_show { background: var(--red-soft); }
+.res-card.estado-cancelada { opacity: 0.5; }
+.res-hora { font-family: var(--font-display); font-size: 22px; line-height: 1; text-align: center; }
+.res-hora .pax { font-family: var(--font-mono); font-size: 11px; font-weight: 600; opacity: 0.65; display: block; margin-top: 4px; }
+.res-main h3 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.res-meta { font-family: var(--font-mono); font-size: 11px; opacity: 0.7; margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+.res-surface { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.tagchip {
+  display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; border: 1.5px solid var(--outline); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.tagchip.vip { background: var(--tertiary); }
+.tagchip.alergia { background: var(--secondary); color: white; }
+.tagchip.ocasion { background: var(--primary-soft); }
+.tagchip.tag { background: var(--gray-soft); }
+.tagchip.hold { background: var(--green-soft); }
+.res-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.badge-estado {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 3px 10px; border-radius: 999px; border: 2px solid var(--outline);
+}
+.badge-estado.confirmada { background: var(--primary-soft); }
+.badge-estado.sentada { background: var(--tertiary); }
+.badge-estado.completada { background: var(--green); color: white; }
+.badge-estado.no_show { background: var(--secondary); color: white; }
+.badge-estado.cancelada { background: var(--gray-soft); }
+.badge-estado.reagendada { background: var(--amber-soft); }
+.mini-acts { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.mini-btn {
+  display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border: 2px solid var(--outline);
+  border-radius: 999px; background: var(--surface); font-weight: 600; font-size: 12px; box-shadow: 2px 2px 0 0 var(--outline);
+}
+.mini-btn:active { transform: translate(1px,1px); box-shadow: none; }
+.mini-btn.primary { background: var(--primary); color: white; }
+.mini-btn.warn { background: var(--tertiary); }
+.mini-btn.danger { background: var(--secondary); color: white; }
+.mini-btn.ghost { background: transparent; box-shadow: none; border-style: dashed; }
+
+/* COMENSALES */
+.com-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.com-card {
+  background: var(--surface); border: 2px solid var(--outline); border-radius: 14px; box-shadow: var(--shadow-sm);
+  padding: 14px; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+}
+.com-card:active { transform: translate(2px,2px); box-shadow: none; }
+.com-card .nm { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+.com-card .sub { font-family: var(--font-mono); font-size: 11px; opacity: 0.65; margin-top: 2px; }
+.com-card .stats { display: flex; gap: 12px; margin-top: 8px; }
+.com-card .stat .n { font-family: var(--font-display); font-size: 18px; color: var(--primary); }
+.com-card .stat .l { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; opacity: 0.6; }
+
+/* INPUTS */
+.input, .select, textarea.input {
+  padding: 10px 12px; border: 2px solid var(--outline); border-radius: 10px; background: var(--surface);
+  font-family: var(--font-body); font-size: 14px; box-shadow: var(--shadow-sm); width: 100%;
+}
+.field-lbl { font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; margin-bottom: 6px; display: block; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 12px; border: 2px solid var(--outline); border-radius: 999px; background: var(--surface);
+  font-family: var(--font-body); font-size: 12px; font-weight: 600; box-shadow: 2px 2px 0 0 var(--outline);
+}
+.chip:active { transform: translate(1px,1px); box-shadow: none; }
+.chip.active { background: var(--ink); color: var(--bg); }
+.com-stepper { display: flex; align-items: center; gap: 12px; }
+.com-stepper button { width: 48px; height: 48px; border: 2px solid var(--outline); border-radius: 50%; background: var(--surface); box-shadow: var(--shadow-sm); font-size: 24px; font-family: var(--font-display); line-height: 0; }
+.com-stepper button:active { transform: translate(2px,2px); box-shadow: none; }
+.com-stepper .num { font-family: var(--font-display); font-size: 36px; min-width: 60px; text-align: center; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 18px;
+  border: 2px solid var(--outline); border-radius: 14px; font-family: var(--font-body); font-weight: 600; font-size: 14px;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); transition: transform 0.1s, box-shadow 0.1s; width: 100%; min-height: 50px;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: none; }
+.btn.primary { background: var(--primary); color: white; }
+.btn.danger { background: var(--secondary); color: white; }
+.btn.warn { background: var(--tertiary); color: var(--ink); }
+.btn.dark { background: var(--ink); color: var(--bg); }
+.btn.ghost { background: transparent; box-shadow: none; border-style: dashed; }
+.btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+/* ============ SHEET / MODAL / DIALOG ============ */
+.backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+.backdrop.open { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90; background: var(--surface);
+  border-top: 3px solid var(--outline); border-radius: 24px 24px 0 0; box-shadow: 0 -10px 0 0 var(--outline);
+  transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
+  max-height: 90vh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle { width: 48px; height: 5px; background: var(--outline); border-radius: 999px; margin: 12px auto 8px; opacity: 0.3; }
+.sheet-head { padding: 6px 24px 14px; border-bottom: 2px solid var(--outline); display: flex; align-items: center; gap: 14px; }
+.sheet-mark {
+  width: 50px; height: 50px; border: 2px solid var(--outline); border-radius: 12px; background: var(--primary-soft);
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 18px; flex-shrink: 0;
+}
+.sheet-title { flex: 1; }
+.sheet-title h2 { font-family: var(--font-display); font-size: 22px; line-height: 1; margin-bottom: 4px; }
+.sheet-title .meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.65; }
+.sheet-close { width: 40px; height: 40px; border: 2px solid var(--outline); border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
+.sheet-close:active { transform: translate(2px,2px); box-shadow: none; }
+.sheet-body { padding: 18px 24px 28px; overflow-y: auto; }
+.sheet-section + .sheet-section { margin-top: 16px; }
+.info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed var(--gray-soft); font-size: 14px; }
+.info-row strong { font-family: var(--font-mono); font-weight: 600; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+.empty-state { text-align: center; padding: 50px 20px; font-family: var(--font-mono); font-size: 12px; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* TOASTS */
+.toast-container { position: fixed; top: 76px; right: 16px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { background: var(--ink); color: var(--bg); border: 2px solid var(--outline); border-radius: 12px; padding: 12px 18px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); animation: toast-in 0.3s ease-out; display: flex; align-items: center; gap: 10px; max-width: 340px; }
+.toast.ok { background: var(--primary); color: white; }
+.toast.err { background: var(--secondary); color: white; }
+.toast.warn { background: var(--tertiary); color: var(--ink); }
+.toast.wa { background: #25d366; color: white; }
+@keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* BOOT */
+.boot { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 300; transition: opacity 0.3s; }
+.boot.gone { opacity: 0; pointer-events: none; }
+.boot .logo { font-family: var(--font-display); font-size: 64px; color: var(--primary); }
+.boot .logo .accent { color: var(--secondary); }
+.boot .msg { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
+.boot .spinner { width: 34px; height: 34px; border: 4px solid var(--outline); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============ TIMELINE (Gantt) ============ */
+.tl-wrap { overflow: auto; border: 2px solid var(--outline); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-sm); }
+.tl-grid { position: relative; min-width: 900px; }
+.tl-row { display: grid; grid-template-columns: 110px 1fr; border-bottom: 1px dashed var(--gray-soft); }
+.tl-row:last-child { border-bottom: none; }
+.tl-row.head { position: sticky; top: 0; z-index: 3; background: var(--ink); color: var(--bg); border-bottom: 2px solid var(--outline); }
+.tl-mesa { padding: 10px 12px; border-right: 2px solid var(--outline); font-weight: 700; font-size: 13px; display: flex; flex-direction: column; justify-content: center; background: var(--surface); position: sticky; left: 0; z-index: 2; }
+.tl-row.head .tl-mesa { background: var(--ink); }
+.tl-mesa .sub { font-family: var(--font-mono); font-size: 10px; opacity: 0.6; font-weight: 500; }
+.tl-track { position: relative; height: 52px; }
+.tl-hours { display: grid; height: 38px; }
+.tl-hcell { border-right: 1px solid var(--gray-soft); font-family: var(--font-mono); font-size: 10px; padding: 4px 6px; text-align: left; }
+.tl-block {
+  position: absolute; top: 6px; height: 40px; border: 2px solid var(--outline); border-radius: 8px;
+  background: var(--primary-soft); box-shadow: 2px 2px 0 0 var(--outline); padding: 4px 8px; overflow: hidden;
+  font-size: 11px; line-height: 1.2; cursor: pointer;
+}
+.tl-block.sentada { background: var(--tertiary); }
+.tl-block.completada { background: var(--green-soft); }
+.tl-block.no_show, .tl-block.cancelada { background: var(--gray-soft); opacity: 0.6; }
+.tl-block b { display: block; font-weight: 700; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.tl-block .tl-sub { font-family: var(--font-mono); font-size: 9px; opacity: 0.7; }
+.tl-now { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--secondary); z-index: 4; }
+
+/* ============ MAPA (floor canvas) ============ */
+.floor-wrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.floor-canvas { position: relative; width: 696px; height: 384px; background: var(--surface); border: 2px solid var(--outline); border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden; flex-shrink: 0; }
+.canvas-inner { position: absolute; inset: 0; transform: scale(1.2); transform-origin: 0 0; width: 580px; height: 320px; }
+.zona-bg { position: absolute; pointer-events: none; }
+.zona-label { position: absolute; font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.5; pointer-events: none; }
+.mueble { position: absolute; pointer-events: none; font-family: var(--font-mono); font-size: 8px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; justify-content: center; color: var(--ink); overflow: hidden; }
+.mueble.pared { background: repeating-linear-gradient(45deg, var(--ink) 0, var(--ink) 3px, #333 3px, #333 6px); }
+.mueble.cocina { background: var(--red-soft); border: 1.5px solid var(--secondary); color: var(--secondary); }
+.mueble.barra_fisica { background: var(--primary-dark); color: var(--bg); }
+.mueble.baño, .mueble.entrada, .mueble.pase, .mueble.columna, .mueble.planta { background: var(--gray-soft); border: 1px solid var(--outline); }
+.m-mesa {
+  position: absolute; border: 2px solid var(--outline); background: var(--surface); box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer;
+  padding: 3px; overflow: hidden; text-align: center; border-radius: 8px; transition: box-shadow .12s;
+}
+.m-mesa.circular { border-radius: 50%; }
+.m-mesa .num { font-family: var(--font-display); font-size: 15px; line-height: 0.9; }
+.m-mesa .cap { font-family: var(--font-mono); font-size: 8px; opacity: 0.6; }
+.m-mesa[data-st="libre"] { background: var(--surface); }
+.m-mesa[data-st="reservada"] { background: var(--primary-soft); border-color: var(--primary); }
+.m-mesa[data-st="sentada"] { background: var(--tertiary); }
+.m-mesa.drop-target { outline: 3px dashed var(--primary); outline-offset: 2px; }
+.res-chip {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 2px solid var(--outline); border-radius: 10px;
+  background: var(--surface); box-shadow: 2px 2px 0 0 var(--outline); cursor: grab; font-size: 12px; margin-bottom: 6px;
+}
+.res-chip:active { cursor: grabbing; }
+.res-chip .h { font-family: var(--font-display); font-size: 14px; }
+.unassigned-col { flex: 1; min-width: 220px; }
+
+/* ============ WAITLIST ============ */
+.wait-list { display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+.wait-card { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; background: var(--surface); border: 2px solid var(--outline); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 12px 14px; }
+.wait-card.prioridad-salud { border-color: var(--secondary); background: #fff6f5; }
+.wait-card.prioridad-vip { border-color: var(--tertiary); background: #fffdf2; }
+.wait-pos { font-family: var(--font-display); font-size: 22px; width: 44px; height: 44px; border: 2px solid var(--outline); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary-soft); }
+.wait-card.prioridad-salud .wait-pos { background: var(--secondary); color: white; }
+.wait-card.prioridad-vip .wait-pos { background: var(--tertiary); }
+.pub-screen { background: var(--ink); color: var(--bg); border-radius: 16px; padding: 28px; }
+.pub-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 20px; }
+.pub-row .num { font-family: var(--font-display); font-size: 28px; color: var(--tertiary); }
+
+@media (max-width: 640px) {
+  .res-card { grid-template-columns: 56px 1fr; }
+  .res-actions { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; }
+}
+</style>
+</head>
+<body>
+
+<div id="boot" class="boot">
+  <div class="logo">prep<span class="accent">!</span></div>
+  <div class="spinner"></div>
+  <div class="msg">Oído · mise en place</div>
+</div>
+
+<header class="header" id="app-header"></header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div class="sheet-mark" id="sheet-mark">—</div>
+    <div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div>
+    <button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</aside>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+/* =========================================================================
+   PREP! · Módulo 04 · BIENVENIDA (reservas, comensales, waitlist, mapa)
+   Fase A: agenda + comensales. Tablas: ms_reservas, ms_clientes, ms_waitlist,
+   ms_card_holds, ms_floor_plans, ca_mesas (compartida con POS).
+   ========================================================================= */
+const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const MARCA = 'm6';
+const LOCAL = 'l11';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* ========= CATÁLOGOS ========= */
+const ALERGENOS = ['Gluten','Lácteos','Maní','Frutos secos','Mariscos','Pescado','Huevo','Soya','Sésamo'];
+const TAGS_CLIENTE = ['VIP','recurrente','prensa','influencer','vegetariano','vegano','celíaco','primera vez'];
+const OCASIONES = ['Cumpleaños','Aniversario','Negocios','Cita','Celebración','Otro'];
+// MS-14: prioridades obligatorias de atención
+const PRIORIDADES_SALUD = ['Adulto mayor','Embarazada','Con niños','Discapacidad'];
+
+/* ========= STATE ========= */
+const state = {
+  mesas: [], clientes: [], clientesMap: {}, reservas: [], waitlist: [], turno: null,
+  floorPlan: null, muebles: [], zonas: [],
+  view: 'agenda',
+  fecha: hoyISO(),
+  turnoFiltro: 'todos',     // todos | almuerzo | cena
+  comQuery: '',
+  waitPublic: false,
+  channel: null,
+};
+
+/* ========= UTILS ========= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+function hoyISO() { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function money(n) { return 'S/ ' + Number(n||0).toFixed(2); }
+function uuid() { return crypto.randomUUID ? crypto.randomUUID() : 'tmp_'+Math.random().toString(36).slice(2); }
+function hhmm(t) { return (t||'').slice(0,5); }
+function fechaLarga(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return dias[dt.getDay()] + ' ' + d + ' ' + meses[m-1];
+}
+function addDias(iso, n) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d); dt.setDate(dt.getDate()+n);
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+}
+function esAlmuerzo(hora) { return hhmm(hora) < '16:00'; }
+function nombreCliente(c) { return c ? (c.nombre + (c.apellidos ? ' '+c.apellidos : '')) : 'Walk-in'; }
+function inicial(s) { return (s||'?').trim().charAt(0).toUpperCase(); }
+function esVip(c) { return !!c && Array.isArray(c.tags) && c.tags.some(t => /vip/i.test(t)); }
+
+function toast(msg, tipo='') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + tipo;
+  const ico = tipo==='ok'?'check_circle':tipo==='err'?'error':tipo==='warn'?'warning':tipo==='wa'?'chat':'info';
+  el.innerHTML = `<span class="material-symbols-outlined">${ico}</span><span>${msg}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.style.transition='opacity .3s,transform .3s'; el.style.opacity='0'; el.style.transform='translateX(120%)'; setTimeout(()=>el.remove(),300); }, 2800);
+}
+function openSheet() { $('#backdrop').classList.add('open'); $('#sheet').classList.add('open'); }
+function closeSheet() { $('#backdrop').classList.remove('open'); $('#sheet').classList.remove('open'); }
+function setSheetHead(mark, title, meta, bg='var(--primary-soft)', color='var(--ink)') {
+  $('#sheet-mark').textContent = mark; $('#sheet-mark').style.background = bg; $('#sheet-mark').style.color = color;
+  $('#sheet-title').textContent = title; $('#sheet-meta').textContent = meta || '';
+}
+
+/* ========= DATA LOAD ========= */
+async function loadAll() {
+  await Promise.all([loadMesas(), loadClientes(), loadTurno(), loadFloorPlan()]);
+  await Promise.all([loadReservas(), loadWaitlist()]);
+  render(); subscribe();
+  setInterval(() => { if (state.view==='agenda'||state.view==='waitlist') render(); }, 60000);
+  $('#boot').classList.add('gone');
+}
+async function loadMesas() {
+  const { data, error } = await sb.from('ca_mesas').select('*').eq('marca_id', MARCA).eq('local_id', LOCAL);
+  if (error) return toast('Atrás: '+error.message,'err');
+  state.mesas = (data||[]).filter(m => m.activa !== false);
+}
+async function loadClientes() {
+  const { data, error } = await sb.from('ms_clientes').select('*').eq('marca_id', MARCA).order('nombre');
+  if (error) return toast('Atrás: '+error.message,'err');
+  state.clientes = data || [];
+  state.clientesMap = {}; state.clientes.forEach(c => state.clientesMap[c.id] = c);
+}
+async function loadTurno() {
+  const { data } = await sb.from('ca_turnos').select('id, nombre, fecha, estado').eq('local_id', LOCAL).eq('estado','abierto').order('fecha',{ascending:false}).limit(1);
+  state.turno = (data && data[0]) || null;
+}
+async function loadFloorPlan() {
+  const { data } = await sb.from('ms_floor_plans').select('*').eq('local_id', LOCAL).eq('activo', true).limit(1);
+  state.floorPlan = (data && data[0]) || null;
+  if (state.floorPlan && state.floorPlan.layout) {
+    state.muebles = state.floorPlan.layout.muebles || [];
+    state.zonas = state.floorPlan.layout.zonas || [];
+  }
+}
+async function loadReservas() {
+  const { data, error } = await sb.from('ms_reservas').select('*').eq('local_id', LOCAL).eq('fecha', state.fecha).order('hora');
+  if (error) return toast('Atrás: '+error.message,'err');
+  state.reservas = data || [];
+}
+async function loadWaitlist() {
+  const { data, error } = await sb.from('ms_waitlist').select('*').eq('local_id', LOCAL).in('estado', ['esperando','avisado']).order('created_at');
+  if (error) return toast('Atrás: '+error.message,'err');
+  state.waitlist = data || [];
+}
+
+/* ========= DERIVED ========= */
+function reservasFiltradas() {
+  return state.reservas.filter(r => {
+    if (state.turnoFiltro === 'almuerzo') return esAlmuerzo(r.hora);
+    if (state.turnoFiltro === 'cena') return !esAlmuerzo(r.hora);
+    return true;
+  });
+}
+function mesaDe(id) { return state.mesas.find(m => m.id === id); }
+function mesaLabel(id) { const m = mesaDe(id); return m ? m.numero : '—'; }
+function reservaActivaDeMesa(mesaId) {
+  return state.reservas.find(r => r.mesa_id === mesaId && ['confirmada','sentada'].includes(r.estado));
+}
+
+/* ========= ROUTER ========= */
+function render() {
+  renderHeader(); renderTabs();
+  if (state.view === 'agenda') renderAgenda();
+  else if (state.view === 'comensales') renderComensales();
+  else if (state.view === 'timeline') renderTimeline();
+  else if (state.view === 'mapa') renderMapa();
+  else if (state.view === 'waitlist') renderWaitlist();
+}
+
+function renderHeader() {
+  $('#app-header').innerHTML = `
+    <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">Bienvenida · Casa Italia</span></div>
+    <div class="header-info">
+      <span class="pill live">${state.reservas.filter(r=>r.estado==='confirmada').length} por llegar</span>
+      <span class="pill">${state.waitlist.length} en espera</span>
+    </div>
+    <button class="btn-ico primary" id="h-nueva"><span class="material-symbols-outlined">add</span><span>Reserva</span></button>
+    <button class="btn-ico" id="h-walkin"><span class="material-symbols-outlined">directions_walk</span><span>Walk-in</span></button>
+  `;
+  $('#h-nueva').onclick = () => abrirEditorReserva(null);
+  $('#h-walkin').onclick = () => abrirWalkin();
+}
+function renderTabs() {
+  const tabs = [
+    { k:'agenda', l:'Agenda', ico:'event_note', n: state.reservas.length },
+    { k:'timeline', l:'Timeline', ico:'view_timeline' },
+    { k:'mapa', l:'Mapa', ico:'table_restaurant' },
+    { k:'waitlist', l:'Waitlist', ico:'hourglass_top', n: state.waitlist.length },
+    { k:'comensales', l:'Comensales', ico:'groups', n: state.clientes.length },
+  ];
+  $('#tabs').innerHTML = tabs.map(t => `
+    <button class="tab ${state.view===t.k?'active':''}" data-v="${t.k}">
+      <span class="material-symbols-outlined" style="font-size:16px">${t.ico}</span>${t.l}
+      ${t.n!=null?`<span class="count">${t.n}</span>`:''}
+    </button>`).join('');
+  $$('#tabs .tab').forEach(b => b.onclick = () => { state.view = b.dataset.v; render(); });
+}
+
+/* ========= AGENDA (libro de reservas) ========= */
+function renderAgenda() {
+  const rs = reservasFiltradas();
+  const cubiertos = rs.filter(r => ['confirmada','sentada','completada'].includes(r.estado)).reduce((a,r)=>a+(r.comensales||0),0);
+  const k = {
+    confirmadas: rs.filter(r=>r.estado==='confirmada').length,
+    sentadas: rs.filter(r=>r.estado==='sentada').length,
+    completadas: rs.filter(r=>r.estado==='completada').length,
+    noshow: rs.filter(r=>r.estado==='no_show').length,
+  };
+  const cards = rs.length === 0
+    ? '<div class="empty-state">Sin reservas para este filtro.<br>Toca "Reserva" para crear una.</div>'
+    : rs.map(renderResCard).join('');
+
+  $('#screen').innerHTML = `
+    <div class="toolbar">
+      <div class="date-nav">
+        <button class="round-btn" id="d-prev"><span class="material-symbols-outlined">chevron_left</span></button>
+        <span class="date-lbl">${fechaLarga(state.fecha)}</span>
+        <button class="round-btn" id="d-next"><span class="material-symbols-outlined">chevron_right</span></button>
+      </div>
+      <button class="btn-ico ghost" id="d-hoy">Hoy</button>
+      <div class="seg">
+        <button class="${state.turnoFiltro==='todos'?'active':''}" data-t="todos">Todos</button>
+        <button class="${state.turnoFiltro==='almuerzo'?'active':''}" data-t="almuerzo">Almuerzo</button>
+        <button class="${state.turnoFiltro==='cena'?'active':''}" data-t="cena">Cena</button>
+      </div>
+      <button class="btn-ico" id="d-brief" style="margin-left:auto"><span class="material-symbols-outlined">receipt_long</span><span>Brief de turno</span></button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="val">${k.confirmadas}</div><div class="lbl">Por llegar</div></div>
+      <div class="kpi"><div class="val">${k.sentadas}</div><div class="lbl">Sentadas</div></div>
+      <div class="kpi"><div class="val">${cubiertos}</div><div class="lbl">Cubiertos</div></div>
+      <div class="kpi"><div class="val">${k.completadas}</div><div class="lbl">Completadas</div></div>
+      <div class="kpi ${k.noshow?'alert':''}"><div class="val">${k.noshow}</div><div class="lbl">No-show</div></div>
+    </div>
+    <div class="res-list">${cards}</div>
+  `;
+  $('#d-prev').onclick = async () => { state.fecha = addDias(state.fecha,-1); await loadReservas(); render(); };
+  $('#d-next').onclick = async () => { state.fecha = addDias(state.fecha,1); await loadReservas(); render(); };
+  $('#d-hoy').onclick = async () => { state.fecha = hoyISO(); await loadReservas(); render(); };
+  $$('.seg [data-t]').forEach(b => b.onclick = () => { state.turnoFiltro = b.dataset.t; render(); });
+  $('#d-brief').onclick = () => imprimirBrief();
+  wireResCards();
+}
+
+function renderResCard(r) {
+  const c = state.clientesMap[r.cliente_id];
+  const alergias = (r.alergias_snapshot && r.alergias_snapshot.length) ? r.alergias_snapshot : (c ? c.alergias : []) || [];
+  const vip = r.vip_snapshot || esVip(c);
+  const surface = [];
+  if (vip) surface.push('<span class="tagchip vip"><span class="material-symbols-outlined" style="font-size:11px">star</span>VIP</span>');
+  (alergias||[]).forEach(a => surface.push(`<span class="tagchip alergia"><span class="material-symbols-outlined" style="font-size:11px">warning</span>${a}</span>`));
+  if (r.ocasion) surface.push(`<span class="tagchip ocasion">${r.ocasion}</span>`);
+  if (r.card_hold_id) surface.push('<span class="tagchip hold"><span class="material-symbols-outlined" style="font-size:11px">credit_card</span>garantía</span>');
+  (c && c.tags || []).filter(t => !/vip/i.test(t)).forEach(t => surface.push(`<span class="tagchip tag">${t}</span>`));
+
+  const acts = [];
+  if (r.estado === 'confirmada') {
+    acts.push('<button class="mini-btn primary" data-act="sentar"><span class="material-symbols-outlined" style="font-size:14px">check</span>Sentar</button>');
+    acts.push('<button class="mini-btn warn" data-act="mesa"><span class="material-symbols-outlined" style="font-size:14px">table_restaurant</span>Mesa</button>');
+    if (!r.card_hold_id) acts.push('<button class="mini-btn" data-act="garantia"><span class="material-symbols-outlined" style="font-size:14px">credit_card</span>Garantía</button>');
+    acts.push('<button class="mini-btn ghost" data-act="recordar"><span class="material-symbols-outlined" style="font-size:14px">chat</span>Recordar</button>');
+    acts.push('<button class="mini-btn danger" data-act="noshow">No-show</button>');
+  } else if (r.estado === 'sentada') {
+    acts.push('<button class="mini-btn primary" data-act="completar">Completar</button>');
+    if (r.pedido_id) acts.push('<button class="mini-btn ghost" data-act="pos">Ver en POS</button>');
+  }
+  acts.push('<button class="mini-btn ghost" data-act="ficha">Ficha</button>');
+
+  return `
+    <div class="res-card estado-${r.estado}" data-rid="${r.id}">
+      <div class="res-hora">${hhmm(r.hora)}<span class="pax">${r.comensales}p</span></div>
+      <div class="res-main">
+        <h3>${nombreCliente(c)}</h3>
+        <div class="res-meta">
+          <span>${esAlmuerzo(r.hora)?'🍝 Almuerzo':'🌙 Cena'}</span>
+          <span>Mesa ${r.mesa_id?mesaLabel(r.mesa_id):'sin asignar'}</span>
+          <span>${({manual:'manual',widget:'web',whatsapp:'WhatsApp',walk_in:'walk-in',telefono:'teléfono',api:'api'})[r.origen]||r.origen}</span>
+          ${r.notas?`<span>· ${r.notas}</span>`:''}
+        </div>
+        ${surface.length?`<div class="res-surface">${surface.join('')}</div>`:''}
+      </div>
+      <div class="res-actions">
+        <span class="badge-estado ${r.estado}">${r.estado.replace('_',' ')}</span>
+        <div class="mini-acts">${acts.join('')}</div>
+      </div>
+    </div>`;
+}
+function wireResCards() {
+  $$('.res-card').forEach(card => {
+    const r = state.reservas.find(x => x.id === card.dataset.rid); if (!r) return;
+    $$('[data-act]', card).forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
+      const a = b.dataset.act;
+      if (a==='sentar') sentarReserva(r);
+      else if (a==='mesa') asignarMesaPrompt(r);
+      else if (a==='garantia') abrirGarantia(r);
+      else if (a==='recordar') { const c=state.clientesMap[r.cliente_id]; mockMensaje(c&&c.telefono, 'Recordatorio: tu reserva en Casa Italia hoy '+hhmm(r.hora)+' para '+r.comensales+'. Responde SÍ para confirmar.'); }
+      else if (a==='noshow') marcarNoShow(r);
+      else if (a==='completar') completarReserva(r);
+      else if (a==='ficha') abrirFichaComensal(r.cliente_id, r);
+      else if (a==='pos') toast('Abrir POS: pedido #'+(r.pedido_id||'').slice(0,8)+' (integración POS)', 'ok');
+    });
+  });
+}
+
+/* ========= ACCIONES RESERVA ========= */
+async function setEstadoReserva(r, patch, msg, tipo='ok') {
+  const { error } = await sb.from('ms_reservas').update(patch).eq('id', r.id);
+  if (error) return toast('Atrás: '+error.message,'err');
+  await loadReservas(); render();
+  if (msg) toast(msg, tipo);
+}
+function nowISO() { return new Date().toISOString(); }
+
+async function marcarNoShow(r) {
+  if (!confirm('¿Marcar como no-show?')) return;
+  await setEstadoReserva(r, { estado:'no_show' }, 'Marcada no-show', 'warn');
+  if (r.cliente_id) {
+    const c = state.clientesMap[r.cliente_id];
+    if (c) await sb.from('ms_clientes').update({ no_show_count: (c.no_show_count||0)+1 }).eq('id', c.id);
+    await loadClientes();
+  }
+}
+async function completarReserva(r) {
+  await setEstadoReserva(r, { estado:'completada', completada_at: nowISO() }, 'Servido · reserva completada', 'ok');
+  if (r.cliente_id) {
+    const c = state.clientesMap[r.cliente_id];
+    if (c) await sb.from('ms_clientes').update({ total_visitas:(c.total_visitas||0)+1, ultima_visita: state.fecha }).eq('id', c.id);
+    await loadClientes();
+  }
+}
+function asignarMesaPrompt(r, thenSentar=false) {
+  const ocupadas = new Set(state.reservas.filter(x => x.id!==r.id && x.mesa_id && ['confirmada','sentada'].includes(x.estado)).map(x => x.mesa_id));
+  const libres = state.mesas.filter(m => !ocupadas.has(m.id) && m.capacidad >= (r.comensales||1)).sort((a,b)=> a.capacidad-b.capacidad);
+  const otras = state.mesas.filter(m => !ocupadas.has(m.id) && m.capacidad < (r.comensales||1));
+  setSheetHead('🪑', 'Asignar mesa', nombreCliente(state.clientesMap[r.cliente_id]) + ' · ' + r.comensales + 'p · ' + hhmm(r.hora));
+  const btn = (m, ok) => `<button class="btn ${ok?'':'ghost'}" data-mesa="${m.id}" style="justify-content:space-between">
+      <span><span class="material-symbols-outlined">table_restaurant</span> ${m.numero}</span>
+      <span class="mono" style="opacity:.6">${m.zona} · ${m.capacidad}p</span></button>`;
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section"><div class="field-lbl">Mesas con capacidad (${r.comensales}p)</div>
+      <div class="stack">${libres.map(m=>btn(m,true)).join('') || '<div class="empty-state">Ninguna mesa libre con esa capacidad</div>'}</div></div>
+    ${otras.length?`<div class="sheet-section"><div class="field-lbl">Otras libres (capacidad menor)</div><div class="stack">${otras.map(m=>btn(m,false)).join('')}</div></div>`:''}
+    <div class="sheet-section"><button class="btn ghost" id="mesa-cancel">Atrás</button></div>`;
+  openSheet();
+  $$('#sheet-body [data-mesa]').forEach(b => b.onclick = async () => {
+    closeSheet();
+    if (thenSentar) await sentarReserva(r, b.dataset.mesa);
+    else await setEstadoReserva(r, { mesa_id: b.dataset.mesa }, 'Va · mesa '+mesaLabel(b.dataset.mesa)+' asignada', 'ok');
+  });
+  $('#mesa-cancel').onclick = closeSheet;
+}
+
+// MS-integración: Sentar → crea pedido en POS y enlaza
+async function sentarReserva(r, mesaIdForzada) {
+  const mesaId = mesaIdForzada || r.mesa_id;
+  if (!mesaId) { asignarMesaPrompt(r, true); return; }
+  // 1. crear pedido en POS (ca_pedidos)
+  const pedidoId = await crearPedidoPOS(r, mesaId);
+  if (!pedidoId) return;
+  // 2. marcar reserva sentada + enlazar
+  await setEstadoReserva(r, { estado:'sentada', sentada_at: nowISO(), mesa_id: mesaId, pedido_id: pedidoId },
+    'Servido · sentada en mesa '+mesaLabel(mesaId)+' · pedido abierto en POS', 'ok');
+}
+
+async function crearPedidoPOS(r, mesaId) {
+  const mesa = mesaDe(mesaId);
+  const intentar = async () => {
+    let ticket = null;
+    if (state.turno) {
+      const { data: nums } = await sb.from('ca_pedidos').select('ticket_num').eq('local_id', LOCAL).eq('turno_id', state.turno.id).order('ticket_num',{ascending:false}).limit(1);
+      ticket = ((nums && nums[0]?.ticket_num) || 0) + 1;
+    }
+    const payload = {
+      marca_id: MARCA, local_id: LOCAL, turno_id: state.turno?.id || null,
+      mesa_id: mesaId, comensales: r.comensales || 1, mozo_id: null,
+      estado:'abierta', estado_servicio:'abierta', origen: (mesa && (mesa.zona==='barra'||mesa.forma==='barra')) ? 'barra' : 'salon',
+      abierta_at: nowISO(), subtotal:0, igv:0, servicio_pct:10, servicio_monto:0, descuento:0, propina_monto:0, total:0,
+      moneda:'PEN', alergias_por_silla:{}, notas: 'Reserva ' + nombreCliente(state.clientesMap[r.cliente_id]) + (r.ocasion?(' · '+r.ocasion):''),
+    };
+    if (ticket != null) payload.ticket_num = ticket;
+    return await sb.from('ca_pedidos').insert(payload).select('id').single();
+  };
+  let { data, error } = await intentar();
+  if (error && error.code === '23505') ({ data, error } = await intentar());
+  if (error) { toast('Atrás · POS: '+error.message,'err'); return null; }
+  return data.id;
+}
+
+/* ========= EDITOR DE RESERVA (crear/editar) MS-01 ========= */
+function abrirEditorReserva(reserva) {
+  const edit = !!reserva;
+  const form = {
+    cliente_id: reserva?.cliente_id || null,
+    clienteNuevo: null,                       // {nombre, apellidos, telefono}
+    fecha: reserva?.fecha || state.fecha,
+    hora: reserva ? hhmm(reserva.hora) : '20:00',
+    comensales: reserva?.comensales || 2,
+    mesa_id: reserva?.mesa_id || '',
+    ocasion: reserva?.ocasion || '',
+    notas: reserva?.notas || '',
+  };
+  setSheetHead('📅', edit?'Editar reserva':'Nueva reserva', 'Casa Italia · '+fechaLarga(form.fecha));
+  const render2 = () => {
+    const cli = form.cliente_id ? state.clientesMap[form.cliente_id] : null;
+    const cliBox = cli
+      ? `<div class="res-card" style="grid-template-columns:1fr auto;box-shadow:none">
+           <div class="res-main"><h3>${nombreCliente(cli)} ${esVip(cli)?'⭐':''}</h3>
+             <div class="res-meta"><span>${cli.telefono||'sin teléfono'}</span><span>${cli.total_visitas||0} visitas</span>${(cli.alergias||[]).length?`<span>⚠ ${(cli.alergias||[]).join(', ')}</span>`:''}</div></div>
+           <button class="mini-btn ghost" id="cli-clear">Cambiar</button></div>`
+      : form.clienteNuevo
+      ? `<div class="res-card" style="grid-template-columns:1fr auto;box-shadow:none">
+           <div class="res-main"><h3>${form.clienteNuevo.nombre} ${form.clienteNuevo.apellidos||''} <span class="tagchip tag">nuevo</span></h3>
+             <div class="res-meta"><span>${form.clienteNuevo.telefono||'sin teléfono'}</span></div></div>
+           <button class="mini-btn ghost" id="cli-clear">Cambiar</button></div>`
+      : `<input class="input" id="cli-search" placeholder="Buscar comensal por nombre o teléfono…" autocomplete="off">
+         <div id="cli-results" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>`;
+    $('#sheet-body').innerHTML = `
+      <div class="sheet-section"><div class="field-lbl">Comensal</div>${cliBox}</div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Fecha</div><input class="input" type="date" id="f-fecha" value="${form.fecha}"></div>
+        <div><div class="field-lbl">Hora</div><input class="input" type="time" id="f-hora" value="${form.hora}" step="900"></div>
+      </div>
+      <div class="sheet-section"><div class="field-lbl">Comensales</div>
+        <div class="com-stepper"><button id="f-minus">−</button><span class="num" id="f-pax">${form.comensales}</span><button id="f-plus">+</button></div>
+      </div>
+      <div class="sheet-section"><div class="field-lbl">Mesa (opcional · se puede asignar luego)</div>
+        <select class="select" id="f-mesa"><option value="">Sin asignar</option>
+          ${state.mesas.map(m=>`<option value="${m.id}" ${form.mesa_id===m.id?'selected':''}>${m.numero} · ${m.zona} · ${m.capacidad}p</option>`).join('')}
+        </select></div>
+      <div class="sheet-section"><div class="field-lbl">Ocasión</div>
+        <div class="chips" id="f-ocasion">${OCASIONES.map(o=>`<button class="chip ${form.ocasion===o?'active':''}" data-o="${o}">${o}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="field-lbl">Notas</div><textarea class="input" id="f-notas" rows="2" placeholder="Cerca de ventana, silla de bebé…">${form.notas}</textarea></div>
+      <div class="sheet-section"><div class="grid2">
+        <button class="btn ghost" id="f-cancel">Atrás</button>
+        <button class="btn primary" id="f-save"><span class="material-symbols-outlined">check</span>${edit?'Guardar':'Crear reserva'}</button>
+      </div></div>`;
+    // wire cliente
+    if (!cli && !form.clienteNuevo) {
+      const inp = $('#cli-search');
+      inp.oninput = () => {
+        const q = inp.value.trim().toLowerCase();
+        const res = $('#cli-results');
+        if (q.length < 2) { res.innerHTML=''; return; }
+        const hits = state.clientes.filter(c => (nombreCliente(c)+' '+(c.telefono||'')).toLowerCase().includes(q)).slice(0,6);
+        res.innerHTML = hits.map(c => `<button class="btn ghost" data-cid="${c.id}" style="justify-content:space-between"><span>${nombreCliente(c)} ${esVip(c)?'⭐':''}</span><span class="mono" style="opacity:.6">${c.telefono||''}</span></button>`).join('')
+          + `<button class="btn dark" id="cli-crear-inline"><span class="material-symbols-outlined">person_add</span>Crear "${inp.value.trim()}" como nuevo</button>`;
+        $$('#cli-results [data-cid]').forEach(b => b.onclick = () => { form.cliente_id = b.dataset.cid; render2(); });
+        $('#cli-crear-inline').onclick = () => crearClienteInline(inp.value.trim(), (nuevo)=>{ form.clienteNuevo = nuevo; render2(); });
+      };
+    } else {
+      $('#cli-clear').onclick = () => { form.cliente_id=null; form.clienteNuevo=null; render2(); };
+    }
+    $('#f-fecha').onchange = e => form.fecha = e.target.value;
+    $('#f-hora').onchange = e => form.hora = e.target.value;
+    $('#f-minus').onclick = () => { if(form.comensales>1){form.comensales--; $('#f-pax').textContent=form.comensales;} };
+    $('#f-plus').onclick = () => { if(form.comensales<30){form.comensales++; $('#f-pax').textContent=form.comensales;} };
+    $('#f-mesa').onchange = e => form.mesa_id = e.target.value;
+    $$('#f-ocasion .chip').forEach(b => b.onclick = () => { form.ocasion = form.ocasion===b.dataset.o?'':b.dataset.o; render2(); });
+    $('#f-notas').oninput = e => form.notas = e.target.value;
+    $('#f-cancel').onclick = closeSheet;
+    $('#f-save').onclick = () => guardarReserva(reserva, form);
+  };
+  render2();
+  openSheet();
+}
+
+function crearClienteInline(texto, cb) {
+  const partes = texto.split(' ');
+  const nombre = partes.shift() || texto;
+  cb({ nombre, apellidos: partes.join(' ') || null, telefono: null });
+}
+
+async function guardarReserva(reserva, form) {
+  if (!form.cliente_id && !form.clienteNuevo) { toast('Elige o crea un comensal', 'warn'); return; }
+  let clienteId = form.cliente_id;
+  if (!clienteId && form.clienteNuevo) {
+    const { data, error } = await sb.from('ms_clientes').insert({
+      marca_id: MARCA, nombre: form.clienteNuevo.nombre, apellidos: form.clienteNuevo.apellidos,
+      telefono: form.clienteNuevo.telefono, origen:'manual',
+    }).select().single();
+    if (error) { toast('Atrás: '+error.message,'err'); return; }
+    clienteId = data.id;
+    await loadClientes();
+  }
+  const c = state.clientesMap[clienteId];
+  const payload = {
+    marca_id: MARCA, local_id: LOCAL, cliente_id: clienteId,
+    fecha: form.fecha, hora: form.hora, comensales: form.comensales,
+    mesa_id: form.mesa_id || null, ocasion: form.ocasion || null, notas: form.notas || null,
+    estado: reserva?.estado || 'confirmada', origen: reserva?.origen || 'manual',
+    vip_snapshot: esVip(c), alergias_snapshot: (c && c.alergias) || [],
+  };
+  let res;
+  if (reserva) res = await sb.from('ms_reservas').update(payload).eq('id', reserva.id);
+  else res = await sb.from('ms_reservas').insert({ ...payload, confirmada_at: nowISO() });
+  if (res.error) { toast('Atrás: '+res.error.message,'err'); return; }
+  closeSheet();
+  if (form.fecha !== state.fecha) state.fecha = form.fecha;
+  await loadReservas(); render();
+  toast((reserva?'Servido · reserva actualizada':'Va · reserva creada')+ ' · ' + simularWhatsApp(c, form), 'ok');
+}
+
+// MS-16: confirmación automática al crear/aceptar reserva
+function simularWhatsApp(c, form) {
+  const tel = c && c.telefono;
+  if (tel) mockMensaje(tel, 'Reserva confirmada en Casa Italia · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas. Te esperamos 🍝');
+  return 'confirmación enviada' + (tel ? ' a '+tel : '');
+}
+
+/* ========= COMENSALES (CRM ligero) ========= */
+function renderComensales() {
+  const q = state.comQuery.trim().toLowerCase();
+  const list = state.clientes.filter(c => !q || (nombreCliente(c)+' '+(c.telefono||'')).toLowerCase().includes(q));
+  $('#screen').innerHTML = `
+    <div class="toolbar">
+      <input class="input" id="com-q" placeholder="Buscar por nombre o teléfono…" value="${state.comQuery}" style="max-width:360px">
+      <button class="btn-ico primary" id="com-nuevo" style="margin-left:auto"><span class="material-symbols-outlined">person_add</span><span>Comensal</span></button>
+    </div>
+    <div class="com-grid">${list.map(comCard).join('') || '<div class="empty-state">Sin comensales</div>'}</div>`;
+  const inp = $('#com-q');
+  inp.oninput = () => { state.comQuery = inp.value; const g = $('.com-grid'); const ql = inp.value.trim().toLowerCase();
+    const l = state.clientes.filter(c => !ql || (nombreCliente(c)+' '+(c.telefono||'')).toLowerCase().includes(ql));
+    g.innerHTML = l.map(comCard).join('') || '<div class="empty-state">Sin resultados</div>'; wireComCards(); };
+  $('#com-nuevo').onclick = () => abrirEditorComensal(null);
+  wireComCards();
+}
+function comCard(c) {
+  return `<div class="com-card" data-cid="${c.id}">
+    <div class="nm">${nombreCliente(c)} ${esVip(c)?'<span class="material-symbols-outlined" style="font-size:16px;color:var(--tertiary)">star</span>':''}</div>
+    <div class="sub">${c.telefono||'sin teléfono'}</div>
+    <div class="res-surface" style="margin-top:8px">
+      ${(c.alergias||[]).map(a=>`<span class="tagchip alergia">${a}</span>`).join('')}
+      ${(c.tags||[]).filter(t=>!/vip/i.test(t)).map(t=>`<span class="tagchip tag">${t}</span>`).join('')}
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n">${c.total_visitas||0}</div><div class="l">visitas</div></div>
+      <div class="stat"><div class="n">${money(c.total_gastado).replace('S/ ','S/')}</div><div class="l">gastado</div></div>
+      <div class="stat"><div class="n">${c.no_show_count||0}</div><div class="l">no-show</div></div>
+    </div>
+  </div>`;
+}
+function wireComCards() { $$('.com-card').forEach(c => c.onclick = () => abrirFichaComensal(c.dataset.cid)); }
+
+async function abrirFichaComensal(clienteId, reservaCtx) {
+  const c = state.clientesMap[clienteId];
+  if (!c) { toast('Comensal no encontrado', 'warn'); return; }
+  setSheetHead(inicial(c.nombre), nombreCliente(c), (c.telefono||'')+(esVip(c)?' · VIP':''), esVip(c)?'var(--tertiary)':'var(--primary-soft)');
+  // historial
+  const { data: hist } = await sb.from('ms_reservas').select('fecha,hora,comensales,estado,ocasion').eq('cliente_id', clienteId).order('fecha',{ascending:false}).limit(8);
+  const histHtml = (hist||[]).map(h => `<div class="info-row"><span>${fechaLarga(h.fecha)} · ${hhmm(h.hora)} · ${h.comensales}p</span><strong>${h.estado}</strong></div>`).join('') || '<div class="empty-state">Sin historial</div>';
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="info-row"><span>Visitas</span><strong>${c.total_visitas||0}</strong></div>
+      <div class="info-row"><span>Ticket promedio</span><strong>${money(c.ticket_promedio)}</strong></div>
+      <div class="info-row"><span>No-shows</span><strong>${c.no_show_count||0}</strong></div>
+      <div class="info-row"><span>Última visita</span><strong>${c.ultima_visita||'—'}</strong></div>
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Alergias</div><div class="res-surface">${(c.alergias||[]).map(a=>`<span class="tagchip alergia">${a}</span>`).join('')||'<span class="mono" style="opacity:.5">ninguna</span>'}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Tags</div><div class="res-surface">${(c.tags||[]).map(t=>`<span class="tagchip ${/vip/i.test(t)?'vip':'tag'}">${t}</span>`).join('')||'<span class="mono" style="opacity:.5">sin tags</span>'}</div></div>
+    ${c.notas_internas?`<div class="sheet-section"><div class="field-lbl">Notas internas</div><p style="font-size:13px">${c.notas_internas}</p></div>`:''}
+    <div class="sheet-section"><div class="field-lbl">Historial reciente</div>${histHtml}</div>
+    <div class="sheet-section"><div class="grid2">
+      <button class="btn ghost" id="fc-editar"><span class="material-symbols-outlined">edit</span>Editar</button>
+      <button class="btn primary" id="fc-reservar"><span class="material-symbols-outlined">event</span>Nueva reserva</button>
+    </div></div>`;
+  openSheet();
+  $('#fc-editar').onclick = () => abrirEditorComensal(c);
+  $('#fc-reservar').onclick = () => { closeSheet(); abrirEditorReserva(null); setTimeout(()=>{}, 0); /* user re-picks */ };
+}
+
+/* ========= EDITOR COMENSAL (MS-15) ========= */
+function abrirEditorComensal(c) {
+  const edit = !!c;
+  const form = {
+    nombre: c?.nombre||'', apellidos: c?.apellidos||'', telefono: c?.telefono||'', email: c?.email||'',
+    fecha_nacimiento: c?.fecha_nacimiento||'', alergias: [...(c?.alergias||[])], tags: [...(c?.tags||[])],
+    alergiasOtras:'', notas: c?.notas_internas||'',
+  };
+  setSheetHead('👤', edit?'Editar comensal':'Nuevo comensal', edit?nombreCliente(c):'Registro');
+  const render2 = () => {
+    $('#sheet-body').innerHTML = `
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Nombre *</div><input class="input" id="c-nombre" value="${form.nombre}"></div>
+        <div><div class="field-lbl">Apellidos</div><input class="input" id="c-ape" value="${form.apellidos}"></div>
+      </div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Teléfono / WhatsApp</div><input class="input" id="c-tel" value="${form.telefono}" inputmode="tel"></div>
+        <div><div class="field-lbl">Email</div><input class="input" id="c-email" value="${form.email}" inputmode="email"></div>
+      </div>
+      <div class="sheet-section"><div class="field-lbl">Fecha de nacimiento (cumpleaños)</div><input class="input" type="date" id="c-fnac" value="${form.fecha_nacimiento}"></div>
+      <div class="sheet-section"><div class="field-lbl">Alergias</div>
+        <div class="chips" id="c-alerg">${ALERGENOS.map(a=>`<button class="chip ${form.alergias.includes(a)?'active':''}" data-a="${a}">${a}</button>`).join('')}</div>
+        <input class="input" id="c-alerg-otras" placeholder="Otras alergias (separa con coma)" style="margin-top:8px" value="${form.alergias.filter(a=>!ALERGENOS.includes(a)).join(', ')}"></div>
+      <div class="sheet-section"><div class="field-lbl">Tags</div>
+        <div class="chips" id="c-tags">${TAGS_CLIENTE.map(t=>`<button class="chip ${form.tags.includes(t)?'active':''}" data-t="${t}">${t}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="field-lbl">Notas internas</div><textarea class="input" id="c-notas" rows="2" placeholder="Prefiere mesa de ventana…">${form.notas}</textarea></div>
+      <div class="sheet-section"><div class="grid2">
+        <button class="btn ghost" id="c-cancel">Atrás</button>
+        <button class="btn primary" id="c-save"><span class="material-symbols-outlined">check</span>${edit?'Guardar':'Registrar'}</button>
+      </div></div>`;
+    $$('#c-alerg .chip').forEach(b => b.onclick = () => { const a=b.dataset.a; const i=form.alergias.indexOf(a); if(i>=0)form.alergias.splice(i,1); else form.alergias.push(a); b.classList.toggle('active'); });
+    $$('#c-tags .chip').forEach(b => b.onclick = () => { const t=b.dataset.t; const i=form.tags.indexOf(t); if(i>=0)form.tags.splice(i,1); else form.tags.push(t); b.classList.toggle('active'); });
+    $('#c-cancel').onclick = edit ? () => abrirFichaComensal(c.id) : closeSheet;
+    $('#c-save').onclick = () => guardarComensal(c, form);
+  };
+  render2();
+  openSheet();
+}
+async function guardarComensal(c, form) {
+  form.nombre = ($('#c-nombre').value||'').trim();
+  if (!form.nombre) { toast('Nombre requerido', 'warn'); return; }
+  const comunes = form.alergias.filter(a => ALERGENOS.includes(a));
+  const otras = ($('#c-alerg-otras').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const payload = {
+    marca_id: MARCA, nombre: form.nombre, apellidos: ($('#c-ape').value||'').trim()||null,
+    telefono: ($('#c-tel').value||'').trim()||null, email: ($('#c-email').value||'').trim()||null,
+    fecha_nacimiento: $('#c-fnac').value||null, alergias: [...comunes,...otras], tags: form.tags,
+    notas_internas: ($('#c-notas').value||'').trim()||null,
+  };
+  let res;
+  if (c) res = await sb.from('ms_clientes').update(payload).eq('id', c.id);
+  else res = await sb.from('ms_clientes').insert({ ...payload, origen:'manual' });
+  if (res.error) { toast('Atrás: '+res.error.message,'err'); return; }
+  await loadClientes();
+  closeSheet(); render();
+  toast(c?'Servido · comensal actualizado':'Va · comensal registrado', 'ok');
+}
+
+/* ========= WALK-IN (placeholder, Fase C lo conecta a waitlist) ========= */
+function abrirWalkin() {
+  toast('Walk-ins se gestionan en la pestaña Waitlist (Fase C)', 'warn');
+  state.view = 'waitlist'; render();
+}
+
+/* ========= BRIEF DE TURNO (impresión) ========= */
+function imprimirBrief() {
+  const rs = reservasFiltradas().filter(r => ['confirmada','sentada'].includes(r.estado));
+  const cubiertos = rs.reduce((a,r)=>a+(r.comensales||0),0);
+  const destacados = rs.filter(r => r.vip_snapshot || (r.alergias_snapshot||[]).length || r.ocasion);
+  const filas = rs.map(r => { const c=state.clientesMap[r.cliente_id];
+    return `<tr><td>${hhmm(r.hora)}</td><td>${nombreCliente(c)}${r.vip_snapshot?' ⭐':''}</td><td>${r.comensales}p</td><td>${r.mesa_id?mesaLabel(r.mesa_id):'—'}</td></tr>`; }).join('');
+  const notas = destacados.map(r => { const c=state.clientesMap[r.cliente_id];
+    const ico = r.ocasion?'🎂':(r.alergias_snapshot||[]).length?'⚠':'🏆';
+    const txt = r.ocasion || ((r.alergias_snapshot||[]).length?('Alergia '+r.alergias_snapshot.join(', ')):'VIP');
+    return `<div>${ico} ${nombreCliente(c)} · ${txt} · ${hhmm(r.hora)} · mesa ${r.mesa_id?mesaLabel(r.mesa_id):'—'}</div>`; }).join('');
+  const body = `
+    <div class="center xl b">Casa Italia</div>
+    <div class="center muted">BRIEF DE TURNO · ${fechaLarga(state.fecha)} · ${state.turnoFiltro==='todos'?'Todos':state.turnoFiltro}</div>
+    <hr>
+    <table><tr><td>Reservas</td><td class="right b">${rs.length}</td></tr>
+    <tr><td>Cubiertos esperados</td><td class="right b">${cubiertos}</td></tr>
+    <tr><td>En lista de espera</td><td class="right b">${state.waitlist.length}</td></tr></table>
+    <hr><table>${filas}</table>
+    ${notas?`<hr><div class="b">Notas del turno</div>${notas}`:''}
+    <hr><div class="center muted">prep! · Bienvenida</div>`;
+  imprimirTermico('Brief de turno', body);
+}
+function imprimirTermico(titulo, htmlBody) {
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${titulo}</title><style>
+    @page{size:80mm auto;margin:0} *{margin:0;padding:0;box-sizing:border-box}
+    body{width:80mm;font-family:'IBM Plex Mono',monospace;color:#000;padding:5mm 4mm;font-size:12px;line-height:1.4}
+    .center{text-align:center}.right{text-align:right}.b{font-weight:700}.xl{font-size:20px}.muted{opacity:.7}
+    hr{border:none;border-top:1px dashed #000;margin:6px 0}table{width:100%;border-collapse:collapse}td{padding:1px 0;vertical-align:top}
+  </style></head><body>${htmlBody}</body></html>`);
+  doc.close();
+  let done=false; const cl=()=>{ if(done)return; done=true; setTimeout(()=>iframe.remove(),400); };
+  iframe.contentWindow.onafterprint = cl;
+  setTimeout(()=>{ try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }catch(_){} setTimeout(cl,3000); }, 250);
+}
+
+/* ========= TIMELINE / GANTT (MS-12) ========= */
+const TL = { startMin: 720, endMin: 1440, slot: 30, cellW: 70 }; // 12:00–24:00, 30min, 70px/celda
+function turnTime(pax) { return pax <= 2 ? 75 : pax <= 4 ? 90 : 120; } // turn-time por tamaño
+function horaToMin(h) { const [hh,mm] = hhmm(h).split(':').map(Number); return hh*60+(mm||0); }
+function nowMin() { const d = new Date(); return d.getHours()*60 + d.getMinutes(); }
+
+function renderTimeline() {
+  const cols = (TL.endMin - TL.startMin) / TL.slot;
+  const trackW = cols * TL.cellW;
+  const horas = Array.from({length: cols}, (_,i) => {
+    const m = TL.startMin + i*TL.slot; return `<div class="tl-hcell" style="width:${TL.cellW}px">${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}</div>`;
+  }).join('');
+  const rs = reservasFiltradas();
+  const sinMesa = rs.filter(r => !r.mesa_id);
+  const rowFor = (mesaLbl, mesaSub, blocks) => `
+    <div class="tl-row">
+      <div class="tl-mesa">${mesaLbl}<span class="sub">${mesaSub}</span></div>
+      <div class="tl-track" style="width:${trackW}px">${blocks}</div>
+    </div>`;
+  const blockHtml = (r) => {
+    const c = state.clientesMap[r.cliente_id];
+    const left = Math.max(0, (horaToMin(r.hora) - TL.startMin) / TL.slot * TL.cellW);
+    const w = Math.max(48, turnTime(r.comensales) / TL.slot * TL.cellW - 4);
+    return `<div class="tl-block ${r.estado}" data-rid="${r.id}" style="left:${left}px;width:${w}px" title="${nombreCliente(c)}">
+      <b>${nombreCliente(c)}${r.vip_snapshot?' ⭐':''}</b><span class="tl-sub">${hhmm(r.hora)} · ${r.comensales}p</span></div>`;
+  };
+  const rows = state.mesas
+    .slice().sort((a,b)=> (a.zona||'').localeCompare(b.zona||'') || a.numero.localeCompare(b.numero))
+    .map(m => {
+      const blocks = rs.filter(r => r.mesa_id === m.id).map(blockHtml).join('');
+      return rowFor(m.numero, (m.zona||'')+' · '+m.capacidad+'p', blocks);
+    }).join('');
+  const sinMesaRow = sinMesa.length ? rowFor('Sin asignar', sinMesa.length+' reserva(s)', sinMesa.map(blockHtml).join('')) : '';
+  const nowLine = state.fecha === hoyISO() && nowMin() >= TL.startMin && nowMin() <= TL.endMin
+    ? `<div class="tl-now" style="left:${110 + (nowMin()-TL.startMin)/TL.slot*TL.cellW}px"></div>` : '';
+
+  $('#screen').innerHTML = `
+    <div class="toolbar">
+      <div class="date-nav">
+        <button class="round-btn" id="d-prev"><span class="material-symbols-outlined">chevron_left</span></button>
+        <span class="date-lbl">${fechaLarga(state.fecha)}</span>
+        <button class="round-btn" id="d-next"><span class="material-symbols-outlined">chevron_right</span></button>
+      </div>
+      <button class="btn-ico ghost" id="d-hoy">Hoy</button>
+      <div class="seg">
+        <button class="${state.turnoFiltro==='todos'?'active':''}" data-t="todos">Todos</button>
+        <button class="${state.turnoFiltro==='almuerzo'?'active':''}" data-t="almuerzo">Almuerzo</button>
+        <button class="${state.turnoFiltro==='cena'?'active':''}" data-t="cena">Cena</button>
+      </div>
+      <span class="pill" style="margin-left:auto">turn-time: 2p 75′ · 4p 90′ · 6p+ 120′</span>
+    </div>
+    <div class="tl-wrap"><div class="tl-grid" style="position:relative">
+      <div class="tl-row head"><div class="tl-mesa">Mesa</div><div class="tl-hours" style="width:${trackW}px;grid-template-columns:repeat(${cols},${TL.cellW}px)">${horas}</div></div>
+      ${sinMesaRow}${rows}
+      ${nowLine}
+    </div></div>`;
+  $('#d-prev').onclick = async () => { state.fecha = addDias(state.fecha,-1); await loadReservas(); render(); };
+  $('#d-next').onclick = async () => { state.fecha = addDias(state.fecha,1); await loadReservas(); render(); };
+  $('#d-hoy').onclick = async () => { state.fecha = hoyISO(); await loadReservas(); render(); };
+  $$('.seg [data-t]').forEach(b => b.onclick = () => { state.turnoFiltro = b.dataset.t; render(); });
+  $$('.tl-block').forEach(b => b.onclick = () => { const r = state.reservas.find(x=>x.id===b.dataset.rid); if (r) abrirEditorReserva(r); });
+}
+
+/* ========= MAPA DEL SALÓN (MS-04 / MS-13) ========= */
+let mapaSel = null; // reserva seleccionada para asignar por tap (fallback táctil)
+function estadoMesaMapa(mesaId) {
+  const r = reservaActivaDeMesa(mesaId);
+  if (!r) return 'libre';
+  return r.estado === 'sentada' ? 'sentada' : 'reservada';
+}
+function renderMapa() {
+  const zonasHtml = state.zonas.map(z => z.x==null ? '' :
+    `<div class="zona-bg" style="left:${z.x}px;top:${z.y}px;width:${z.w}px;height:${z.h}px;background:${z.color||'transparent'};opacity:.4"></div>
+     <div class="zona-label" style="left:${z.x+8}px;top:${z.y+6}px">${z.nombre}</div>`).join('');
+  const mueblesHtml = state.muebles.map(mu =>
+    `<div class="mueble ${mu.tipo}" style="left:${mu.x}px;top:${mu.y}px;width:${mu.w}px;height:${mu.h}px">${mu.label||''}</div>`).join('');
+  const mesasHtml = state.mesas.map(m => {
+    const st = estadoMesaMapa(m.id);
+    const r = reservaActivaDeMesa(m.id);
+    const c = r ? state.clientesMap[r.cliente_id] : null;
+    return `<div class="m-mesa ${m.forma||'rectangular'}" data-id="${m.id}" data-st="${st}"
+       style="left:${m.pos_x}px;top:${m.pos_y}px;width:${m.ancho}px;height:${m.alto}px">
+       <span class="num">${m.numero}</span>
+       <span class="cap">${r? (hhmm(r.hora)+' '+nombreCliente(c).split(' ')[0]) : '×'+m.capacidad}</span>
+     </div>`;
+  }).join('');
+  const sinMesa = reservasFiltradas().filter(r => !r.mesa_id && r.estado==='confirmada');
+  const chips = sinMesa.map(r => { const c = state.clientesMap[r.cliente_id];
+    return `<div class="res-chip ${mapaSel===r.id?'':''}" draggable="true" data-rid="${r.id}" style="${mapaSel===r.id?'border-color:var(--primary);background:var(--primary-soft)':''}">
+      <span class="h">${hhmm(r.hora)}</span><span style="flex:1">${nombreCliente(c)} · ${r.comensales}p${r.vip_snapshot?' ⭐':''}</span>
+      <span class="material-symbols-outlined" style="opacity:.5">drag_indicator</span></div>`;
+  }).join('') || '<div class="empty-state">Todas las reservas tienen mesa</div>';
+
+  $('#screen').innerHTML = `
+    <div class="toolbar">
+      <div class="date-nav">
+        <button class="round-btn" id="d-prev"><span class="material-symbols-outlined">chevron_left</span></button>
+        <span class="date-lbl">${fechaLarga(state.fecha)}</span>
+        <button class="round-btn" id="d-next"><span class="material-symbols-outlined">chevron_right</span></button>
+      </div>
+      <button class="btn-ico ghost" id="d-hoy">Hoy</button>
+      <span class="pill">${mapaSel?'Toca una mesa para asignar':'Arrastra o toca una reserva, luego la mesa'}</span>
+    </div>
+    <div class="floor-wrap">
+      <div class="floor-canvas"><div class="canvas-inner">${zonasHtml}${mueblesHtml}${mesasHtml}</div></div>
+      <div class="unassigned-col">
+        <div class="field-lbl">Sin asignar (${sinMesa.length})</div>
+        ${chips}
+        <div style="display:flex;gap:14px;margin-top:14px;font-family:var(--font-mono);font-size:10px;flex-wrap:wrap">
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--surface);border:1.5px solid var(--outline);border-radius:3px;vertical-align:-1px"></span> libre</span>
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--primary-soft);border:1.5px solid var(--primary);border-radius:3px;vertical-align:-1px"></span> reservada</span>
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--tertiary);border:1.5px solid var(--outline);border-radius:3px;vertical-align:-1px"></span> sentada</span>
+        </div>
+      </div>
+    </div>`;
+  $('#d-prev').onclick = async () => { state.fecha = addDias(state.fecha,-1); mapaSel=null; await loadReservas(); render(); };
+  $('#d-next').onclick = async () => { state.fecha = addDias(state.fecha,1); mapaSel=null; await loadReservas(); render(); };
+  $('#d-hoy').onclick = async () => { state.fecha = hoyISO(); mapaSel=null; await loadReservas(); render(); };
+
+  // tap-select de chip (fallback táctil) + drag HTML5
+  $$('.res-chip').forEach(ch => {
+    ch.onclick = () => { mapaSel = mapaSel===ch.dataset.rid ? null : ch.dataset.rid; render(); };
+    ch.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', ch.dataset.rid); mapaSel = ch.dataset.rid; });
+  });
+  $$('.m-mesa').forEach(el => {
+    el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drop-target'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drop-target'));
+    el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('drop-target');
+      const rid = e.dataTransfer.getData('text/plain') || mapaSel; if (rid) asignarReservaAMesa(rid, el.dataset.id); });
+    el.onclick = () => {
+      if (mapaSel) { asignarReservaAMesa(mapaSel, el.dataset.id); mapaSel = null; }
+      else { const r = reservaActivaDeMesa(el.dataset.id); if (r) abrirEditorReserva(r); else toast('Mesa '+el.dataset.id+' libre', 'ok'); }
+    };
+  });
+}
+async function asignarReservaAMesa(reservaId, mesaId) {
+  const r = state.reservas.find(x => x.id === reservaId); if (!r) return;
+  const m = mesaDe(mesaId);
+  if (m && m.capacidad < (r.comensales||1) && !confirm('La mesa '+m.numero+' tiene capacidad '+m.capacidad+' y la reserva es de '+r.comensales+'. ¿Asignar igual?')) return;
+  await setEstadoReserva(r, { mesa_id: mesaId }, 'Va · '+mesaLabel(mesaId)+' → '+nombreCliente(state.clientesMap[r.cliente_id]), 'ok');
+}
+
+/* ========= WAITLIST (MS-06 · MS-07 · MS-14 · MS-08/09) ========= */
+const PRIO_RANK = { salud: 0, vip: 1, reserva: 2, normal: 3 };
+function waitlistOrdenada() {
+  return state.waitlist.slice().sort((a,b) =>
+    (PRIO_RANK[a.prioridad]??3) - (PRIO_RANK[b.prioridad]??3) ||
+    new Date(a.llegada_at||a.created_at) - new Date(b.llegada_at||b.created_at));
+}
+function minDesde(ts) { if (!ts) return 0; return Math.max(0, Math.round((Date.now() - new Date(ts).getTime())/60000)); }
+
+function renderWaitlist() {
+  if (state.waitPublic) return renderWaitlistPublica();
+  const list = waitlistOrdenada();
+  const prom = list.length ? Math.round(list.reduce((a,w)=>a+minDesde(w.llegada_at),0)/list.length) : 0;
+  const cards = list.length === 0
+    ? '<div class="empty-state">Lista de espera vacía.<br>Toca "Walk-in" para agregar.</div>'
+    : list.map((w,i) => waitCard(w, i+1)).join('');
+  $('#screen').innerHTML = `
+    <div class="toolbar">
+      <button class="btn-ico primary" id="w-add"><span class="material-symbols-outlined">person_add</span><span>Walk-in / a la espera</span></button>
+      <button class="btn-ico dark" id="w-public" style="margin-left:auto"><span class="material-symbols-outlined">cast</span><span>Pantalla pública</span></button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="val">${list.length}</div><div class="lbl">En espera</div></div>
+      <div class="kpi"><div class="val">${list.filter(w=>w.estado==='avisado').length}</div><div class="lbl">Avisados</div></div>
+      <div class="kpi"><div class="val">${list.filter(w=>w.prioridad==='salud').length}</div><div class="lbl">Prioridad salud</div></div>
+      <div class="kpi"><div class="val">${prom}′</div><div class="lbl">Espera promedio</div></div>
+    </div>
+    <div class="wait-list">${cards}</div>`;
+  $('#w-add').onclick = () => abrirWalkin();
+  $('#w-public').onclick = () => { state.waitPublic = true; render(); };
+  $$('.wait-card').forEach(card => {
+    const w = state.waitlist.find(x=>x.id===card.dataset.wid); if (!w) return;
+    $$('[data-act]', card).forEach(b => b.onclick = () => {
+      const a = b.dataset.act;
+      if (a==='avisar') avisarWaitlist(w);
+      else if (a==='sentar') sentarWaitlist(w);
+      else if (a==='abandono') abandonoWaitlist(w);
+    });
+  });
+}
+function waitCard(w, pos) {
+  const c = w.cliente_id ? state.clientesMap[w.cliente_id] : null;
+  const nombre = c ? nombreCliente(c) : (w.nombre_walkin || 'Walk-in');
+  const espera = minDesde(w.llegada_at);
+  const prioLbl = { salud:'Prioridad salud', vip:'VIP', reserva:'Reserva', normal:'' }[w.prioridad] || '';
+  return `<div class="wait-card prioridad-${w.prioridad}" data-wid="${w.id}">
+    <div class="wait-pos">${pos}</div>
+    <div>
+      <div style="font-weight:700;font-size:15px">${nombre} · ${w.comensales}p ${w.estado==='avisado'?'<span class="tagchip ocasion">avisado</span>':''}</div>
+      <div class="res-meta">
+        <span>esperando ${espera}′</span>
+        <span>${({presencial:'presencial',whatsapp:'WhatsApp',web:'web',telefono:'teléfono'})[w.canal]||w.canal}</span>
+        ${prioLbl?`<span>· ${prioLbl}</span>`:''}
+        ${w.notas?`<span>· ${w.notas}</span>`:''}
+        ${w.tiempo_estimado_min?`<span>· est. ${w.tiempo_estimado_min}′</span>`:''}
+      </div>
+    </div>
+    <div class="mini-acts">
+      ${w.estado!=='avisado'?'<button class="mini-btn warn" data-act="avisar"><span class="material-symbols-outlined" style="font-size:14px">notifications_active</span>Avisar</button>':''}
+      <button class="mini-btn primary" data-act="sentar">Sentar</button>
+      <button class="mini-btn ghost" data-act="abandono">Abandonó</button>
+    </div>
+  </div>`;
+}
+function renderWaitlistPublica() {
+  const list = waitlistOrdenada().filter(w => w.visible_publico !== false);
+  $('#screen').innerHTML = `
+    <div class="toolbar"><button class="btn-ico" id="w-exit"><span class="material-symbols-outlined">close_fullscreen</span><span>Salir de pantalla pública</span></button></div>
+    <div class="pub-screen">
+      <div style="font-family:var(--font-display);font-size:28px;color:var(--tertiary);margin-bottom:8px">Lista de espera · Casa Italia</div>
+      <div style="opacity:.6;font-family:var(--font-mono);font-size:12px;margin-bottom:16px">Te avisaremos cuando tu mesa esté lista</div>
+      ${list.map((w,i)=>{ const c=w.cliente_id?state.clientesMap[w.cliente_id]:null;
+        const nom = (c?c.nombre:(w.nombre_walkin||'Invitado')).split(' ')[0];
+        const est = w.tiempo_estimado_min || (i+1)*15;
+        return `<div class="pub-row"><span><span class="num">${i+1}.</span> ${nom} · ${w.comensales}p ${w.estado==='avisado'?'🔔':''}</span><span style="opacity:.7">~${est} min</span></div>`;
+      }).join('') || '<div style="opacity:.5;padding:30px;text-align:center">Sin lista de espera</div>'}
+    </div>`;
+  $('#w-exit').onclick = () => { state.waitPublic = false; render(); };
+}
+
+async function avisarWaitlist(w) {
+  const { error } = await sb.from('ms_waitlist').update({ estado:'avisado', avisado_at: nowISO() }).eq('id', w.id);
+  if (error) return toast('Atrás: '+error.message,'err');
+  const c = w.cliente_id ? state.clientesMap[w.cliente_id] : null;
+  const tel = (c && c.telefono) || w.telefono_walkin;
+  await loadWaitlist(); render();
+  mockMensaje(tel, '¡Tu mesa en Casa Italia está casi lista! Acércate al anfitrión 🍝', 'wa');
+}
+async function abandonoWaitlist(w) {
+  if (!confirm('¿Marcar que abandonó la espera?')) return;
+  const { error } = await sb.from('ms_waitlist').update({ estado:'abandono', abandono_at: nowISO() }).eq('id', w.id);
+  if (error) return toast('Atrás: '+error.message,'err');
+  await loadWaitlist(); render(); toast('Quitado de la espera', 'warn');
+}
+function sentarWaitlist(w) {
+  const ocupadas = new Set(state.reservas.filter(x => x.mesa_id && ['confirmada','sentada'].includes(x.estado)).map(x => x.mesa_id));
+  const libres = state.mesas.filter(m => !ocupadas.has(m.id) && m.capacidad >= (w.comensales||1)).sort((a,b)=>a.capacidad-b.capacidad);
+  setSheetHead('🪑', 'Sentar de la espera', (w.cliente_id?nombreCliente(state.clientesMap[w.cliente_id]):(w.nombre_walkin||'Walk-in'))+' · '+w.comensales+'p');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section"><div class="field-lbl">Mesa libre con capacidad</div>
+      <div class="stack">${libres.map(m=>`<button class="btn" data-mesa="${m.id}" style="justify-content:space-between"><span><span class="material-symbols-outlined">table_restaurant</span> ${m.numero}</span><span class="mono" style="opacity:.6">${m.zona} · ${m.capacidad}p</span></button>`).join('') || '<div class="empty-state">Ninguna mesa libre</div>'}</div></div>
+    <div class="sheet-section"><button class="btn ghost" id="w-sentar-cancel">Atrás</button></div>`;
+  openSheet();
+  $$('#sheet-body [data-mesa]').forEach(b => b.onclick = async () => {
+    const mesaId = b.dataset.mesa;
+    const pedidoId = await crearPedidoPOS({ comensales:w.comensales, cliente_id:w.cliente_id, ocasion:null }, mesaId);
+    if (!pedidoId) return;
+    const { error } = await sb.from('ms_waitlist').update({ estado:'sentado', sentado_at: nowISO(), mesa_asignada_id: mesaId }).eq('id', w.id);
+    if (error) return toast('Atrás: '+error.message,'err');
+    closeSheet(); await loadWaitlist(); render();
+    toast('Servido · sentado en '+mesaLabel(mesaId)+' · pedido abierto en POS', 'ok');
+  });
+  $('#w-sentar-cancel').onclick = closeSheet;
+}
+
+/* ========= WALK-IN / ALTA EN ESPERA (MS-06 · MS-14) ========= */
+function abrirWalkin() {
+  const form = { cliente_id:null, nombre:'', telefono:'', comensales:2, prioridad:'normal', salud:'', canal:'presencial', estimado:'' };
+  setSheetHead('🚶', 'A la lista de espera', 'Walk-in o sin reserva');
+  const render2 = () => {
+    const cli = form.cliente_id ? state.clientesMap[form.cliente_id] : null;
+    $('#sheet-body').innerHTML = `
+      <div class="sheet-section"><div class="field-lbl">Comensal</div>
+        ${cli ? `<div class="res-card" style="grid-template-columns:1fr auto;box-shadow:none"><div class="res-main"><h3>${nombreCliente(cli)}</h3><div class="res-meta"><span>${cli.telefono||''}</span></div></div><button class="mini-btn ghost" id="w-cli-clear">Cambiar</button></div>`
+          : `<input class="input" id="w-nombre" placeholder="Nombre" value="${form.nombre}">
+             <input class="input" id="w-tel" placeholder="Teléfono (para avisar por WhatsApp)" inputmode="tel" style="margin-top:8px" value="${form.telefono}">
+             <div id="w-cli-results" style="margin-top:6px;display:flex;flex-direction:column;gap:6px"></div>`}
+      </div>
+      <div class="sheet-section"><div class="field-lbl">Comensales</div>
+        <div class="com-stepper"><button id="w-minus">−</button><span class="num" id="w-pax">${form.comensales}</span><button id="w-plus">+</button></div></div>
+      <div class="sheet-section"><div class="field-lbl">Prioridad</div>
+        <div class="chips" id="w-prio">
+          <button class="chip ${form.prioridad==='normal'?'active':''}" data-p="normal">Normal</button>
+          <button class="chip ${form.prioridad==='vip'?'active':''}" data-p="vip">VIP</button>
+          <button class="chip ${form.prioridad==='salud'?'active':''}" data-p="salud">Prioridad de salud</button>
+        </div>
+        ${form.prioridad==='salud'?`<div class="chips" id="w-salud" style="margin-top:8px">${PRIORIDADES_SALUD.map(s=>`<button class="chip ${form.salud===s?'active':''}" data-s="${s}">${s}</button>`).join('')}</div>`:''}
+      </div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Canal</div><select class="select" id="w-canal">${['presencial','whatsapp','web','telefono'].map(x=>`<option ${form.canal===x?'selected':''}>${x}</option>`).join('')}</select></div>
+        <div><div class="field-lbl">Tiempo estimado (min)</div><input class="input" id="w-est" type="number" step="5" placeholder="auto" value="${form.estimado}"></div>
+      </div>
+      <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="w-cancel">Atrás</button><button class="btn primary" id="w-save"><span class="material-symbols-outlined">add</span>Agregar a la espera</button></div></div>`;
+    if (cli) $('#w-cli-clear').onclick = () => { form.cliente_id=null; render2(); };
+    else {
+      const inp = $('#w-nombre');
+      inp.oninput = () => { form.nombre = inp.value; const q = inp.value.trim().toLowerCase(); const res=$('#w-cli-results');
+        if (q.length<2){res.innerHTML='';return;}
+        const hits = state.clientes.filter(c=>(nombreCliente(c)+' '+(c.telefono||'')).toLowerCase().includes(q)).slice(0,5);
+        res.innerHTML = hits.map(c=>`<button class="btn ghost" data-cid="${c.id}" style="justify-content:space-between"><span>${nombreCliente(c)} ${esVip(c)?'⭐':''}</span><span class="mono" style="opacity:.6">${c.telefono||''}</span></button>`).join('');
+        $$('#w-cli-results [data-cid]').forEach(b=>b.onclick=()=>{ form.cliente_id=b.dataset.cid; render2(); });
+      };
+      $('#w-tel').oninput = e => form.telefono = e.target.value;
+    }
+    $('#w-minus').onclick = () => { if(form.comensales>1){form.comensales--; $('#w-pax').textContent=form.comensales;} };
+    $('#w-plus').onclick = () => { if(form.comensales<30){form.comensales++; $('#w-pax').textContent=form.comensales;} };
+    $$('#w-prio .chip').forEach(b => b.onclick = () => { form.prioridad=b.dataset.p; if(form.prioridad!=='salud')form.salud=''; render2(); });
+    if ($('#w-salud')) $$('#w-salud .chip').forEach(b => b.onclick = () => { form.salud = form.salud===b.dataset.s?'':b.dataset.s; render2(); });
+    $('#w-canal').onchange = e => form.canal = e.target.value;
+    $('#w-est').oninput = e => form.estimado = e.target.value;
+    $('#w-cancel').onclick = closeSheet;
+    $('#w-save').onclick = () => guardarWalkin(form);
+  };
+  render2();
+  openSheet();
+}
+async function guardarWalkin(form) {
+  if (!form.cliente_id && !form.nombre.trim()) { toast('Ingresa un nombre', 'warn'); return; }
+  const payload = {
+    marca_id: MARCA, local_id: LOCAL, cliente_id: form.cliente_id,
+    nombre_walkin: form.cliente_id ? null : form.nombre.trim(),
+    telefono_walkin: form.cliente_id ? null : (form.telefono.trim()||null),
+    comensales: form.comensales, prioridad: form.prioridad, canal: form.canal,
+    estado: 'esperando', llegada_at: nowISO(),
+    tiempo_estimado_min: form.estimado ? Number(form.estimado) : null,
+    notas: form.prioridad==='salud' && form.salud ? form.salud : null,
+    posicion: state.waitlist.length + 1, visible_publico: true,
+  };
+  const { error } = await sb.from('ms_waitlist').insert(payload);
+  if (error) { toast('Atrás: '+error.message,'err'); return; }
+  closeSheet(); await loadWaitlist(); render();
+  toast('Va · agregado a la lista de espera', 'ok');
+}
+
+/* ========= COMUNICACIONES (MOCK) · MS-06 / MS-10 / MS-16 ========= */
+// Capa simulada: muestra el mensaje que se "enviaría". Punto de integración real:
+// Meta WhatsApp Business API / Resend (email). Reemplazar el cuerpo por el fetch al backend.
+function mockMensaje(destino, texto, tipo='wa') {
+  if (!destino) { toast('Sin teléfono/email — no se pudo notificar', 'warn'); return; }
+  console.log('[MOCK '+tipo.toUpperCase()+'] →', destino, ':', texto);
+  toast((tipo==='wa'?'WhatsApp':'SMS')+' → '+destino, 'wa');
+}
+
+/* ========= GARANTÍA ANTI NO-SHOW (MS-05) · card hold mock (Culqi) ========= */
+function abrirGarantia(reserva) {
+  const c = state.clientesMap[reserva.cliente_id];
+  const sugerido = (reserva.comensales || 1) * 50; // S/50 por persona por defecto
+  setSheetHead('💳', 'Garantía anti no-show', nombreCliente(c)+' · '+reserva.comensales+'p · '+hhmm(reserva.hora));
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div style="font-size:12px;font-family:var(--font-mono);opacity:.7;background:var(--amber-soft);border:1px dashed var(--outline);border-radius:8px;padding:10px">
+        Se retiene una tarjeta vía Culqi (simulado). Solo se cobra si el comensal no se presenta. Recomendado para grupos 6+ y fechas especiales.
+      </div>
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Monto a retener (S/)</div>
+      <input class="input" id="g-monto" type="number" step="10" value="${sugerido}"></div>
+    <div class="sheet-section"><div class="field-lbl">Referencia tarjeta (simulada)</div>
+      <input class="input" id="g-ref" placeholder="**** 4242" value="**** 4242"></div>
+    <div class="sheet-section"><div class="grid2">
+      <button class="btn ghost" id="g-cancel">Atrás</button>
+      <button class="btn primary" id="g-auth"><span class="material-symbols-outlined">lock</span>Autorizar retención</button>
+    </div></div>`;
+  openSheet();
+  $('#g-cancel').onclick = closeSheet;
+  $('#g-auth').onclick = async () => {
+    const monto = +(Number($('#g-monto').value)||0);
+    if (!(monto>0)) { toast('Monto inválido','warn'); return; }
+    const expira = new Date(Date.now() + 1000*60*60*48).toISOString(); // 48h
+    const { data, error } = await sb.from('ms_card_holds').insert({
+      cliente_id: reserva.cliente_id, monto, moneda:'PEN', ref_externa: ($('#g-ref').value||'').trim()||null,
+      estado:'autorizada', expira_at: expira,
+    }).select('id').single();
+    if (error) { toast('Atrás: '+error.message,'err'); return; }
+    await sb.from('ms_reservas').update({ card_hold_id: data.id }).eq('id', reserva.id);
+    closeSheet(); await loadReservas(); render();
+    toast('Servido · garantía de '+money(monto)+' autorizada', 'ok');
+    mockMensaje(c && c.telefono, 'Reserva garantizada en Casa Italia. Retención de '+money(monto)+' (sin cargo si asistes).');
+  };
+}
+
+/* ========= REALTIME ========= */
+function subscribe() {
+  if (state.channel) sb.removeChannel(state.channel);
+  state.channel = sb.channel('bienvenida_'+LOCAL)
+    .on('postgres_changes', { event:'*', schema:'public', table:'ms_reservas', filter:'local_id=eq.'+LOCAL }, async () => { await loadReservas(); render(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'ms_waitlist', filter:'local_id=eq.'+LOCAL }, async () => { await loadWaitlist(); render(); })
+    .subscribe();
+}
+
+/* ========= WIRE UP ========= */
+$('#sheet-close').addEventListener('click', closeSheet);
+$('#backdrop').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* ========= WIDGET PÚBLICO (MS-01) · ?widget=1 ========= */
+function slotsDisponibles() {
+  const gen = (ini, fin) => { const out=[]; for (let m=ini; m<=fin; m+=30) out.push(String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')); return out; };
+  return { almuerzo: gen(720, 900), cena: gen(1140, 1350) }; // 12:00–15:00 · 19:00–22:30
+}
+function renderWidget() {
+  $('#boot').classList.add('gone');
+  $('#app-header').style.display = 'none';
+  $('#tabs').style.display = 'none';
+  document.body.style.alignItems = 'center';
+  const form = { fecha: hoyISO(), hora: '20:00', comensales: 2, nombre:'', telefono:'', ocasion:'', notas:'' };
+  const slots = slotsDisponibles();
+  const full = new Set(['13:30','20:00']); // mock no disponible
+  const screen = $('#screen');
+  screen.style.maxWidth = '480px';
+  screen.style.margin = '0 auto';
+  const draw = () => {
+    const slotBtns = (arr) => arr.map(s => `<button class="chip ${form.hora===s?'active':''}" data-slot="${s}" ${full.has(s)?'disabled style="opacity:.35;text-decoration:line-through"':''}>${s}</button>`).join('');
+    screen.innerHTML = `
+      <div style="background:var(--surface);border:2px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;margin-top:24px">
+        <div style="background:var(--ink);color:var(--bg);padding:20px 24px;display:flex;justify-content:space-between;align-items:center">
+          <div class="brand"><span class="logo" style="font-size:26px">prep<span class="accent">!</span></span></div>
+          <div style="text-align:right"><div style="font-weight:700">Casa Italia</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">Miraflores · Lima</div></div>
+        </div>
+        <div style="padding:22px 24px">
+          <div class="sheet-section grid2">
+            <div><div class="field-lbl">Fecha</div><input class="input" type="date" id="wg-fecha" value="${form.fecha}" min="${hoyISO()}"></div>
+            <div><div class="field-lbl">Personas</div>
+              <div class="chips" id="wg-pax">${[1,2,3,4,5,6].map(n=>`<button class="chip ${form.comensales===n?'active':''}" data-n="${n}">${n}</button>`).join('')}<button class="chip ${form.comensales>6?'active':''}" data-n="8">+</button></div></div>
+          </div>
+          <div class="sheet-section"><div class="field-lbl">Hora · Almuerzo</div><div class="chips">${slotBtns(slots.almuerzo)}</div></div>
+          <div class="sheet-section"><div class="field-lbl">Hora · Cena</div><div class="chips">${slotBtns(slots.cena)}</div></div>
+          <div class="sheet-section grid2">
+            <div><div class="field-lbl">Nombre</div><input class="input" id="wg-nombre" value="${form.nombre}" placeholder="Tu nombre"></div>
+            <div><div class="field-lbl">WhatsApp</div><input class="input" id="wg-tel" value="${form.telefono}" inputmode="tel" placeholder="+51 9..."></div>
+          </div>
+          <div class="sheet-section"><div class="field-lbl">Ocasión (opcional)</div>
+            <div class="chips" id="wg-oca">${OCASIONES.map(o=>`<button class="chip ${form.ocasion===o?'active':''}" data-o="${o}">${o}</button>`).join('')}</div></div>
+          <div class="sheet-section"><button class="btn primary" id="wg-confirm" style="font-size:16px">CONFIRMAR RESERVA →</button></div>
+          <div style="text-align:center;font-family:var(--font-mono);font-size:10px;opacity:.5;padding-top:6px">⚡ prep! · reservas sin comisión</div>
+        </div>
+      </div>`;
+    $('#wg-fecha').onchange = e => form.fecha = e.target.value;
+    $$('#wg-pax .chip').forEach(b => b.onclick = () => { form.comensales = +b.dataset.n; draw(); });
+    $$('[data-slot]').forEach(b => b.onclick = () => { if (b.disabled) return; form.hora = b.dataset.slot; draw(); });
+    $$('#wg-oca .chip').forEach(b => b.onclick = () => { form.ocasion = form.ocasion===b.dataset.o?'':b.dataset.o; draw(); });
+    $('#wg-nombre').oninput = e => form.nombre = e.target.value;
+    $('#wg-tel').oninput = e => form.telefono = e.target.value;
+    $('#wg-confirm').onclick = () => confirmarWidget(form);
+  };
+  draw();
+}
+async function confirmarWidget(form) {
+  if (!form.nombre.trim()) return toast('Ingresa tu nombre', 'warn');
+  if (!form.telefono.trim()) return toast('Ingresa tu WhatsApp', 'warn');
+  // cliente por teléfono (crea si no existe)
+  let cliente = null;
+  const { data: ex } = await sb.from('ms_clientes').select('*').eq('marca_id', MARCA).eq('telefono', form.telefono.trim()).limit(1);
+  if (ex && ex[0]) cliente = ex[0];
+  else {
+    const partes = form.nombre.trim().split(' ');
+    const { data, error } = await sb.from('ms_clientes').insert({
+      marca_id: MARCA, nombre: partes.shift(), apellidos: partes.join(' ')||null, telefono: form.telefono.trim(), origen:'widget',
+    }).select().single();
+    if (error) return toast('Atrás: '+error.message,'err');
+    cliente = data;
+  }
+  const { error } = await sb.from('ms_reservas').insert({
+    marca_id: MARCA, local_id: LOCAL, cliente_id: cliente.id,
+    fecha: form.fecha, hora: form.hora, comensales: form.comensales,
+    ocasion: form.ocasion||null, estado:'confirmada', origen:'widget', confirmada_at: nowISO(),
+    vip_snapshot: esVip(cliente), alergias_snapshot: cliente.alergias||[],
+  });
+  if (error) return toast('Atrás: '+error.message,'err');
+  mockMensaje(form.telefono.trim(), 'Reserva confirmada en Casa Italia · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas 🍝');
+  $('#screen').innerHTML = `
+    <div style="background:var(--surface);border:2px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);padding:40px 28px;text-align:center;margin-top:40px">
+      <div style="font-size:56px">✅</div>
+      <h2 style="font-family:var(--font-display);font-size:26px;margin:12px 0">¡Reserva confirmada!</h2>
+      <p style="opacity:.7;margin-bottom:8px">${fechaLarga(form.fecha)} · ${form.hora} · ${form.comensales} personas</p>
+      <p style="font-family:var(--font-mono);font-size:12px;opacity:.6">Te enviamos la confirmación por WhatsApp a ${form.telefono.trim()}</p>
+    </div>`;
+}
+
+/* ========= BOOT ========= */
+const ESWIDGET = new URLSearchParams(location.search).get('widget') || /\/reservar\b/.test(location.pathname);
+if (ESWIDGET) {
+  renderWidget();
+} else {
+  loadAll().catch(err => {
+    console.error(err);
+    $('#boot .msg').textContent = 'Atrás · ' + (err.message||'fallo de conexión');
+    $('#boot .spinner').style.borderTopColor = 'var(--secondary)';
+  });
+}
+</script>
+</body>
+</html>

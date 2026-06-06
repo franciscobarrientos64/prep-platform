@@ -320,6 +320,10 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 ## 12. ESTADO ACTUAL DEL PROYECTO (actualizar conforme se avance)
 
 ### Módulos construidos:
+- **bienvenida.html** — Módulo 04 (reservas/anfitrión). Vistas: Agenda (libro de reservas), Timeline (Gantt mesas×horas + turn-time), Mapa (floor plan con asignación drag&drop), Waitlist (prioridades + pantalla pública), Comensales (CRM ligero). Widget público en `/reservar` o `?widget=1`.
+  - **Implementados (14/16):** MS-01 (reserva manual + widget), MS-02 (ficha + historial), MS-03 (VIP/alergias/preferencias/tags), MS-04 (floor plan — reusa canvas POS), MS-05 (card hold anti no-show · mock Culqi), MS-06 (waitlist + notify), MS-07 (prioridad salud), MS-08/MS-09 (pantalla pública de waitlist), MS-11 (allergen surface en tarjetas), MS-12 (timeline Gantt), MS-13 (drag&drop reserva→mesa), MS-14 (prioridades obligatorias), MS-15 (registro de comensal), MS-16 (confirmación automática · mock WhatsApp).
+  - **Mock (a integrar):** WhatsApp/SMS (Meta API/Resend) y Culqi están simulados (`mockMensaje`, card hold). MS-10 (bot WhatsApp de reservas) queda como punto de integración.
+  - **Integración POS:** al "Sentar" una reserva/walk-in se crea un `ca_pedidos` real y se enlaza vía `ms_reservas.pedido_id`/`mesa_id`. Usa tablas `ms_clientes`, `ms_reservas`, `ms_waitlist`, `ms_card_holds`, `ms_floor_plans` + `ca_mesas`.
 - **pos-v2.html** — POS con floor plan realtime + editor de plano + toma de pedido + pantalla de cobro. Conectado a Supabase con datos reales de Casa Italia.
   - **Implementados (19/23):** CA-01, CA-02 (course timing + marchar por tiempo), CA-03 (split por proporción y por ítem), CA-04 + CA-18 (tabs de barra concurrentes con nombre y asientos agrupados), CA-06 (impresión real de comandas por estación, 80mm), CA-07 (cortesías con aprobación de gerente), CA-08 (multipago, fix `mercado_pago`), CA-10 (modificadores priceados), CA-11, CA-13 (gift cards: vender + recargar + cobrar), CA-15, CA-16, CA-17, CA-19, CA-20, CA-21, CA-22 (captura/edición de alergias por silla + extrapolación a compartidos), CA-23 (pre-cuenta imprimible).
   - **Pendientes (4/23):** CA-05 (tableside QR), CA-09 (facturación SUNAT/Nubefact), CA-12 (audit log universal), CA-14 (customer-facing display).
@@ -330,7 +334,6 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - pos-legacy.html, inventario.html, hub.html, reservas-spec.html, reservas-widget.html
 
 ### Módulos por construir:
-- Bienvenida (bienvenida.html)
 - Línea/KDS (linea.html)
 - Pase/Dashboard (pase.html)
 - Mercado (mercado.html)
