@@ -161,7 +161,7 @@ prep-platform/
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // anon key
+const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 </script>
 ```
@@ -298,7 +298,7 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 
   <script>
     const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
-    const SB_KEY = '...'; // anon key de Supabase
+    const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
     const sb = supabase.createClient(SB_URL, SB_KEY);
 
     // Inicialización
@@ -316,3 +316,30 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 1. Agregar rewrite en vercel.json: `{ "source": "/nombre-modulo", "destination": "/nombre-modulo.html" }`
 2. Actualizar index.html si el módulo reemplaza al actual
 3. `git add . && git commit -m "Módulo X" && git push origin main`
+
+## 12. ESTADO ACTUAL DEL PROYECTO (actualizar conforme se avance)
+
+### Módulos construidos:
+- **pos-v2.html** (126K) — POS con 3 bloques: floor plan realtime + editor de plano + toma de pedido + pantalla de cobro. Conectado a Supabase con datos reales de Casa Italia.
+- **casa-italia.html** (72K) — Demo con 4 módulos en vivo (Pase, Caja, Línea, Mesa) + 9 previews. Se sirve como index.html en la raíz.
+
+### Módulos legacy (versiones anteriores, mantener como referencia):
+- pos-legacy.html, inventario.html, hub.html, reservas-spec.html, reservas-widget.html
+
+### Módulos por construir:
+- Bienvenida (bienvenida.html)
+- Línea/KDS (linea.html)
+- Pase/Dashboard (pase.html)
+- Mercado (mercado.html)
+- Recetas (recetas.html)
+- RRHH (rrhh.html)
+- Delivery (delivery.html)
+- Contabilidad (contabilidad.html)
+- Vuelto (vuelto.html)
+- El Libro (el-libro.html)
+- Directorio (directorio.html)
+- Engagement (engagement.html)
+
+### Landing (repo separado: prep-landing):
+- index.html (356K) — Landing v7 con logo animado, 13 módulos, 404 page personalizada
+- Pendiente: bilingüe EN/ES, separación FOH/BOH, soporte 24h
