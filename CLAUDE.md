@@ -343,3 +343,161 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 ### Landing (repo separado: prep-landing):
 - index.html (356K) — Landing v7 con logo animado, 13 módulos, 404 page personalizada
 - Pendiente: bilingüe EN/ES, separación FOH/BOH, soporte 24h
+
+## 13. FEATURES POR MÓDULO (IDs estables)
+
+### Pase (#01 · Dashboard)
+- PA-01 [MVP] Pase en vivo: cubiertos, ventas, food cost, ticket promedio, labor cost
+- PA-02 [MVP] Comparativo entre sedes lado a lado
+- PA-03 [MVP] Menu engineering matrix (stars/plowhorses/puzzles/dogs)
+- PA-04 [MVP] Alertas push al celular del dueño
+- PA-05 [MVP] Reportes cross-module configurables
+- PA-06 [F2] Reportes a medida para Directorio
+- PA-07 [F3] Analytics predictivo
+
+### POS (#02 · antes Caja)
+- CA-01 [MVP] Ingreso de pedidos por mozo
+- CA-02 [MVP] Course timing (urgente, marchar, dividir por pasos)
+- CA-03 [MVP] Split bills (por ítem o proporción)
+- CA-04 [MVP] Open tabs (cuentas abiertas, barra)
+- CA-05 [MVP] Tableside ordering con QR
+- CA-06 [MVP] Print station routing automático
+- CA-07 [MVP] Cortesías con workflow de aprobación
+- CA-08 [MVP] Multi-método de pago (efectivo, Yape, Plin, MP, Izipay, tarjetas)
+- CA-09 [MVP] Facturación SUNAT vía Nubefact
+- CA-10 [MVP] Modificadores complejos por ítem
+- CA-11 [MVP] Captura de propinas en cobro
+- CA-12 [MVP] Audit log universal
+- CA-13 [MVP] Gift cards: vender, recargar, cobrar
+- CA-14 [MVP] Customer-facing display
+- CA-15 [MVP] Suspended ticket (pausar y retomar)
+- CA-16 [MVP] Floor plan en tiempo real, colores por estado
+- CA-17 [MVP] Mover clientes entre mesas
+- CA-18 [MVP] Sillas de barra visibles, agrupables en un pedido
+- CA-19 [MVP] Zoom-in a mesa: posiciones de silla, ítems por silla o compartidos
+- CA-20 [MVP] Menú por familias: Cocina (Entradas/Fondos/Postres) y Bar (Cócteles casa/Clásicos/Sin alcohol/Bebidas calientes)
+- CA-21 [MVP] Notas por ítem: términos carne, instrucciones cocina
+- CA-22 [MVP] Alergias por posición de silla, extrapolable a compartidos
+- CA-23 [MVP] Flujo cobro secuencial: Cobrar → total+dividir → pre-cuenta → boleta/factura → método pago → registro+propina
+
+### Línea (#03 · KDS)
+- LI-01 [MVP] KDS principal (Pase del expedidor)
+- LI-02 [MVP] KDS dedicado para delivery
+- LI-07 [MVP] Priorización por course timing
+- LI-09 [F2] Alerta de merma anómala
+- LI-10 [MVP] Print station routing
+- LI-11 [MVP] Colores por tiempo: verde (<5min), amarillo (5-10min), rojo (>10min)
+- LI-12 [MVP] Touch para cambiar estado: oído → va → fuego → servido
+- LI-13 [MVP] Sonido/vibración al recibir comanda
+
+### Bienvenida (#04 · antes Mesa)
+- MS-01 [MVP] Reservas con widget embeddable (0% fee)
+- MS-02 [MVP] Ficha de cliente con historial
+- MS-03 [MVP] VIP, alergias, pedidos especiales
+- MS-04 [MVP] Floor plan editor visual
+- MS-05 [MVP] Card hold anti no-show
+- MS-06 [MVP] Waitlist con SMS/WhatsApp
+- MS-07 [MVP] Waitlist con prioridad por salud
+- MS-08 [F2] Pantalla pública de waitlist
+- MS-09 [F2] Waitlist visible en web pública
+- MS-10 [MVP] WhatsApp Business bot de reservas
+- MS-11 [MVP] Allergen surface visible al mozo
+- MS-12 [MVP] Vista Gantt: timeline de mesas por hora
+- MS-13 [MVP] Floor Plan con drag-and-drop para reservas
+- MS-14 [MVP] Prioridades obligatorias: adultos mayores, embarazadas, niños, discapacitados
+- MS-15 [MVP] Registro nuevos comensales: nombre, apellido, teléfono, alergias, celebración
+- MS-16 [MVP] WhatsApp: botón aceptar → confirmación automática
+
+### Mercado (#05 · Compras + Inventario)
+- ME-01 [MVP] Comparativo de compras entre proveedores
+- ME-02 [MVP] Tracking histórico de precios
+- ME-03 [MVP] Alerta de variación de precio
+- ME-04 [MVP] Alerta de impacto en food cost
+- ME-05 [MVP] OCR de facturas de proveedor
+- ME-06 [F2] Vendor scoring
+- ME-07 [MVP] Inventario por sede y almacén
+- ME-08 [MVP] Registro de mermas con motivo
+- ME-09 [MVP] Alertas de vencimiento (FEFO)
+- ME-10 [MVP] Registro automático de facturas para Contabilidad
+- ME-11 [F2] Inventario predictivo
+- ME-12 [MVP] Conteo físico con modo ciego
+- ME-13 [MVP] Órdenes de compra con aprobación
+- ME-14 [MVP] FIFO tracking por lotes
+- ME-15 [MVP] Multi-sede con transferencias
+
+### Recetas (#06 · Costeo)
+- RC-01 [MVP] Ingreso de recetas con ingredientes y gramajes
+- RC-02 [MVP] Costeo automático en tiempo real
+- RC-03 [MVP] Food cost actualizado permanentemente
+- RC-04 [MVP] Recipe scaling automation
+- RC-05 [MVP] Alertas de vencimientos
+- RC-06 [MVP] Menu engineering matrix
+- RC-07 [MVP] Ficha de receta imprimible
+- RC-08 [MVP] Alergenos por receta
+- RC-09 [F2] Sub-recetas reutilizables
+
+### RRHH (#07 · Personal)
+- RH-01 [MVP] Convocatorias y ofertas de trabajo
+- RH-02 [MVP] Contratos digitales
+- RH-03 [MVP] Manuales del puesto con versionado
+- RH-04 [MVP] Ficha completa (CV, historial, The Talk)
+- RH-05 [MVP] Intranet operativa
+- RH-06 [MVP] Asistencia con geofence
+- RH-07 [MVP] Permisos y vacaciones digital
+- RH-08 [MVP] Planilla con un click
+- RH-09 [MVP] Carrera de servicio y mejora continua
+- RH-10 [MVP] Dashboard de status por trabajador
+- RH-11 [MVP] Shift scheduling con conflictos
+- RH-12 [MVP] Labor cost en tiempo real
+- RH-13 [MVP] Shift swap online
+- RH-14 [MVP] Tip pooling automation
+
+### Delivery (#08)
+- DE-01 [MVP] Pedidos delivery con KDS dedicado
+- DE-02 [MVP] Marketplace propio (0% comisión)
+- DE-03 [MVP] Online ordering sin Rappi/PedidosYa
+- DE-04 [F2] Dark kitchen multi-brand
+- DE-05 [F2] Catering y eventos
+- DE-06 [F2] Tracking de estado
+- DE-07 [F2] Zonas de cobertura con tarifas
+
+### Contabilidad (#09 · antes Tributario)
+- TR-01 [MVP] Registro automático de facturas desde Mercado
+- TR-02 [MVP] Integración ContaFácil
+- TR-03 [F2] Pre-liquidación PDT 621
+- TR-04 [F2] Servicio contador Prep!
+- TR-05 [MVP] Libro de ventas/compras pre-armado
+- TR-06 [MVP] Cierre mensual automatizado
+
+### Vuelto (#10 · Caja chica)
+- VU-01 [MVP] OCR de recibos con IA
+- VU-02 [MVP] Clasificación automática por centro de costo
+- VU-03 [MVP] Cierre diario automático
+- VU-04 [MVP] Límites por empleado con alertas
+- VU-05 [MVP] Aprobación de gastos por supervisor
+
+### El Libro (#11 · Intranet)
+- LB-01 [MVP] Manuales operativos con versiones
+- LB-02 [MVP] HACCP digital
+- LB-03 [MVP] Recetario consultivo para cocina
+- LB-04 [F2] Marketplace de plantillas
+- LB-05 [MVP] Onboarding por rol
+
+### Directorio (#12 · Reportes / BI)
+- DI-01 [MVP] KPIs estratégicos cross-module
+- DI-02 [MVP] Reportes a medida
+- DI-03 [MVP] Dashboards, time-series, comparativos, drill-down
+- DI-04 [MVP] Exports PDF y Excel
+- DI-05 [MVP] Reportes programados WhatsApp/email
+- DI-06 [MVP] Alertas cuando KPI se desvía
+
+### Engagement (#13 · Loyalty + CRM)
+- TX-01 [F2] Loyalty en WhatsApp
+- TX-02 [F2] Multilenguaje del menú
+- TX-03 [F2] App nativa iOS/Android
+- TX-04 [F2] API pública
+- TX-05 [F3] Marketplace plantillas
+- EN-01 [F2] Catering y eventos
+- EN-02 [F2] Dark kitchen multi-marca
+- EN-03 [F3] Analytics predictivo
+- EN-04 [F2] Campañas segmentadas
