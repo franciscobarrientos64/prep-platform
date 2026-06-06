@@ -698,6 +698,7 @@ async function crearPedidoPOS(r, mesaId) {
     const payload = {
       marca_id: MARCA, local_id: LOCAL, turno_id: state.turno?.id || null,
       mesa_id: mesaId, comensales: r.comensales || 1, mozo_id: null,
+      cliente_id: r.cliente_id || null,
       estado:'abierta', estado_servicio:'abierta', origen: (mesa && (mesa.zona==='barra'||mesa.forma==='barra')) ? 'barra' : 'salon',
       abierta_at: nowISO(), subtotal:0, igv:0, servicio_pct:10, servicio_monto:0, descuento:0, propina_monto:0, total:0,
       moneda:'PEN', alergias_por_silla:{}, notas: 'Reserva ' + nombreCliente(state.clientesMap[r.cliente_id]) + (r.ocasion?(' · '+r.ocasion):''),
@@ -869,21 +870,53 @@ function wireComCards() { $$('.com-card').forEach(c => c.onclick = () => abrirFi
 async function abrirFichaComensal(clienteId, reservaCtx) {
   const c = state.clientesMap[clienteId];
   if (!c) { toast('Comensal no encontrado', 'warn'); return; }
+  const segColor = { vip:'var(--tertiary)', habitual:'var(--green-soft)', nuevo:'var(--primary-soft)', en_riesgo:'var(--amber-soft)', inactivo:'var(--gray-soft)' }[c.segmento||'nuevo'] || 'var(--primary-soft)';
   setSheetHead(inicial(c.nombre), nombreCliente(c), (c.telefono||'')+(esVip(c)?' · VIP':''), esVip(c)?'var(--tertiary)':'var(--primary-soft)');
-  // historial
+  // historial de reservas
   const { data: hist } = await sb.from('ms_reservas').select('fecha,hora,comensales,estado,ocasion').eq('cliente_id', clienteId).order('fecha',{ascending:false}).limit(8);
   const histHtml = (hist||[]).map(h => `<div class="info-row"><span>${fechaLarga(h.fecha)} · ${hhmm(h.hora)} · ${h.comensales}p</span><strong>${h.estado}</strong></div>`).join('') || '<div class="empty-state">Sin historial</div>';
+  const favs = Array.isArray(c.platos_favoritos) ? c.platos_favoritos : [];
+  const prefs = [];
+  if (c.bebida_preferida) prefs.push(`<span class="tagchip tag">🍷 ${c.bebida_preferida}</span>`);
+  if (c.zona_preferida) prefs.push(`<span class="tagchip tag">📍 ${c.zona_preferida}</span>`);
+  (c.dieta||[]).forEach(d => prefs.push(`<span class="tagchip ocasion">${d}</span>`));
+  (c.preferencias||[]).forEach(p => prefs.push(`<span class="tagchip tag">${p}</span>`));
   $('#sheet-body').innerHTML = `
     <div class="sheet-section">
-      <div class="info-row"><span>Visitas</span><strong>${c.total_visitas||0}</strong></div>
-      <div class="info-row"><span>Ticket promedio</span><strong>${money(c.ticket_promedio)}</strong></div>
-      <div class="info-row"><span>No-shows</span><strong>${c.no_show_count||0}</strong></div>
-      <div class="info-row"><span>Última visita</span><strong>${c.ultima_visita||'—'}</strong></div>
+      <div class="res-surface" style="margin-bottom:10px">
+        <span class="tagchip" style="background:${segColor}">${(c.segmento||'nuevo').replace('_',' ')}</span>
+        ${esVip(c)?'<span class="tagchip vip">⭐ VIP</span>':''}
+      </div>
+      <div class="grid2">
+        <div class="kpi"><div class="val">${c.total_visitas||0}</div><div class="lbl">Visitas</div></div>
+        <div class="kpi"><div class="val">${money(c.ticket_promedio).replace('S/ ','S/')}</div><div class="lbl">Ticket prom.</div></div>
+        <div class="kpi"><div class="val">${money(c.total_gastado).replace('S/ ','S/')}</div><div class="lbl">Total gastado</div></div>
+        <div class="kpi ${c.no_show_count?'alert':''}"><div class="val">${c.no_show_count||0}</div><div class="lbl">No-shows</div></div>
+      </div>
     </div>
+    <div class="sheet-section">
+      <div class="info-row"><span>Última visita</span><strong>${c.ultima_visita||'—'}</strong></div>
+      <div class="info-row"><span>Frecuencia</span><strong>${c.dias_entre_visitas?('cada ~'+Math.round(c.dias_entre_visitas)+' días'):'—'}</strong></div>
+      <div class="info-row"><span>Ticket máximo</span><strong>${money(c.ticket_max)}</strong></div>
+      <div class="info-row"><span>Grupo típico</span><strong>${c.grupo_tipico?c.grupo_tipico+' personas':'—'}</strong></div>
+      <div class="info-row"><span>Día habitual</span><strong>${c.dia_habitual||'—'}</strong></div>
+      <div class="info-row"><span>Propina habitual</span><strong>${c.propina_pct_prom?c.propina_pct_prom+'%':'—'}</strong></div>
+      <div class="info-row"><span>🎂 Cumpleaños</span><strong>${c.fecha_nacimiento||'—'}</strong></div>
+      <div class="info-row"><span>💍 Aniversario</span><strong>${c.aniversario||'—'}</strong></div>
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Qué come usualmente</div>
+      ${favs.length?`<div class="res-surface">${favs.map(f=>`<span class="tagchip tag">${f.nombre} ×${f.veces}</span>`).join('')}</div>`:'<div class="empty-state" style="padding:14px">Aún sin platos registrados</div>'}</div>
     <div class="sheet-section"><div class="field-lbl">Alergias</div><div class="res-surface">${(c.alergias||[]).map(a=>`<span class="tagchip alergia">${a}</span>`).join('')||'<span class="mono" style="opacity:.5">ninguna</span>'}</div></div>
+    ${(c.platos_no||[]).length?`<div class="sheet-section"><div class="field-lbl">No le gusta / evitar</div><div class="res-surface">${(c.platos_no||[]).map(p=>`<span class="tagchip" style="background:var(--red-soft)">${p}</span>`).join('')}</div></div>`:''}
+    ${prefs.length?`<div class="sheet-section"><div class="field-lbl">Preferencias</div><div class="res-surface">${prefs.join('')}</div></div>`:''}
     <div class="sheet-section"><div class="field-lbl">Tags</div><div class="res-surface">${(c.tags||[]).map(t=>`<span class="tagchip ${/vip/i.test(t)?'vip':'tag'}">${t}</span>`).join('')||'<span class="mono" style="opacity:.5">sin tags</span>'}</div></div>
+    ${c.empresa||c.instagram||c.como_nos_conocio?`<div class="sheet-section">
+      ${c.empresa?`<div class="info-row"><span>Empresa</span><strong>${c.empresa}</strong></div>`:''}
+      ${c.instagram?`<div class="info-row"><span>Instagram</span><strong>${c.instagram}</strong></div>`:''}
+      ${c.como_nos_conocio?`<div class="info-row"><span>Nos conoció por</span><strong>${c.como_nos_conocio}</strong></div>`:''}
+    </div>`:''}
     ${c.notas_internas?`<div class="sheet-section"><div class="field-lbl">Notas internas</div><p style="font-size:13px">${c.notas_internas}</p></div>`:''}
-    <div class="sheet-section"><div class="field-lbl">Historial reciente</div>${histHtml}</div>
+    <div class="sheet-section"><div class="field-lbl">Historial de reservas</div>${histHtml}</div>
     <div class="sheet-section"><div class="grid2">
       <button class="btn ghost" id="fc-editar"><span class="material-symbols-outlined">edit</span>Editar</button>
       <button class="btn primary" id="fc-reservar"><span class="material-symbols-outlined">event</span>Nueva reserva</button>
@@ -898,8 +931,10 @@ function abrirEditorComensal(c) {
   const edit = !!c;
   const form = {
     nombre: c?.nombre||'', apellidos: c?.apellidos||'', telefono: c?.telefono||'', email: c?.email||'',
-    fecha_nacimiento: c?.fecha_nacimiento||'', alergias: [...(c?.alergias||[])], tags: [...(c?.tags||[])],
-    alergiasOtras:'', notas: c?.notas_internas||'',
+    fecha_nacimiento: c?.fecha_nacimiento||'', aniversario: c?.aniversario||'',
+    alergias: [...(c?.alergias||[])], tags: [...(c?.tags||[])], notas: c?.notas_internas||'',
+    bebida_preferida: c?.bebida_preferida||'', zona_preferida: c?.zona_preferida||'',
+    empresa: c?.empresa||'', instagram: c?.instagram||'', como_nos_conocio: c?.como_nos_conocio||'',
   };
   setSheetHead('👤', edit?'Editar comensal':'Nuevo comensal', edit?nombreCliente(c):'Registro');
   const render2 = () => {
@@ -912,12 +947,25 @@ function abrirEditorComensal(c) {
         <div><div class="field-lbl">Teléfono / WhatsApp</div><input class="input" id="c-tel" value="${form.telefono}" inputmode="tel"></div>
         <div><div class="field-lbl">Email</div><input class="input" id="c-email" value="${form.email}" inputmode="email"></div>
       </div>
-      <div class="sheet-section"><div class="field-lbl">Fecha de nacimiento (cumpleaños)</div><input class="input" type="date" id="c-fnac" value="${form.fecha_nacimiento}"></div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">🎂 Cumpleaños</div><input class="input" type="date" id="c-fnac" value="${form.fecha_nacimiento}"></div>
+        <div><div class="field-lbl">💍 Aniversario</div><input class="input" type="date" id="c-aniv" value="${form.aniversario}"></div>
+      </div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Bebida preferida</div><input class="input" id="c-bebida" value="${form.bebida_preferida}" placeholder="Malbec, agua sin gas…"></div>
+        <div><div class="field-lbl">Zona preferida</div><select class="select" id="c-zona"><option value="">—</option>${['salón','terraza','reservado','barra'].map(z=>`<option ${form.zona_preferida===z?'selected':''}>${z}</option>`).join('')}</select></div>
+      </div>
       <div class="sheet-section"><div class="field-lbl">Alergias</div>
         <div class="chips" id="c-alerg">${ALERGENOS.map(a=>`<button class="chip ${form.alergias.includes(a)?'active':''}" data-a="${a}">${a}</button>`).join('')}</div>
         <input class="input" id="c-alerg-otras" placeholder="Otras alergias (separa con coma)" style="margin-top:8px" value="${form.alergias.filter(a=>!ALERGENOS.includes(a)).join(', ')}"></div>
+      <div class="sheet-section"><div class="field-lbl">No le gusta / evitar (separa con coma)</div><input class="input" id="c-platosno" value="${(c?.platos_no||[]).join(', ')}" placeholder="cilantro, picante…"></div>
       <div class="sheet-section"><div class="field-lbl">Tags</div>
         <div class="chips" id="c-tags">${TAGS_CLIENTE.map(t=>`<button class="chip ${form.tags.includes(t)?'active':''}" data-t="${t}">${t}</button>`).join('')}</div></div>
+      <div class="sheet-section grid2">
+        <div><div class="field-lbl">Empresa</div><input class="input" id="c-empresa" value="${form.empresa}"></div>
+        <div><div class="field-lbl">Instagram</div><input class="input" id="c-ig" value="${form.instagram}" placeholder="@usuario"></div>
+      </div>
+      <div class="sheet-section"><div class="field-lbl">¿Cómo nos conoció?</div><input class="input" id="c-conocio" value="${form.como_nos_conocio}" placeholder="Instagram, recomendación, Google…"></div>
       <div class="sheet-section"><div class="field-lbl">Notas internas</div><textarea class="input" id="c-notas" rows="2" placeholder="Prefiere mesa de ventana…">${form.notas}</textarea></div>
       <div class="sheet-section"><div class="grid2">
         <button class="btn ghost" id="c-cancel">Atrás</button>
@@ -936,10 +984,15 @@ async function guardarComensal(c, form) {
   if (!form.nombre) { toast('Nombre requerido', 'warn'); return; }
   const comunes = form.alergias.filter(a => ALERGENOS.includes(a));
   const otras = ($('#c-alerg-otras').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const platosNo = ($('#c-platosno').value||'').split(',').map(x=>x.trim()).filter(Boolean);
   const payload = {
     marca_id: MARCA, nombre: form.nombre, apellidos: ($('#c-ape').value||'').trim()||null,
     telefono: ($('#c-tel').value||'').trim()||null, email: ($('#c-email').value||'').trim()||null,
-    fecha_nacimiento: $('#c-fnac').value||null, alergias: [...comunes,...otras], tags: form.tags,
+    fecha_nacimiento: $('#c-fnac').value||null, aniversario: $('#c-aniv').value||null,
+    alergias: [...comunes,...otras], tags: form.tags,
+    bebida_preferida: ($('#c-bebida').value||'').trim()||null, zona_preferida: $('#c-zona').value||null,
+    platos_no: platosNo, empresa: ($('#c-empresa').value||'').trim()||null,
+    instagram: ($('#c-ig').value||'').trim()||null, como_nos_conocio: ($('#c-conocio').value||'').trim()||null,
     notas_internas: ($('#c-notas').value||'').trim()||null,
   };
   let res;
