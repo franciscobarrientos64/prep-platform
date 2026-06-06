@@ -968,6 +968,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cobro-item.cortesia { background: var(--green-soft); }
 .cobro-item.cortesia .price { text-decoration: line-through; opacity: 0.5; }
+.cobro-item.selectable { cursor: pointer; }
+.cobro-item.sel { background: var(--primary-soft); border-color: var(--primary); }
+.cobro-item.pagado { opacity: 0.45; }
+.cobro-item.pagado .price { text-decoration: line-through; }
 .cobro-item .qty {
   font-family: var(--font-mono); font-weight: 700; font-size: 12px;
   background: var(--ink); color: var(--bg);
@@ -1243,6 +1247,7 @@ const state = {
   // catálogo
   mesas: [],
   empleados: [],
+  gerentes: [],
   recetas: [],
   estaciones: [],
   floorPlan: null,
@@ -1322,10 +1327,164 @@ function toast(msg, tipo='') {
   }, 2800);
 }
 
+/* ========= CATÁLOGOS (cursos · modificadores · alérgenos) ========= */
+// CA-02: tiempos / cursos del servicio
+const COURSES = [
+  { step: 1, label: 'Entrada', short: 'ENT', emoji: '🥗' },
+  { step: 2, label: 'Fondo',   short: 'FON', emoji: '🍝' },
+  { step: 3, label: 'Postre',  short: 'POS', emoji: '🍰' },
+];
+function courseDe(step) { return COURSES.find(c => c.step === step) || COURSES[1]; }
+function courseSugerido(r) {
+  const s = ((r.sub_categoria || r.categoria_menu || '') + ' ' + (r.nombre || '')).toLowerCase();
+  if (/entrada|antipast|ensalada|sopa|crema|starter|appetiz|bruschet|carpacc/.test(s)) return 1;
+  if (/postre|dolc|dessert|helado|tiramis|torta|cheesecake|panna|gelato/.test(s)) return 3;
+  if (r.modulo === 'bar') return 1; // bebidas entran con el primer tiempo
+  return 2; // fondos por defecto
+}
+
+// CA-10: modificadores priceados (catálogo genérico Casa Italia)
+// precio = delta fijo en S/ · pct = delta proporcional al precio base (0.6 = +60%)
+const MODIFICADORES = {
+  cocina: [
+    { id: 'extra_queso',  nombre: 'Extra queso',     precio: 4 },
+    { id: 'extra_salsa',  nombre: 'Extra salsa',     precio: 3 },
+    { id: 'sin_gluten',   nombre: 'Pasta sin gluten', precio: 6 },
+    { id: 'porcion_doble',nombre: 'Porción doble',   precio: 0, pct: 0.6 },
+    { id: 'pan_extra',    nombre: 'Pan extra',       precio: 2 },
+    { id: 'sin_lactosa',  nombre: 'Sin lactosa',     precio: 0 },
+  ],
+  bar: [
+    { id: 'doble_shot',   nombre: 'Doble shot',          precio: 8 },
+    { id: 'sin_alcohol',  nombre: 'Versión sin alcohol', precio: 0 },
+    { id: 'hielo_aparte', nombre: 'Hielo aparte',        precio: 0 },
+    { id: 'jugo_natural', nombre: 'Con jugo natural',    precio: 3 },
+  ],
+};
+function modsDe(modulo) { return MODIFICADORES[modulo] || MODIFICADORES.cocina; }
+// delta total de un set de modificadores aplicado a un precio base unitario
+function deltaModificadores(mods, precioBase) {
+  if (!Array.isArray(mods)) return 0;
+  return +mods.reduce((acc, m) => acc + Number(m.precio || 0) + (m.pct ? precioBase * m.pct : 0), 0).toFixed(2);
+}
+
+// CA-22: alérgenos comunes para captura por silla
+const ALERGENOS_COMUNES = ['Gluten', 'Lácteos', 'Maní', 'Frutos secos', 'Mariscos', 'Pescado', 'Huevo', 'Soya', 'Sésamo'];
+
+/* ========= IMPRESIÓN TÉRMICA (CA-06 · CA-23) ========= */
+// Imprime en formato ticket 80mm vía iframe oculto (evita bloqueo de pop-ups).
+function imprimirTermico(titulo, htmlBody) {
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>${titulo}</title>
+    <style>
+      @page { size: 80mm auto; margin: 0; }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body { width:80mm; font-family:'IBM Plex Mono','Courier New',monospace; color:#000; padding:5mm 4mm; font-size:12px; line-height:1.35; }
+      .center{text-align:center} .right{text-align:right}
+      .b{font-weight:700} .lg{font-size:15px} .xl{font-size:20px} .muted{opacity:.7}
+      hr{border:none;border-top:1px dashed #000;margin:6px 0}
+      table{width:100%;border-collapse:collapse} td{vertical-align:top;padding:1px 0}
+      .seccion{page-break-after:always}
+      .seccion:last-child{page-break-after:auto}
+    </style></head><body>${htmlBody}</body></html>`);
+  doc.close();
+  let removed = false;
+  const cleanup = () => { if (removed) return; removed = true; setTimeout(() => iframe.remove(), 300); };
+  iframe.contentWindow.onafterprint = cleanup;
+  setTimeout(() => {
+    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch (_) {}
+    setTimeout(cleanup, 3000);
+  }, 250);
+}
+function nombreEstacion(stationId) {
+  const e = state.estaciones.find(x => x.id === stationId);
+  return e ? ((e.emoji ? e.emoji + ' ' : '') + e.nombre) : 'COCINA';
+}
+function impresoraEstacion(stationId) {
+  const e = state.estaciones.find(x => x.id === stationId);
+  return e ? (e.impresora_nombre || e.impresora_ip || null) : null;
+}
+function horaCorta() { return new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }); }
+
+// CA-06: una comanda por estación (page-break entre estaciones = un slip por impresora)
+function imprimirComandasEstacion(ped, items, etiqueta) {
+  const its = items.filter(it => it.estado !== 'cancelado');
+  if (!its.length) { toast('Nada para imprimir', 'warn'); return; }
+  const mesa = state.mesas.find(m => m.id === ped.mesa_id);
+  const porEst = {};
+  its.forEach(it => { const k = it.station || 'sin_estacion'; (porEst[k] = porEst[k] || []).push(it); });
+  const secciones = Object.keys(porEst).map(st => {
+    const imp = impresoraEstacion(st);
+    const filas = porEst[st].map(it => {
+      const mods = (Array.isArray(it.modificadores) ? it.modificadores : []).map(m => m.nombre).join(', ');
+      const cs = courseDe(it.course_step || 2);
+      return `<tr><td class="b lg" style="width:34px">${it.qty}×</td><td class="b lg">${it.nombre}
+        <div class="muted">${it.seat_position ? 'Silla ' + it.seat_position : 'Centro · compartido'} · [${cs.short}]${it.urgente ? ' · ¡URGENTE!' : ''}</div>
+        ${mods ? `<div>+ ${mods}</div>` : ''}
+        ${it.notas ? `<div class="b">» ${it.notas}</div>` : ''}
+        </td></tr>`;
+    }).join('');
+    return `<div class="seccion">
+      <div class="center b xl">${nombreEstacion(st)}</div>
+      <div class="center muted">${imp ? '🖨 ' + imp : 'sin impresora asignada'}</div>
+      <hr>
+      <table>
+        <tr><td class="b lg">Mesa ${mesa ? mesa.numero : '—'}</td><td class="right b lg">#${ped.ticket_num}</td></tr>
+        <tr><td class="muted">${(mesa && mesa.zona) || ''}${etiqueta ? ' · ' + etiqueta : ''}</td><td class="right muted">${horaCorta()}</td></tr>
+      </table>
+      <hr>
+      <table>${filas}</table>
+      <hr>
+      <div class="center muted">prep! · ${porEst[st].length} ítem(s) · ${nombreEstacion(st)}</div>
+    </div>`;
+  }).join('');
+  imprimirTermico('Comanda #' + ped.ticket_num, secciones);
+}
+
+// CA-23: pre-cuenta (sin valor fiscal)
+function imprimirPreCuenta(ped, T) {
+  const mesa = state.mesas.find(m => m.id === ped.mesa_id);
+  const items = state.pedidoItemsCache[ped.id] || [];
+  const filas = items.filter(it => it.estado !== 'cancelado').map(it => {
+    const cMonto = (T.cortesiasMontoPorItem && T.cortesiasMontoPorItem[it.id]) || 0;
+    return `<tr>
+      <td style="width:28px">${it.qty}×</td>
+      <td>${it.nombre}${cMonto > 0 ? ' <span class="muted">(cortesía)</span>' : ''}</td>
+      <td class="right">${money(it.precio_total)}</td>
+    </tr>`;
+  }).join('');
+  const body = `
+    <div class="center xl b">Casa Italia</div>
+    <div class="center muted">PRE-CUENTA · no es comprobante de pago</div>
+    <hr>
+    <table>
+      <tr><td class="b">Mesa ${mesa ? mesa.numero : '—'}</td><td class="right b">#${ped.ticket_num}</td></tr>
+      <tr><td class="muted">${(mesa && mesa.zona) || ''}</td><td class="right muted">${horaCorta()}</td></tr>
+      <tr><td class="muted">${ped.comensales || 1} comensal(es)</td><td class="right muted">${ped.tab_nombre ? 'Tab: ' + ped.tab_nombre : ''}</td></tr>
+    </table>
+    <hr>
+    <table>${filas}</table>
+    <hr>
+    <table>
+      <tr><td>Subtotal</td><td class="right">${money(T.sub_bruto)}</td></tr>
+      ${T.cortesias_total > 0 ? `<tr><td>Cortesías</td><td class="right">−${money(T.cortesias_total)}</td></tr>` : ''}
+      <tr><td>Servicio 10%</td><td class="right">${money(T.servicio_monto)}</td></tr>
+      <tr><td class="b lg">TOTAL</td><td class="right b lg">${money(T.sub_neto + T.servicio_monto)}</td></tr>
+    </table>
+    <hr>
+    <div class="center muted">Propina sugerida no incluida</div>
+    <div class="center muted">Gracias por su visita · prep!</div>`;
+  imprimirTermico('Pre-cuenta #' + ped.ticket_num, body);
+}
+
 /* ========= DATA LOAD ========= */
 async function loadAll() {
   await Promise.all([
-    loadMesas(), loadEmpleados(), loadTurno(),
+    loadMesas(), loadEmpleados(), loadGerentes(), loadTurno(),
     loadRecetas(), loadEstaciones(), loadFloorPlan(),
   ]);
   await loadPedidos();
@@ -1346,7 +1505,7 @@ async function loadMesas() {
 }
 async function loadPedidos() {
   const { data, error } = await sb.from('ca_pedidos')
-    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla')
+    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla, tab_nombre')
     .eq('marca_id', MARCA).eq('local_id', LOCAL)
     .in('estado', ['abierta', 'suspended']);
   if (error) return toast('Atrás: ' + error.message, 'err');
@@ -1377,10 +1536,19 @@ async function loadRecetas() {
 }
 async function loadEstaciones() {
   const { data, error } = await sb.from('li_estaciones')
-    .select('id, nombre, emoji, color, es_delivery, orden_pase')
+    .select('id, nombre, emoji, color, es_delivery, orden_pase, impresora_ip, impresora_nombre')
     .eq('marca_id', MARCA).eq('local_id', LOCAL);
   if (error) return toast('Atrás: ' + error.message, 'err');
   state.estaciones = data || [];
+}
+// CA-07: gerentes/admins que pueden aprobar cortesías (rol distinto al área de salón)
+async function loadGerentes() {
+  const { data, error } = await sb.from('rrhh_empleados')
+    .select('id, nombre, apellidos, rol, area')
+    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
+    .or('rol.ilike.%gerente%,rol.ilike.%admin%,rol.ilike.%encargad%,rol.ilike.%superv%,rol.ilike.%chef%');
+  if (error) { state.gerentes = []; return; }
+  state.gerentes = data || [];
 }
 async function loadFloorPlan() {
   const { data, error } = await sb.from('ms_floor_plans')
@@ -1406,13 +1574,23 @@ async function loadPedidoItems(pedidoId) {
 
 /* ========= DERIVED ========= */
 function pedidoDeMesa(mesaId) { return state.pedidos.find(p => p.mesa_id === mesaId); }
+// CA-04/CA-18: la barra puede tener varios tabs (pedidos) concurrentes
+function pedidosDeMesa(mesaId) { return state.pedidos.filter(p => p.mesa_id === mesaId); }
+function esBarra(mesa) { return !!mesa && (mesa.zona === 'barra' || mesa.forma === 'barra'); }
+const ESTADO_SERV_MAP = { abierta:'abierta', ordenando:'abierta', comiendo:'marchada', cuenta_pedida:'cuenta_pedida', pagando:'cuenta_pedida' };
 function estadoMesa(mesa) {
-  const p = pedidoDeMesa(mesa.id);
-  if (!p) return 'libre';
+  const ps = pedidosDeMesa(mesa.id);
+  if (!ps.length) return 'libre';
+  if (esBarra(mesa)) {
+    if (ps.every(p => p.estado === 'suspended')) return 'suspendida';
+    const activos = ps.filter(p => p.estado !== 'suspended');
+    if (activos.some(p => ['cuenta_pedida','pagando'].includes(p.estado_servicio))) return 'cuenta_pedida';
+    if (activos.some(p => p.estado_servicio === 'comiendo')) return 'marchada';
+    return 'abierta';
+  }
+  const p = ps[0];
   if (p.estado === 'suspended') return 'suspendida';
-  // BD usa abierta|ordenando|comiendo|cuenta_pedida|pagando
-  const map = { abierta:'abierta', ordenando:'abierta', comiendo:'marchada', cuenta_pedida:'cuenta_pedida', pagando:'cuenta_pedida' };
-  return map[p.estado_servicio] || 'abierta';
+  return ESTADO_SERV_MAP[p.estado_servicio] || 'abierta';
 }
 function zonasCount() {
   const map = { todas: state.mesas.length };
@@ -1512,7 +1690,8 @@ function renderHeader() {
     ${editing
       ? `<button class="btn-ico ghost" id="btn-discard-edit"><span class="material-symbols-outlined">undo</span><span>Descartar</span></button>
          <button class="btn-ico primary" id="btn-save-edit"><span class="material-symbols-outlined">save</span><span>Guardar plano</span></button>`
-      : `<button class="btn-ico" id="btn-edit-floor"><span class="material-symbols-outlined">edit</span><span>Editar plano</span></button>
+      : `<button class="btn-ico" id="btn-giftcards"><span class="material-symbols-outlined">card_giftcard</span><span>Gift cards</span></button>
+         <button class="btn-ico" id="btn-edit-floor"><span class="material-symbols-outlined">edit</span><span>Editar plano</span></button>
          <button class="btn-ico dark" id="mozo-select"><span class="material-symbols-outlined">person</span><span id="mozo-label">${
            (() => { const m = state.empleados.find(e => e.id === state.mozoId); return m ? fmtMozo(m) : 'Elegir mozo'; })()
          }</span></button>`
@@ -1525,6 +1704,7 @@ function renderHeader() {
   } else {
     $('#btn-edit-floor').onclick = enterEditMode;
     $('#mozo-select').onclick = abrirPickerMozo;
+    $('#btn-giftcards').onclick = () => abrirGestorGiftCards('vender');
   }
 }
 
@@ -1614,17 +1794,22 @@ function renderFloorScreen() {
 }
 
 function renderMesaEl(m, editing) {
-  const ped = pedidoDeMesa(m.id);
   const est = estadoMesa(m);
   const visible = editing || state.zonaActiva === 'todas' || (m.zona || 'sin_zona') === state.zonaActiva;
   const selected = editing && state.edit.selected && state.edit.selected.kind === 'mesa' && state.edit.selected.id === m.id;
+  // CA-04: la barra muestra nº de tabs; mesas normales muestran comensales
+  const barra = esBarra(m);
+  const tabs = barra ? pedidosDeMesa(m.id) : [];
+  const ped = barra ? null : pedidoDeMesa(m.id);
+  const desde = barra ? tabs.map(t => t.abierta_at).filter(Boolean).sort()[0] : (ped && ped.abierta_at);
+  const badgeNum = barra ? (tabs.length || null) : (ped && ped.comensales);
   return `
     <button class="mesa ${m.forma || 'rectangular'} ${selected?'selected':''}" data-id="${m.id}" data-estado="${est}" data-kind="mesa"
             style="left:${m.pos_x}px; top:${m.pos_y}px; width:${m.ancho}px; height:${m.alto}px; ${visible?'':'display:none'}">
       <span class="num">${m.numero}</span>
-      <span class="cap">×${m.capacidad}</span>
-      ${ped && !editing ? `<span class="timer">${timeAgo(ped.abierta_at)}</span>` : ''}
-      ${ped && ped.comensales && !editing ? `<span class="badge-com">${ped.comensales}</span>` : ''}
+      <span class="cap">${barra ? (tabs.length ? tabs.length+' tab'+(tabs.length===1?'':'s') : '×'+m.capacidad) : '×'+m.capacidad}</span>
+      ${desde && !editing ? `<span class="timer">${timeAgo(desde)}</span>` : ''}
+      ${badgeNum && !editing ? `<span class="badge-com">${badgeNum}</span>` : ''}
     </button>
   `;
 }
@@ -1652,12 +1837,21 @@ function updateTimers() {
 function openSheet(mesaId) {
   const mesa = state.mesas.find(m => m.id === mesaId); if (!mesa) return;
   state.mesaAbierta = mesa;
-  const ped = pedidoDeMesa(mesaId);
   const est = estadoMesa(mesa);
   $('#sheet-mark').textContent = mesa.numero;
   $('#sheet-mark').style.background = est==='libre'?'var(--primary-soft)':est==='abierta'?'var(--primary-soft)':est==='marchada'?'var(--tertiary)':est==='cuenta_pedida'?'var(--secondary)':'var(--surface)';
   $('#sheet-mark').style.color = est==='cuenta_pedida'?'white':'var(--ink)';
-  $('#sheet-title').textContent = mesa.zona === 'barra' ? 'Barra' : 'Mesa ' + mesa.numero;
+  $('#sheet-title').textContent = esBarra(mesa) ? 'Barra' : 'Mesa ' + mesa.numero;
+  // CA-04: la barra gestiona múltiples tabs
+  if (esBarra(mesa)) {
+    const tabs = pedidosDeMesa(mesaId);
+    $('#sheet-meta').textContent = ['BARRA', 'CAP ' + mesa.capacidad, tabs.length + ' tab(s)'].join(' · ');
+    renderSheetBarra(mesa, tabs);
+    $('#sheet-backdrop').classList.add('open');
+    $('#sheet').classList.add('open');
+    return;
+  }
+  const ped = pedidoDeMesa(mesaId);
   const meta = [(mesa.zona||'').toUpperCase(), 'CAP '+mesa.capacidad];
   if (ped) meta.push('TICKET #' + (ped.ticket_num||'?'));
   $('#sheet-meta').textContent = meta.join(' · ');
@@ -1665,6 +1859,75 @@ function openSheet(mesaId) {
   else renderSheetOcupada(mesa, ped);
   $('#sheet-backdrop').classList.add('open');
   $('#sheet').classList.add('open');
+}
+// CA-04/CA-18: lista de tabs de la barra + abrir nueva tab
+function renderSheetBarra(mesa, tabs) {
+  const tabsHtml = tabs.length === 0
+    ? '<div class="empty-state">Sin tabs abiertas en la barra.</div>'
+    : tabs.map(t => {
+        const mozo = state.empleados.find(e => e.id === t.mozo_id);
+        const sus = t.estado === 'suspended';
+        const nom = t.tab_nombre || ('Tab #' + t.ticket_num);
+        return `<button class="mozo-item" data-tab="${t.id}">
+          <span class="mozo-avatar" style="background:${sus?'var(--gray-soft)':'var(--primary-soft)'}">${(nom).charAt(0).toUpperCase()}</span>
+          <span class="mozo-info">
+            <span class="name">${nom}${sus?' · ⏸':''}</span>
+            <span class="rol">#${t.ticket_num} · ${fmtMozo(mozo)} · ${t.comensales||1} asiento(s) · ${money(t.total)}</span>
+          </span>
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>`;
+      }).join('');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Tabs abiertas en la barra</div>
+      ${tabsHtml}
+    </div>
+    <div class="sheet-section">
+      <button class="btn primary" id="btn-nueva-tab">
+        <span class="material-symbols-outlined">add_circle</span>
+        Abrir nueva tab
+      </button>
+    </div>
+  `;
+  $$('#sheet-body .mozo-item[data-tab]').forEach(b => b.onclick = async () => {
+    const t = tabs.find(x => x.id === b.dataset.tab);
+    if (t && t.estado === 'suspended') await reanudar(t.id);
+    closeSheet();
+    abrirPedidoScreen(b.dataset.tab);
+  });
+  $('#btn-nueva-tab').onclick = () => abrirNuevaTabBarra(mesa);
+}
+// CA-18: nueva tab de barra con nombre + nº de asientos agrupados
+function abrirNuevaTabBarra(mesa) {
+  $('#sheet-title').textContent = 'Nueva tab · Barra';
+  $('#sheet-meta').textContent = 'Nombre + asientos';
+  let asientos = 1;
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Nombre de la tab (comensal)</div>
+      <input class="input" id="tab-nombre" placeholder="Ej. Lucía · barra 3" maxlength="40">
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">¿Cuántos asientos agrupa?</div>
+      <div class="com-stepper">
+        <button id="tab-minus">−</button>
+        <span class="com-num" id="tab-num">1</span>
+        <button id="tab-plus">+</button>
+      </div>
+    </div>
+    <div class="sheet-section"><div class="btn-grid">
+      <button class="btn ghost span-2" id="tab-cancel">Atrás</button>
+      <button class="btn primary span-2" id="tab-abrir"><span class="material-symbols-outlined">play_arrow</span>Abrir tab · Va</button>
+    </div></div>
+  `;
+  const upd = () => $('#tab-num').textContent = asientos;
+  $('#tab-minus').onclick = () => { if (asientos > 1) asientos--; upd(); };
+  $('#tab-plus').onclick = () => { if (asientos < 12) asientos++; upd(); };
+  $('#tab-cancel').onclick = () => openSheet(mesa.id);
+  $('#tab-abrir').onclick = () => {
+    const nombre = ($('#tab-nombre').value || '').trim() || null;
+    abrirPedido(mesa, asientos, nombre);
+  };
 }
 function closeSheet() {
   $('#sheet-backdrop').classList.remove('open');
@@ -1769,9 +2032,10 @@ function abrirMover(ped, mesaActual) {
 }
 
 /* ========= ACCIONES DB (pedido shell) ========= */
-async function abrirPedido(mesa, comensales) {
+async function abrirPedido(mesa, comensales, tabNombre = null) {
   if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige el mozo en turno', 'warn'); return; }
   if (!state.turno) { toast('No hay turno abierto', 'err'); return; }
+  const barra = esBarra(mesa);
   const intentar = async () => {
     const { data: nums } = await sb.from('ca_pedidos')
       .select('ticket_num').eq('local_id', LOCAL).eq('turno_id', state.turno.id)
@@ -1780,7 +2044,8 @@ async function abrirPedido(mesa, comensales) {
     return await sb.from('ca_pedidos').insert({
       ticket_num: nextTicket, marca_id: MARCA, local_id: LOCAL, turno_id: state.turno.id,
       mesa_id: mesa.id, comensales, mozo_id: state.mozoId,
-      estado:'abierta', estado_servicio:'abierta', origen:'salon',
+      estado:'abierta', estado_servicio:'abierta', origen: barra ? 'barra' : 'salon',
+      tab_nombre: tabNombre,
       abierta_at: new Date().toISOString(),
       subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
       descuento:0, propina_monto:0, total:0,
@@ -1791,7 +2056,7 @@ async function abrirPedido(mesa, comensales) {
   if (error && error.code === '23505') ({ data, error } = await intentar());
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
   state.pedidos.push(data);
-  toast('Va · pedido #' + data.ticket_num + ' en mesa ' + mesa.numero, 'ok');
+  toast('Va · ' + (barra ? 'tab ' + (tabNombre || '#'+data.ticket_num) + ' en barra' : 'pedido #' + data.ticket_num + ' en mesa ' + mesa.numero), 'ok');
   closeSheet();
   // Pasar directo a la pantalla de pedido
   abrirPedidoScreen(data.id);
@@ -1849,6 +2114,146 @@ function abrirPickerMozo() {
     renderHeader();
     toast('En turno: ' + fmtMozo(state.empleados.find(e => e.id === b.dataset.id)), 'ok');
   });
+}
+
+/* ========= GIFT CARDS · vender + recargar (CA-13) ========= */
+function genCodigoGiftCard() { return 'GC-' + Math.random().toString(36).slice(2, 7).toUpperCase(); }
+const gcState = { tab: 'vender', codigoNuevo: '', recarga: { codigo: '', card: null, error: null } };
+
+function abrirGestorGiftCards(tab) {
+  gcState.tab = tab || 'vender';
+  if (!gcState.codigoNuevo) gcState.codigoNuevo = genCodigoGiftCard();
+  $('#sheet-mark').textContent = '🎫';
+  $('#sheet-mark').style.background = 'var(--primary-soft)';
+  $('#sheet-mark').style.color = 'var(--ink)';
+  $('#sheet-title').textContent = 'Gift cards';
+  $('#sheet-meta').textContent = 'Vender · recargar · (cobrar se hace en el cobro)';
+  renderGestorGiftCards();
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+}
+
+function renderGestorGiftCards() {
+  const tabs = `
+    <div class="comprobante-tabs" style="margin-bottom:14px">
+      <button class="comprobante-tab ${gcState.tab==='vender'?'active':''}" data-gctab="vender">Vender nueva</button>
+      <button class="comprobante-tab ${gcState.tab==='recargar'?'active':''}" data-gctab="recargar">Recargar</button>
+    </div>`;
+  let body;
+  if (gcState.tab === 'vender') {
+    body = `
+      <div class="sheet-section">
+        <div class="sheet-section-label">Código</div>
+        <div style="display:flex;gap:8px">
+          <input class="input" id="gc-codigo" value="${gcState.codigoNuevo}" style="flex:1">
+          <button class="btn dark" id="gc-regen" style="width:auto;min-width:auto;padding:0 14px"><span class="material-symbols-outlined">refresh</span></button>
+        </div>
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Valor de la gift card (S/)</div>
+        <input class="input" id="gc-valor" type="number" step="10" inputmode="decimal" placeholder="100.00">
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Comprador</div>
+        <input class="input" id="gc-comp-nombre" placeholder="Nombre del comprador" style="margin-bottom:8px">
+        <input class="input" id="gc-comp-tel" placeholder="Teléfono (opcional)" inputmode="tel">
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Beneficiario (opcional)</div>
+        <input class="input" id="gc-benef-nombre" placeholder="Nombre de quien la usará">
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Vence (opcional)</div>
+        <input class="input" id="gc-expira" type="date">
+      </div>
+      <div class="sheet-section"><div class="btn-grid">
+        <button class="btn ghost" id="gc-cancel">Atrás</button>
+        <button class="btn primary" id="gc-vender"><span class="material-symbols-outlined">sell</span>Vender gift card</button>
+      </div></div>`;
+  } else {
+    const R = gcState.recarga;
+    body = `
+      <div class="sheet-section">
+        <div class="sheet-section-label">Código de la gift card</div>
+        <div style="display:flex;gap:8px">
+          <input class="input" id="gc-rec-codigo" placeholder="GC-XXXX" value="${R.codigo||''}" style="flex:1">
+          <button class="btn dark" id="gc-rec-buscar" style="width:auto;min-width:auto;padding:0 16px">Buscar</button>
+        </div>
+        ${R.error ? `<div style="color:var(--secondary);font-size:12px;margin-top:8px">${R.error}</div>` : ''}
+        ${R.card ? `
+          <div class="sheet-info-row" style="margin-top:10px"><span>Estado</span><strong>${R.card.estado}</strong></div>
+          <div class="sheet-info-row"><span>Saldo actual</span><strong style="color:var(--primary)">${money(R.card.saldo)}</strong></div>
+        ` : ''}
+      </div>
+      ${R.card ? `
+      <div class="sheet-section">
+        <div class="sheet-section-label">Monto a recargar (S/)</div>
+        <input class="input" id="gc-rec-monto" type="number" step="10" inputmode="decimal" placeholder="50.00">
+      </div>
+      <div class="sheet-section"><div class="btn-grid">
+        <button class="btn ghost" id="gc-cancel">Atrás</button>
+        <button class="btn primary" id="gc-recargar"><span class="material-symbols-outlined">add_card</span>Recargar</button>
+      </div></div>
+      ` : `<div class="sheet-section"><button class="btn ghost" id="gc-cancel">Atrás</button></div>`}`;
+  }
+  $('#sheet-body').innerHTML = tabs + body;
+  $$('#sheet-body [data-gctab]').forEach(b => b.onclick = () => { gcState.tab = b.dataset.gctab; renderGestorGiftCards(); });
+  if ($('#gc-cancel')) $('#gc-cancel').onclick = closeSheet;
+  if ($('#gc-regen')) $('#gc-regen').onclick = () => { gcState.codigoNuevo = genCodigoGiftCard(); renderGestorGiftCards(); };
+  if ($('#gc-vender')) $('#gc-vender').onclick = venderGiftCard;
+  if ($('#gc-rec-buscar')) $('#gc-rec-buscar').onclick = buscarGiftCardRecarga;
+  if ($('#gc-rec-codigo')) $('#gc-rec-codigo').oninput = (e) => { gcState.recarga.codigo = e.target.value.toUpperCase(); };
+  if ($('#gc-recargar')) $('#gc-recargar').onclick = recargarGiftCard;
+}
+
+async function venderGiftCard() {
+  const codigo = ($('#gc-codigo').value || '').trim().toUpperCase();
+  const valor = +(Number($('#gc-valor').value) || 0);
+  if (!codigo) { toast('Código requerido', 'warn'); return; }
+  if (!(valor > 0)) { toast('Valor inválido', 'warn'); return; }
+  const payload = {
+    codigo, marca_id: MARCA,
+    valor_inicial: valor, saldo: valor, estado: 'activa',
+    comprador_nombre: ($('#gc-comp-nombre').value || '').trim() || null,
+    comprador_telefono: ($('#gc-comp-tel').value || '').trim() || null,
+    beneficiario_nombre: ($('#gc-benef-nombre').value || '').trim() || null,
+    expira_at: $('#gc-expira').value || null,
+  };
+  const { error } = await sb.from('ca_gift_cards').insert(payload);
+  if (error) {
+    toast('Atrás: ' + (error.code === '23505' ? 'ese código ya existe' : error.message), 'err');
+    return;
+  }
+  gcState.codigoNuevo = '';
+  closeSheet();
+  toast('Servido · gift card ' + codigo + ' vendida por ' + money(valor), 'ok');
+}
+
+async function buscarGiftCardRecarga() {
+  const codigo = (gcState.recarga.codigo || $('#gc-rec-codigo').value || '').trim().toUpperCase();
+  gcState.recarga.codigo = codigo;
+  if (!codigo) { gcState.recarga.error = 'Ingresa un código'; gcState.recarga.card = null; renderGestorGiftCards(); return; }
+  const { data, error } = await sb.from('ca_gift_cards')
+    .select('id, codigo, saldo, estado, expira_at')
+    .eq('marca_id', MARCA).eq('codigo', codigo).maybeSingle();
+  if (error || !data) { gcState.recarga = { codigo, card: null, error: 'No existe esta gift card' }; }
+  else if (data.estado === 'anulada') { gcState.recarga = { codigo, card: null, error: 'Gift card anulada' }; }
+  else { gcState.recarga = { codigo, card: data, error: null }; }
+  renderGestorGiftCards();
+}
+
+async function recargarGiftCard() {
+  const R = gcState.recarga;
+  if (!R.card) { toast('Busca la gift card primero', 'warn'); return; }
+  const monto = +(Number($('#gc-rec-monto').value) || 0);
+  if (!(monto > 0)) { toast('Monto inválido', 'warn'); return; }
+  const nuevoSaldo = +(Number(R.card.saldo) + monto).toFixed(2);
+  const { error } = await sb.from('ca_gift_cards')
+    .update({ saldo: nuevoSaldo, estado: 'activa' }).eq('id', R.card.id);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  gcState.recarga = { codigo: '', card: null, error: null };
+  closeSheet();
+  toast('Servido · recarga de ' + money(monto) + ' · nuevo saldo ' + money(nuevoSaldo), 'ok');
 }
 
 /* ========= EDIT MODE ========= */
@@ -2234,6 +2639,17 @@ function renderPedidoScreen() {
   // Alergias por silla (CA-22)
   const alergias = ped.alergias_por_silla || {};
 
+  // CA-02: pendientes (oído) por curso → botones de marchar por tiempo
+  const pendientesPorCurso = {};
+  items.filter(it => it.estado === 'oido').forEach(it => {
+    const c = it.course_step || 2; pendientesPorCurso[c] = (pendientesPorCurso[c]||0) + 1;
+  });
+  const courseMarcharBar = COURSES.filter(c => pendientesPorCurso[c.step]).map(c =>
+    `<button class="btn-ico warn" data-marchar-course="${c.step}" style="margin:0 6px 8px 0">
+       <span class="material-symbols-outlined">local_fire_department</span>
+       <span>Marchar ${c.label} (${pendientesPorCurso[c.step]})</span>
+     </button>`).join('');
+
   const grupoHtml = sillas.length === 0
     ? '<div class="empty-state">Pedido vacío.<br>Tap un ítem del menú para agregarlo.</div>'
     : sillas.map(s => {
@@ -2253,7 +2669,8 @@ function renderPedidoScreen() {
               <div class="item-row ${it.urgente?'urgente':''}" data-iid="${it.id}">
                 <span class="qty">×${it.qty}</span>
                 <span class="nm">
-                  ${it.nombre}
+                  <span class="estado" style="background:var(--gray-soft);color:var(--ink);margin-right:6px">${courseDe(it.course_step||2).short}</span>${it.nombre}
+                  ${(Array.isArray(it.modificadores)&&it.modificadores.length)?`<span class="notas"><span class="material-symbols-outlined" style="font-size:10px">tune</span> ${it.modificadores.map(m=>m.nombre+(m.precio>0?' +'+money(m.precio):'')).join(' · ')}</span>`:''}
                   ${it.notas ? `<span class="notas"><span class="material-symbols-outlined" style="font-size:10px">edit_note</span> ${it.notas}</span>` : ''}
                 </span>
                 <span class="estado ${it.estado}">${({oido:'Oído',va:'Va',fuego:'En fuego',servido:'Servido',cancelado:'Cancelado'})[it.estado] || it.estado}</span>
@@ -2292,8 +2709,9 @@ function renderPedidoScreen() {
       <div class="pedido-head">
         <div class="ticket-mark">${state.mesas.find(m => m.id === ped.mesa_id)?.numero || '?'}</div>
         <div class="info">
-          <h2>Pedido #${ped.ticket_num}</h2>
+          <h2>${ped.tab_nombre ? ped.tab_nombre : 'Pedido #' + ped.ticket_num}</h2>
           <div class="meta">
+            ${ped.tab_nombre ? `<span>TAB · #${ped.ticket_num}</span>` : ''}
             <span>${(state.mesas.find(m => m.id === ped.mesa_id)?.zona || '').toUpperCase()}</span>
             <span>${items.length} ítem${items.length===1?'':'s'}</span>
             <span>${items.filter(it=>it.estado==='oido').length} sin marchar</span>
@@ -2301,6 +2719,14 @@ function renderPedidoScreen() {
           </div>
         </div>
         <div class="actions">
+          <button class="btn-ico" id="btn-alergias-ped">
+            <span class="material-symbols-outlined">health_and_safety</span>
+            <span>Alergias</span>
+          </button>
+          <button class="btn-ico" id="btn-precuenta-ped">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span>Pre-cuenta</span>
+          </button>
           <button class="btn-ico ghost" id="btn-suspender-ped">
             <span class="material-symbols-outlined">pause</span>
             <span>Suspender</span>
@@ -2315,6 +2741,9 @@ function renderPedidoScreen() {
         <div class="silla-picker" style="margin-bottom:14px; padding:0 4px">
           ${sillaBtns}
         </div>
+        ${courseMarcharBar ? `<div style="padding:0 4px 10px;display:flex;flex-wrap:wrap;align-items:center">
+          <span class="sheet-section-label" style="width:100%;margin-bottom:6px">Marchar por tiempo</span>${courseMarcharBar}
+        </div>` : ''}
         ${grupoHtml}
       </div>
 
@@ -2366,6 +2795,12 @@ function renderPedidoScreen() {
     const id = b.closest('.item-row').dataset.iid;
     eliminarItem(id, ped.id);
   });
+  $$('[data-marchar-course]').forEach(b => b.onclick = () => marcharCurso(+b.dataset.marcharCourse));
+  $('#btn-alergias-ped').onclick = () => abrirDialogoAlergias(ped);
+  $('#btn-precuenta-ped').onclick = () => {
+    imprimirPreCuenta(ped, totalesBasicos(ped));
+    toast('Pre-cuenta enviada a impresión', 'ok');
+  };
   $('#btn-suspender-ped').onclick = async () => {
     await suspender(ped.id);
     state.screen = 'floor'; render();
@@ -2373,15 +2808,34 @@ function renderPedidoScreen() {
 }
 
 /* ========= ITEM PICKER (modal) ========= */
+// CA-22: detecta alérgenos en conflicto entre un plato y las alergias registradas.
+// Si el ítem va al centro (compartido) revisa TODAS las sillas (extrapolación).
+function normAlerg(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function conflictoAlergenos(recetaAlergenos, seat, ped) {
+  const ra = (recetaAlergenos || []).map(normAlerg);
+  if (!ra.length) return [];
+  const map = (ped && ped.alergias_por_silla) || {};
+  const sillas = (seat === 0 || seat == null) ? Object.keys(map) : [String(seat)];
+  const hits = new Set();
+  sillas.forEach(s => (map[s] || []).forEach(al => {
+    const na = normAlerg(al);
+    if (na && ra.some(x => x.includes(na) || na.includes(x))) hits.add(al);
+  }));
+  return Array.from(hits);
+}
+
 function openItemPicker(r, ped) {
   let qty = 1;
-  let notas = '';
   let seat = state.sillaActiva;
   let urgente = false;
+  let course = courseSugerido(r);          // CA-02
+  const selMods = new Set();               // CA-10: ids de modificadores activos
+  const catalogoMods = modsDe(r.modulo || state.menuTab);
+  const precioBase = Number(r.precio_venta) || 0;
 
   // términos de carne / vuelta para platos relevantes
-  const esCarne = /carne|osso|carpaccio|prosciutto|risotto/i.test(r.nombre + ' ' + (r.categoria_menu||''));
-  const terminos = ['Jugoso','A punto','Bien cocido','Sin sal','Sin gluten','Para llevar'];
+  const esCarne = /carne|osso|carpaccio|prosciutto|risotto|bistec|lomo|filete/i.test(r.nombre + ' ' + (r.categoria_menu||''));
+  const terminos = ['Jugoso','A punto','Bien cocido','Sin sal','Para llevar'];
 
   const sillaPicker = [
     `<button class="silla-pick-btn centro ${seat===0?'active':''}" data-s="0">★<span class="sub">CENTRO</span></button>`,
@@ -2389,17 +2843,30 @@ function openItemPicker(r, ped) {
       `<button class="silla-pick-btn ${seat===s?'active':''}" data-s="${s}">${s}</button>`)
   ].join('');
 
+  const courseBtns = COURSES.map(c =>
+    `<button class="chip ${course===c.step?'active':''}" data-course="${c.step}">${c.emoji} ${c.label}</button>`).join('');
+
+  const modBtns = catalogoMods.map(m => {
+    const etiq = m.pct ? `+${Math.round(m.pct*100)}%` : (m.precio>0 ? '+'+money(m.precio) : 'gratis');
+    return `<button class="chip" data-mod="${m.id}">${m.nombre} <span style="opacity:.6">${etiq}</span></button>`;
+  }).join('');
+
   $('#item-modal-inner').innerHTML = `
     <div class="modal-head">
       <span class="icon">${r.emoji || '🍽️'}</span>
       <h3>${r.nombre}</h3>
-      <span class="price">${money(r.precio_venta)}</span>
+      <span class="price" id="im-price-live">${money(precioBase)}</span>
       <button class="sheet-close" id="im-close"><span class="material-symbols-outlined">close</span></button>
     </div>
     <div class="modal-body">
       <div class="sheet-section">
         <div class="sheet-section-label">Para qué silla</div>
         <div class="silla-picker">${sillaPicker}</div>
+        <div id="im-alerg-warn" style="display:none;margin-top:10px;font-size:12px;font-weight:600;background:var(--red-soft);color:var(--secondary);border:2px solid var(--secondary);border-radius:10px;padding:8px 12px"></div>
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Tiempo / curso</div>
+        <div class="chips" id="im-course">${courseBtns}</div>
       </div>
       <div class="sheet-section">
         <div class="sheet-section-label">Cantidad</div>
@@ -2408,6 +2875,10 @@ function openItemPicker(r, ped) {
           <span class="com-num" id="im-qty">1</span>
           <button id="im-plus">+</button>
         </div>
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">Modificadores</div>
+        <div class="chips" id="im-mods">${modBtns}</div>
       </div>
       ${esCarne ? `
         <div class="sheet-section">
@@ -2419,7 +2890,7 @@ function openItemPicker(r, ped) {
       ` : ''}
       <div class="sheet-section">
         <div class="sheet-section-label">Notas de cocina (opcional)</div>
-        <textarea class="input" id="im-notas" rows="2" placeholder="Sin cebolla, alergia maní, en pan aparte..."></textarea>
+        <textarea class="input" id="im-notas" rows="2" placeholder="Sin cebolla, en pan aparte..."></textarea>
       </div>
       <div class="sheet-section">
         <div class="prop-row">
@@ -2438,57 +2909,87 @@ function openItemPicker(r, ped) {
       <button class="btn ghost" id="im-cancel">Atrás</button>
       <button class="btn primary" id="im-add" style="flex:1">
         <span class="material-symbols-outlined">add_circle</span>
-        Agregar
+        <span id="im-add-lbl">Agregar</span>
       </button>
     </div>
   `;
   $('#item-modal').classList.add('open');
 
-  const updQty = () => $('#im-qty').textContent = qty;
+  const modsActivos = () => catalogoMods.filter(m => selMods.has(m.id));
+  const precioUnit = () => +(precioBase + deltaModificadores(modsActivos(), precioBase)).toFixed(2);
+  const refrescarPrecio = () => {
+    const pu = precioUnit();
+    $('#im-price-live').textContent = money(pu);
+    $('#im-add-lbl').textContent = 'Agregar · ' + money(pu * qty);
+  };
+  const refrescarAlerg = () => {
+    const hits = conflictoAlergenos(r.alergenos, seat, ped);
+    const w = $('#im-alerg-warn');
+    if (hits.length) {
+      w.style.display = 'block';
+      w.innerHTML = `<span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">warning</span> Alerta alergia: ${hits.join(', ')} ${seat===0?'(alguna silla la registró · plato compartido)':'en silla '+seat}`;
+    } else w.style.display = 'none';
+  };
+
+  const updQty = () => { $('#im-qty').textContent = qty; refrescarPrecio(); };
   const updSillas = () => $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => {
     b.classList.toggle('active', +b.dataset.s === seat);
   });
   $('#im-minus').onclick = () => { if (qty>1) qty--; updQty(); };
   $('#im-plus').onclick = () => { if (qty<20) qty++; updQty(); };
-  $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => b.onclick = () => { seat = +b.dataset.s; updSillas(); });
+  $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => b.onclick = () => { seat = +b.dataset.s; updSillas(); refrescarAlerg(); });
+  $$('#im-course .chip').forEach(b => b.onclick = () => {
+    course = +b.dataset.course;
+    $$('#im-course .chip').forEach(x => x.classList.toggle('active', +x.dataset.course === course));
+  });
+  $$('#im-mods .chip').forEach(b => b.onclick = () => {
+    const id = b.dataset.mod;
+    if (selMods.has(id)) selMods.delete(id); else selMods.add(id);
+    b.classList.toggle('active', selMods.has(id));
+    refrescarPrecio();
+  });
   if ($('#im-chips')) $$('#im-chips .chip').forEach(b => b.onclick = () => {
     b.classList.toggle('active');
-    notas = $$('#im-chips .chip.active').map(x => x.dataset.t).join(' · ');
-    const taNotas = $('#im-notas').value;
-    if (taNotas && !taNotas.includes(notas) && notas) $('#im-notas').value = notas + (taNotas?(' · '+taNotas):'');
+    const sel = $$('#im-chips .chip.active').map(x => x.dataset.t).join(' · ');
+    const taNotas = $('#im-notas').value.split(' || ')[0] || '';
+    $('#im-notas').value = sel ? (sel + (taNotas && taNotas!==sel ? ' || ' + taNotas : '')) : taNotas;
   });
   $('#im-urgente').onclick = () => {
     urgente = !urgente;
     $('#im-urgente').textContent = urgente ? 'Urgente · va primero' : 'Normal';
     $('#im-urgente').classList.toggle('active', urgente);
-    if (urgente) $('#im-urgente').style.background = 'var(--secondary)';
-    else $('#im-urgente').style.background = '';
-    if (urgente) $('#im-urgente').style.color = 'white';
-    else $('#im-urgente').style.color = '';
+    $('#im-urgente').style.background = urgente ? 'var(--secondary)' : '';
+    $('#im-urgente').style.color = urgente ? 'white' : '';
   };
   $('#im-cancel').onclick = () => $('#item-modal').classList.remove('open');
   $('#im-close').onclick = () => $('#item-modal').classList.remove('open');
   $('#im-add').onclick = async () => {
     const notasFinal = $('#im-notas').value.trim();
-    await agregarItem(r, qty, seat, notasFinal, urgente, ped);
+    await agregarItem(r, qty, seat, notasFinal, urgente, ped, modsActivos(), course);
     $('#item-modal').classList.remove('open');
     state.sillaActiva = seat;
   };
+  refrescarPrecio();
+  refrescarAlerg();
 }
 
-async function agregarItem(r, qty, seat, notas, urgente, ped) {
-  const precio_unit = Number(r.precio_venta) || 0;
+async function agregarItem(r, qty, seat, notas, urgente, ped, mods = [], course = 2) {
+  const precio_unit = +((Number(r.precio_venta) || 0) + deltaModificadores(mods, Number(r.precio_venta) || 0)).toFixed(2);
+  // CA-22: confirmar si el plato choca con una alergia registrada
+  const hits = conflictoAlergenos(r.alergenos, seat, ped);
+  if (hits.length && !confirm('⚠ ALERGIA: ' + r.nombre + ' contiene ' + hits.join(', ') + '.\n¿Agregar de todas formas?')) return;
+  const modsLimpios = (mods || []).map(m => ({ id: m.id, nombre: m.nombre, precio: +(Number(m.precio||0) + (m.pct ? (Number(r.precio_venta)||0) * m.pct : 0)).toFixed(2) }));
   const payload = {
     pedido_id: ped.id,
     receta_id: r.id,
     nombre: r.nombre,
     qty,
     precio_unit,
-    precio_total: precio_unit * qty,
-    modificadores: {},
+    precio_total: +(precio_unit * qty).toFixed(2),
+    modificadores: modsLimpios,
     estado: 'oido',
     station: r.estacion_id || null,
-    course_step: 1,
+    course_step: course || 2,
     es_cortesia: false,
     notas: notas || null,
     seat_position: seat === 0 ? null : seat, // null = centro/compartido
@@ -2500,7 +3001,7 @@ async function agregarItem(r, qty, seat, notas, urgente, ped) {
   await recalcularYPersistirTotales(ped.id);
   await loadPedidos();
   render();
-  toast('Va · ' + r.nombre + (seat?' · silla '+seat:' · centro'), 'ok');
+  toast('Va · ' + r.nombre + (seat?' · silla '+seat:' · centro') + ' · ' + courseDe(course).label, 'ok');
 }
 
 async function eliminarItem(itemId, pedidoId) {
@@ -2514,32 +3015,109 @@ async function eliminarItem(itemId, pedidoId) {
   toast('Servido · ítem eliminado', 'ok');
 }
 
-async function marcharTodoPendientes() {
-  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
-  if (!ped) return;
-  const items = state.pedidoItemsCache[ped.id] || [];
-  const oidos = items.filter(it => it.estado === 'oido');
+// Núcleo de marcha: pasa ítems 'oido' a cocina, sella course_marchar_at e imprime comandas por estación (CA-06)
+async function marcharItems(ped, oidos, etiqueta) {
   if (!oidos.length) { toast('Nada que marchar', 'warn'); return; }
   const now = new Date().toISOString();
-  // BD: items en oido pasan a 'fuego' (urgentes) o 'va' (normal)
   const urgentes = oidos.filter(it => it.urgente).map(it => it.id);
   const normales = oidos.filter(it => !it.urgente).map(it => it.id);
   if (urgentes.length) {
-    const r = await sb.from('ca_pedido_items').update({ estado: 'fuego', enviado_cocina_at: now }).in('id', urgentes);
+    const r = await sb.from('ca_pedido_items').update({ estado: 'fuego', enviado_cocina_at: now, course_marchar_at: now }).in('id', urgentes);
     if (r.error) { toast('Atrás: ' + r.error.message, 'err'); return; }
   }
   if (normales.length) {
-    const r = await sb.from('ca_pedido_items').update({ estado: 'va', enviado_cocina_at: now }).in('id', normales);
+    const r = await sb.from('ca_pedido_items').update({ estado: 'va', enviado_cocina_at: now, course_marchar_at: now }).in('id', normales);
     if (r.error) { toast('Atrás: ' + r.error.message, 'err'); return; }
   }
   // estado_servicio: BD acepta abierta|ordenando|comiendo|cuenta_pedida|pagando
   if (['abierta','ordenando'].includes(ped.estado_servicio)) {
     await sb.from('ca_pedidos').update({ estado_servicio: 'comiendo' }).eq('id', ped.id);
   }
-  toast('En fuego · ' + oidos.length + ' ítem(s) a cocina', 'ok');
+  // CA-06: imprime comandas ruteadas por estación
+  imprimirComandasEstacion(ped, oidos, etiqueta);
+  toast('En fuego · ' + oidos.length + ' ítem(s) a cocina' + (etiqueta ? ' · ' + etiqueta : ''), 'ok');
   await loadPedidoItems(ped.id);
   await loadPedidos();
   render();
+}
+
+async function marcharTodoPendientes() {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) return;
+  const oidos = (state.pedidoItemsCache[ped.id] || []).filter(it => it.estado === 'oido');
+  await marcharItems(ped, oidos, null);
+}
+
+// CA-02: marchar solo los ítems de un tiempo/curso
+async function marcharCurso(step) {
+  const ped = state.pedidos.find(p => p.id === state.pedidoAbiertoId);
+  if (!ped) return;
+  const oidos = (state.pedidoItemsCache[ped.id] || []).filter(it => it.estado === 'oido' && (it.course_step || 2) === step);
+  await marcharItems(ped, oidos, courseDe(step).label);
+}
+
+// Totales rápidos para pre-cuenta desde la pantalla de pedido (sin depender de state.cobro)
+function totalesBasicos(ped) {
+  const items = (state.pedidoItemsCache[ped.id] || []).filter(it => it.estado !== 'cancelado');
+  const sub_bruto = items.reduce((a, it) => a + Number(it.precio_total || 0), 0);
+  const servicio_monto = +(sub_bruto * 0.10).toFixed(2);
+  return { sub_bruto, cortesias_total: 0, sub_neto: sub_bruto, servicio_monto, igv_incl: +(sub_bruto * 18 / 118).toFixed(2), cortesiasMontoPorItem: {} };
+}
+
+/* ========= ALERGIAS POR SILLA (CA-22) ========= */
+function abrirDialogoAlergias(ped) {
+  const num = ped.comensales || 1;
+  const work = JSON.parse(JSON.stringify(ped.alergias_por_silla || {}));
+  $('#sheet-mark').textContent = '⚕';
+  $('#sheet-mark').style.background = 'var(--red-soft)';
+  $('#sheet-mark').style.color = 'var(--secondary)';
+  $('#sheet-title').textContent = 'Alergias por silla';
+  $('#sheet-meta').textContent = 'Pedido #' + ped.ticket_num + ' · ' + num + ' comensal(es)';
+  const seatsHtml = Array.from({ length: num }, (_, i) => i + 1).map(s => {
+    const cur = work[String(s)] || [];
+    const chips = ALERGENOS_COMUNES.map(a => `<button class="chip ${cur.includes(a) ? 'active' : ''}" data-seat="${s}" data-al="${a}">${a}</button>`).join('');
+    const otras = cur.filter(a => !ALERGENOS_COMUNES.includes(a));
+    return `<div class="sheet-section">
+      <div class="sheet-section-label">Silla ${s}${cur.length ? ' · ' + cur.length + ' alerta(s)' : ''}</div>
+      <div class="chips">${chips}</div>
+      <input class="input" style="margin-top:8px" data-otras="${s}" placeholder="Otras alergias (separa con coma)" value="${otras.join(', ')}">
+    </div>`;
+  }).join('');
+  $('#sheet-body').innerHTML = `
+    <div style="font-size:12px;font-family:var(--font-mono);opacity:.7;margin-bottom:10px">
+      Las alergias advierten al agregar platos. En platos del centro (compartidos) se revisan todas las sillas.
+    </div>
+    ${seatsHtml}
+    <div class="sheet-section"><div class="btn-grid">
+      <button class="btn ghost" id="al-cancel">Atrás</button>
+      <button class="btn primary" id="al-save"><span class="material-symbols-outlined">save</span>Guardar alergias</button>
+    </div></div>`;
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+  $$('#sheet-body .chip[data-al]').forEach(b => b.onclick = () => {
+    const s = b.dataset.seat, a = b.dataset.al;
+    work[s] = work[s] || [];
+    if (work[s].includes(a)) work[s] = work[s].filter(x => x !== a); else work[s].push(a);
+    b.classList.toggle('active');
+  });
+  $('#al-cancel').onclick = closeSheet;
+  $('#al-save').onclick = () => guardarAlergias(ped, work);
+}
+async function guardarAlergias(ped, work) {
+  $$('#sheet-body [data-otras]').forEach(inp => {
+    const s = inp.dataset.otras;
+    const otras = inp.value.split(',').map(x => x.trim()).filter(Boolean);
+    const comunes = (work[s] || []).filter(a => ALERGENOS_COMUNES.includes(a));
+    const merged = [...comunes, ...otras];
+    if (merged.length) work[s] = merged; else delete work[s];
+  });
+  const { error } = await sb.from('ca_pedidos').update({ alergias_por_silla: work }).eq('id', ped.id);
+  if (error) { toast('Atrás: ' + error.message, 'err'); return; }
+  ped.alergias_por_silla = work;
+  const p = state.pedidos.find(x => x.id === ped.id); if (p) p.alergias_por_silla = work;
+  closeSheet();
+  render();
+  toast('Servido · alergias actualizadas', 'ok');
 }
 
 async function recalcularYPersistirTotales(pedidoId) {
@@ -2572,6 +3150,9 @@ async function abrirCobroScreen(pedidoId) {
     propina_custom: null,
     comprobante: { tipo: 'sin_comprobante', doc: '', nombre: '', email: '' },
     split_n: 1,
+    split_mode: 'proporcion',  // 'proporcion' | 'item' (CA-03)
+    sel_items: [],             // ítems seleccionados para la cuenta actual
+    pagados_items: [],         // ítems ya cubiertos por un pago en modo por-ítem
     metodo_actual: 'efectivo',
     monto_input: '',
     ref_input: '',
@@ -2615,7 +3196,7 @@ function calcularTotalesCobro(ped) {
 }
 
 function pagoLabel(m) {
-  const map = { efectivo:'💵 Efectivo', yape:'📱 Yape', plin:'📱 Plin', visa:'💳 Visa', mastercard:'💳 MC', amex:'💳 Amex', mercadopago:'🟦 MP', izipay:'📲 Izipay', gift_card:'🎫 GC' };
+  const map = { efectivo:'💵 Efectivo', yape:'📱 Yape', plin:'📱 Plin', visa:'💳 Visa', mastercard:'💳 MC', amex:'💳 Amex', mercado_pago:'🟦 MP', izipay:'📲 Izipay', gift_card:'🎫 GC' };
   return map[m] || m;
 }
 
@@ -2624,14 +3205,27 @@ function renderCobroScreen() {
   if (!ped) { state.screen = 'floor'; render(); return; }
   const items = state.pedidoItemsCache[ped.id] || [];
   const T = calcularTotalesCobro(ped);
-  const sugerido = state.cobro.split_n > 1 ? +(T.pendiente / state.cobro.split_n).toFixed(2) : T.pendiente;
+  const porItem = state.cobro.split_mode === 'item';
 
-  // Items (con cortesía marcada)
+  // CA-03: neto por ítem (precio menos cortesía aplicada) y total de la selección actual
+  const netoItem = (it) => Math.max(0, +(Number(it.precio_total||0) - (T.cortesiasMontoPorItem[it.id]||0)).toFixed(2));
+  const selNetoConServicio = +(state.cobro.sel_items.reduce((a, iid) => {
+    const it = items.find(x => x.id === iid); return a + (it ? netoItem(it) : 0);
+  }, 0) * 1.10).toFixed(2);
+
+  let sugerido;
+  if (porItem) sugerido = state.cobro.sel_items.length ? Math.min(T.pendiente, selNetoConServicio) : T.pendiente;
+  else sugerido = state.cobro.split_n > 1 ? +(T.pendiente / state.cobro.split_n).toFixed(2) : T.pendiente;
+
+  // Items (con cortesía marcada + selección por-ítem)
   const itemsHtml = items.map(it => {
     const cMonto = T.cortesiasMontoPorItem[it.id] || 0;
     const isCortesia = cMonto > 0;
+    const pagado = state.cobro.pagados_items.includes(it.id);
+    const sel = state.cobro.sel_items.includes(it.id);
     return `
-      <div class="cobro-item ${isCortesia?'cortesia':''}" data-iid="${it.id}">
+      <div class="cobro-item ${isCortesia?'cortesia':''} ${porItem?'selectable':''} ${sel?'sel':''} ${pagado?'pagado':''}" data-iid="${it.id}">
+        ${porItem ? `<span class="material-symbols-outlined" style="font-size:20px;color:${pagado?'var(--green)':sel?'var(--primary)':'var(--gray-soft)'}">${pagado?'task_alt':sel?'check_circle':'radio_button_unchecked'}</span>` : ''}
         <span class="qty">×${it.qty}</span>
         <span class="nm">${it.nombre}${it.notas ? '<br><span style="font-size:10px;font-family:var(--font-mono);opacity:0.6">'+it.notas+'</span>' : ''}</span>
         ${isCortesia ? '<span class="cortesia-tag">cortesía</span>' : ''}
@@ -2651,7 +3245,7 @@ function renderCobroScreen() {
     { k:'visa',      e:'💳', l:'Visa' },
     { k:'mastercard',e:'💳', l:'Mastercard' },
     { k:'amex',      e:'💳', l:'Amex' },
-    { k:'mercadopago', e:'🟦', l:'Mercado Pago' },
+    { k:'mercado_pago', e:'🟦', l:'Mercado Pago' },
     { k:'izipay',    e:'📲', l:'Izipay' },
     { k:'gift_card', e:'🎫', l:'Gift card' },
   ];
@@ -2745,7 +3339,7 @@ function renderCobroScreen() {
       ${G.saldo!=null ? `<div class="vuelto-row"><span>Saldo disponible</span><strong style="color:var(--primary)">${money(G.saldo)}</strong></div>` : ''}
       ${G.error ? `<div class="vuelto-row" style="color:var(--secondary)"><span>${G.error}</span></div>` : ''}
     `;
-  } else if (['yape','plin','mercadopago','izipay'].includes(M)) {
+  } else if (['yape','plin','mercado_pago','izipay'].includes(M)) {
     formExtraHtml = `
       <div class="sheet-section-label" style="margin-top:14px">Código de operación (ref)</div>
       <input class="input" id="ref-input" placeholder="ej. 12345678" value="${state.cobro.ref_input}" inputmode="numeric">
@@ -2784,14 +3378,26 @@ function renderCobroScreen() {
       </div>
 
       <div class="cobro-left">
-        <div class="sheet-section-label">Ítems del pedido · tap 🎁 para cortesía</div>
+        <div class="sheet-section-label">Ítems del pedido · tap 🎁 para cortesía${porItem ? ' · tap ítem para asignar a esta cuenta' : ''}</div>
         ${itemsHtml || '<div class="empty-state">Sin ítems</div>'}
       </div>
 
       <div class="cobro-right">
         <div class="sheet-section-label">Dividir cuenta</div>
-        <div class="split-chips">${splitHtml}</div>
-        ${state.cobro.split_n>1 ? `<div style="font-family:var(--font-mono);font-size:11px;opacity:0.6;margin-top:6px">Cada cuenta: ${money(T.pendiente/state.cobro.split_n)}</div>` : ''}
+        <div class="split-mode-tabs" style="display:flex;gap:6px;margin-bottom:8px">
+          <button class="comprobante-tab ${!porItem?'active':''}" data-split-mode="proporcion">Proporción</button>
+          <button class="comprobante-tab ${porItem?'active':''}" data-split-mode="item">Por ítem</button>
+        </div>
+        ${porItem ? `
+          <div style="font-family:var(--font-mono);font-size:12px;margin-top:4px">
+            Cuenta actual: <strong>${state.cobro.sel_items.length}</strong> ítem(s) · <strong style="color:var(--primary)">${money(selNetoConServicio)}</strong>
+            <span style="opacity:.6"> (incluye servicio)</span>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:4px">${state.cobro.pagados_items.length} de ${items.length} ítem(s) ya cubiertos</div>
+        ` : `
+          <div class="split-chips">${splitHtml}</div>
+          ${state.cobro.split_n>1 ? `<div style="font-family:var(--font-mono);font-size:11px;opacity:0.6;margin-top:6px">Cada cuenta: ${money(T.pendiente/state.cobro.split_n)}</div>` : ''}
+        `}
 
         <div class="sheet-section-label" style="margin-top:16px">Método de pago</div>
         <div class="pay-methods">${metHtml}</div>
@@ -2836,6 +3442,10 @@ function renderCobroScreen() {
           <div class="t cubierto"><span class="lbl">Pagado</span><span class="val">${money(T.pagado)}</span></div>
           <div class="t pendiente"><span class="lbl">Pendiente</span><span class="val">${money(T.pendiente)}</span></div>
         </div>
+        <button class="btn" id="precuenta-cobro" style="width:auto;min-width:150px">
+          <span class="material-symbols-outlined">receipt_long</span>
+          Pre-cuenta
+        </button>
         <button class="btn primary" id="confirmar-cobro" ${T.pendiente>0.01?'disabled':''}>
           <span class="material-symbols-outlined">check_circle</span>
           Cobrar y cerrar mesa
@@ -2845,10 +3455,26 @@ function renderCobroScreen() {
   `;
 
   // WIRES
-  $$('.cobro-item [data-act="cortesia"]').forEach(b => b.onclick = () => {
+  $$('.cobro-item [data-act="cortesia"]').forEach(b => b.onclick = (e) => {
+    e.stopPropagation();
     const iid = b.closest('.cobro-item').dataset.iid;
     abrirDialogoCortesia(iid);
   });
+  // CA-03: selección de ítems para la cuenta actual (modo por ítem)
+  if (porItem) $$('.cobro-item.selectable').forEach(row => row.onclick = () => {
+    const iid = row.dataset.iid;
+    if (state.cobro.pagados_items.includes(iid)) { toast('Ese ítem ya fue cobrado', 'warn'); return; }
+    const i = state.cobro.sel_items.indexOf(iid);
+    if (i >= 0) state.cobro.sel_items.splice(i, 1); else state.cobro.sel_items.push(iid);
+    state.cobro.monto_input = '';
+    render();
+  });
+  $$('[data-split-mode]').forEach(b => b.onclick = () => {
+    state.cobro.split_mode = b.dataset.splitMode;
+    state.cobro.split_n = 1; state.cobro.sel_items = []; state.cobro.monto_input = '';
+    render();
+  });
+  $('#precuenta-cobro').onclick = () => { imprimirPreCuenta(ped, T); toast('Pre-cuenta enviada a impresión', 'ok'); };
   $$('.pay-method-btn').forEach(b => b.onclick = () => {
     state.cobro.metodo_actual = b.dataset.met;
     state.cobro.ref_input = '';
@@ -2875,7 +3501,7 @@ function renderCobroScreen() {
     const v = prompt('Propina personalizada (S/)', state.cobro.propina_custom || '0');
     if (v != null && !isNaN(+v)) { state.cobro.propina_custom = +v; render(); }
   };
-  $$('.comprobante-tab').forEach(b => b.onclick = () => {
+  $$('.comprobante-tab[data-c]').forEach(b => b.onclick = () => {
     state.cobro.comprobante.tipo = b.dataset.c;
     if (b.dataset.c === 'sin_comprobante') { state.cobro.comprobante.doc=''; state.cobro.comprobante.nombre=''; }
     render();
@@ -2923,13 +3549,18 @@ function agregarPagoLocal(monto, recibido, vuelto) {
     if (!G.gift_id) { toast('Valida la gift card primero', 'warn'); return; }
     if (monto > G.saldo) { toast('Monto excede el saldo de la gift card', 'warn'); return; }
     pago.gift_card = { id: G.gift_id, codigo: G.codigo, saldo_previo: G.saldo };
-  } else if (['yape','plin','mercadopago','izipay'].includes(M)) {
+  } else if (['yape','plin','mercado_pago','izipay'].includes(M)) {
     if (!state.cobro.ref_input) { toast('Ingresa el código de operación', 'warn'); return; }
     pago.ref_externa = state.cobro.ref_input;
   } else if (['visa','mastercard','amex'].includes(M)) {
     pago.ref_externa = state.cobro.ref_input || null;
   }
   state.cobro.pagos.push(pago);
+  // CA-03: en modo por-ítem, los ítems seleccionados quedan cubiertos por este pago
+  if (state.cobro.split_mode === 'item' && state.cobro.sel_items.length) {
+    state.cobro.pagados_items = [...new Set([...state.cobro.pagados_items, ...state.cobro.sel_items])];
+    state.cobro.sel_items = [];
+  }
   state.cobro.monto_input = '';
   state.cobro.ref_input = '';
   state.cobro.recibido_input = '';
@@ -2987,7 +3618,7 @@ function abrirDialogoCortesia(itemId) {
     </div>
     <div class="sheet-section">
       <div style="font-size:11px;font-family:var(--font-mono);opacity:0.65;padding:10px;background:var(--amber-soft);border:1px dashed var(--outline);border-radius:8px">
-        ⚠ La cortesía queda registrada en auditoría con el mozo en turno como solicitante. En producción debe aprobarla un gerente.
+        ⚠ Toda cortesía requiere aprobación de un gerente. Queda registrada en auditoría: mozo solicitante + gerente aprobador.
       </div>
     </div>
     <div class="sheet-section">
@@ -3007,19 +3638,64 @@ function abrirDialogoCortesia(itemId) {
     if (!motivoSel) { toast('Selecciona un motivo', 'warn'); return; }
     if (!(montoCort > 0) || montoCort > Number(item.precio_total) + 0.01) { toast('Monto inválido', 'warn'); return; }
     const notas = $('#motivo-notas').value;
-    state.cobro.cortesias.push({
-      tmp_id: 'cort_' + Date.now(),
-      item_id: itemId,
+    // CA-07: paso de aprobación de gerente antes de aplicar
+    pedirAprobacionGerente({
+      item, itemId,
       monto: +montoCort.toFixed(2),
       motivo: motivoSel + (notas ? ' · ' + notas : ''),
     });
-    closeSheet();
-    render();
-    toast('Va · cortesía aplicada', 'ok');
   };
   $('#cort-full').onclick = () => aplicar(Number(item.precio_total));
   $('#cort-parcial-go').onclick = () => aplicar(+$('#cort-parcial').value);
   $('#cort-cancel').onclick = closeSheet;
+}
+
+// CA-07: selección del gerente que aprueba la cortesía (solicitante ≠ aprobador)
+function pedirAprobacionGerente(cort) {
+  const aprobadores = (state.gerentes || []).filter(g => g.id !== state.mozoId);
+  $('#sheet-mark').textContent = '🔑';
+  $('#sheet-mark').style.background = 'var(--tertiary)';
+  $('#sheet-mark').style.color = 'var(--ink)';
+  $('#sheet-title').textContent = 'Aprobación de gerente';
+  $('#sheet-meta').textContent = 'Cortesía ' + money(cort.monto) + ' · ' + cort.item.nombre;
+  const lista = aprobadores.map(g => `
+    <button class="mozo-item" data-gid="${g.id}">
+      <span class="mozo-avatar">${avatarLetters(g)}</span>
+      <span class="mozo-info">
+        <span class="name">${g.nombre} ${g.apellidos||''}</span>
+        <span class="rol">${g.rol}</span>
+      </span>
+      <span class="material-symbols-outlined">verified_user</span>
+    </button>
+  `).join('');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">¿Quién autoriza esta cortesía?</div>
+      ${lista || '<p style="text-align:center;padding:16px;opacity:0.6">No hay gerentes registrados</p>'}
+    </div>
+    <div class="sheet-section">
+      <button class="btn ghost" id="aprob-cancel">Atrás</button>
+    </div>
+  `;
+  $('#sheet-backdrop').classList.add('open');
+  $('#sheet').classList.add('open');
+  $$('#sheet-body .mozo-item[data-gid]').forEach(b => b.onclick = () => {
+    aplicarCortesiaAprobada(cort, b.dataset.gid);
+  });
+  $('#aprob-cancel').onclick = () => abrirDialogoCortesia(cort.itemId);
+}
+function aplicarCortesiaAprobada(cort, gerenteId) {
+  const g = (state.gerentes || []).find(x => x.id === gerenteId);
+  state.cobro.cortesias.push({
+    tmp_id: 'cort_' + Date.now(),
+    item_id: cort.itemId,
+    monto: cort.monto,
+    motivo: cort.motivo,
+    aprobada_por: gerenteId,
+  });
+  closeSheet();
+  render();
+  toast('Va · cortesía aprobada por ' + fmtMozo(g), 'ok');
 }
 
 async function confirmarCobro() {
@@ -3067,15 +3743,15 @@ async function confirmarCobro() {
         if (r.error) throw new Error('Gift card: ' + r.error.message);
       }
     }
-    // 3. ca_cortesias
+    // 3. ca_cortesias (CA-07: solicitante = mozo, aprobador = gerente)
     const cortesiasInsert = state.cobro.cortesias.map(c => ({
       pedido_id: ped.id,
       item_id: c.item_id || null,
-      tipo: c.item_id ? 'item' : 'global',
+      tipo: c.item_id ? 'item' : 'total_pedido',
       monto: c.monto,
       motivo: c.motivo,
       solicitada_por: state.mozoId || null,
-      aprobada_por: state.mozoId || null,
+      aprobada_por: c.aprobada_por || null,
       aprobada_at: pagado_at,
     }));
     if (cortesiasInsert.length) {
