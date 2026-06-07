@@ -42,6 +42,10 @@
       "destination": "/vuelto.html"
     },
     {
+      "source": "/rrhh",
+      "destination": "/rrhh.html"
+    },
+    {
       "source": "/finanzas",
       "destination": "/finanzas.html"
     },
