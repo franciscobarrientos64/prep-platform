@@ -66,6 +66,18 @@
       "destination": "/recetas.html"
     },
     {
+      "source": "/carta",
+      "destination": "/carta.html"
+    },
+    {
+      "source": "/menu",
+      "destination": "/carta.html"
+    },
+    {
+      "source": "/m",
+      "destination": "/carta.html"
+    },
+    {
       "source": "/el-libro",
       "destination": "/el-libro.html"
     },

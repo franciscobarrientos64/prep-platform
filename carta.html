@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5af9">
+<title>Carta · Casa Italia</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-bottom:90px}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+.hero{background:var(--ink);color:var(--bg);padding:22px 18px 18px;text-align:center;border-bottom:3px solid var(--outline)}
+.hero .logo{position:relative;width:150px;height:48px;margin:0 auto 8px}.hero .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+.hero h1{font-family:var(--font-display);font-size:26px}.hero .mesa{font-family:var(--font-mono);font-size:12px;opacity:.8;margin-top:4px}
+.navsec{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid var(--outline);display:flex;gap:8px;padding:10px 14px;overflow-x:auto}
+.navsec button{flex-shrink:0;padding:7px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:2px 2px 0 0 #000;cursor:pointer}
+.navsec button.active{background:var(--primary);color:#fff}
+.wrap{max-width:680px;margin:0 auto;padding:14px}
+.sec-t{font-family:var(--font-display);font-size:22px;margin:18px 0 10px}
+.dish{display:flex;gap:12px;background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:12px;margin-bottom:10px}
+.dish .ph{width:74px;height:74px;border-radius:12px;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;background-size:cover;background-position:center}
+.dish .b{flex:1;min-width:0}.dish h3{font-size:16px;font-weight:700}.dish .ds{font-size:13px;opacity:.7;margin-top:2px;line-height:1.35}
+.dish .alg{font-family:var(--font-mono);font-size:10px;color:var(--secondary);margin-top:4px}
+.dish .ft{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.dish .pr{font-family:var(--font-display);font-size:18px}
+.add{width:38px;height:38px;border:2px solid var(--outline);border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000;cursor:pointer;flex-shrink:0}
+.qtyc{display:flex;align-items:center;gap:10px}.qtyc button{width:32px;height:32px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);font-weight:700;box-shadow:2px 2px 0 0 #000;cursor:pointer}.qtyc .n{font-family:var(--font-display);font-size:16px;min-width:18px;text-align:center}
+.cartbar{position:fixed;bottom:0;left:0;right:0;z-index:40;padding:12px 16px;background:var(--bg);border-top:2px solid var(--outline)}
+.cartbar .btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:14px 18px;border:2px solid var(--outline);border-radius:14px;background:var(--primary);color:#fff;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);cursor:pointer}
+.cartbar .btn:disabled{opacity:.45}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:90vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 22px 12px;border-bottom:2px solid var(--outline);display:flex;justify-content:space-between;align-items:center}.sheet-head h2{font-family:var(--font-display);font-size:22px}
+.sheet-close{width:38px;height:38px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000}
+.sheet-body{padding:16px 22px 26px;overflow-y:auto}
+.ci{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--gray-soft)}.ci .nm{flex:1;font-weight:600;font-size:14px}
+.tot{display:flex;justify-content:space-between;font-family:var(--font-display);font-size:20px;margin:12px 0}
+.btn2{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:2px solid var(--outline);border-radius:14px;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);cursor:pointer;margin-top:8px}
+.btn2.primary{background:var(--primary);color:#fff}.btn2.ghost{background:transparent}
+.empty{text-align:center;padding:30px;font-family:var(--font-mono);font-size:13px;opacity:.6}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;background:var(--ink);color:#fff;border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-weight:600;box-shadow:var(--shadow);max-width:90%}
+.boot{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .l{width:200px;height:64px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<div class="hero"><div class="logo"><span class="l"></span></div><h1>Casa Italia</h1><div class="mesa" id="mesa">Carta digital</div></div>
+<nav class="navsec" id="nav"></nav>
+<main class="wrap" id="screen"></main>
+<div class="cartbar"><button class="btn" id="cart-btn" disabled><span><span class="material-symbols-outlined">shopping_bag</span> <span id="cart-n">0</span> ítems</span><span id="cart-t">S/ 0.00</span></button></div>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><h2 id="sheet-title">Tu pedido</h2><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const qs=new URLSearchParams(location.search);
+const MARCA='m6',LOCAL=qs.get('local')||'l11',MESA=qs.get('mesa')||'';
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const state={recetas:[],cart:{},sec:null};
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2600)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+
+async function load(){
+  if(MESA)$('#mesa').textContent='Mesa '+MESA.replace(/^t_/,'').toUpperCase();
+  const{data}=await sb.from('inv_recetas').select('*').eq('marca_id',MARCA).eq('activo',true).order('categoria_menu').order('orden_menu');
+  state.recetas=(data||[]).filter(r=>Number(r.precio_venta||0)>0);
+  render();$('#boot').classList.add('gone');
+}
+function secciones(){return [...new Set(state.recetas.map(r=>r.categoria_menu||'Otros'))]}
+function render(){
+  const secs=secciones();if(!state.sec)state.sec=secs[0];
+  $('#nav').innerHTML=secs.map(s=>`<button class="${state.sec===s?'active':''}" data-s="${s}">${s}</button>`).join('');
+  $$('#nav button').forEach(b=>b.onclick=()=>{state.sec=b.dataset.s;render();document.querySelector('#screen').scrollIntoView({behavior:'smooth',block:'start'})});
+  $('#screen').innerHTML=secs.map(sec=>{const rs=state.recetas.filter(r=>(r.categoria_menu||'Otros')===sec);
+    return `<div id="sec-${sec.replace(/\s/g,'_')}"><div class="sec-t">${sec}</div>${rs.map(dish).join('')}</div>`}).join('')||'<div class="empty">Carta no disponible</div>';
+  bindDishes();updateCart();
+}
+function dish(r){const q=state.cart[r.id]?.qty||0;
+  return `<div class="dish" data-id="${r.id}"><div class="ph" style="${r.foto_url?`background-image:url(${r.foto_url})`:''}">${r.foto_url?'':(r.emoji||'🍽️')}</div>
+    <div class="b"><h3>${r.nombre}</h3>${r.descripcion?`<div class="ds">${r.descripcion}</div>`:''}${(r.alergenos&&r.alergenos.length)?`<div class="alg">⚠ ${r.alergenos.join(', ')}</div>`:''}
+      <div class="ft"><span class="pr">${money(r.precio_venta)}</span>${q>0?`<div class="qtyc"><button data-m="${r.id}">−</button><span class="n">${q}</span><button data-p="${r.id}">+</button></div>`:`<div class="add" data-p="${r.id}"><span class="material-symbols-outlined">add</span></div>`}</div></div></div>`;
+}
+function bindDishes(){
+  $$('#screen [data-p]').forEach(b=>b.onclick=()=>chg(b.dataset.p,1));
+  $$('#screen [data-m]').forEach(b=>b.onclick=()=>chg(b.dataset.m,-1));
+}
+function chg(id,d){const r=state.recetas.find(x=>x.id===id);if(!r)return;const cur=state.cart[id]?.qty||0;const q=Math.max(0,cur+d);if(q===0)delete state.cart[id];else state.cart[id]={qty:q,r};render()}
+function cartItems(){return Object.values(state.cart)}
+function cartTotal(){return cartItems().reduce((a,it)=>a+it.qty*Number(it.r.precio_venta||0),0)}
+function updateCart(){const n=cartItems().reduce((a,it)=>a+it.qty,0);$('#cart-n').textContent=n;$('#cart-t').textContent=money(cartTotal());$('#cart-btn').disabled=n===0}
+
+$('#cart-btn').onclick=()=>{if(!cartItems().length)return;abrirCarrito()};
+function abrirCarrito(){
+  $('#sheet-title').textContent='Tu pedido'+(MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):'');
+  $('#sheet-body').innerHTML=`${cartItems().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${it.r.nombre}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${money(it.qty*it.r.precio_venta)}</span></div>`).join('')}
+    <div class="tot"><span>Total</span><span>${money(cartTotal())}</span></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:6px">El pedido llega directo a cocina. ${MESA?'Lo llevamos a tu mesa.':'Acércate a caja o indícanos tu mesa.'}</div>
+    <button class="btn2 primary" id="c-send"><span class="material-symbols-outlined">send</span>Enviar pedido a cocina</button>
+    <button class="btn2 ghost" id="c-bill"><span class="material-symbols-outlined">request_quote</span>Pedir la cuenta</button>`;
+  $$('#sheet-body [data-p]').forEach(b=>b.onclick=()=>{chg(b.dataset.p,1);abrirCarrito()});
+  $$('#sheet-body [data-m]').forEach(b=>b.onclick=()=>{chg(b.dataset.m,-1);cartItems().length?abrirCarrito():closeSheet()});
+  $('#c-send').onclick=enviarPedido;
+  $('#c-bill').onclick=()=>{closeSheet();toast('🧾 Avisamos al mozo para llevarte la cuenta')};
+  openSheet();
+}
+async function enviarPedido(){
+  const items=cartItems();if(!items.length)return;
+  $('#c-send').disabled=true;
+  const total=cartTotal();const subtotal=+(total/1.18).toFixed(2);const igv=+(total-subtotal).toFixed(2);
+  let ticket=Math.floor(Date.now()/1000)%100000;
+  try{const{data:mx}=await sb.from('ca_pedidos').select('ticket_num').eq('local_id',LOCAL).order('ticket_num',{ascending:false}).limit(1);if(mx&&mx[0]&&mx[0].ticket_num)ticket=Number(mx[0].ticket_num)+1;}catch(e){}
+  const{data:ped,error}=await sb.from('ca_pedidos').insert({marca_id:MARCA,local_id:LOCAL,ticket_num:ticket,mesa_id:MESA||null,origen:'qr',estado:'abierta',estado_servicio:'oido',abierta_at:new Date().toISOString(),subtotal,igv,total,moneda:'PEN',notas:'Pedido por carta QR'}).select().single();
+  if(error||!ped){toast('No se pudo enviar: '+(error?.message||''));$('#c-send').disabled=false;return}
+  const rows=items.map(it=>({pedido_id:ped.id,receta_id:it.r.id,nombre:it.r.nombre,qty:it.qty,precio_unit:Number(it.r.precio_venta),precio_total:+(it.qty*Number(it.r.precio_venta)).toFixed(2),estado:'oido',enviado_cocina_at:new Date().toISOString()}));
+  const{error:e2}=await sb.from('ca_pedido_items').insert(rows);
+  if(e2){toast('Pedido creado pero falló el detalle: '+e2.message);$('#c-send').disabled=false;return}
+  state.cart={};closeSheet();render();
+  $('#sheet-title').textContent='¡Pedido enviado!';$('#sheet-body').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:54px">🍝</div><h2 style="font-family:var(--font-display);font-size:24px;margin:8px 0">¡Va para la cocina!</h2><p style="opacity:.7">Pedido #${ticket}${MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):''}. En breve lo preparamos.</p><button class="btn2 primary" id="ok" style="margin-top:16px">Seguir viendo la carta</button></div>`;
+  $('#ok').onclick=closeSheet;openSheet();
+}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);
+load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="empty">No se pudo cargar la carta.</div>'});
+</script>
+</body>
+</html>
