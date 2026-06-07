@@ -30,7 +30,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .wrap{max-width:1180px;margin:0 auto;padding:20px 18px 60px}
 .section-t{font-family:var(--font-display);font-size:22px;margin:24px 0 14px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .section-t .sub{font-family:var(--font-mono);font-size:12px;font-weight:400;opacity:.55;text-transform:none;letter-spacing:0}
-.mods-band{background:linear-gradient(160deg,var(--primary-soft),#eaf6ef);border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:8px}
+.mods-band{
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(30,90,249,.10) 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(30,90,249,.10) 23px 24px),
+    var(--surface);
+  border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-sm);padding:18px;margin-bottom:8px}
 .mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .mod-card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 16px 14px;display:flex;flex-direction:column;gap:5px;text-decoration:none;color:var(--ink);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden;min-height:120px}
 .mod-card .material-symbols-outlined{font-size:30px}
