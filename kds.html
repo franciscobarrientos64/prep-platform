@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171c20">
+<title>Línea · KDS · Casa Italia</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#11151a;--surface:#1c2128;--ink:#f3f5f7;--outline:#000;--green:#10b981;--amber:#d4a000;--muted:#8b949e;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:#0c0f13;border-bottom:2px solid #000;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:90px;height:28px;flex-shrink:0;display:block}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:#fff}
+.brand-txt .cli{font-weight:700;font-size:13px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.hinfo{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid #000;border-radius:999px;background:var(--surface);font-weight:700;font-size:12px;font-family:var(--font-mono)}
+.chips{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;background:#0c0f13;border-bottom:2px solid #000}
+.chip{flex-shrink:0;padding:8px 16px;border:2px solid #000;border-radius:999px;background:var(--surface);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer}
+.chip.active{background:var(--primary);color:#fff}
+.main{flex:1;overflow-y:auto;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:3px solid #000;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.card.urg{border-color:var(--secondary)}
+.card .ch{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;background:#0c0f13}
+.card .ch .tk{font-family:var(--font-display);font-size:18px}
+.card .ch .mesa{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.timer{font-family:var(--font-mono);font-weight:700;font-size:14px;padding:3px 9px;border-radius:8px;border:2px solid #000}
+.t-ok{background:#12351f;color:#7ee2a8}.t-mid{background:#3a3210;color:#ffd966}.t-bad{background:#3a1414;color:#ff8a80}
+.items{padding:6px 0}
+.it{padding:9px 12px;border-bottom:1px solid #2a313a;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.it:last-child{border:none}
+.it .qty{font-family:var(--font-display);font-size:16px;min-width:26px;color:var(--tertiary)}
+.it .body{flex:1;min-width:0}.it .nm{font-weight:700;font-size:15px}
+.it .mod{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:2px}
+.it .nota{font-size:12px;color:#ffd966;margin-top:2px}
+.it .est{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:2px solid #000;white-space:nowrap}
+.it.done{opacity:.4}
+.it.done .nm{text-decoration:line-through}
+.it .urg{color:var(--secondary);font-weight:700;font-size:10px}
+.card .cf{padding:8px;display:flex;gap:8px;border-top:2px solid #000;background:#0c0f13}
+.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:2px solid #000;border-radius:10px;font-weight:700;font-size:13px;background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.go{background:var(--secondary);color:#fff}.btn.done{background:var(--green);color:#fff}
+.empty{text-align:center;padding:60px 20px;font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.toast-container{position:fixed;top:70px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#000;color:#fff;border:2px solid var(--primary);border-radius:12px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+.boot .spinner{width:34px;height:34px;border:4px solid #333;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · calentando la línea</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Línea · KDS</div></div></div>
+  <div class="hinfo" id="hinfo"></div>
+</header>
+<nav class="chips" id="chips"></nav>
+<main class="main" id="screen"></main>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const ESTI=[['oido','Oído','#3b4a5a'],['va','Va','#d4a000'],['fuego','En fuego','#ff3b30'],['servido','Servido','#10b981']];
+const FLUJO={oido:'va',va:'fuego',fuego:'servido'};
+const state={pedidos:[],items:[],station:'todas',channel:null};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+function estData(k){return ESTI.find(e=>e[0]===k)||['?','?','#666']}
+function normStation(s){const m={est_fria:'Fría',fria:'Fría',est_caliente:'Caliente',caliente:'Caliente',bar:'Barra',barra:'Barra',pizza:'Pizza',parrilla:'Parrilla',postres:'Postres',pasta:'Pasta'};return m[(s||'').toLowerCase()]||(s?s[0].toUpperCase()+s.slice(1):'Sin estación')}
+function mins(ts){if(!ts)return 0;return Math.floor((Date.now()-new Date(ts).getTime())/60000)}
+function tClass(m){return m>=15?'t-bad':m>=8?'t-mid':'t-ok'}
+function mesaLabel(p){if(p.tab_nombre)return p.tab_nombre;if(p.origen==='delivery')return 'Delivery';if(p.mesa_id)return (p.mesa_id||'').replace(/^t_/,'Mesa ').toUpperCase();return 'Para llevar'}
+function modTxt(m){if(!m)return'';try{const a=Array.isArray(m)?m:(typeof m==='string'?JSON.parse(m):m);if(Array.isArray(a))return a.map(x=>x.nombre||x.name||x).join(' · ');if(typeof a==='object')return Object.values(a).flat().map(x=>x.nombre||x).join(' · ')}catch(e){}return ''}
+function toast(m){const e=document.createElement('div');e.className='toast';e.innerHTML='<span class="material-symbols-outlined">check_circle</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s';e.style.opacity='0';setTimeout(()=>e.remove(),300)},2000)}
+
+async function loadData(){
+  const{data:peds}=await sb.from('ca_pedidos').select('id,ticket_num,mesa_id,tab_nombre,origen,abierta_at,estado').eq('local_id',LOCAL).eq('estado','abierta');
+  state.pedidos=peds||[];
+  const ids=state.pedidos.map(p=>p.id);
+  if(!ids.length){state.items=[];return}
+  const{data:its}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');
+  state.items=its||[];
+}
+async function loadAll(){await loadData();render();subscribe();$('#boot').classList.add('gone')}
+
+function ped(id){return state.pedidos.find(p=>p.id===id)}
+function stationsActivas(){return [...new Set(state.items.map(i=>normStation(i.station)))]}
+
+function render(){
+  const sts=stationsActivas();
+  const items=state.station==='todas'?state.items:state.items.filter(i=>normStation(i.station)===state.station);
+  const viejo=Math.max(0,...state.items.map(i=>mins(i.enviado_cocina_at||i.created_at)));
+  $('#hinfo').innerHTML=`<span class="pill">${state.items.length} ítems</span><span class="pill ${tClass(viejo)}">↑ ${viejo} min</span>`;
+  $('#chips').innerHTML=['todas',...sts].map(s=>`<button class="chip ${state.station===s?'active':''}" data-s="${s}">${s==='todas'?'Todas':s}${s!=='todas'?(' · '+state.items.filter(i=>normStation(i.station)===s).length):''}</button>`).join('');
+  $$('#chips .chip').forEach(b=>b.onclick=()=>{state.station=b.dataset.s;render()});
+  // agrupar por pedido
+  const porPed={};items.forEach(i=>{(porPed[i.pedido_id]=porPed[i.pedido_id]||[]).push(i)});
+  const cards=Object.entries(porPed).map(([pid,its])=>{const p=ped(pid);if(!p)return'';
+    const t0=Math.min(...its.map(i=>new Date(i.enviado_cocina_at||i.created_at).getTime()));const m=Math.floor((Date.now()-t0)/60000);
+    const urg=its.some(i=>i.urgente);
+    return `<div class="card ${urg?'urg':''}"><div class="ch"><div><div class="tk">#${p.ticket_num||'—'}</div><div class="mesa">${mesaLabel(p)}</div></div><span class="timer ${tClass(m)}">${m}′</span></div>
+      <div class="items">${its.sort((a,b)=>(a.seat_position||0)-(b.seat_position||0)).map(itRow).join('')}</div>
+      <div class="cf"><button class="btn go" data-allnext="${pid}">Avanzar todo</button><button class="btn done" data-alldone="${pid}">Servir todo</button></div></div>`;
+  }).join('');
+  $('#screen').innerHTML=Object.keys(porPed).length?`<div class="grid">${cards}</div>`:'<div class="empty">🍃 Línea limpia — sin comandas pendientes</div>';
+  $$('#screen .it').forEach(el=>el.onclick=()=>bump(el.dataset.id));
+  $$('#screen [data-allnext]').forEach(b=>b.onclick=()=>avanzarTodo(b.dataset.allnext));
+  $$('#screen [data-alldone]').forEach(b=>b.onclick=()=>servirTodo(b.dataset.alldone));
+}
+function itRow(i){const e=estData(i.estado);const mod=modTxt(i.modificadores);
+  return `<div class="it" data-id="${i.id}"><span class="qty">${Number(i.qty||1)}×</span><div class="body"><div class="nm">${i.nombre}${i.urgente?' <span class="urg">⚡URGENTE</span>':''}</div>${mod?`<div class="mod">${mod}</div>`:''}${i.notas?`<div class="nota">📝 ${i.notas}</div>`:''}</div><span class="est" style="background:${e[2]};color:#fff">${e[1]}</span></div>`;
+}
+
+async function bump(itemId){const i=state.items.find(x=>x.id===itemId);if(!i)return;const sig=FLUJO[i.estado];if(!sig)return;
+  const patch={estado:sig};if(sig==='servido')patch.servido_at=new Date().toISOString();
+  const{error}=await sb.from('ca_pedido_items').update(patch).eq('id',itemId);if(error){toast('Error');return}
+  await loadData();render();
+}
+async function avanzarTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&FLUJO[i.estado]);
+  await Promise.all(its.map(i=>sb.from('ca_pedido_items').update({estado:FLUJO[i.estado]}).eq('id',i.id)));
+  await loadData();render();toast('Comanda avanzada');
+}
+async function servirTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&i.estado!=='servido');
+  await Promise.all(its.map(i=>sb.from('ca_pedido_items').update({estado:'servido',servido_at:new Date().toISOString()}).eq('id',i.id)));
+  await loadData();render();toast('Comanda servida');
+}
+
+function subscribe(){if(state.channel)sb.removeChannel(state.channel);
+  state.channel=sb.channel('kds_'+LOCAL)
+    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedido_items'},async()=>{await loadData();render()})
+    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},async()=>{await loadData();render()})
+    .subscribe();
+}
+setInterval(()=>{if(!$('#boot').classList.contains('gone'))return;render()},30000); // refresca timers
+loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
+</script>
+</body>
+</html>

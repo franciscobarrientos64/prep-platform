@@ -34,6 +34,14 @@
       "destination": "/bienvenida.html"
     },
     {
+      "source": "/kds",
+      "destination": "/kds.html"
+    },
+    {
+      "source": "/linea",
+      "destination": "/kds.html"
+    },
+    {
       "source": "/mercado",
       "destination": "/mercado.html"
     },
