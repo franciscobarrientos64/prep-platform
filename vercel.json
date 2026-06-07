@@ -42,6 +42,14 @@
       "destination": "/vuelto.html"
     },
     {
+      "source": "/finanzas",
+      "destination": "/finanzas.html"
+    },
+    {
+      "source": "/contabilidad",
+      "destination": "/finanzas.html"
+    },
+    {
       "source": "/reservar",
       "destination": "/bienvenida.html"
     },
