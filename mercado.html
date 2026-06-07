@@ -133,7 +133,9 @@ const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/fal
 
 const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
-  pedidoQty:{},pedidoCat:'todas',pedidoInit:false,channel:null};
+  pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
+  cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
+const UNIDADES=['unidad','kg','g','l','ml','lata','botella','atado','caja','paquete','docena','bolsa'];
 
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toFixed(2)}
@@ -171,6 +173,7 @@ function categorias(){return Array.from(new Set(state.productos.map(p=>p.categor
 /* ===== ROUTER ===== */
 function render(){recalcStock();renderHeader();renderTabs();
   if(state.view==='inventario')renderInventario();
+  else if(state.view==='carga')renderCarga();
   else if(state.view==='pedido')renderPedido();
   else if(state.view==='compras')renderCompras();
   else if(state.view==='mermas')renderMermas();
@@ -192,6 +195,7 @@ function renderHeader(){
 function renderTabs(){
   const nPedido=Object.values(state.pedidoQty).filter(q=>q>0).length;
   const tabs=[{k:'inventario',l:'Inventario',ico:'inventory_2',n:state.productos.length},
+    {k:'carga',l:'Carga rápida',ico:'bolt'},
     {k:'pedido',l:'Armar pedido',ico:'list_alt',n:nPedido||null},
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
     {k:'mermas',l:'Mermas',ico:'delete_sweep',n:state.mermas.length},
@@ -350,6 +354,60 @@ function renderMovimientos(){
   $('#screen').innerHTML=`<div class="field-lbl" style="margin-bottom:10px">Últimos movimientos de inventario</div>
     <table class="tbl"><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cant.</th><th>Valor</th><th>Ref/Motivo</th></tr>
     ${state.movs.map(m=>{const p=prod(m.producto_id);return `<tr><td>${m.fecha}</td><td>${p?.emoji||''} ${p?.nombre||m.producto_id}</td><td>${m.tipo}</td><td style="color:${Number(m.cantidad)<0?'var(--secondary)':'var(--green)'}">${Number(m.cantidad)>0?'+':''}${num(m.cantidad)}</td><td>${money(Math.abs(m.valor_total||0))}</td><td>${m.referencia||m.motivo||(m.proveedor_id?prov(m.proveedor_id)?.nombre:'')||''}</td></tr>`}).join('')||'<tr><td colspan="6" style="text-align:center;padding:30px;opacity:.5">Sin movimientos</td></tr>'}</table>`;
+}
+
+/* ===== CARGA RÁPIDA (recepción / conteo físico) · optimizado para teléfono ===== */
+function renderCarga(){
+  const cats=['todas',...categorias()];
+  const list=state.productos.filter(p=>state.cargaCat==='todas'||p.categoria===state.cargaCat);
+  const modo=state.cargaMode;
+  $('#screen').innerHTML=`
+    <div class="toolbar">
+      <div class="seg"><button class="${modo==='recepcion'?'active':''}" data-cm="recepcion">📥 Recepción</button><button class="${modo==='conteo'?'active':''}" data-cm="conteo">📋 Inventario</button></div>
+      ${modo==='conteo'?`<button class="btn-ico ${state.cargaCiego?'dark':'ghost'}" id="cg-ciego"><span class="material-symbols-outlined">${state.cargaCiego?'visibility_off':'visibility'}</span><span>Modo ciego</span></button>`:''}
+    </div>
+    <div class="chips" style="margin-bottom:10px">${cats.map(c=>`<button class="chip ${state.cargaCat===c?'active':''}" data-cc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">${modo==='recepcion'?'Ingresa lo que llegó.':(state.cargaCiego?'Cuenta a ciegas (no se muestra el stock).':'Cuenta el físico real.')} Escribe el número y pulsa Enter para saltar al siguiente. Toca la unidad para cambiarla.</div>
+    ${list.map((p,i)=>cargaRow(p,i,modo)).join('')||'<div class="empty-state">Sin productos</div>'}
+    <div style="position:sticky;bottom:0;background:var(--bg);padding:12px 0;margin-top:8px">
+      <button class="btn primary" id="cg-save"><span class="material-symbols-outlined">save</span>Guardar</button></div>`;
+  $$('#screen .seg [data-cm]').forEach(b=>b.onclick=()=>{state.cargaMode=b.dataset.cm;renderCarga()});
+  if($('#cg-ciego'))$('#cg-ciego').onclick=()=>{state.cargaCiego=!state.cargaCiego;renderCarga()};
+  $$('#screen .chip[data-cc]').forEach(b=>b.onclick=()=>{state.cargaCat=b.dataset.cc;renderCarga()});
+  $$('#screen [data-uni]').forEach(sel=>sel.onchange=()=>cambiarUnidad(sel.dataset.uni,sel.value));
+  const inputs=$$('#screen input[data-ci]');
+  inputs.forEach(inp=>{
+    inp.oninput=()=>{state.cargaVals[inp.dataset.pid]=inp.value;updateCargaCount()};
+    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const n=inputs[Number(inp.dataset.ci)+1];if(n){n.focus();n.select();n.scrollIntoView({block:'center',behavior:'smooth'})}else inp.blur()}};
+  });
+  $('#cg-save').onclick=guardarCarga;updateCargaCount();
+}
+function cargaRow(p,i,modo){const s=stock(p.id);const val=state.cargaVals[p.id]??'';
+  const inLista=UNIDADES.includes(p.unidad||'unidad');
+  const uniSel=`<select class="select" data-uni="${p.id}" style="width:auto;padding:3px 6px;font-size:11px;box-shadow:none;border-radius:6px">${UNIDADES.map(u=>`<option ${(p.unidad||'unidad')===u?'selected':''}>${u}</option>`).join('')}${inLista?'':`<option selected>${p.unidad}</option>`}</select>`;
+  return `<div class="row-card" style="grid-template-columns:auto 1fr auto;gap:10px;padding:10px 12px">
+    <span class="row-emoji">${p.emoji||'📦'}</span>
+    <div class="row-main"><h3 style="font-size:14px">${p.nombre}</h3>
+      <div class="row-meta" style="align-items:center">${(modo==='conteo'&&state.cargaCiego)?'<span style="opacity:.5">a ciegas</span>':`<span>stock ${num(s)}</span>`}${uniSel}</div></div>
+    <input class="input" inputmode="decimal" data-ci="${i}" data-pid="${p.id}" value="${val}" placeholder="${modo==='recepcion'?'+':num(s)}" style="width:82px;text-align:right;font-size:18px;font-family:var(--font-display)">
+  </div>`;
+}
+function updateCargaCount(){const c=Object.values(state.cargaVals).filter(v=>v!==''&&v!=null).length;const b=$('#cg-save');if(!b)return;b.disabled=!c;
+  b.innerHTML='<span class="material-symbols-outlined">save</span>'+(state.cargaMode==='recepcion'?('Ingresar '+c+' producto(s) a stock'):('Guardar conteo ('+c+')'));}
+async function cambiarUnidad(pid,unidad){const{error}=await sb.from('inv_productos').update({unidad}).eq('id',pid);if(error){toast('Atrás: '+error.message,'err');return}const p=prod(pid);if(p)p.unidad=unidad;toast('Unidad → '+unidad,'ok')}
+async function guardarCarga(){
+  const entries=Object.entries(state.cargaVals).filter(([pid,v])=>v!==''&&v!=null);
+  if(!entries.length){toast('Nada que guardar','warn');return}
+  const modo=state.cargaMode,now=hoyISO(),rows=[];
+  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;const v=Number(vRaw);if(isNaN(v))continue;
+    if(modo==='recepcion'){if(v<=0)continue;rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:'recepción',responsable:'Mercado'});}
+    else{const delta=+(v-stock(pid)).toFixed(2);if(delta===0)continue;rows.push({local_id:LOCAL,producto_id:pid,tipo:'ajuste',cantidad:delta,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(delta*Number(p.costo||0)).toFixed(2),fecha:now,motivo:'Conteo físico',responsable:'Mercado'});}}
+  if(!rows.length){toast('Sin cambios para guardar','warn');return}
+  if(!confirm((modo==='recepcion'?'Ingresar a stock ':'Ajustar por conteo ')+rows.length+' producto(s)?'))return;
+  const{error}=await sb.from('inv_movimientos').insert(rows);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  state.cargaVals={};await loadMovs();state.view='inventario';render();
+  toast('Servido · '+rows.length+' producto(s) '+(modo==='recepcion'?'ingresados':'ajustados por conteo'),'ok');
 }
 
 /* ===== ARMAR PEDIDO (formulario por categoría → consolidado por proveedor) ===== */
