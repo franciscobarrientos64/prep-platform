@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Usuarios & permisos · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--amber-soft:#fef3c7;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;display:block}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline)}
+.tab{padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer}.tab.active{background:var(--ink);color:var(--bg)}
+.main{flex:1;overflow-y:auto;padding:16px;max-width:900px;margin:0 auto;width:100%}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.select,.input{padding:9px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-bottom:6px;display:block}
+.row{display:flex;gap:12px;align-items:center;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.row:active{transform:translate(2px,2px);box-shadow:none}
+.av{width:42px;height:42px;border-radius:50%;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.row .info{flex:1;min-width:0}.row .info h3{font-size:15px;font-weight:700}.row .info .meta{font-family:var(--font-mono);font-size:11px;opacity:.7;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.tagx{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
+.tagx.sa{background:var(--secondary);color:#fff}.tagx.adm{background:var(--primary);color:#fff}.tagx.op{background:var(--gray-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 #000;cursor:pointer}.chip.active{background:var(--ink);color:var(--bg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:48px}
+.btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
+.permrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--gray-soft)}.permrow .nm{font-weight:600;font-size:14px}
+.permrow select{width:130px}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:92vh;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 22px 12px;border-bottom:2px solid var(--outline);display:flex;justify-content:space-between;align-items:center}.sheet-head h2{font-family:var(--font-display);font-size:21px}
+.sheet-close{width:38px;height:38px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000}
+.sheet-body{padding:16px 22px 26px;overflow-y:auto}.sheet-section+.sheet-section{margin-top:14px}
+.toast{position:fixed;top:70px;right:16px;z-index:200;background:var(--ink);color:#fff;border:2px solid var(--outline);border-radius:12px;padding:11px 16px;font-weight:600;box-shadow:var(--shadow-sm)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:200px;height:60px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Usuarios & permisos</div></div></div>
+  <div class="header-info"><a class="btn-ico" href="/prep" title="Consola Prep"><span class="material-symbols-outlined">tune</span></a><button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span id="addl">Usuario</span></button></div>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><h2 id="sheet-title">—</h2><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
+const NIVELES=['ninguno','ver','operar','aprobar','admin'];
+const ROLSIS=[['superadmin','Super Admin (Prep)'],['admin_marca','Admin restaurante'],['gerente','Gerente'],['operativo','Operativo']];
+const state={usuarios:[],roles:[],marcas:[],locales:[],emp:[],view:'usuarios'};
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2200)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+function ini(n){return (n||'?').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase()}
+function marcaNom(id){const m=state.marcas.find(x=>x.id===id);return m?m.nombre:(id||'—')}
+function rolNom(id){const r=state.roles.find(x=>x.id===id);return r?r.nombre:null}
+
+async function load(){
+  const[us,ro,ma,lo,em]=await Promise.all([
+    sb.from('prep_usuarios').select('*').order('created_at'),
+    sb.from('prep_roles').select('*').order('nombre'),
+    sb.from('inv_marcas').select('*').order('id'),
+    sb.from('inv_locales').select('*').order('id'),
+    sb.from('rrhh_empleados').select('id,nombre,apellidos,local_id')
+  ]);
+  state.usuarios=us.data||[];state.roles=ro.data||[];state.marcas=ma.data||[];state.locales=lo.data||[];state.emp=em.data||[];
+  render();$('#boot').classList.add('gone');
+}
+function render(){
+  $('#tabs').innerHTML=[['usuarios','Usuarios','group'],['roles','Roles & permisos','admin_panel_settings']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}">${l}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $('#addl').textContent=state.view==='roles'?'Rol':'Usuario';
+  if(state.view==='usuarios')renderUsuarios();else renderRoles();
+}
+function renderUsuarios(){
+  $('#screen').innerHTML=state.usuarios.map(u=>{const cls=u.rol_sistema==='superadmin'?'sa':u.rol_sistema==='admin_marca'?'adm':'op';
+    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div><span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
+  }).join('')||'<div class="empty">Sin usuarios</div>';
+  $$('#screen .row').forEach(r=>r.onclick=()=>editarUsuario(state.usuarios.find(u=>u.id===r.dataset.id)));
+}
+function editarUsuario(u){
+  const ed=!!u;const c=Object.assign({nombre:'',email:'',rol_sistema:'operativo',marca_id:'m6',local_id:'l11',rol_id:null,empleado_id:null,activo:true},u||{});
+  $('#sheet-title').textContent=ed?'Editar usuario':'Nuevo usuario';
+  const draw=()=>{
+    const rolesM=state.roles.filter(r=>r.marca_id===c.marca_id);
+    const empsL=state.emp.filter(e=>e.local_id===c.local_id);
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="u-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Email</div><input class="input" id="u-email" value="${c.email||''}"></div></div>
+      <div class="sheet-section"><div class="field-lbl">Rol del sistema</div><div class="chips" id="u-rs">${ROLSIS.map(r=>`<button class="chip ${c.rol_sistema===r[0]?'active':''}" data-r="${r[0]}">${r[1]}</button>`).join('')}</div></div>
+      ${c.rol_sistema!=='superadmin'?`<div class="sheet-section grid2"><div><div class="field-lbl">Marca</div><select class="select" id="u-marca">${state.marcas.map(m=>`<option value="${m.id}" ${c.marca_id===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select></div><div><div class="field-lbl">Local</div><select class="select" id="u-local"><option value="">— todos —</option>${state.locales.filter(l=>l.marca_id===c.marca_id).map(l=>`<option value="${l.id}" ${c.local_id===l.id?'selected':''}>${l.nombre}</option>`).join('')}</select></div></div>`:''}
+      ${c.rol_sistema==='operativo'?`<div class="sheet-section"><div class="field-lbl">Rol / permisos</div><select class="select" id="u-rol"><option value="">— elegir rol —</option>${rolesM.map(r=>`<option value="${r.id}" ${c.rol_id===r.id?'selected':''}>${r.nombre}</option>`).join('')}</select></div>`:''}
+      <div class="sheet-section"><div class="field-lbl">Vincular empleado (RRHH, opcional)</div><select class="select" id="u-emp"><option value="">— ninguno —</option>${empsL.map(e=>`<option value="${e.id}" ${c.empleado_id===e.id?'selected':''}>${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
+      <div class="sheet-section"><label class="chip ${c.activo?'active':''}" id="u-act" style="cursor:pointer">${c.activo?'✓ Activo':'Inactivo'}</label></div>
+      <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="u-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="u-cancel">Atrás</button>'}<button class="btn primary" id="u-save">Guardar</button></div></div>`;
+    $$('#u-rs .chip').forEach(b=>b.onclick=()=>{c.rol_sistema=b.dataset.r;draw()});
+    if($('#u-marca'))$('#u-marca').onchange=e=>{c.marca_id=e.target.value;c.local_id='';c.rol_id=null;draw()};
+    if($('#u-local'))$('#u-local').onchange=e=>c.local_id=e.target.value;
+    if($('#u-rol'))$('#u-rol').onchange=e=>c.rol_id=e.target.value||null;
+    $('#u-emp').onchange=e=>c.empleado_id=e.target.value||null;
+    $('#u-act').onclick=()=>{c.activo=!c.activo;draw()};
+    if($('#u-cancel'))$('#u-cancel').onclick=closeSheet;
+    if($('#u-del'))$('#u-del').onclick=async()=>{if(!confirm('¿Eliminar usuario?'))return;await sb.from('prep_usuarios').delete().eq('id',u.id);closeSheet();await load();toast('Usuario eliminado')};
+    $('#u-save').onclick=async()=>{c.nombre=$('#u-nom').value;c.email=$('#u-email').value;
+      if(!c.nombre){toast('Falta nombre');return}
+      const p={nombre:c.nombre,email:c.email,rol_sistema:c.rol_sistema,marca_id:c.rol_sistema==='superadmin'?null:c.marca_id,local_id:c.rol_sistema==='superadmin'?null:(c.local_id||null),rol_id:c.rol_sistema==='operativo'?c.rol_id:null,empleado_id:c.empleado_id,activo:c.activo};
+      const{error}=ed?await sb.from('prep_usuarios').update(p).eq('id',u.id):await sb.from('prep_usuarios').insert(p);
+      if(error){toast('Error: '+error.message);return}closeSheet();await load();toast('Usuario guardado')};
+  };draw();openSheet();
+}
+function renderRoles(){
+  $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).length;
+    return `<div class="row" data-id="${r.id}"><div class="av"><span class="material-symbols-outlined">badge</span></div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${marcaNom(r.marca_id)}</span><span>${np} módulo(s) con acceso</span></div></div><span class="tagx op">rol</span></div>`;
+  }).join('')||'<div class="empty">Sin roles</div>';
+  $$('#screen .row').forEach(el=>el.onclick=()=>editarRol(state.roles.find(r=>r.id===el.dataset.id)));
+}
+function editarRol(r){
+  const ed=!!r;const c=Object.assign({nombre:'',marca_id:'m6',permisos:{}},JSON.parse(JSON.stringify(r||{})));
+  $('#sheet-title').textContent=ed?'Editar rol':'Nuevo rol';
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section grid2"><div><div class="field-lbl">Nombre del rol</div><input class="input" id="r-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Marca</div><select class="select" id="r-marca">${state.marcas.map(m=>`<option value="${m.id}" ${c.marca_id===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select></div></div>
+    <div class="sheet-section"><div class="field-lbl">Permisos por módulo</div>${MODS.map(([k,l])=>`<div class="permrow"><span class="nm">${l}</span><select data-k="${k}">${NIVELES.map(n=>`<option value="${n}" ${(c.permisos[k]||'ninguno')===n?'selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div>
+    <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="r-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="r-cancel">Atrás</button>'}<button class="btn primary" id="r-save">Guardar rol</button></div></div>`;
+  $('#r-nom').onchange=e=>c.nombre=e.target.value;$('#r-marca').onchange=e=>c.marca_id=e.target.value;
+  $$('#sheet-body select[data-k]').forEach(s=>s.onchange=()=>{const v=s.value;if(v==='ninguno')delete c.permisos[s.dataset.k];else c.permisos[s.dataset.k]=v});
+  if($('#r-cancel'))$('#r-cancel').onclick=closeSheet;
+  if($('#r-del'))$('#r-del').onclick=async()=>{if(!confirm('¿Eliminar rol?'))return;await sb.from('prep_roles').delete().eq('id',r.id);closeSheet();await load();toast('Rol eliminado')};
+  $('#r-save').onclick=async()=>{if(!c.nombre){toast('Falta nombre');return}const p={nombre:c.nombre,marca_id:c.marca_id,permisos:c.permisos};const{error}=ed?await sb.from('prep_roles').update(p).eq('id',r.id):await sb.from('prep_roles').insert(p);if(error){toast('Error: '+error.message);return}closeSheet();await load();toast('Rol guardado')};
+  openSheet();
+}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);
+$('#h-add').addEventListener('click',()=>state.view==='roles'?editarRol(null):editarUsuario(null));
+load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="empty">Error al cargar</div>'});
+</script>
+</body>
+</html>
