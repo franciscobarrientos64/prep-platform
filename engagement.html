@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Engagement · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:11px;font-family:var(--font-mono)}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.main{flex:1;overflow-y:auto;padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px}
+.kpi .v{font-family:var(--font-display);font-size:22px;line-height:1.05;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin-top:4px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.input,.select{padding:9px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 var(--outline)}.chip.active{background:var(--ink);color:var(--bg)}
+.cli{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.cli:active{transform:translate(2px,2px);box-shadow:none}
+.av{width:46px;height:46px;border-radius:50%;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;background-size:cover;background-position:center}
+.cli .info{flex:1;min-width:0}.cli .info h3{font-size:15px;font-weight:700}.cli .info .meta{font-family:var(--font-mono);font-size:11px;opacity:.7;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.cli .right{text-align:right;flex-shrink:0}
+.tier{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
+.grp-t{font-family:var(--font-display);font-size:17px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.aud{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:12px}
+.aud .ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.aud .ah h3{font-family:var(--font-display);font-size:16px}
+.aud .ci{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--gray-soft);font-size:13px}.aud .ci:last-child{border:none}
+.mini-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:12px;box-shadow:2px 2px 0 0 var(--outline)}
+.mini-btn.wa{background:#25d366;color:#fff}.mini-btn.primary{background:var(--primary);color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:50px}
+.btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}.btn.wa{background:#25d366;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bar{margin-bottom:6px}.bar .t{display:flex;justify-content:space-between;font-size:12px}.bar .track{height:8px;border-radius:99px;background:var(--gray-soft);overflow:hidden}.bar .fill{height:100%}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-bottom:6px;display:block}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:92vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 24px 14px;border-bottom:2px solid var(--outline);display:flex;align-items:center;gap:14px}
+.sheet-mark{width:52px;height:52px;border:2px solid var(--outline);border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;background-size:cover;background-position:center}
+.sheet-title{flex:1}.sheet-title h2{font-family:var(--font-display);font-size:22px;line-height:1;margin-bottom:4px}.sheet-title .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.sheet-close{width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.sheet-body{padding:18px 24px 28px;overflow-y:auto}.sheet-section+.sheet-section{margin-top:14px}
+.info-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--gray-soft);font-size:14px;gap:10px}.info-row strong{font-family:var(--font-mono);text-align:right}
+.tagline{display:inline-block;font-family:var(--font-mono);font-size:10px;padding:2px 8px;border:1.5px solid var(--outline);border-radius:999px;margin:2px 4px 2px 0}
+.toast-container{position:fixed;top:76px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.ok{background:var(--primary);color:#fff}.toast.err{background:var(--secondary);color:#fff}.toast.warn{background:var(--tertiary)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · cuidando clientes</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Engagement</div></div></div>
+  <div class="header-info" id="hinfo"></div>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const NIVELES=[{k:'Diamante',min:5000,emoji:'💎',c:'#7c3aed'},{k:'Oro',min:2000,emoji:'🥇',c:'#d4a000'},{k:'Plata',min:800,emoji:'🥈',c:'#9aa0a6'},{k:'Bronce',min:0,emoji:'🥉',c:'#b87333'}];
+const state={clientes:[],puntos:[],campanas:[],view:'clientes',q:'',seg:'todos',channel:null};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
+function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
+function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nombre(c){return (c.nombre||'')+' '+(c.apellidos||'')}
+function iniciales(c){return ((c.nombre||'?')[0]+((c.apellidos||' ')[0]||'')).toUpperCase()}
+function mesDe(d){return d?Number(String(d).slice(5,7)):null}
+function diasDesde(d){if(!d)return null;return Math.floor((Date.now()-new Date(d).getTime())/86400000)}
+function nivelDe(c){const g=Number(c.total_gastado||0);return NIVELES.find(n=>g>=n.min)||NIVELES[NIVELES.length-1]}
+function puntosBase(c){return Math.floor(Number(c.total_gastado||0)/10)}
+function puntosBalance(c){return puntosBase(c)+state.puntos.filter(p=>p.cliente_id===c.id).reduce((a,p)=>a+Number(p.puntos||0),0)}
+function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;const i=t==='ok'?'check_circle':t==='err'?'error':t==='warn'?'warning':'info';e.innerHTML='<span class="material-symbols-outlined">'+i+'</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s,transform .3s';e.style.opacity='0';e.style.transform='translateX(120%)';setTimeout(()=>e.remove(),300)},2800)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+function setHead(mk,t,m,foto){const el=$('#sheet-mark');if(foto){el.style.backgroundImage='url('+foto+')';el.textContent=''}else{el.style.backgroundImage='';el.textContent=mk}$('#sheet-title').textContent=t;$('#sheet-meta').textContent=m||''}
+function waLink(tel,msg){const t=(tel||'').replace(/\D/g,'');return 'https://wa.me/'+(t.length<=9?'51'+t:t)+'?text='+encodeURIComponent(msg)}
+
+async function loadClientes(){const{data}=await sb.from('ms_clientes').select('*').eq('marca_id',MARCA).order('total_gastado',{ascending:false});state.clientes=data||[]}
+async function loadPuntos(){const{data}=await sb.from('eng_puntos').select('*').eq('marca_id',MARCA);state.puntos=data||[]}
+async function loadCampanas(){const{data}=await sb.from('eng_campanas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false}).limit(50);state.campanas=data||[]}
+async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas()]);render();$('#boot').classList.add('gone')}
+
+function render(){
+  $('#hinfo').innerHTML=`<span class="pill">${state.clientes.length} clientes</span><span class="pill">${money(state.clientes.reduce((a,c)=>a+Number(c.total_gastado||0),0))} histórico</span>`;
+  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else renderCampanas();
+}
+
+function renderClientes(){
+  const segs=['todos',...new Set(state.clientes.map(c=>c.segmento).filter(Boolean))];
+  let list=state.clientes.filter(c=>state.seg==='todos'||c.segmento===state.seg);
+  if(state.q){const q=state.q.toLowerCase();list=list.filter(c=>nombre(c).toLowerCase().includes(q)||(c.telefono||'').includes(q))}
+  const tot=state.clientes.length,vip=state.clientes.filter(c=>nivelDe(c).k==='Diamante'||nivelDe(c).k==='Oro').length;
+  const tprom=tot?state.clientes.reduce((a,c)=>a+Number(c.ticket_promedio||0),0)/tot:0;
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${tot}</div><div class="l">Clientes</div></div>
+      <div class="kpi"><div class="v">${vip}</div><div class="l">Oro / Diamante</div></div>
+      <div class="kpi"><div class="v">${money(tprom)}</div><div class="l">Ticket promedio</div></div>
+      <div class="kpi"><div class="v">${state.clientes.filter(c=>diasDesde(c.ultima_visita)!=null&&diasDesde(c.ultima_visita)>45&&Number(c.total_visitas||0)>=2).length}</div><div class="l">En riesgo</div></div></div>
+    <div class="toolbar"><input class="input" id="q" placeholder="Buscar nombre o teléfono…" value="${state.q}" style="max-width:280px"></div>
+    <div class="chips" style="margin-bottom:12px">${segs.map(s=>`<button class="chip ${state.seg===s?'active':''}" data-s="${s}">${s}</button>`).join('')}</div>
+    ${list.map(cliCard).join('')||'<div class="empty">Sin clientes</div>'}`;
+  $('#q').oninput=e=>{state.q=e.target.value;renderClientes()};
+  $$('#screen .chip[data-s]').forEach(b=>b.onclick=()=>{state.seg=b.dataset.s;renderClientes()});
+  $$('#screen .cli').forEach(c=>c.onclick=()=>abrirFicha(state.clientes.find(x=>x.id===c.dataset.id)));
+}
+function cliCard(c){const n=nivelDe(c);
+  return `<div class="cli" data-id="${c.id}"><div class="av" style="${c.foto_url?`background-image:url(${c.foto_url})`:''}">${c.foto_url?'':iniciales(c)}</div>
+    <div class="info"><h3>${nombre(c)}</h3><div class="meta"><span>${num(c.total_visitas)} visitas</span><span>${money(c.total_gastado)}</span><span>${c.ultima_visita?('últ. '+c.ultima_visita):'—'}</span></div></div>
+    <div class="right"><span class="tier" style="background:${n.c};color:#fff">${n.emoji} ${n.k}</span><div style="font-family:var(--font-mono);font-size:11px;margin-top:5px">${num(puntosBalance(c))} pts</div></div></div>`;
+}
+
+function renderLoyalty(){
+  const porNivel={};NIVELES.forEach(n=>porNivel[n.k]=[]);state.clientes.forEach(c=>porNivel[nivelDe(c).k].push(c));
+  const max=Math.max(1,...NIVELES.map(n=>porNivel[n.k].length));
+  const top=[...state.clientes].sort((a,b)=>puntosBalance(b)-puntosBalance(a)).slice(0,8);
+  $('#screen').innerHTML=`
+    <div class="grp-t">Niveles de fidelidad</div>
+    <div style="background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:14px">
+      ${NIVELES.map(n=>`<div class="bar"><div class="t"><span>${n.emoji} ${n.k} <span style="opacity:.5">(desde ${money(n.min)})</span></span><span class="mono">${porNivel[n.k].length}</span></div><div class="track"><div class="fill" style="width:${Math.round(porNivel[n.k].length/max*100)}%;background:${n.c}"></div></div></div>`).join('')}
+      <div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:8px">1 punto por cada S/10 consumidos + bonos/canjes manuales.</div>
+    </div>
+    <div class="grp-t">Top clientes por puntos</div>
+    ${top.map((c,i)=>{const n=nivelDe(c);return `<div class="cli" data-id="${c.id}"><div class="av">${i+1}</div><div class="info"><h3>${nombre(c)}</h3><div class="meta"><span class="tier" style="background:${n.c};color:#fff">${n.emoji} ${n.k}</span><span>${money(c.total_gastado)}</span></div></div><div class="right"><div style="font-family:var(--font-display);font-size:20px">${num(puntosBalance(c))}</div><div style="font-family:var(--font-mono);font-size:9px;opacity:.6">PUNTOS</div></div></div>`}).join('')}`;
+  $$('#screen .cli').forEach(c=>c.onclick=()=>abrirFicha(state.clientes.find(x=>x.id===c.dataset.id)));
+}
+
+const MSGS={
+  cumple:c=>`¡Feliz cumpleaños ${c.nombre}! 🎂 En Casa Italia queremos celebrarte: te esperamos con un detalle especial. ¡Reserva cuando quieras!`,
+  aniversario:c=>`${c.nombre}, ¡feliz aniversario! 🥂 Celébralo en Casa Italia, tenemos una sorpresa para ti.`,
+  riesgo:c=>`${c.nombre}, ¡te extrañamos en Casa Italia! 🍝 Vuelve esta semana y disfruta de tu mesa favorita.`,
+  nuevos:c=>`${c.nombre}, ¡gracias por visitar Casa Italia! 🇮🇹 Esperamos verte pronto de nuevo.`,
+  vip:c=>`${c.nombre}, como cliente especial de Casa Italia queremos consentirte. ¡Escríbenos para tu próxima reserva! ⭐`
+};
+function audiencias(){
+  const mes=mesDe(hoyISO());
+  return [
+    {k:'cumple',t:'🎂 Cumpleaños del mes',cs:state.clientes.filter(c=>mesDe(c.fecha_nacimiento)===mes)},
+    {k:'aniversario',t:'🥂 Aniversarios del mes',cs:state.clientes.filter(c=>mesDe(c.aniversario)===mes)},
+    {k:'riesgo',t:'⚠ En riesgo (no vienen hace +45 días)',cs:state.clientes.filter(c=>diasDesde(c.ultima_visita)!=null&&diasDesde(c.ultima_visita)>45&&Number(c.total_visitas||0)>=2)},
+    {k:'nuevos',t:'✨ Nuevos (última visita ≤30 días, 1 visita)',cs:state.clientes.filter(c=>Number(c.total_visitas||0)<=1&&diasDesde(c.primera_visita)!=null&&diasDesde(c.primera_visita)<=30)},
+    {k:'vip',t:'⭐ VIP (Oro / Diamante)',cs:state.clientes.filter(c=>['Oro','Diamante'].includes(nivelDe(c).k))},
+  ];
+}
+function renderCampanas(){
+  const auds=audiencias();
+  $('#screen').innerHTML=`
+    <div class="grp-t">Audiencias para contactar</div>
+    ${auds.map(a=>`<div class="aud">
+      <div class="ah"><h3>${a.t}</h3><span class="pill">${a.cs.length}</span></div>
+      ${a.cs.length?a.cs.slice(0,6).map(c=>`<div class="ci"><span>${nombre(c)} <span style="opacity:.5">· ${c.telefono||'sin tel'}</span></span><a class="mini-btn wa" href="${waLink(c.telefono,MSGS[a.k](c))}" target="_blank" rel="noopener">WhatsApp</a></div>`).join(''):'<div style="opacity:.5;font-size:12px;padding:6px 0">Sin clientes en esta audiencia</div>'}
+      ${a.cs.length>6?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;padding:6px 0">+${a.cs.length-6} más…</div>`:''}
+      ${a.cs.length?`<button class="btn" style="margin-top:8px" data-camp="${a.k}"><span class="material-symbols-outlined">campaign</span>Registrar campaña (${a.cs.length})</button>`:''}
+    </div>`).join('')}
+    ${state.campanas.length?`<div class="grp-t">Historial de campañas</div>${state.campanas.map(c=>`<div class="cli" style="cursor:default"><div class="info"><h3>${c.nombre||c.audiencia}</h3><div class="meta"><span>${c.fecha}</span><span>${c.canal}</span><span>${c.n_destinatarios} destinatarios</span></div></div></div>`).join('')}`:''}`;
+  $$('#screen [data-camp]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.camp);registrarCampana(a)});
+}
+async function registrarCampana(a){
+  const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:a.cs.length,estado:'enviada',fecha:hoyISO()});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadCampanas();render();toast('Servido · campaña registrada ('+a.cs.length+' destinatarios)','ok');
+}
+
+function abrirFicha(c){
+  const n=nivelDe(c),pts=puntosBalance(c);
+  const fav=Array.isArray(c.platos_favoritos)?c.platos_favoritos:(c.platos_favoritos?Object.keys(c.platos_favoritos):[]);
+  setHead(iniciales(c),nombre(c),(c.segmento||'Cliente')+' · '+n.emoji+' '+n.k,c.foto_url);
+  $('#sheet-body').innerHTML=`
+    <div class="kpis" style="margin-bottom:12px">
+      <div class="kpi"><div class="v">${num(c.total_visitas)}</div><div class="l">Visitas</div></div>
+      <div class="kpi"><div class="v">${money(c.total_gastado)}</div><div class="l">Gastado</div></div>
+      <div class="kpi"><div class="v">${money(c.ticket_promedio)}</div><div class="l">Ticket prom.</div></div>
+      <div class="kpi"><div class="v" style="color:${n.c}">${num(pts)}</div><div class="l">Puntos · ${n.k}</div></div></div>
+    <div class="sheet-section"><div class="field-lbl">Perfil</div>
+      <div class="info-row"><span>Primera / última visita</span><strong>${c.primera_visita||'—'} · ${c.ultima_visita||'—'}</strong></div>
+      <div class="info-row"><span>Cada cuánto viene</span><strong>${c.dias_entre_visitas?Math.round(c.dias_entre_visitas)+' días':'—'}</strong></div>
+      <div class="info-row"><span>Cumpleaños / aniversario</span><strong>${c.fecha_nacimiento||'—'} · ${c.aniversario||'—'}</strong></div>
+      <div class="info-row"><span>Teléfono</span><strong>${c.telefono||'—'}</strong></div>
+      ${c.instagram?`<div class="info-row"><span>Instagram</span><strong>${c.instagram}</strong></div>`:''}</div>
+    ${(c.bebida_preferida||fav.length||c.zona_preferida)?`<div class="sheet-section"><div class="field-lbl">Gustos</div>${fav.length?`<div class="info-row"><span>Platos favoritos</span><strong>${fav.slice(0,3).join(', ')}</strong></div>`:''}${c.bebida_preferida?`<div class="info-row"><span>Bebida</span><strong>${c.bebida_preferida}</strong></div>`:''}${c.zona_preferida?`<div class="info-row"><span>Zona</span><strong>${c.zona_preferida}</strong></div>`:''}</div>`:''}
+    ${(c.alergias&&c.alergias.length)?`<div class="sheet-section"><div class="field-lbl">⚠ Alergias</div>${c.alergias.map(a=>`<span class="tagline" style="border-color:var(--secondary);color:var(--secondary)">${a}</span>`).join('')}</div>`:''}
+    ${(c.tags&&c.tags.length)?`<div class="sheet-section"><div class="field-lbl">Tags</div>${c.tags.map(t=>`<span class="tagline">${t}</span>`).join('')}</div>`:''}
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="f-bono"><span class="material-symbols-outlined">add_circle</span>Otorgar puntos</button><button class="btn ghost" id="f-canje"><span class="material-symbols-outlined">redeem</span>Canjear</button></div></div>
+    <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de Casa Italia 🇮🇹')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>`;
+  openSheet();
+  $('#f-bono').onclick=()=>ajustarPuntos(c,1);
+  $('#f-canje').onclick=()=>ajustarPuntos(c,-1);
+}
+async function ajustarPuntos(c,signo){
+  const v=prompt(signo>0?'¿Cuántos puntos otorgar?':'¿Cuántos puntos canjear?');if(!v)return;const p=Math.abs(Number(v));if(!(p>0)){toast('Cantidad inválida','warn');return}
+  const motivo=prompt('Motivo (opcional):')||(signo>0?'Bono':'Canje');
+  const{error}=await sb.from('eng_puntos').insert({marca_id:MARCA,cliente_id:c.id,tipo:signo>0?'bono':'canjeado',puntos:signo*p,motivo,fecha:hoyISO()});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadPuntos();abrirFicha(state.clientes.find(x=>x.id===c.id));render();toast('Servido · '+(signo>0?'+':'')+signo*p+' puntos','ok');
+}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
+</script>
+</body>
+</html>
