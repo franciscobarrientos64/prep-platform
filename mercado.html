@@ -133,7 +133,7 @@ const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/fal
 
 const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
-  pedidoQty:{},pedidoCat:'todas',channel:null};
+  pedidoQty:{},pedidoCat:'todas',pedidoInit:false,channel:null};
 
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toFixed(2)}
@@ -255,8 +255,10 @@ async function abrirFichaProducto(pid){const p=prod(pid);if(!p)return;const s=st
     <div class="sheet-section"><div class="field-lbl">Proveedores (precio)</div>
       ${precios.length?`<table class="tbl"><tr><th>Proveedor</th><th>Costo</th><th>Entrega</th></tr>${precios.map((pp,i)=>`<tr class="${i===0?'best':''}"><td>${prov(pp.proveedor_id)?.nombre||pp.proveedor_id}${pp.preferido?' ⭐':''}</td><td>${money(pp.costo)}/${pp.unidad_compra||''}</td><td>${pp.tiempo_entrega_dias||'?'}d</td></tr>`).join('')}</table>`:'<div class="empty-state" style="padding:14px">Sin precios de proveedor</div>'}</div>
     <div class="sheet-section"><div class="field-lbl">Últimos movimientos</div>
-      ${movs.length?movs.map(m=>`<div class="info-row"><span>${m.fecha} · ${m.tipo}</span><strong style="color:${Number(m.cantidad)<0?'var(--secondary)':'var(--green)'}">${Number(m.cantidad)>0?'+':''}${num(m.cantidad)}</strong></div>`).join(''):'<div class="empty-state" style="padding:14px">Sin movimientos</div>'}</div>`;
+      ${movs.length?movs.map(m=>`<div class="info-row"><span>${m.fecha} · ${m.tipo}</span><strong style="color:${Number(m.cantidad)<0?'var(--secondary)':'var(--green)'}">${Number(m.cantidad)>0?'+':''}${num(m.cantidad)}</strong></div>`).join(''):'<div class="empty-state" style="padding:14px">Sin movimientos</div>'}</div>
+    <div class="sheet-section"><button class="btn" id="fp-cfg"><span class="material-symbols-outlined">settings</span>Configurar par / proveedor</button></div>`;
   openSheet();
+  $('#fp-cfg').onclick=()=>abrirConfigProducto(pid);
 }
 
 /* ===== MOVIMIENTOS (entrada/salida/ajuste) ===== */
@@ -358,6 +360,9 @@ function proveedorDe(pid){
   return opts.find(o=>o.preferido)||opts.slice().sort((a,b)=>Number(a.costo)-Number(b.costo))[0];
 }
 function sugerido(p){return Math.max(0,Number(p.par_level||0)-stock(p.id))}
+function mermaTotal(pid){return state.mermas.filter(m=>m.producto_id===pid).reduce((a,m)=>a+Number(m.cantidad||0),0)}
+function mermaAlta(p){const m=mermaTotal(p.id),par=Number(p.par_level||0);return m>0&&par>0&&m>=par*0.3} // merma ≥ 30% del par
+function parSugerido(p){return Math.ceil(Number(p.par_level||0)+mermaTotal(p.id))} // recalculo simple por merma
 function consolidadoPedido(){
   const porProv={};let sinProv=[];
   Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);if(!(q>0))return;const p=prod(pid);if(!p)return;
@@ -370,36 +375,47 @@ function consolidadoPedido(){
   return {porProv,sinProv};
 }
 function renderPedido(){
+  // Precarga lo necesario para completar el PAR (primera vez)
+  if(!state.pedidoInit){state.productos.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});state.pedidoInit=true;}
   const cats=['todas',...categorias()];
   const list=state.productos.filter(p=>state.pedidoCat==='todas'||p.categoria===state.pedidoCat);
+  const faltan=state.productos.filter(p=>sugerido(p)>0).length;
   $('#screen').innerHTML=`
     <div class="toolbar">
       <div class="chips">${cats.map(c=>`<button class="chip ${state.pedidoCat===c?'active':''}" data-pc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
-      <button class="btn-ico" id="ped-sug" style="margin-left:auto"><span class="material-symbols-outlined">auto_fix_high</span><span>Autocompletar sugeridos</span></button>
+      <button class="btn-ico" id="ped-sug" style="margin-left:auto"><span class="material-symbols-outlined">auto_fix_high</span><span>Completar el PAR</span></button>
       <button class="btn-ico ghost" id="ped-clear"><span class="material-symbols-outlined">close</span><span>Limpiar</span></button>
     </div>
-    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Indica cuánto pedir de cada producto. El sugerido = par − stock. Abajo se consolida por proveedor.</div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Precargado lo necesario para completar el PAR (${faltan} insumo${faltan===1?'':'s'} bajo par). Toca el nombre de un insumo para configurar su par. Abajo se consolida por proveedor.</div>
     ${list.map(pedRow).join('')||'<div class="empty-state">Sin productos</div>'}
     <div id="ped-resumen" style="margin-top:18px"></div>`;
   $$('#screen .chip[data-pc]').forEach(b=>b.onclick=()=>{state.pedidoCat=b.dataset.pc;renderPedido()});
-  $('#ped-sug').onclick=()=>{list.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});renderPedido()};
+  $('#ped-sug').onclick=()=>{state.productos.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});renderPedido()};
   $('#ped-clear').onclick=()=>{state.pedidoQty={};renderPedido()};
+  $$('#screen [data-cfg]').forEach(el=>el.onclick=()=>abrirConfigProducto(el.dataset.cfg));
   $$('#screen [data-pq]').forEach(inp=>inp.oninput=()=>{state.pedidoQty[inp.dataset.pq]=Number(inp.value)||0;renderResumenPedido()});
   renderResumenPedido();
 }
-function pedRow(p){const s=stock(p.id),sug=sugerido(p),pp=proveedorDe(p.id),q=state.pedidoQty[p.id]||'';
+function pedRow(p){const s=stock(p.id),sug=sugerido(p),pp=proveedorDe(p.id),q=Number(state.pedidoQty[p.id]||0);
   const provLbl=pp?(prov(pp.proveedor_id)?.nombre||pp.proveedor_id):'⚠ sin proveedor';
+  const overpar=q>0&&(s+q)>Number(p.par_level||0)*1.2;
+  const alertas=[];
+  if(mermaAlta(p))alertas.push('<span class="badge sin">⚠ mucha merma · recalcular par</span>');
+  if(overpar)alertas.push('<span class="badge bajo">⚠ supera el par +20%</span>');
   return `<div class="row-card" data-pid="${p.id}">
     <span class="row-emoji">${p.emoji||'📦'}</span>
-    <div class="row-main"><h3>${p.nombre}</h3>
-      <div class="row-meta"><span>stock ${num(s)} ${p.unidad||''}</span><span>par ${num(p.par_level)}</span><span>sug. ${num(sug)}</span><span>${pp?money(pp.costo)+' · ':''}${provLbl}</span></div></div>
-    <div class="row-right"><input class="input" data-pq="${p.id}" type="number" min="0" step="0.5" value="${q}" placeholder="${sug||0}" style="width:90px;text-align:right"></div>
+    <div class="row-main"><h3 style="cursor:pointer" data-cfg="${p.id}">${p.nombre} <span class="material-symbols-outlined" style="font-size:14px;opacity:.5">settings</span></h3>
+      <div class="row-meta"><span>${num(s)} de ${num(p.par_level)} ${p.unidad||''}</span><span>falta ${num(sug)}</span><span>${pp?money(pp.costo)+' · ':''}${provLbl}</span></div>
+      ${alertas.length?`<div class="chips" style="margin-top:6px">${alertas.join('')}</div>`:''}
+    </div>
+    <div class="row-right"><input class="input" data-pq="${p.id}" type="number" min="0" step="0.5" value="${q||''}" placeholder="${sug||0}" style="width:90px;text-align:right"></div>
   </div>`;
 }
 function renderResumenPedido(){
   const el=$('#ped-resumen');if(!el)return;
   const {porProv,sinProv}=consolidadoPedido();
   const provIds=Object.keys(porProv);
+  const overpar=[];Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);const p=prod(pid);if(p&&q>0&&(stock(pid)+q)>Number(p.par_level||0)*1.2)overpar.push(p.nombre)});
   const totalMonto=provIds.reduce((a,id)=>a+porProv[id].monto,0);
   const totalItems=provIds.reduce((a,id)=>a+porProv[id].items.length,0);
   if(!provIds.length&&!sinProv.length){el.innerHTML='';return;}
@@ -412,6 +428,7 @@ function renderResumenPedido(){
       ${provIds.map(id=>{const g=porProv[id];return `<div style="border:1px solid var(--gray-soft);border-radius:10px;padding:10px 12px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;font-weight:700"><span>🏬 ${prov(id)?.nombre||id}</span><span class="mono">${money(g.monto)}</span></div>
         <div class="row-meta" style="margin-top:4px">${g.items.map(it=>`${it.nombre} ×${num(it.cantidad)}`).join(' · ')}</div></div>`}).join('')}
+      ${overpar.length?`<div style="background:var(--amber-soft);border:1px dashed #c98a00;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px">⚠ Estos superan el par +20% (posible sobre-stock): ${overpar.join(', ')}.</div>`:''}
       ${sinProv.length?`<div style="background:var(--red-soft);border:1px dashed var(--secondary);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px">⚠ Sin proveedor asignado (no se enviarán): ${sinProv.map(x=>x.p.nombre+' ×'+num(x.q)).join(', ')}. Asígnalos en Compras→Comparativo.</div>`:''}
       <button class="btn primary" id="ped-generar" ${provIds.length?'':'disabled'}><span class="material-symbols-outlined">send</span>Generar ${provIds.length} orden(es) de compra</button>
     </div>`;
@@ -487,6 +504,43 @@ function imprimirOrden(o){const p=prov(o.proveedor_id);
 function enviarOrden(o,canal){const p=prov(o.proveedor_id);const txt=buildOrderText(o);
   if(canal==='email'){const to=p?.email||'';window.open('mailto:'+to+'?subject='+encodeURIComponent('Orden de compra '+(o.numero||'')+' — Casa Italia')+'&body='+encodeURIComponent(txt));toast(to?'Abriendo email a '+to:'Proveedor sin email — adjunta el PDF','warn');}
   else{const tel=(p?.telefono||'').replace(/\D/g,'');const dest=tel?(tel.length<=9?'51'+tel:tel):'';window.open('https://wa.me/'+dest+'?text='+encodeURIComponent(txt),'_blank');toast(tel?'Abriendo WhatsApp':'Proveedor sin teléfono','warn');}
+}
+
+/* ===== CONFIGURAR INSUMO (par, costo, proveedor preferido, recálculo por merma) ===== */
+function abrirConfigProducto(pid){
+  const p=prod(pid);if(!p)return;
+  const opts=state.provProd.filter(pp=>pp.producto_id===pid).sort((a,b)=>Number(a.costo)-Number(b.costo));
+  const sug=parSugerido(p);
+  setHead(p.emoji||'⚙️','Configurar insumo',p.nombre+' · '+(p.categoria||''));
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section">
+      <div class="info-row"><span>Stock actual</span><strong>${num(stock(pid))} ${p.unidad||''}</strong></div>
+      <div class="info-row"><span>Merma acumulada</span><strong style="color:${mermaAlta(p)?'var(--secondary)':''}">${num(mermaTotal(pid))} ${p.unidad||''}</strong></div>
+    </div>
+    ${mermaAlta(p)?`<div class="sheet-section"><div style="background:var(--red-soft);border:1px dashed var(--secondary);border-radius:10px;padding:10px 12px;font-size:12px">⚠ <strong>Mucha merma</strong> en este insumo. Considera subir el par para no quedarte corto. Sugerido: <strong>${num(sug)} ${p.unidad||''}</strong> <button class="mini-btn" id="cfg-usesug" style="margin-left:6px">Usar sugerido</button></div></div>`:''}
+    <div class="sheet-section grid2">
+      <div><div class="field-lbl">Par level (${p.unidad||''})</div><input class="input" id="cfg-par" type="number" min="0" step="0.5" value="${Number(p.par_level||0)}"></div>
+      <div><div class="field-lbl">Costo (S/)</div><input class="input" id="cfg-costo" type="number" min="0" step="0.5" value="${Number(p.costo||0)}"></div>
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Proveedor preferido (a quién se le pide)</div>
+      ${opts.length?opts.map(pp=>`<button class="btn ${pp.preferido?'primary':'ghost'}" data-pref="${pp.proveedor_id}" style="justify-content:space-between;margin-bottom:6px"><span>${prov(pp.proveedor_id)?.nombre||pp.proveedor_id}</span><span class="mono">${money(pp.costo)} ${pp.preferido?'⭐':''}</span></button>`).join(''):'<div class="row-meta">Sin proveedores cargados. Agrégalos en Compras→Comparativo.</div>'}</div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="cfg-cancel">Atrás</button><button class="btn primary" id="cfg-save">Guardar configuración</button></div></div>`;
+  openSheet();
+  if($('#cfg-usesug'))$('#cfg-usesug').onclick=()=>{$('#cfg-par').value=sug};
+  $$('#sheet-body [data-pref]').forEach(b=>b.onclick=()=>marcarPreferido(pid,b.dataset.pref));
+  $('#cfg-cancel').onclick=closeSheet;
+  $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-par').value),Number($('#cfg-costo').value));
+}
+async function marcarPreferido(pid,provId){
+  await sb.from('inv_proveedor_productos').update({preferido:false}).eq('producto_id',pid);
+  await sb.from('inv_proveedor_productos').update({preferido:true}).eq('producto_id',pid).eq('proveedor_id',provId);
+  await loadProvProd();abrirConfigProducto(pid);toast('Va · proveedor preferido actualizado','ok');
+}
+async function guardarConfigProducto(pid,par,costo){
+  if(!(par>=0)){toast('Par inválido','warn');return}
+  const{error}=await sb.from('inv_productos').update({par_level:par,costo:costo}).eq('id',pid);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadProductos();closeSheet();render();toast('Servido · configuración guardada','ok');
 }
 
 /* ===== COMPRAS (proveedores + comparativo + órdenes) ===== */
