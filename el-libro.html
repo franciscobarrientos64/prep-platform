@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>El Libro · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.main{flex:1;overflow-y:auto;padding:16px}
+.grp-t{font-family:var(--font-display);font-size:17px;margin:14px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 var(--outline)}.chip.active{background:var(--ink);color:var(--bg)}
+.post{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px;cursor:pointer}
+.post:active{transform:translate(2px,2px);box-shadow:none}
+.post.fij{border-left-width:7px;border-left-color:var(--tertiary)}
+.post .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.post h3{font-size:16px;font-weight:700}.post .ex{font-size:13px;opacity:.75;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post .meta{font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+.tagx{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:6px;border:1.5px solid var(--outline)}
+.tagx.alta{background:var(--red-soft)} .tagx.cat{background:var(--primary-soft)}
+.clk{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:13px 15px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.clk:active{transform:translate(2px,2px);box-shadow:none}
+.prog{font-family:var(--font-mono);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:2px solid var(--outline)}
+.prog.full{background:var(--green);color:#fff}.prog.part{background:var(--amber-soft)}.prog.none{background:var(--gray-soft)}
+.bit{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:8px;border-left-width:7px}
+.bit.incidencia{border-left-color:var(--secondary)}.bit.nota{border-left-color:var(--primary)}.bit.novedad{border-left-color:var(--green)}
+.bit .meta{font-family:var(--font-mono);font-size:11px;opacity:.65;margin-top:5px;display:flex;gap:8px;flex-wrap:wrap}
+.chkitem{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed var(--gray-soft);cursor:pointer}.chkitem:last-child{border:none}
+.box{width:26px;height:26px;border:2px solid var(--outline);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--surface)}
+.box.on{background:var(--green);color:#fff}
+.chkitem.on span.tx{text-decoration:line-through;opacity:.5}
+.input,.select,textarea.input{padding:10px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+textarea.input{min-height:120px;resize:vertical}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-bottom:6px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:50px}
+.btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:92vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 24px 14px;border-bottom:2px solid var(--outline);display:flex;align-items:center;gap:14px}
+.sheet-mark{width:50px;height:50px;border:2px solid var(--outline);border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px}
+.sheet-title{flex:1}.sheet-title h2{font-family:var(--font-display);font-size:22px;line-height:1;margin-bottom:4px}.sheet-title .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.sheet-close{width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.sheet-body{padding:18px 24px 28px;overflow-y:auto}.sheet-section+.sheet-section{margin-top:14px}
+.contenido{white-space:pre-wrap;font-size:15px;line-height:1.55}
+.toast-container{position:fixed;top:76px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.ok{background:var(--primary);color:#fff}.toast.err{background:var(--secondary);color:#fff}.toast.warn{background:var(--tertiary)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · abriendo el libro</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">El Libro</div></div></div>
+  <div class="header-info" id="hinfo"></div>
+  <button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span id="h-add-l">Nuevo</span></button>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const state={posts:[],checklists:[],runs:[],bitacora:[],view:'tablon',cat:'todas',channel:null};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nowISO(){return new Date().toISOString()}
+function fechaCorta(ts){if(!ts)return'';const d=new Date(ts),n=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return d.getDate()+' '+n[d.getMonth()]}
+function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;const i=t==='ok'?'check_circle':t==='err'?'error':t==='warn'?'warning':'info';e.innerHTML='<span class="material-symbols-outlined">'+i+'</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s,transform .3s';e.style.opacity='0';e.style.transform='translateX(120%)';setTimeout(()=>e.remove(),300)},2600)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+function setHead(mk,t,m){$('#sheet-mark').textContent=mk;$('#sheet-title').textContent=t;$('#sheet-meta').textContent=m||''}
+
+async function loadPosts(){const{data}=await sb.from('lb_posts').select('*').eq('local_id',LOCAL).eq('vigente',true).order('fijado',{ascending:false}).order('created_at',{ascending:false});state.posts=data||[]}
+async function loadChecklists(){const{data}=await sb.from('lb_checklists').select('*').eq('local_id',LOCAL).eq('activo',true).order('turno');state.checklists=data||[]}
+async function loadRuns(){const{data}=await sb.from('lb_checklist_runs').select('*').eq('local_id',LOCAL).eq('fecha',hoyISO());state.runs=data||[]}
+async function loadBitacora(){const{data}=await sb.from('lb_bitacora').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(60);state.bitacora=data||[]}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora()]);render();subscribe();$('#boot').classList.add('gone')}
+
+function render(){
+  const pend=state.checklists.filter(c=>!runCompleto(c)).length;
+  $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
+  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='checklists')renderChecklists();else renderBitacora();
+}
+
+function postCard(p){const ex=(p.contenido||'').split('\n')[0];
+  return `<div class="post ${p.fijado?'fij':''}" data-id="${p.id}"><div class="ph"><h3>${p.fijado?'📌 ':''}${p.titulo}</h3>${p.prioridad==='alta'?'<span class="tagx alta">importante</span>':''}</div>
+    <div class="ex">${ex}</div><div class="meta"><span class="tagx cat">${p.categoria||'General'}</span><span>${p.autor||''}</span><span>${fechaCorta(p.created_at)}</span></div></div>`;
+}
+function renderTablon(){
+  const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
+  $('#screen').innerHTML=list.map(postCard).join('')||'<div class="empty">Sin comunicados</div>';
+  $$('#screen .post').forEach(c=>c.onclick=()=>verPost(state.posts.find(p=>p.id===c.dataset.id)));
+}
+function renderProcs(){
+  const list=state.posts.filter(p=>p.tipo==='procedimiento');
+  const cats=['todas',...new Set(list.map(p=>p.categoria).filter(Boolean))];
+  const fl=state.cat==='todas'?list:list.filter(p=>p.categoria===state.cat);
+  $('#screen').innerHTML=`<div class="chips">${cats.map(c=>`<button class="chip ${state.cat===c?'active':''}" data-c="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>`+(fl.map(postCard).join('')||'<div class="empty">Sin procedimientos</div>');
+  $$('#screen .chip[data-c]').forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;renderProcs()});
+  $$('#screen .post').forEach(c=>c.onclick=()=>verPost(state.posts.find(p=>p.id===c.dataset.id)));
+}
+function verPost(p){
+  setHead(p.tipo==='procedimiento'?'📖':p.tipo==='politica'?'📋':'📣',p.titulo,(p.categoria||'')+' · '+(p.autor||'')+' · '+fechaCorta(p.created_at));
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="contenido">${(p.contenido||'').replace(/</g,'&lt;')}</div></div>
+    ${p.adjunto_url?`<div class="sheet-section"><a class="btn ghost" href="${p.adjunto_url}" target="_blank" rel="noopener"><span class="material-symbols-outlined">attach_file</span>Ver adjunto</a></div>`:''}
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="p-edit"><span class="material-symbols-outlined">edit</span>Editar</button>${p.tipo==='comunicado'?`<button class="btn ghost" id="p-fij">${p.fijado?'Desfijar':'Fijar 📌'}</button>`:'<div></div>'}</div></div>`;
+  openSheet();
+  $('#p-edit').onclick=()=>editarPost(p);
+  if($('#p-fij'))$('#p-fij').onclick=async()=>{await sb.from('lb_posts').update({fijado:!p.fijado}).eq('id',p.id);await loadPosts();closeSheet();render();toast('Va · actualizado','ok')};
+}
+function editarPost(p){
+  const ed=!!p;const tipo=p?p.tipo:(state.view==='procedimientos'?'procedimiento':'comunicado');
+  const c=Object.assign({titulo:'',categoria:'',contenido:'',autor:'Gerencia',prioridad:'normal'},p||{});
+  setHead('✏️',ed?'Editar':'Nuevo '+(tipo==='procedimiento'?'procedimiento':'comunicado'),'El Libro');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="x-tit" value="${(c.titulo||'').replace(/"/g,'&quot;')}"></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Categoría</div><input class="input" id="x-cat" value="${c.categoria||''}" placeholder="Cocina, Salón…"></div><div><div class="field-lbl">Autor</div><input class="input" id="x-aut" value="${c.autor||''}"></div></div>
+    ${tipo!=='procedimiento'?`<div class="sheet-section"><div class="field-lbl">Prioridad</div><div class="chips" id="x-pri">${['normal','alta'].map(x=>`<button class="chip ${c.prioridad===x?'active':''}" data-p="${x}">${x}</button>`).join('')}</div></div>`:''}
+    <div class="sheet-section"><div class="field-lbl">Contenido</div><textarea class="input" id="x-cont" placeholder="Escribe aquí…">${c.contenido||''}</textarea></div>
+    <div class="sheet-section"><button class="btn primary" id="x-save"><span class="material-symbols-outlined">save</span>Guardar</button></div>`;
+  let pri=c.prioridad;if($('#x-pri'))$$('#x-pri .chip').forEach(b=>b.onclick=()=>{pri=b.dataset.p;$$('#x-pri .chip').forEach(x=>x.classList.toggle('active',x.dataset.p===pri))});
+  $('#x-save').onclick=async()=>{const tit=$('#x-tit').value;if(!tit){toast('Falta título','warn');return}
+    const payload={marca_id:MARCA,local_id:LOCAL,tipo,titulo:tit,categoria:$('#x-cat').value,autor:$('#x-aut').value,contenido:$('#x-cont').value,prioridad:pri,updated_at:nowISO()};
+    const{error}=ed?await sb.from('lb_posts').update(payload).eq('id',p.id):await sb.from('lb_posts').insert(payload);
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadPosts();render();toast('Servido · publicado','ok')};
+  openSheet();
+}
+
+function runDe(cl){return state.runs.find(r=>r.checklist_id===cl.id)}
+function items(cl){return Array.isArray(cl.items)?cl.items:[]}
+function runCompleto(cl){const r=runDe(cl);if(!r)return false;const e=r.estados||{};return items(cl).length>0&&items(cl).every((_,i)=>e[i])}
+function runHechos(cl){const r=runDe(cl);if(!r)return 0;const e=r.estados||{};return items(cl).filter((_,i)=>e[i]).length}
+function renderChecklists(){
+  $('#screen').innerHTML=`<div class="grp-t">Checklists de hoy · ${hoyISO()}</div>`+(state.checklists.map(cl=>{const tot=items(cl).length,h=runHechos(cl);const cls=h===0?'none':h===tot?'full':'part';
+    return `<div class="clk" data-id="${cl.id}"><div><div style="font-weight:700;font-size:15px">${cl.nombre}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${cl.area||''} · ${cl.turno||''}</div></div><span class="prog ${cls}">${h}/${tot}</span></div>`;
+  }).join('')||'<div class="empty">Sin checklists</div>');
+  $$('#screen .clk').forEach(c=>c.onclick=()=>abrirChecklist(state.checklists.find(x=>x.id===c.dataset.id)));
+}
+function abrirChecklist(cl){
+  const its=items(cl);let r=runDe(cl);let est=Object.assign({},(r&&r.estados)||{});
+  setHead('✅',cl.nombre,(cl.area||'')+' · '+(cl.turno||'')+' · hoy');
+  const draw=()=>{const h=its.filter((_,i)=>est[i]).length;
+    $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">${h}/${its.length} completado</div>
+      ${its.map((it,i)=>`<div class="chkitem ${est[i]?'on':''}" data-i="${i}"><div class="box ${est[i]?'on':''}">${est[i]?'<span class="material-symbols-outlined" style="font-size:18px">check</span>':''}</div><span class="tx">${it}</span></div>`).join('')}</div>
+      <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="ck-resp" value="${(r&&r.completado_por)||''}" placeholder="Quién lo completa"></div>
+      <div class="sheet-section"><button class="btn primary" id="ck-save"><span class="material-symbols-outlined">save</span>Guardar checklist</button></div>`;
+    $$('#sheet-body .chkitem').forEach(el=>el.onclick=()=>{const i=el.dataset.i;est[i]=!est[i];draw()});
+    $('#ck-save').onclick=()=>guardarRun(cl,est,$('#ck-resp').value);
+  };draw();openSheet();
+}
+async function guardarRun(cl,est,resp){
+  const payload={checklist_id:cl.id,local_id:LOCAL,fecha:hoyISO(),turno:cl.turno,completado_por:resp||null,estados:est};
+  const{error}=await sb.from('lb_checklist_runs').upsert(payload,{onConflict:'checklist_id,fecha'});
+  if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadRuns();render();toast('Servido · checklist guardado','ok');
+}
+
+function renderBitacora(){
+  $('#screen').innerHTML=state.bitacora.map(b=>`<div class="bit ${b.tipo}"><div style="font-size:14px">${b.contenido}</div><div class="meta"><span class="tagx ${b.tipo==='incidencia'?'alta':'cat'}">${b.tipo}</span><span>${b.autor||''}</span><span>${b.turno||''}</span><span>${fechaCorta(b.created_at)}</span></div></div>`).join('')||'<div class="empty">Sin registros de bitácora</div>';
+}
+function abrirBitacora(){
+  let tipo='nota',turno='cena';setHead('📝','Nueva entrada de bitácora','El Libro');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Tipo</div><div class="chips" id="b-tipo">${['nota','incidencia','novedad'].map(x=>`<button class="chip ${tipo===x?'active':''}" data-t="${x}">${x}</button>`).join('')}</div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Turno</div><select class="select" id="b-turno"><option>almuerzo</option><option selected>cena</option></select></div><div><div class="field-lbl">Autor</div><input class="input" id="b-aut" placeholder="Tu nombre"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Detalle</div><textarea class="input" id="b-cont" placeholder="Novedad, incidencia, nota del turno…"></textarea></div>
+    <div class="sheet-section"><button class="btn primary" id="b-save"><span class="material-symbols-outlined">save</span>Registrar</button></div>`;
+  $$('#b-tipo .chip').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;$$('#b-tipo .chip').forEach(x=>x.classList.toggle('active',x.dataset.t===tipo))});
+  $('#b-save').onclick=async()=>{const cont=$('#b-cont').value;if(!cont){toast('Escribe el detalle','warn');return}
+    const{error}=await sb.from('lb_bitacora').insert({marca_id:MARCA,local_id:LOCAL,fecha:hoyISO(),turno:$('#b-turno').value,autor:$('#b-aut').value,tipo,contenido:cont});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadBitacora();render();toast('Servido · bitácora registrada','ok')};
+  openSheet();
+}
+
+function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else{editarPost(null)}}
+function abrirChecklistNuevo(){
+  setHead('✅','Nuevo checklist','El Libro');let items=[''];
+  const draw=()=>{$('#sheet-body').innerHTML=`
+    <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="c-nom"></div><div><div class="field-lbl">Área</div><input class="input" id="c-area" placeholder="Cocina, Salón…"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Turno</div><select class="select" id="c-turno"><option>apertura</option><option>cierre</option><option>limpieza</option></select></div>
+    <div class="sheet-section"><div class="field-lbl">Ítems</div><div id="c-items">${items.map((it,i)=>`<input class="input" data-i="${i}" value="${(it||'').replace(/"/g,'&quot;')}" placeholder="Ítem ${i+1}" style="margin-bottom:6px">`).join('')}</div><button class="btn ghost" id="c-add">+ Agregar ítem</button></div>
+    <div class="sheet-section"><button class="btn primary" id="c-save">Guardar checklist</button></div>`;
+    $$('#c-items [data-i]').forEach(el=>el.oninput=()=>{items[el.dataset.i]=el.value});
+    $('#c-add').onclick=()=>{items.forEach((_,i)=>{const el=document.querySelector('#c-items [data-i="'+i+'"]');if(el)items[i]=el.value});items.push('');draw()};
+    $('#c-save').onclick=async()=>{const its=items.map(x=>x.trim()).filter(Boolean);const n=$('#c-nom').value;if(!n||!its.length){toast('Falta nombre o ítems','warn');return}
+      const{error}=await sb.from('lb_checklists').insert({marca_id:MARCA,local_id:LOCAL,nombre:n,area:$('#c-area').value,turno:$('#c-turno').value,items:its});
+      if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadChecklists();render();toast('Servido · checklist creado','ok')};
+  };draw();openSheet();
+}
+
+function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('lb_'+LOCAL)
+  .on('postgres_changes',{event:'*',schema:'public',table:'lb_posts',filter:'local_id=eq.'+LOCAL},async()=>{await loadPosts();render()})
+  .on('postgres_changes',{event:'*',schema:'public',table:'lb_bitacora',filter:'local_id=eq.'+LOCAL},async()=>{await loadBitacora();render()})
+  .subscribe()}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);$('#h-add').addEventListener('click',nuevo);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
+</script>
+</body>
+</html>
