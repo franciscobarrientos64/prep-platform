@@ -136,7 +136,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],
+const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],teoPeriodo:'7d',
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -157,11 +157,14 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones()]);
+  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems()]);
   const h=location.hash.replace('#','');if(['inventario','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
+async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento').eq('marca_id',MARCA);state.recetas=data||[]}
+function teoDesde(){const d=new Date();if(state.teoPeriodo==='hoy')return d.toISOString().slice(0,10)+'T00:00:00';if(state.teoPeriodo==='mes'){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01T00:00:00'}d.setDate(d.getDate()-7);return d.toISOString().slice(0,10)+'T00:00:00'}
+async function loadVentasItems(){const{data:peds}=await sb.from('ca_pedidos').select('id').eq('local_id',LOCAL).gte('created_at',teoDesde());const ids=(peds||[]).map(p=>p.id);if(!ids.length){state.ventasItems=[];return}const{data}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,estado,pedido_id').in('pedido_id',ids).neq('estado','cancelado');state.ventasItems=data||[]}
 function diffPct(c,r){if(r<=0)return c>0?1:0;return Math.abs(c-r)/r}
 function esAnomalia(c,r){if(isNaN(c))return false;return diffPct(c,r)>=0.5||(r>0&&c===0)} // ≥50% de diferencia o quiebre total
 async function loadStockMap(){const{data}=await sb.from('inv_stock_actual').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m;}
@@ -188,6 +191,7 @@ function render(){renderHeader();renderTabs();
   else if(state.view==='mermas')renderMermas();
   else if(state.view==='movimientos')renderMovimientos();
   else if(state.view==='reportes')renderReportes();
+  else if(state.view==='teorico')renderTeorico();
 }
 function renderHeader(){
   const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
@@ -210,6 +214,7 @@ function renderTabs(){
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
     {k:'mermas',l:'Mermas',ico:'delete_sweep',n:state.mermas.length},
     {k:'movimientos',l:'Movimientos',ico:'sync_alt'},
+    {k:'teorico',l:'Teórico vs real',ico:'science'},
     {k:'reportes',l:'Reportes',ico:'monitoring'}];
   $('#tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.view===t.k?'active':''}" data-v="${t.k}"><span class="material-symbols-outlined" style="font-size:16px">${t.ico}</span>${t.l}${t.n!=null?`<span class="count">${t.n}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
@@ -827,6 +832,47 @@ async function accionOrden(o,accion){
   const{error}=await sb.from('inv_ordenes_compra').update({estado:nuevo}).eq('id',o.id);
   if(error){toast('Atrás: '+error.message,'err');return}
   closeSheet();await loadOrdenes();render();toast('Va · '+o.numero+' → '+nuevo,'ok');
+}
+
+/* ===== INVENTARIO TEÓRICO vs REAL (consumo por recetas / auto-depleción) ===== */
+function consumoTeorico(){
+  const m={};
+  state.ventasItems.forEach(it=>{const r=state.recetas.find(x=>x.id===it.receta_id);if(!r||!Array.isArray(r.ingredientes))return;const q=Number(it.qty||1);
+    r.ingredientes.forEach(ing=>{if(!ing.pid)return;const merma=Number(ing.merma||0);const factor=(merma>0&&merma<100)?1/(1-merma/100):1;const cant=Number(ing.cantidad||0)*q*factor;if(!m[ing.pid])m[ing.pid]={cant:0};m[ing.pid].cant+=cant;});});
+  return m;
+}
+function renderTeorico(){
+  const cons=consumoTeorico();
+  const pids=Object.keys(cons).filter(pid=>prod(pid));
+  const platos=state.ventasItems.reduce((a,it)=>a+Number(it.qty||0),0);
+  const valorCons=pids.reduce((a,pid)=>a+cons[pid].cant*Number(prod(pid).costo||0),0);
+  const sinReceta=state.ventasItems.filter(it=>!state.recetas.find(r=>r.id===it.receta_id&&Array.isArray(r.ingredientes)&&r.ingredientes.length)).reduce((a,it)=>a+Number(it.qty||0),0);
+  const per=[['hoy','Hoy'],['7d','7 días'],['mes','Mes']];
+  $('#screen').innerHTML=`
+    <div class="toolbar"><div class="chips">${per.map(p=>`<button class="chip ${state.teoPeriodo===p[0]?'active':''}" data-tp="${p[0]}">${p[1]}</button>`).join('')}</div></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Inventario <b>real</b> = lo que hay físico (conteos/compras). Inventario <b>virtual</b> = real − consumo teórico de las recetas vendidas. La diferencia al hacer un conteo = merma real.</div>
+    <div class="kpis">
+      <div class="kpi"><div class="val">${num(platos)}</div><div class="lbl">Platos vendidos</div></div>
+      <div class="kpi"><div class="val">${money(valorCons)}</div><div class="lbl">Consumo teórico</div></div>
+      <div class="kpi ${sinReceta?'alert':''}"><div class="val">${num(sinReceta)}</div><div class="lbl">Vendidos sin receta costeada</div></div>
+    </div>
+    ${pids.length?`<table class="tbl"><tr><th>Insumo</th><th>Consumo teórico</th><th>Valor</th><th>Stock real</th><th>Virtual</th></tr>
+      ${pids.sort((a,b)=>cons[b].cant*Number(prod(b).costo||0)-cons[a].cant*Number(prod(a).costo||0)).map(pid=>{const p=prod(pid);const c=cons[pid].cant;const real=stock(pid);const virt=real-c;
+        return `<tr><td>${p.emoji||''} ${p.nombre}</td><td>${num(c)} ${p.unidad||''}</td><td>${money(c*Number(p.costo||0))}</td><td>${num(real)}</td><td style="color:${virt<0?'var(--secondary)':''}">${num(virt)}</td></tr>`}).join('')}</table>
+      <div class="row-meta" style="margin-top:10px">Si registras el consumo, se generan salidas por el teórico y el stock real baja a su nivel "virtual".</div>
+      <button class="btn primary" id="teo-aplicar" style="margin-top:10px"><span class="material-symbols-outlined">remove_circle</span>Registrar consumo del período a inventario</button>`
+      :'<div class="empty-state">Sin ventas con receta costeada en el período. Costea recetas en el módulo Recetas para ver el consumo.</div>'}`;
+  $$('#screen .chip[data-tp]').forEach(b=>b.onclick=async()=>{state.teoPeriodo=b.dataset.tp;await loadVentasItems();render()});
+  if($('#teo-aplicar'))$('#teo-aplicar').onclick=()=>aplicarConsumoTeorico(cons);
+}
+async function aplicarConsumoTeorico(cons){
+  const pids=Object.keys(cons).filter(pid=>prod(pid)&&cons[pid].cant>0);
+  if(!pids.length)return;
+  if(!confirm('Registrar el consumo teórico de '+pids.length+' insumo(s) como salidas? Hazlo una vez por período para no duplicar.'))return;
+  const now=hoyISO();const rows=pids.map(pid=>{const p=prod(pid);const c=+cons[pid].cant.toFixed(3);return{local_id:LOCAL,producto_id:pid,tipo:'salida',cantidad:-c,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(-c*Number(p.costo||0)).toFixed(2),fecha:now,motivo:'Consumo teórico ('+state.teoPeriodo+')',responsable:'Sistema'}});
+  const{error}=await sb.from('inv_movimientos').insert(rows);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadMovs();render();toast('Servido · consumo aplicado al inventario','ok');
 }
 
 /* ===== REPORTES (optimizar compras · proveedores · control de inventario) ===== */
