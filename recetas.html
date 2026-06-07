@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Recetas · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:11px;font-family:var(--font-mono)}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.main{flex:1;overflow-y:auto;padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px}
+.kpi .v{font-family:var(--font-display);font-size:22px;line-height:1.05;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin-top:4px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.input,.select,textarea.input{padding:10px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+textarea.input{min-height:90px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 var(--outline);cursor:pointer}.chip.active{background:var(--ink);color:var(--bg)}
+.rec{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.rec:active{transform:translate(2px,2px);box-shadow:none}
+.rec .em{width:46px;height:46px;border-radius:12px;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background-size:cover;background-position:center}
+.rec .info{flex:1;min-width:0}.rec .info h3{font-size:15px;font-weight:700}.rec .info .meta{font-family:var(--font-mono);font-size:11px;opacity:.7;display:flex;gap:8px;flex-wrap:wrap;margin-top:3px}
+.rec .right{text-align:right;flex-shrink:0}
+.fc{font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
+.fc.ok{background:var(--green);color:#fff}.fc.mid{background:var(--amber-soft)}.fc.bad{background:var(--secondary);color:#fff}.fc.none{background:var(--gray-soft)}
+.grp-t{font-family:var(--font-display);font-size:17px;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-bottom:6px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:48px}
+.btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}.btn.sm{min-height:0;padding:9px 12px;font-size:13px}
+.mini-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:12px;box-shadow:2px 2px 0 0 var(--outline)}
+.ing{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--gray-soft)}
+.ing:last-child{border:none}.ing .nm{font-weight:600;font-size:14px}.ing .sub{font-family:var(--font-mono);font-size:11px;opacity:.6}
+.cost-box{background:var(--ink);color:var(--bg);border-radius:14px;padding:14px;margin:4px 0}
+.cost-box .row{display:flex;justify-content:space-between;padding:5px 0;font-size:14px}.cost-box .row.big{font-family:var(--font-display);font-size:20px}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+.switch{width:44px;height:26px;border:2px solid var(--outline);border-radius:999px;background:var(--gray-soft);position:relative;flex-shrink:0;cursor:pointer}
+.switch.on{background:var(--green)}.switch .k{position:absolute;top:1px;left:1px;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--outline);transition:left .15s}.switch.on .k{left:19px}
+.carta-item{display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px}
+.carta-item .nm{flex:1;font-weight:600}.carta-item.off{opacity:.5}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:94vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 24px 14px;border-bottom:2px solid var(--outline);display:flex;align-items:center;gap:14px}
+.sheet-mark{width:50px;height:50px;border:2px solid var(--outline);border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px;background-size:cover;background-position:center}
+.sheet-title{flex:1}.sheet-title h2{font-family:var(--font-display);font-size:22px;line-height:1;margin-bottom:4px}.sheet-title .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.sheet-close{width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.sheet-body{padding:18px 24px 28px;overflow-y:auto}.sheet-section+.sheet-section{margin-top:14px}
+.etapa{background:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:10px 12px;margin-bottom:8px}.etapa h4{font-family:var(--font-display);font-size:14px;margin-bottom:4px}.etapa p{font-size:13px;line-height:1.45;white-space:pre-wrap}
+.toast-container{position:fixed;top:76px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.ok{background:var(--primary);color:#fff}.toast.err{background:var(--secondary);color:#fff}.toast.warn{background:var(--tertiary)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · escandallando</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Recetas</div></div></div>
+  <div class="header-info" id="hinfo"></div>
+  <button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span id="h-add-l">Receta</span></button>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const SECCIONES=['Entradas','Pastas','Fondos','Pizzas','Postres','Bebidas','Cócteles','Vinos'];
+const FCDEF=30;
+const state={recetas:[],productos:[],menus:[],view:'recetas',cat:'todas',q:'',channel:null};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function nowISO(){return new Date().toISOString()}
+function prod(pid){return state.productos.find(p=>p.id===pid)}
+function costoUnit(pid){const p=prod(pid);return p?Number(p.costo||0):0}
+function ings(r){return Array.isArray(r.ingredientes)?r.ingredientes:[]}
+function etapas(r){return Array.isArray(r.etapas)?r.etapas:[]}
+function costoIng(it){const base=Number(it.cantidad||0)*(it.pid?costoUnit(it.pid):Number(it.costo||0));const m=Number(it.merma||0);return m>0&&m<100?base/(1-m/100):base}
+function costoTotal(r){return ings(r).reduce((a,it)=>a+costoIng(it),0)}
+function porciones(r){return Number(r.rendimiento||1)||1}
+function costoPorcion(r){return costoTotal(r)/porciones(r)}
+function foodCost(r){const pv=Number(r.precio_venta||0);return pv>0?costoPorcion(r)/pv*100:null}
+function fcClass(fc,obj){if(fc==null)return'none';const o=obj||FCDEF;if(fc<=o)return'ok';if(fc<=o+10)return'mid';return'bad'}
+function precioSugerido(r){const o=Number(r.costo_objetivo||FCDEF);return o>0?costoPorcion(r)/(o/100):0}
+function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;const i=t==='ok'?'check_circle':t==='err'?'error':t==='warn'?'warning':'info';e.innerHTML='<span class="material-symbols-outlined">'+i+'</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s,transform .3s';e.style.opacity='0';e.style.transform='translateX(120%)';setTimeout(()=>e.remove(),300)},2600)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+function setHead(mk,t,m,foto){const el=$('#sheet-mark');if(foto){el.style.backgroundImage='url('+foto+')';el.textContent=''}else{el.style.backgroundImage='';el.textContent=mk}$('#sheet-title').textContent=t;$('#sheet-meta').textContent=m||''}
+
+async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu');state.recetas=data||[]}
+async function loadProductos(){const{data}=await sb.from('inv_productos').select('id,nombre,unidad,costo').eq('marca_id',MARCA).order('nombre');state.productos=data||[]}
+async function loadMenus(){const{data}=await sb.from('inv_menus').select('*').eq('marca_id',MARCA).order('orden');state.menus=data||[]}
+async function loadAll(){await Promise.all([loadRecetas(),loadProductos(),loadMenus()]);render();subscribe();$('#boot').classList.add('gone')}
+
+function render(){
+  const costeadas=state.recetas.filter(r=>ings(r).length>0).length;
+  $('#hinfo').innerHTML=`<span class="pill">${state.recetas.length} recetas</span><span class="pill">${costeadas} costeadas</span>`;
+  $('#tabs').innerHTML=[['recetas','Recetas + costeo','restaurant_menu'],['carta','Carta / menú','menu_book'],['menus','Menús','restaurant']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $('#h-add-l').textContent=state.view==='menus'?'Menú':'Receta';
+  if(state.view==='recetas')renderRecetas();else if(state.view==='carta')renderCarta();else renderMenus();
+}
+
+function renderRecetas(){
+  const cats=['todas',...new Set(state.recetas.map(r=>r.categoria_menu).filter(Boolean))];
+  let list=state.recetas.filter(r=>state.cat==='todas'||r.categoria_menu===state.cat);
+  if(state.q){const q=state.q.toLowerCase();list=list.filter(r=>(r.nombre||'').toLowerCase().includes(q))}
+  const conFc=state.recetas.filter(r=>foodCost(r)!=null);
+  const fcProm=conFc.length?conFc.reduce((a,r)=>a+foodCost(r),0)/conFc.length:0;
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${state.recetas.length}</div><div class="l">Recetas</div></div>
+      <div class="kpi"><div class="v">${fcProm?fcProm.toFixed(0)+'%':'—'}</div><div class="l">Food cost promedio</div></div>
+      <div class="kpi"><div class="v">${state.recetas.filter(r=>ings(r).length===0).length}</div><div class="l">Sin costear</div></div></div>
+    <div class="toolbar"><input class="input" id="q" placeholder="Buscar receta…" value="${state.q}" style="max-width:260px"></div>
+    <div class="chips" style="margin-bottom:12px">${cats.map(c=>`<button class="chip ${state.cat===c?'active':''}" data-c="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
+    ${list.map(recCard).join('')||'<div class="empty">Sin recetas</div>'}`;
+  $('#q').oninput=e=>{state.q=e.target.value;renderRecetas()};
+  $$('#screen .chip[data-c]').forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;renderRecetas()});
+  $$('#screen .rec').forEach(c=>c.onclick=()=>verReceta(state.recetas.find(r=>r.id===c.dataset.id)));
+}
+function recCard(r){const fc=foodCost(r);const cls=fcClass(fc,r.costo_objetivo);
+  return `<div class="rec" data-id="${r.id}"><div class="em" style="${r.foto_url?`background-image:url(${r.foto_url})`:''}">${r.foto_url?'':(r.emoji||'🍽️')}</div>
+    <div class="info"><h3>${r.nombre}${!r.activo?' <span class="fc none" style="font-size:9px">inactivo</span>':''}</h3><div class="meta"><span>${r.categoria_menu||'—'}</span><span>${money(r.precio_venta)}</span><span>costo ${money(costoPorcion(r))}</span></div></div>
+    <div class="right"><span class="fc ${cls}">${fc!=null?fc.toFixed(0)+'%':'s/costo'}</span></div></div>`;
+}
+
+/* ====== FICHA + COSTEO + ESCALADO ====== */
+let escala=1;
+function verReceta(r){escala=porciones(r);
+  setHead(r.emoji||'🍽️',r.nombre,(r.categoria_menu||'')+' · '+(r.tipo||'plato'),r.foto_url);
+  drawFicha(r);openSheet();
+}
+function drawFicha(r){
+  const fc=foodCost(r),cp=costoPorcion(r),pv=Number(r.precio_venta||0),margen=pv-cp;
+  const factor=escala/porciones(r);
+  $('#sheet-body').innerHTML=`
+    <div class="cost-box">
+      <div class="row"><span>Costo por porción</span><strong class="mono">${money(cp)}</strong></div>
+      <div class="row"><span>Precio de venta</span><strong class="mono">${money(pv)}</strong></div>
+      <div class="row"><span>Food cost</span><strong class="mono" style="color:${fc==null?'#aaa':fc<=(r.costo_objetivo||FCDEF)?'#7ee2a8':fc<=(r.costo_objetivo||FCDEF)+10?'#ffd966':'#ff8a80'}">${fc!=null?fc.toFixed(1)+'%':'—'}</strong></div>
+      <div class="row big"><span>Margen</span><strong>${money(margen)}</strong></div>
+      ${pv>0&&fc!=null?'':`<div class="row" style="font-size:12px;opacity:.7"><span>Precio sugerido (FC ${r.costo_objetivo||FCDEF}%)</span><span>${money(precioSugerido(r))}</span></div>`}
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Escalar porciones</div>
+      <div class="toolbar"><button class="mini-btn" id="es-1">1 pax</button><button class="mini-btn" id="es-base">Base (${porciones(r)})</button><input class="input" id="es-n" type="number" min="1" value="${escala}" style="max-width:90px"><button class="mini-btn" id="es-10">×10</button></div></div>
+    <div class="sheet-section"><div class="field-lbl">Ingredientes para ${escala} ${escala==1?'porción':'porciones'} · ${money(costoTotal(r)*factor)}</div>
+      ${ings(r).length?ings(r).map(it=>`<div class="ing"><div><div class="nm">${it.nombre||prod(it.pid)?.nombre||'—'}</div><div class="sub">${(Number(it.cantidad||0)*factor).toLocaleString('en-US',{maximumFractionDigits:3})} ${it.unidad||''}${it.merma?(' · merma '+it.merma+'%'):''}${it.pid?'':' · manual'}</div></div><div class="mono" style="font-size:13px">${money(costoIng(it)*factor)}</div><div></div></div>`).join(''):'<div style="opacity:.5;font-size:13px">Sin ingredientes. Edita la receta para costearla.</div>'}</div>
+    ${etapas(r).length?`<div class="sheet-section"><div class="field-lbl">Preparación por etapas</div>${etapas(r).map((e,i)=>`<div class="etapa"><h4>${i+1}. ${e.titulo||'Etapa'}</h4><p>${(e.desc||'').replace(/</g,'&lt;')}</p></div>`).join('')}</div>`:(r.instrucciones?`<div class="sheet-section"><div class="field-lbl">Preparación</div><div class="etapa"><p>${(r.instrucciones||'').replace(/</g,'&lt;')}</p></div></div>`:'')}
+    ${(r.alergenos&&r.alergenos.length)?`<div class="sheet-section"><div class="field-lbl">⚠ Alérgenos</div><div class="chips">${r.alergenos.map(a=>`<span class="chip" style="cursor:default">${a}</span>`).join('')}</div></div>`:''}
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="fic-edit"><span class="material-symbols-outlined">edit</span>Editar receta</button><button class="btn ghost" id="fic-print"><span class="material-symbols-outlined">print</span>Ficha técnica</button></div></div>`;
+  $('#es-1').onclick=()=>{escala=1;drawFicha(r)};$('#es-base').onclick=()=>{escala=porciones(r);drawFicha(r)};$('#es-10').onclick=()=>{escala=porciones(r)*10;drawFicha(r)};
+  $('#es-n').onchange=e=>{escala=Math.max(1,Number(e.target.value)||1);drawFicha(r)};
+  $('#fic-edit').onclick=()=>editarReceta(r);$('#fic-print').onclick=()=>imprimirFicha(r);
+}
+
+/* ====== EDITOR ====== */
+function editarReceta(r){
+  const ed=!!r;const c=JSON.parse(JSON.stringify(Object.assign({nombre:'',emoji:'🍽️',categoria_menu:'Entradas',tipo:'plato',precio_venta:'',rendimiento:1,costo_objetivo:FCDEF,ingredientes:[],etapas:[],alergenos:[],instrucciones:'',activo:true,foto_url:null},r||{})));
+  if(!Array.isArray(c.ingredientes))c.ingredientes=[];if(!Array.isArray(c.etapas))c.etapas=[];
+  setHead(ed?(c.emoji||'✏️'):'➕',ed?'Editar receta':'Nueva receta','Costeo',c.foto_url);
+  const draw=()=>{
+    const cp=c.rendimiento?c.ingredientes.reduce((a,it)=>a+costoIng(it),0)/(Number(c.rendimiento)||1):0;
+    const fc=Number(c.precio_venta)>0?cp/Number(c.precio_venta)*100:null;
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="r-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Emoji</div><input class="input" id="r-emo" value="${c.emoji||''}"></div></div>
+      <div class="sheet-section grid2"><div><div class="field-lbl">Sección de carta</div><select class="select" id="r-cat">${[...new Set([...SECCIONES,c.categoria_menu].filter(Boolean))].map(s=>`<option ${c.categoria_menu===s?'selected':''}>${s}</option>`).join('')}</select></div><div><div class="field-lbl">Precio venta (S/)</div><input class="input" id="r-pv" type="number" step="0.5" value="${c.precio_venta||''}"></div></div>
+      <div class="sheet-section grid3"><div><div class="field-lbl">Rinde (porciones)</div><input class="input" id="r-rend" type="number" min="1" value="${c.rendimiento||1}"></div><div><div class="field-lbl">Food cost obj. %</div><input class="input" id="r-obj" type="number" value="${c.costo_objetivo||FCDEF}"></div><div><div class="field-lbl">Activo</div><div class="switch ${c.activo?'on':''}" id="r-act"><div class="k"></div></div></div></div>
+      <div class="cost-box"><div class="row"><span>Costo/porción</span><strong class="mono">${money(cp)}</strong></div><div class="row"><span>Food cost</span><strong class="mono">${fc!=null?fc.toFixed(1)+'%':'—'}</strong></div><div class="row" style="font-size:12px;opacity:.8"><span>Precio sugerido (${c.costo_objetivo||FCDEF}%)</span><span>${money((c.costo_objetivo>0)?cp/(c.costo_objetivo/100):0)}</span></div></div>
+      <div class="sheet-section"><div class="field-lbl">Ingredientes (vinculados a Mercado = costo automático)</div><div id="r-ings">${c.ingredientes.map((it,i)=>ingEditor(it,i)).join('')}</div><button class="btn ghost sm" id="r-adding" style="margin-top:8px">+ Ingrediente</button></div>
+      <div class="sheet-section"><div class="field-lbl">Preparación por etapas</div><div id="r-etapas">${c.etapas.map((e,i)=>etapaEditor(e,i)).join('')}</div><button class="btn ghost sm" id="r-addet" style="margin-top:8px">+ Etapa</button></div>
+      <div class="sheet-section"><div class="field-lbl">Pegar texto corrido (opcional)</div><textarea class="input" id="r-paste" placeholder="Pega aquí una receta; cada línea con un '-' o número se vuelve una etapa."></textarea><button class="btn ghost sm" id="r-parse" style="margin-top:8px">Convertir texto en etapas</button></div>
+      <div class="sheet-section grid2"><label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">photo_camera</span>Foto del plato<input type="file" id="r-foto" accept="image/*" style="display:none"></label><div><div class="field-lbl">Alérgenos (coma)</div><input class="input" id="r-alg" value="${(c.alergenos||[]).join(', ')}"></div></div>
+      <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="r-cancel">${ed?'Volver':'Atrás'}</button><button class="btn primary" id="r-save"><span class="material-symbols-outlined">save</span>Guardar receta</button></div></div>`;
+    // binds
+    const setv=()=>{c.nombre=$('#r-nom').value;c.emoji=$('#r-emo').value;c.categoria_menu=$('#r-cat').value;c.precio_venta=$('#r-pv').value;c.rendimiento=$('#r-rend').value;c.costo_objetivo=$('#r-obj').value};
+    ['r-nom','r-emo','r-cat','r-pv','r-rend','r-obj'].forEach(id=>{const el=$('#'+id);el.onchange=()=>{setv();draw()}});
+    $('#r-act').onclick=()=>{setv();c.activo=!c.activo;draw()};
+    $$('#r-ings [data-ing]').forEach(row=>{const i=+row.dataset.ing;
+      row.querySelector('[data-f=pid]').onchange=e=>{setv();c.ingredientes[i].pid=e.target.value||null;const p=prod(e.target.value);if(p){c.ingredientes[i].nombre=p.nombre;c.ingredientes[i].unidad=p.unidad}draw()};
+      row.querySelector('[data-f=cant]').onchange=e=>{setv();c.ingredientes[i].cantidad=Number(e.target.value)||0;draw()};
+      row.querySelector('[data-f=merma]').onchange=e=>{setv();c.ingredientes[i].merma=Number(e.target.value)||0;draw()};
+      row.querySelector('[data-del]').onclick=()=>{setv();c.ingredientes.splice(i,1);draw()};
+    });
+    $('#r-adding').onclick=()=>{setv();c.ingredientes.push({pid:null,nombre:'',cantidad:0,unidad:'',merma:0});draw()};
+    $$('#r-etapas [data-et]').forEach(row=>{const i=+row.dataset.et;
+      row.querySelector('[data-f=tit]').onchange=e=>{setv();c.etapas[i].titulo=e.target.value;};
+      row.querySelector('[data-f=desc]').onchange=e=>{setv();c.etapas[i].desc=e.target.value;};
+      row.querySelector('[data-del]').onclick=()=>{setv();c.etapas.splice(i,1);draw()};
+    });
+    $('#r-addet').onclick=()=>{setv();c.etapas.push({titulo:'',desc:''});draw()};
+    $('#r-parse').onclick=()=>{setv();const t=$('#r-paste').value.trim();if(!t)return;t.split(/\n+/).map(l=>l.replace(/^[-•\d\.\)\s]+/,'').trim()).filter(Boolean).forEach((l,i)=>c.etapas.push({titulo:'Paso '+(c.etapas.length+1),desc:l}));draw()};
+    $('#r-foto').onchange=e=>subirFoto(e.target.files[0],url=>{c.foto_url=url;draw()});
+    $('#r-cancel').onclick=()=>ed?verReceta(r):closeSheet();
+    $('#r-save').onclick=()=>{setv();c.alergenos=$('#r-alg').value.split(',').map(x=>x.trim()).filter(Boolean);guardarReceta(ed?r.id:null,c)};
+  };draw();
+}
+function ingEditor(it,i){return `<div class="ing" data-ing="${i}"><div><select class="input" data-f="pid" style="margin-bottom:4px"><option value="">— insumo de Mercado —</option>${state.productos.map(p=>`<option value="${p.id}" ${it.pid===p.id?'selected':''}>${p.nombre} (${money(p.costo)}/${p.unidad})</option>`).join('')}</select><div class="sub">${it.pid?money(costoIng(it)):'manual'}</div></div><input class="input" data-f="cant" type="number" step="0.001" value="${it.cantidad||''}" placeholder="cant" style="width:80px"><div style="display:flex;gap:4px;align-items:center"><input class="input" data-f="merma" type="number" value="${it.merma||0}" style="width:58px" title="merma %"><button class="mini-btn" data-del>✕</button></div></div>`}
+function etapaEditor(e,i){return `<div class="etapa" data-et="${i}"><input class="input" data-f="tit" value="${(e.titulo||'').replace(/"/g,'&quot;')}" placeholder="Título de la etapa" style="margin-bottom:6px"><textarea class="input" data-f="desc" placeholder="Método…" style="min-height:60px">${e.desc||''}</textarea><button class="mini-btn" data-del style="margin-top:6px">✕ Quitar etapa</button></div>`}
+async function subirFoto(file,cb){if(!file)return;toast('Subiendo foto…');const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=MARCA+'/'+Date.now()+'.'+ext;const up=await sb.storage.from('recetas-files').upload(path,file,{upsert:true,contentType:file.type||undefined});if(up.error){toast('Atrás: '+up.error.message,'err');return}cb(sb.storage.from('recetas-files').getPublicUrl(path).data.publicUrl);toast('Foto lista','ok')}
+async function guardarReceta(id,c){
+  if(!c.nombre){toast('Falta nombre','warn');return}
+  const payload={marca_id:MARCA,nombre:c.nombre,emoji:c.emoji,categoria_menu:c.categoria_menu,tipo:c.tipo||'plato',precio_venta:Number(c.precio_venta)||0,rendimiento:Number(c.rendimiento)||1,costo_objetivo:Number(c.costo_objetivo)||FCDEF,ingredientes:c.ingredientes,etapas:c.etapas,alergenos:c.alergenos,activo:!!c.activo,foto_url:c.foto_url||null};
+  const{error}=id?await sb.from('inv_recetas').update(payload).eq('id',id):await sb.from('inv_recetas').insert(payload);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  closeSheet();await loadRecetas();render();toast('Servido · receta guardada','ok');
+}
+
+/* ====== CARTA / MENÚ ====== */
+function renderCarta(){
+  const cats=[...new Set(state.recetas.map(r=>r.categoria_menu||'Sin sección'))];
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Activa/desactiva platos de la carta y ajusta su sección. Lo activo es lo que ve el cliente / POS.</div>`+
+    cats.map(cat=>{const rs=state.recetas.filter(r=>(r.categoria_menu||'Sin sección')===cat);
+      return `<div class="grp-t">${cat} <span style="font-family:var(--font-mono);font-size:12px;opacity:.55">· ${rs.filter(r=>r.activo).length}/${rs.length} activos</span></div>`+
+      rs.map(r=>`<div class="carta-item ${r.activo?'':'off'}"><span style="font-size:22px">${r.emoji||'🍽️'}</span><div class="nm">${r.nombre}<div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${money(r.precio_venta)}${foodCost(r)!=null?(' · FC '+foodCost(r).toFixed(0)+'%'):''}</div></div>
+        <select class="input" data-sec="${r.id}" style="width:130px;font-size:12px;padding:6px">${[...new Set([...SECCIONES,r.categoria_menu].filter(Boolean))].map(s=>`<option ${r.categoria_menu===s?'selected':''}>${s}</option>`).join('')}</select>
+        <div class="switch ${r.activo?'on':''}" data-act="${r.id}"><div class="k"></div></div></div>`).join('');
+    }).join('');
+  $$('#screen [data-act]').forEach(sw=>sw.onclick=()=>toggleActivo(sw.dataset.act));
+  $$('#screen [data-sec]').forEach(se=>se.onchange=()=>cambiarSeccion(se.dataset.sec,se.value));
+}
+async function toggleActivo(id){const r=state.recetas.find(x=>x.id===id);const{error}=await sb.from('inv_recetas').update({activo:!r.activo}).eq('id',id);if(error){toast('Atrás','err');return}await loadRecetas();render();toast(r.activo?'Quitado de la carta':'Activado en la carta','ok')}
+async function cambiarSeccion(id,sec){const{error}=await sb.from('inv_recetas').update({categoria_menu:sec}).eq('id',id);if(error){toast('Atrás','err');return}await loadRecetas();render();toast('Sección actualizada','ok')}
+
+/* ====== MENÚS ====== */
+function menuCosto(m){return (Array.isArray(m.items)?m.items:[]).reduce((a,it)=>{const r=state.recetas.find(x=>x.id===it.receta_id);return a+(r?costoPorcion(r):0)},0)}
+function renderMenus(){
+  $('#screen').innerHTML=(state.menus.map(m=>{const cost=menuCosto(m);const pv=Number(m.precio||0);const fc=pv>0?cost/pv*100:null;
+    return `<div class="rec" data-mid="${m.id}"><div class="em">${m.tipo==='degustacion'?'🌟':'🍽️'}</div><div class="info"><h3>${m.nombre}${!m.activo?' <span class="fc none" style="font-size:9px">inactivo</span>':''}</h3><div class="meta"><span>${(Array.isArray(m.items)?m.items.length:0)} platos</span><span>${money(pv)}</span><span>costo ${money(cost)}</span></div></div><div class="right"><span class="fc ${fcClass(fc,30)}">${fc!=null?fc.toFixed(0)+'%':'—'}</span></div></div>`;
+  }).join('')||'<div class="empty">Sin menús. Crea uno con "Menú".</div>');
+  $$('#screen .rec[data-mid]').forEach(c=>c.onclick=()=>editarMenu(state.menus.find(m=>m.id===c.dataset.mid)));
+}
+function editarMenu(m){
+  const ed=!!m;const c=JSON.parse(JSON.stringify(Object.assign({nombre:'',tipo:'fijo',precio:'',items:[],activo:true},m||{})));
+  if(!Array.isArray(c.items))c.items=[];
+  setHead('🍽️',ed?'Editar menú':'Nuevo menú','Costeo automático');
+  const draw=()=>{const cost=c.items.reduce((a,it)=>{const r=state.recetas.find(x=>x.id===it.receta_id);return a+(r?costoPorcion(r):0)},0);const pv=Number(c.precio)||0;const fc=pv>0?cost/pv*100:null;const margen=pv-cost;
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="m-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Precio del menú (S/)</div><input class="input" id="m-pv" type="number" step="0.5" value="${c.precio||''}"></div></div>
+      <div class="cost-box"><div class="row"><span>Costo del menú</span><strong class="mono">${money(cost)}</strong></div><div class="row"><span>Food cost</span><strong class="mono">${fc!=null?fc.toFixed(1)+'%':'—'}</strong></div><div class="row big"><span>Margen</span><strong>${money(margen)}</strong></div></div>
+      <div class="sheet-section"><div class="field-lbl">Platos del menú</div>${c.items.map((it,i)=>{const r=state.recetas.find(x=>x.id===it.receta_id);return `<div class="ing"><div class="nm">${r?(r.emoji+' '+r.nombre):'—'}</div><div class="mono" style="font-size:12px">${r?money(costoPorcion(r)):''}</div><button class="mini-btn" data-rm="${i}">✕</button></div>`}).join('')||'<div style="opacity:.5;font-size:13px">Aún sin platos</div>'}</div>
+      <div class="sheet-section"><div class="field-lbl">Agregar plato</div><select class="select" id="m-add"><option value="">— elegir receta —</option>${state.recetas.filter(r=>r.activo).map(r=>`<option value="${r.id}">${r.emoji||''} ${r.nombre} · ${money(costoPorcion(r))}</option>`).join('')}</select></div>
+      <div class="sheet-section"><label class="toggle"><div class="switch ${c.activo?'on':''}" id="m-act"><div class="k"></div></div> Activo</label></div>
+      <div class="sheet-section"><div class="grid2">${ed?`<button class="btn ghost" id="m-del" style="color:var(--secondary)">Eliminar</button>`:'<button class="btn ghost" id="m-cancel">Atrás</button>'}<button class="btn primary" id="m-save"><span class="material-symbols-outlined">save</span>Guardar menú</button></div></div>`;
+    $('#m-nom').onchange=e=>c.nombre=e.target.value;$('#m-pv').onchange=e=>{c.precio=e.target.value;draw()};
+    $('#m-add').onchange=e=>{if(e.target.value){const r=state.recetas.find(x=>x.id===e.target.value);c.items.push({receta_id:r.id,nombre:r.nombre});draw()}};
+    $$('#sheet-body [data-rm]').forEach(b=>b.onclick=()=>{c.items.splice(+b.dataset.rm,1);draw()});
+    $('#m-act').onclick=()=>{c.activo=!c.activo;draw()};
+    if($('#m-cancel'))$('#m-cancel').onclick=closeSheet;
+    if($('#m-del'))$('#m-del').onclick=async()=>{if(!confirm('¿Eliminar menú?'))return;await sb.from('inv_menus').delete().eq('id',m.id);closeSheet();await loadMenus();render();toast('Menú eliminado','warn')};
+    $('#m-save').onclick=()=>guardarMenu(ed?m.id:null,c);
+  };draw();openSheet();
+}
+async function guardarMenu(id,c){
+  if(!c.nombre){toast('Falta nombre','warn');return}
+  const payload={marca_id:MARCA,local_id:LOCAL,nombre:c.nombre,tipo:c.tipo,precio:Number(c.precio)||0,items:c.items,activo:!!c.activo};
+  const{error}=id?await sb.from('inv_menus').update(payload).eq('id',id):await sb.from('inv_menus').insert(payload);
+  if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadMenus();render();toast('Servido · menú guardado','ok');
+}
+
+function imprimirFicha(r){const factor=escala/porciones(r);
+  const html=`<html><head><title>${r.nombre}</title><style>body{font-family:Georgia,serif;padding:30px;color:#111}h1{font-size:24px}table{width:100%;border-collapse:collapse;margin:14px 0}td,th{border-bottom:1px solid #ccc;padding:6px;text-align:left;font-size:13px}.r{text-align:right}h3{margin-top:18px}</style></head><body>
+    <h1>${r.emoji||''} ${r.nombre}</h1><p>${r.categoria_menu||''} · Rinde ${escala} porciones · Food cost ${foodCost(r)!=null?foodCost(r).toFixed(1)+'%':'—'} · Costo/porción ${money(costoPorcion(r))}</p>
+    <h3>Ingredientes</h3><table><tr><th>Ingrediente</th><th class="r">Cantidad</th><th class="r">Costo</th></tr>${ings(r).map(it=>`<tr><td>${it.nombre||''}</td><td class="r">${(Number(it.cantidad||0)*factor).toLocaleString('en-US',{maximumFractionDigits:3})} ${it.unidad||''}</td><td class="r">${money(costoIng(it)*factor)}</td></tr>`).join('')}</table>
+    <h3>Preparación</h3>${etapas(r).map((e,i)=>`<p><b>${i+1}. ${e.titulo||''}</b><br>${(e.desc||'').replace(/</g,'&lt;')}</p>`).join('')||('<p>'+(r.instrucciones||'')+'</p>')}
+    </body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),400);
+}
+
+function nuevo(){if(state.view==='menus')editarMenu(null);else editarReceta(null)}
+function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('rec_'+MARCA).on('postgres_changes',{event:'*',schema:'public',table:'inv_recetas',filter:'marca_id=eq.'+MARCA},async()=>{await loadRecetas();render()}).subscribe()}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);$('#h-add').addEventListener('click',nuevo);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
+</script>
+</body>
+</html>

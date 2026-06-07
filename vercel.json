@@ -62,6 +62,10 @@
       "destination": "/delivery.html"
     },
     {
+      "source": "/recetas",
+      "destination": "/recetas.html"
+    },
+    {
       "source": "/el-libro",
       "destination": "/el-libro.html"
     },
