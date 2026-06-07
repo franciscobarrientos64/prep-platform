@@ -51,6 +51,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.danger{background:var(--secondary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
 .bar{margin-bottom:6px}.bar .t{display:flex;justify-content:space-between;font-size:12px}.bar .track{height:8px;border-radius:99px;background:var(--gray-soft);overflow:hidden}.bar .fill{height:100%;background:var(--primary)}
 .empty{text-align:center;padding:50px 20px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.poweredby{flex-shrink:0;text-align:center;padding:8px;font-family:var(--font-mono);font-size:10px;opacity:.5;border-top:1px solid var(--gray-soft)}
+.poweredby a{color:var(--primary);font-weight:600}
 .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
 .sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:90vh;display:flex;flex-direction:column}
 .sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
@@ -78,6 +80,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 </header>
 <nav class="tabs" id="tabs"></nav>
 <main class="main" id="screen"></main>
+<div class="poweredby">Caja chica · mecánica de gastos inspirada en <a href="https://gethaus.app" target="_blank" rel="noopener">Haüs</a> — Powered by Haüs</div>
 <div class="backdrop" id="backdrop"></div>
 <aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
 <div class="toast-container" id="toasts"></div>
@@ -155,19 +158,40 @@ function abrirGasto(){
   setHead('🧾','Registrar gasto','Caja chica');
   const draw=()=>{
     $('#sheet-body').innerHTML=`
+      <div class="sheet-section"><div class="grid2"><label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">photo_camera</span>${file?('📎 '+(file.name.length>14?file.name.slice(0,14)+'…':file.name)):'Foto / recibo'}<input type="file" id="g-file" accept="image/*,application/pdf" style="display:none"></label><button class="btn" id="g-voz" style="background:var(--tertiary)"><span class="material-symbols-outlined">mic</span>Dictar</button></div><div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:6px;text-align:center">Manual abajo · o foto · o voz: "Gasté 45 soles en taxi al mercado"</div></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Monto (S/)</div><input class="input" id="g-monto" type="number" step="0.10" inputmode="decimal" value="${monto}" placeholder="0.00"></div>
         <div><div class="field-lbl">Método</div><select class="select" id="g-met">${METODOS.map(m=>`<option ${metodo===m?'selected':''}>${m}</option>`).join('')}</select></div></div>
       <div class="sheet-section"><div class="field-lbl">Centro de costo</div><div class="chips" id="g-cat">${CENTROS.map(c=>`<button class="chip ${cat===c?'active':''}" data-c="${c}">${c}</button>`).join('')}</div></div>
       <div class="sheet-section"><div class="field-lbl">Descripción</div><input class="input" id="g-desc" value="${desc}" placeholder="Taxi mercado, ferretería…"></div>
       <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="g-resp" value="${resp}" placeholder="Quién hizo el gasto"></div>
-      <div class="sheet-section"><label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">photo_camera</span>${file?('📎 '+file.name):'Foto / recibo (opcional)'}<input type="file" id="g-file" accept="image/*,application/pdf" style="display:none"></label></div>
       <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="g-cancel">Atrás</button><button class="btn primary" id="g-save"><span class="material-symbols-outlined">save</span>Registrar gasto</button></div></div>`;
     $('#g-monto').oninput=e=>monto=e.target.value;$('#g-met').onchange=e=>metodo=e.target.value;
     $$('#g-cat .chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;draw()});
     $('#g-desc').oninput=e=>desc=e.target.value;$('#g-resp').oninput=e=>resp=e.target.value;
     $('#g-file').onchange=e=>{file=e.target.files[0];draw()};
+    $('#g-voz').onclick=()=>dictarGasto(t=>{const r=parseGastoVoz(t);if(r.monto)monto=r.monto;if(r.cat)cat=r.cat;if(r.desc)desc=r.desc;draw();toast('Oído: '+t,'ok')});
     $('#g-cancel').onclick=closeSheet;$('#g-save').onclick=()=>guardarGasto({monto:Number(monto),cat,desc,metodo,resp,file});
   };draw();openSheet();
+}
+function dictarGasto(cb){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('Tu navegador no soporta dictado','warn');return}
+  const r=new SR();r.lang='es-PE';r.interimResults=false;r.maxAlternatives=1;
+  toast('Escuchando…');r.start();
+  r.onresult=e=>cb(e.results[0][0].transcript);
+  r.onerror=ev=>toast('No se pudo escuchar'+(ev.error?(' ('+ev.error+')'):''),'err');
+}
+function parseGastoVoz(t){
+  const low=' '+t.toLowerCase()+' ';
+  const m=low.match(/(\d+(?:[.,]\d+)?)/);const monto=m?Number(m[1].replace(',','.')):null;
+  const map={taxi:'Transporte',pasaje:'Transporte',combustible:'Transporte',gasolina:'Transporte',transporte:'Transporte',flete:'Transporte',
+    mercado:'Cocina',verdura:'Cocina',fruta:'Cocina',carne:'Cocina',pescado:'Cocina',pollo:'Cocina',insumo:'Cocina',abarrote:'Cocina',
+    bar:'Barra',licor:'Barra',vino:'Barra',cerveza:'Barra',hielo:'Barra',
+    limpieza:'Limpieza',detergente:'Limpieza',bolsa:'Limpieza',guante:'Limpieza',jabon:'Limpieza',
+    gas:'Mantenimiento',repuesto:'Mantenimiento',ferreteria:'Mantenimiento',reparacion:'Mantenimiento',foco:'Mantenimiento',
+    luz:'Administración',agua:'Administración',internet:'Administración',tramite:'Administración',utiles:'Administración'};
+  let cat='';for(const k in map){if(low.includes(k)){cat=map[k];break}}
+  return {monto,cat,desc:t};
 }
 async function guardarGasto({monto,cat,desc,metodo,resp,file}){
   if(!(monto>0)){toast('Monto inválido','warn');return}
