@@ -547,7 +547,8 @@ function renderAgenda() {
         <button class="${state.turnoFiltro==='almuerzo'?'active':''}" data-t="almuerzo">Almuerzo</button>
         <button class="${state.turnoFiltro==='cena'?'active':''}" data-t="cena">Cena</button>
       </div>
-      <button class="btn-ico" id="d-brief" style="margin-left:auto"><span class="material-symbols-outlined">receipt_long</span><span>Brief de turno</span></button>
+      <button class="btn-ico primary" id="d-resumen" style="margin-left:auto"><span class="material-symbols-outlined">summarize</span><span>Resumen</span></button>
+      <button class="btn-ico" id="d-brief"><span class="material-symbols-outlined">receipt_long</span><span>Brief de turno</span></button>
     </div>
     <div class="kpis">
       <div class="kpi"><div class="val">${k.confirmadas}</div><div class="lbl">Por llegar</div></div>
@@ -563,6 +564,7 @@ function renderAgenda() {
   $('#d-hoy').onclick = async () => { state.fecha = hoyISO(); await loadReservas(); render(); };
   $$('.seg [data-t]').forEach(b => b.onclick = () => { state.turnoFiltro = b.dataset.t; render(); });
   $('#d-brief').onclick = () => imprimirBrief();
+  $('#d-resumen').onclick = () => abrirResumen();
   wireResCards();
 }
 
@@ -1011,6 +1013,61 @@ function abrirWalkin() {
 }
 
 /* ========= BRIEF DE TURNO (impresión) ========= */
+/* ========= RESUMEN DEL DÍA ========= */
+function abrirResumen() {
+  const rs = reservasFiltradas().slice().sort((a,b)=>hhmm(a.hora).localeCompare(hhmm(b.hora)));
+  const cont = (e) => rs.filter(r=>r.estado===e).length;
+  const cubiertos = rs.filter(r=>['confirmada','sentada','completada'].includes(r.estado)).reduce((a,r)=>a+(r.comensales||0),0);
+  const garantias = rs.filter(r=>r.card_hold_id).length;
+  setSheetHead('📋','Resumen del día', fechaLarga(state.fecha)+' · '+(state.turnoFiltro==='todos'?'Todos los turnos':state.turnoFiltro));
+  const kpi=(v,l,cls='')=>`<div class="kpi ${cls}"><div class="val">${v}</div><div class="lbl">${l}</div></div>`;
+  const filas = rs.map(r=>{
+    const c = state.clientesMap[r.cliente_id];
+    const alg = (r.alergias_snapshot && r.alergias_snapshot.length) ? r.alergias_snapshot : ((c && c.alergias) || []);
+    const vip = r.vip_snapshot || esVip(c);
+    return `<div style="border:2px solid var(--outline);border-radius:12px;padding:12px;margin-bottom:8px;background:var(--surface)">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-family:var(--font-display);font-size:18px">${hhmm(r.hora)}</span>
+        <strong style="font-size:15px">${nombreCliente(c)}</strong>
+        ${vip?'<span class="tagchip vip">⭐ VIP</span>':''}
+        <span class="badge-estado ${r.estado}" style="margin-left:auto">${r.estado.replace('_',' ')}</span>
+      </div>
+      <div class="res-meta" style="margin-top:6px">
+        <span>👥 ${r.comensales}p</span>
+        <span>🪑 ${r.mesa_id?('Mesa '+mesaLabel(r.mesa_id)):'sin asignar'}</span>
+        <span>🔁 ${c?((c.total_visitas||0)+' visita'+((c.total_visitas||0)===1?'':'s')):'comensal nuevo'}</span>
+        ${c&&c.ticket_promedio?`<span>🎟 ${money(c.ticket_promedio)} prom.</span>`:''}
+        ${c&&c.telefono?`<span>📞 ${c.telefono}</span>`:''}
+        <span>vía ${({manual:'manual',widget:'web',whatsapp:'WhatsApp',walk_in:'walk-in',telefono:'teléfono',api:'api'})[r.origen]||r.origen}</span>
+      </div>
+      ${(alg.length||r.ocasion||r.card_hold_id)?`<div class="res-surface" style="margin-top:8px">
+        ${alg.map(a=>`<span class="tagchip alergia">⚠ ${a}</span>`).join('')}
+        ${r.ocasion?`<span class="tagchip ocasion">${r.ocasion}</span>`:''}
+        ${r.card_hold_id?'<span class="tagchip hold">💳 garantía</span>':''}
+      </div>`:''}
+      ${r.notas?`<div style="margin-top:6px;font-size:12px;font-family:var(--font-mono);opacity:.75">📝 ${r.notas}</div>`:''}
+    </div>`;
+  }).join('') || '<div class="empty-state">Sin reservas para este filtro</div>';
+  $('#sheet-body').innerHTML = `
+    <div class="kpis" style="margin-bottom:16px">
+      ${kpi(rs.length,'Reservas')}
+      ${kpi(cubiertos,'Cubiertos')}
+      ${kpi(cont('confirmada'),'Por llegar')}
+      ${kpi(cont('sentada'),'Sentadas')}
+      ${kpi(cont('completada'),'Completadas')}
+      ${kpi(cont('no_show'),'No-show',cont('no_show')?'alert':'')}
+      ${kpi(cont('cancelada'),'Canceladas')}
+      ${kpi(state.waitlist.length,'En espera')}
+      ${kpi(garantias,'Garantías')}
+    </div>
+    <div class="field-lbl">Detalle de reservas (${rs.length})</div>
+    ${filas}
+    <div class="sheet-section"><button class="btn ghost" id="res-print"><span class="material-symbols-outlined">print</span>Imprimir resumen</button></div>
+  `;
+  openSheet();
+  $('#res-print').onclick = () => imprimirBrief();
+}
+
 function imprimirBrief() {
   const rs = reservasFiltradas().filter(r => ['confirmada','sentada'].includes(r.estado));
   const cubiertos = rs.reduce((a,r)=>a+(r.comensales||0),0);
