@@ -339,19 +339,26 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 ### Módulos legacy (versiones anteriores, mantener como referencia):
 - pos-legacy.html, inventario.html, hub.html, reservas-spec.html, reservas-widget.html
 
-### Módulos por construir:
-- **mercado.html** (parcial) — Módulo 05 (Compras + Inventario). Vistas: Inventario (stock vs par + valor, ME-07), Compras (proveedores + comparativo de precios ME-01 + órdenes de compra con aprobación borrador→enviada→aprobada→recibida ME-13), Mermas (ME-08), Movimientos (ledger). Stock = suma de `inv_movimientos.cantidad` (signed) por local. Recibir una OC genera entradas a stock. Pendiente: conteo físico ciego (ME-12, ver inventario.html), lotes FEFO/FIFO (ME-09/14), transferencias multi-sede (ME-15), facturas/OCR (ME-05/10), histórico de precios y alertas (ME-02/03/04), vendor scoring (ME-06), predictivo (ME-11). Ruta /mercado.
-- Línea/KDS (linea.html)
-- Pase/Dashboard (pase.html)
-- Mercado (mercado.html)
-- Recetas (recetas.html)
-- RRHH (rrhh.html)
-- Delivery (delivery.html)
-- Contabilidad (contabilidad.html)
-- Vuelto (vuelto.html)
-- El Libro (el-libro.html)
-- Directorio (directorio.html)
-- Engagement (engagement.html)
+### Módulos construidos (al 2026-06-07) — 12/13 + carta pública:
+- **casa-italia.html** (= index.html, ruta `/`) — HUB del sistema: tarjetas de módulos (con color por módulo, fondo cuadrícula) + dashboard en vivo (KPIs clicables, ventas 7d, próximas reservas, alertas, inventario). Logo PREP! negro; clic en logo → hub.
+- **pos-v2.html** (`/pos`) — POS (19/23 CA features).
+- **kds.html** (`/kds`, `/linea`) — Línea/KDS: comandas en vivo de `ca_pedido_items`, estados Oído→Va→En fuego→Servido, filtro por estación, timers, pantalla oscura.
+- **bienvenida.html** (`/bienvenida`, `/reservar`) — Reservas/anfitrión (Agenda, Timeline, Mapa, Waitlist, Comensales/CRM).
+- **mercado.html** (`/mercado`) — Compras+Inventario: Inventario (PAR, stock exacto vía vista `inv_stock_actual`), Carga rápida (recepción + conteo con doble aprobación + anomalías + unidad editable), Armar pedido (completar PAR, configurar insumo, alertas merma/+20%), Compras (comparativo proveedores+webs con alerta más barato + comprobante PDF/foto + control de pago), Mermas, Movimientos, **Teórico vs real** (consumo por recetas + auto-depleción), Reportes (ahorro, reposición, vendor scoring ME-06, etc., clic→detalle).
+- **recetas.html** (`/recetas`) — Costeo/food cost ligado a Mercado (merma por ingrediente, escalado 1→N, precio sugerido, ficha técnica imprimible), carga manual/texto/foto, **Carta** (activar/desactivar + sección), **Menús** (combos con costeo auto). Tablas: inv_recetas (+etapas jsonb), inv_menus.
+- **carta.html** (`/carta`, `/menu`, `/m?mesa=`) — Carta digital pública (QR): menú por secciones desde recetas activas; el pedido crea `ca_pedidos` (origen qr)+items en estado oido → entra a POS y KDS. Pedir la cuenta (mock).
+- **rrhh.html** (`/rrhh`) — Equipo+fichas, Asistencia (entrada/salida+horas), Planilla, **Turnos** (programación semanal + restricciones por persona: días no disponibles/turnos permitidos). Tablas: rrhh_* (existentes) + rrhh_programacion + rrhh_empleados.restricciones jsonb.
+- **delivery.html** (`/delivery`) — Pedidos (flujo recibido→…→entregado, canal propio/Rappi/PedidosYa), Repartidores, Zonas (tarifa/tiempo). Tablas dl_pedidos/dl_repartidores/dl_zonas.
+- **finanzas.html** (`/finanzas`, `/contabilidad`) — Módulo 09 (Finanzas/Contabilidad): presupuesto general (plantilla de partidas + recurrentes), presupuesto vs real con variación y alertas por umbral, real automático desde POS/Mercado/Vuelto. Tablas fin_partidas + fin_real.
+- **vuelto.html** (`/vuelto`) — Caja chica: gastos por voz/foto/manual, centro de costo, aprobación de supervisor, cierre diario. "Powered by Haüs". Tabla vu_gastos.
+- **el-libro.html** (`/el-libro`, `/libro`) — Intranet: Tablón (comunicados), Procedimientos/SOPs, Checklists (run diario), Bitácora. Tablas lb_posts/lb_checklists/lb_checklist_runs/lb_bitacora.
+- **directorio.html** (`/directorio`) — Reportes ejecutivos consolidados (ventas, food cost, labor%, utilidad, top platos, operación, P&L vs presupuesto) por hoy/7d/mes.
+- **engagement.html** (`/engagement`) — CRM 360 + Loyalty (niveles+puntos, eng_puntos) + Campañas (audiencias + WhatsApp, eng_campanas).
+
+### Pendientes (backlog):
+- **Pase** (dashboard ejecutivo dedicado) — hoy cubierto por el hub + Directorio.
+- **SUNAT** — facturación electrónica (boleta/factura/NC vía PSE/OSE). CRÍTICO Perú, construir cuando el cliente esté listo.
+- v2 por módulo: POS (tips/giftcards/kiosko/offline), KDS (multicanal/insights), Delivery (página pública + integración real agregadores), Engagement (email marketing/reseñas), Recetas (sub-recetas, ingeniería de menú, "qué puedo preparar con stock", alérgenos heredados), OCR de recibos/recetario con IA (requiere API key Anthropic), multi-sucursal en Directorio.
 
 ### Landing (repo separado: prep-landing):
 - index.html (356K) — Landing v7 con logo animado, 13 módulos, 404 page personalizada
