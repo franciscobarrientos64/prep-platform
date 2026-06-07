@@ -132,7 +132,8 @@ const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
 const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],
-  view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,channel:null};
+  view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
+  pedidoQty:{},pedidoCat:'todas',channel:null};
 
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toFixed(2)}
@@ -170,6 +171,7 @@ function categorias(){return Array.from(new Set(state.productos.map(p=>p.categor
 /* ===== ROUTER ===== */
 function render(){recalcStock();renderHeader();renderTabs();
   if(state.view==='inventario')renderInventario();
+  else if(state.view==='pedido')renderPedido();
   else if(state.view==='compras')renderCompras();
   else if(state.view==='mermas')renderMermas();
   else if(state.view==='movimientos')renderMovimientos();
@@ -188,7 +190,9 @@ function renderHeader(){
   $('#h-merma').onclick=()=>abrirMerma(null);
 }
 function renderTabs(){
+  const nPedido=Object.values(state.pedidoQty).filter(q=>q>0).length;
   const tabs=[{k:'inventario',l:'Inventario',ico:'inventory_2',n:state.productos.length},
+    {k:'pedido',l:'Armar pedido',ico:'list_alt',n:nPedido||null},
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
     {k:'mermas',l:'Mermas',ico:'delete_sweep',n:state.mermas.length},
     {k:'movimientos',l:'Movimientos',ico:'sync_alt'}];
@@ -338,6 +342,88 @@ function renderMovimientos(){
   $('#screen').innerHTML=`<div class="field-lbl" style="margin-bottom:10px">Últimos movimientos de inventario</div>
     <table class="tbl"><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cant.</th><th>Valor</th><th>Ref/Motivo</th></tr>
     ${state.movs.map(m=>{const p=prod(m.producto_id);return `<tr><td>${m.fecha}</td><td>${p?.emoji||''} ${p?.nombre||m.producto_id}</td><td>${m.tipo}</td><td style="color:${Number(m.cantidad)<0?'var(--secondary)':'var(--green)'}">${Number(m.cantidad)>0?'+':''}${num(m.cantidad)}</td><td>${money(Math.abs(m.valor_total||0))}</td><td>${m.referencia||m.motivo||(m.proveedor_id?prov(m.proveedor_id)?.nombre:'')||''}</td></tr>`}).join('')||'<tr><td colspan="6" style="text-align:center;padding:30px;opacity:.5">Sin movimientos</td></tr>'}</table>`;
+}
+
+/* ===== ARMAR PEDIDO (formulario por categoría → consolidado por proveedor) ===== */
+// Sabe a quién pedir: proveedor preferido, si no el de menor precio.
+function proveedorDe(pid){
+  const opts=state.provProd.filter(pp=>pp.producto_id===pid);
+  if(!opts.length)return null;
+  return opts.find(o=>o.preferido)||opts.slice().sort((a,b)=>Number(a.costo)-Number(b.costo))[0];
+}
+function sugerido(p){return Math.max(0,Number(p.par_level||0)-stock(p.id))}
+function consolidadoPedido(){
+  const porProv={};let sinProv=[];
+  Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);if(!(q>0))return;const p=prod(pid);if(!p)return;
+    const pp=proveedorDe(pid);
+    if(!pp){sinProv.push({p,q});return;}
+    const costo=Number(pp.costo);
+    (porProv[pp.proveedor_id]=porProv[pp.proveedor_id]||{items:[],monto:0});
+    porProv[pp.proveedor_id].items.push({producto_id:pid,nombre:p.nombre,cantidad:q,costo_unit:costo});
+    porProv[pp.proveedor_id].monto+=q*costo;});
+  return {porProv,sinProv};
+}
+function renderPedido(){
+  const cats=['todas',...categorias()];
+  const list=state.productos.filter(p=>state.pedidoCat==='todas'||p.categoria===state.pedidoCat);
+  $('#screen').innerHTML=`
+    <div class="toolbar">
+      <div class="chips">${cats.map(c=>`<button class="chip ${state.pedidoCat===c?'active':''}" data-pc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
+      <button class="btn-ico" id="ped-sug" style="margin-left:auto"><span class="material-symbols-outlined">auto_fix_high</span><span>Autocompletar sugeridos</span></button>
+      <button class="btn-ico ghost" id="ped-clear"><span class="material-symbols-outlined">close</span><span>Limpiar</span></button>
+    </div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Indica cuánto pedir de cada producto. El sugerido = par − stock. Abajo se consolida por proveedor.</div>
+    ${list.map(pedRow).join('')||'<div class="empty-state">Sin productos</div>'}
+    <div id="ped-resumen" style="margin-top:18px"></div>`;
+  $$('#screen .chip[data-pc]').forEach(b=>b.onclick=()=>{state.pedidoCat=b.dataset.pc;renderPedido()});
+  $('#ped-sug').onclick=()=>{list.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});renderPedido()};
+  $('#ped-clear').onclick=()=>{state.pedidoQty={};renderPedido()};
+  $$('#screen [data-pq]').forEach(inp=>inp.oninput=()=>{state.pedidoQty[inp.dataset.pq]=Number(inp.value)||0;renderResumenPedido()});
+  renderResumenPedido();
+}
+function pedRow(p){const s=stock(p.id),sug=sugerido(p),pp=proveedorDe(p.id),q=state.pedidoQty[p.id]||'';
+  const provLbl=pp?(prov(pp.proveedor_id)?.nombre||pp.proveedor_id):'⚠ sin proveedor';
+  return `<div class="row-card" data-pid="${p.id}">
+    <span class="row-emoji">${p.emoji||'📦'}</span>
+    <div class="row-main"><h3>${p.nombre}</h3>
+      <div class="row-meta"><span>stock ${num(s)} ${p.unidad||''}</span><span>par ${num(p.par_level)}</span><span>sug. ${num(sug)}</span><span>${pp?money(pp.costo)+' · ':''}${provLbl}</span></div></div>
+    <div class="row-right"><input class="input" data-pq="${p.id}" type="number" min="0" step="0.5" value="${q}" placeholder="${sug||0}" style="width:90px;text-align:right"></div>
+  </div>`;
+}
+function renderResumenPedido(){
+  const el=$('#ped-resumen');if(!el)return;
+  const {porProv,sinProv}=consolidadoPedido();
+  const provIds=Object.keys(porProv);
+  const totalMonto=provIds.reduce((a,id)=>a+porProv[id].monto,0);
+  const totalItems=provIds.reduce((a,id)=>a+porProv[id].items.length,0);
+  if(!provIds.length&&!sinProv.length){el.innerHTML='';return;}
+  el.innerHTML=`
+    <div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="font-family:var(--font-display);font-size:20px">Consolidado</div>
+        <div style="font-family:var(--font-mono);font-size:12px;opacity:.7">${provIds.length} proveedor(es) · ${totalItems} ítems · ${money(totalMonto)}</div>
+      </div>
+      ${provIds.map(id=>{const g=porProv[id];return `<div style="border:1px solid var(--gray-soft);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-weight:700"><span>🏬 ${prov(id)?.nombre||id}</span><span class="mono">${money(g.monto)}</span></div>
+        <div class="row-meta" style="margin-top:4px">${g.items.map(it=>`${it.nombre} ×${num(it.cantidad)}`).join(' · ')}</div></div>`}).join('')}
+      ${sinProv.length?`<div style="background:var(--red-soft);border:1px dashed var(--secondary);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px">⚠ Sin proveedor asignado (no se enviarán): ${sinProv.map(x=>x.p.nombre+' ×'+num(x.q)).join(', ')}. Asígnalos en Compras→Comparativo.</div>`:''}
+      <button class="btn primary" id="ped-generar" ${provIds.length?'':'disabled'}><span class="material-symbols-outlined">send</span>Generar ${provIds.length} orden(es) de compra</button>
+    </div>`;
+  $('#ped-generar').onclick=generarOrdenesPedido;
+}
+async function generarOrdenesPedido(){
+  const {porProv}=consolidadoPedido();const provIds=Object.keys(porProv);
+  if(!provIds.length){toast('No hay nada para pedir','warn');return}
+  if(!confirm('¿Generar '+provIds.length+' orden(es) de compra (borrador), una por proveedor?'))return;
+  // numeración base
+  const{data:nums}=await sb.from('inv_ordenes_compra').select('numero').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(1);
+  let n=(parseInt((nums&&nums[0]?.numero||'').replace(/\D/g,''))||0);
+  const rows=provIds.map(id=>{const g=porProv[id];const subtotal=+g.monto.toFixed(2);const igv=+(subtotal*0.18).toFixed(2);n++;
+    return {numero:'OC-'+String(n).padStart(4,'0'),local_id:LOCAL,proveedor_id:id,estado:'borrador',items:g.items,subtotal,igv,total:+(subtotal+igv).toFixed(2),fecha_emision:hoyISO(),responsable:'Mercado'};});
+  const{error}=await sb.from('inv_ordenes_compra').insert(rows);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  state.pedidoQty={};await loadOrdenes();state.view='compras';state.comprasTab='ordenes';render();
+  toast('Servido · '+rows.length+' orden(es) generada(s) como borrador','ok');
 }
 
 /* ===== COMPRAS (proveedores + comparativo + órdenes) ===== */
