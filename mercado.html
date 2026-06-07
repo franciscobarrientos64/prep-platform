@@ -131,7 +131,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],
+const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -152,9 +152,12 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado()]);
+  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones()]);
   render();subscribe();$('#boot').classList.add('gone');
 }
+async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
+function diffPct(c,r){if(r<=0)return c>0?1:0;return Math.abs(c-r)/r}
+function esAnomalia(c,r){if(isNaN(c))return false;return diffPct(c,r)>=0.5||(r>0&&c===0)} // ≥50% de diferencia o quiebre total
 async function loadStockMap(){const{data}=await sb.from('inv_stock_actual').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m;}
 async function loadPreciosMercado(){const{data}=await sb.from('inv_precios_mercado').select('*').eq('marca_id',MARCA);state.preciosMercado=data||[]}
 async function loadProductos(){const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)return toast('Atrás: '+error.message,'err');state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre))}
@@ -367,6 +370,7 @@ function renderCarga(){
     <div class="toolbar">
       <div class="seg"><button class="${modo==='recepcion'?'active':''}" data-cm="recepcion">📥 Recepción</button><button class="${modo==='conteo'?'active':''}" data-cm="conteo">📋 Inventario</button></div>
       ${modo==='conteo'?`<button class="btn-ico ${state.cargaCiego?'dark':'ghost'}" id="cg-ciego"><span class="material-symbols-outlined">${state.cargaCiego?'visibility_off':'visibility'}</span><span>Modo ciego</span></button>`:''}
+      ${modo==='conteo'&&state.sesiones.length?`<button class="btn-ico warn" id="cg-aprob" style="margin-left:auto"><span class="material-symbols-outlined">fact_check</span><span>${state.sesiones.length} por aprobar</span></button>`:''}
     </div>
     <div class="chips" style="margin-bottom:10px">${cats.map(c=>`<button class="chip ${state.cargaCat===c?'active':''}" data-cc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">${modo==='recepcion'?'Ingresa lo que llegó.':(state.cargaCiego?'Cuenta a ciegas (no se muestra el stock).':'Cuenta el físico real.')} Escribe el número y pulsa Enter para saltar al siguiente. Toca la unidad para cambiarla.</div>
@@ -375,11 +379,13 @@ function renderCarga(){
       <button class="btn primary" id="cg-save"><span class="material-symbols-outlined">save</span>Guardar</button></div>`;
   $$('#screen .seg [data-cm]').forEach(b=>b.onclick=()=>{state.cargaMode=b.dataset.cm;renderCarga()});
   if($('#cg-ciego'))$('#cg-ciego').onclick=()=>{state.cargaCiego=!state.cargaCiego;renderCarga()};
+  if($('#cg-aprob'))$('#cg-aprob').onclick=abrirAprobaciones;
   $$('#screen .chip[data-cc]').forEach(b=>b.onclick=()=>{state.cargaCat=b.dataset.cc;renderCarga()});
   $$('#screen [data-uni]').forEach(sel=>sel.onchange=()=>cambiarUnidad(sel.dataset.uni,sel.value));
   const inputs=$$('#screen input[data-ci]');
   inputs.forEach(inp=>{
-    inp.oninput=()=>{state.cargaVals[inp.dataset.pid]=inp.value;updateCargaCount()};
+    inp.oninput=()=>{state.cargaVals[inp.dataset.pid]=inp.value;updateCargaCount();
+      if(state.cargaMode==='conteo'&&!state.cargaCiego){const a=inp.value!==''&&esAnomalia(Number(inp.value),Number(inp.dataset.reg));inp.style.borderColor=a?'var(--secondary)':'';inp.style.background=a?'var(--red-soft)':''}};
     inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const n=inputs[Number(inp.dataset.ci)+1];if(n){n.focus();n.select();n.scrollIntoView({block:'center',behavior:'smooth'})}else inp.blur()}};
   });
   $('#cg-save').onclick=guardarCarga;updateCargaCount();
@@ -387,29 +393,84 @@ function renderCarga(){
 function cargaRow(p,i,modo){const s=stock(p.id);const val=state.cargaVals[p.id]??'';
   const inLista=UNIDADES.includes(p.unidad||'unidad');
   const uniSel=`<select class="select" data-uni="${p.id}" style="width:auto;padding:3px 6px;font-size:11px;box-shadow:none;border-radius:6px">${UNIDADES.map(u=>`<option ${(p.unidad||'unidad')===u?'selected':''}>${u}</option>`).join('')}${inLista?'':`<option selected>${p.unidad}</option>`}</select>`;
+  const anom=modo==='conteo'&&!state.cargaCiego&&val!==''&&esAnomalia(Number(val),s);
+  const istyle='width:78px;text-align:right;font-size:18px;font-family:var(--font-display)'+(anom?';border-color:var(--secondary);background:var(--red-soft)':'');
   return `<div class="row-card" style="grid-template-columns:auto 1fr auto;gap:10px;padding:10px 12px">
     <span class="row-emoji">${p.emoji||'📦'}</span>
-    <div class="row-main"><h3 style="font-size:14px">${p.nombre}</h3>
-      <div class="row-meta" style="align-items:center">${(modo==='conteo'&&state.cargaCiego)?'<span style="opacity:.5">a ciegas</span>':`<span>stock ${num(s)}</span>`}${uniSel}</div></div>
-    <input class="input" inputmode="decimal" data-ci="${i}" data-pid="${p.id}" value="${val}" placeholder="${modo==='recepcion'?'+':num(s)}" style="width:82px;text-align:right;font-size:18px;font-family:var(--font-display)">
+    <div class="row-main"><h3 style="font-size:14px">${p.nombre}${anom?' <span class="badge sin" style="font-size:9px">⚠ revisar</span>':''}</h3>
+      <div class="row-meta" style="align-items:center">${(modo==='conteo'&&state.cargaCiego)?'<span style="opacity:.5">a ciegas</span>':`<span>stock ${num(s)} ${p.unidad||''}</span>`}${uniSel}</div></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <input class="input" inputmode="decimal" data-ci="${i}" data-pid="${p.id}" data-reg="${s}" value="${val}" placeholder="${modo==='recepcion'?'+':num(s)}" style="${istyle}">
+      <span style="font-size:11px;font-family:var(--font-mono);opacity:.6;min-width:32px">${p.unidad||''}</span>
+    </div>
   </div>`;
 }
 function updateCargaCount(){const c=Object.values(state.cargaVals).filter(v=>v!==''&&v!=null).length;const b=$('#cg-save');if(!b)return;b.disabled=!c;
-  b.innerHTML='<span class="material-symbols-outlined">save</span>'+(state.cargaMode==='recepcion'?('Ingresar '+c+' producto(s) a stock'):('Guardar conteo ('+c+')'));}
+  const ico=state.cargaMode==='recepcion'?'save':'send';
+  b.innerHTML='<span class="material-symbols-outlined">'+ico+'</span>'+(state.cargaMode==='recepcion'?('Ingresar '+c+' producto(s) a stock'):('Enviar conteo a aprobación ('+c+')'));}
 async function cambiarUnidad(pid,unidad){const{error}=await sb.from('inv_productos').update({unidad}).eq('id',pid);if(error){toast('Atrás: '+error.message,'err');return}const p=prod(pid);if(p)p.unidad=unidad;toast('Unidad → '+unidad,'ok')}
 async function guardarCarga(){
+  if(state.cargaMode==='conteo'){return enviarConteoAprobacion();}
   const entries=Object.entries(state.cargaVals).filter(([pid,v])=>v!==''&&v!=null);
   if(!entries.length){toast('Nada que guardar','warn');return}
-  const modo=state.cargaMode,now=hoyISO(),rows=[];
-  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;const v=Number(vRaw);if(isNaN(v))continue;
-    if(modo==='recepcion'){if(v<=0)continue;rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:'recepción',responsable:'Mercado'});}
-    else{const delta=+(v-stock(pid)).toFixed(2);if(delta===0)continue;rows.push({local_id:LOCAL,producto_id:pid,tipo:'ajuste',cantidad:delta,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(delta*Number(p.costo||0)).toFixed(2),fecha:now,motivo:'Conteo físico',responsable:'Mercado'});}}
-  if(!rows.length){toast('Sin cambios para guardar','warn');return}
-  if(!confirm((modo==='recepcion'?'Ingresar a stock ':'Ajustar por conteo ')+rows.length+' producto(s)?'))return;
+  const now=hoyISO(),rows=[];
+  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;const v=Number(vRaw);if(isNaN(v)||v<=0)continue;
+    rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:'recepción',responsable:'Mercado'});}
+  if(!rows.length){toast('Sin cantidades válidas','warn');return}
+  if(!confirm('Ingresar a stock '+rows.length+' producto(s)?'))return;
   const{error}=await sb.from('inv_movimientos').insert(rows);
   if(error){toast('Atrás: '+error.message,'err');return}
   state.cargaVals={};await loadMovs();state.view='inventario';render();
-  toast('Servido · '+rows.length+' producto(s) '+(modo==='recepcion'?'ingresados':'ajustados por conteo'),'ok');
+  toast('Servido · '+rows.length+' producto(s) ingresados a stock','ok');
+}
+/* Conteo con doble aprobación (quien lo toma → jefe que aprueba) */
+async function enviarConteoAprobacion(){
+  const entries=Object.entries(state.cargaVals).filter(([pid,v])=>v!==''&&v!=null);
+  if(!entries.length){toast('Nada que enviar','warn');return}
+  const quien=prompt('¿Quién tomó el inventario? (tu nombre)');if(!quien)return;
+  const lineas=[];let difs=0,valDif=0;
+  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;const c=Number(vRaw);if(isNaN(c))continue;const reg=stock(pid);const diff=+(c-reg).toFixed(2);
+    if(diff!==0)difs++;valDif+=Math.abs(diff)*Number(p.costo||0);
+    lineas.push({producto_id:pid,nombre:p.nombre,unidad:p.unidad,contado:c,registrado:reg,diff,valor:+(diff*Number(p.costo||0)).toFixed(2),anomalia:esAnomalia(c,reg)});}
+  if(!lineas.length){toast('Sin datos','warn');return}
+  const{error}=await sb.from('inv_sesiones_conteo').insert({local_id:LOCAL,area:'general',modo:'conteo',estado:'tomado',iniciado_por:quien,iniciada_at:nowISO(),total_productos:lineas.length,total_diferencias:difs,valor_diferencia:+valDif.toFixed(2),lineas});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  state.cargaVals={};await loadSesiones();render();
+  toast('Servido · conteo enviado a aprobación del jefe ('+lineas.length+' productos)','ok');
+}
+function abrirAprobaciones(){
+  setHead('✔️','Conteos por aprobar',state.sesiones.length+' pendiente(s)');
+  $('#sheet-body').innerHTML=state.sesiones.length?state.sesiones.map(s=>`<button class="btn ghost" data-ses="${s.id}" style="justify-content:space-between;margin-bottom:8px"><span>${(s.iniciada_at||'').slice(0,10)} · ${s.iniciado_por||'—'}</span><span class="mono">${s.total_productos}p · ${s.total_diferencias} dif · ${money(s.valor_diferencia)}</span></button>`).join(''):'<div class="empty-state">Nada por aprobar</div>';
+  openSheet();
+  $$('#sheet-body [data-ses]').forEach(b=>b.onclick=()=>{const s=state.sesiones.find(x=>x.id===b.dataset.ses);abrirRevisionConteo(s)});
+}
+function abrirRevisionConteo(s){
+  const lineas=Array.isArray(s.lineas)?s.lineas:[];
+  setHead('🔍','Revisar y aprobar conteo','Tomado por '+(s.iniciado_por||'—')+' · '+(s.iniciada_at||'').slice(0,10),'var(--amber-soft)');
+  $('#sheet-body').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="val">${s.total_productos}</div><div class="lbl">Productos</div></div>
+      <div class="kpi alert"><div class="val">${s.total_diferencias}</div><div class="lbl">Diferencias</div></div>
+      <div class="kpi"><div class="val">${money(s.valor_diferencia)}</div><div class="lbl">Valor dif.</div></div></div>
+    <div class="sheet-section"><table class="tbl"><tr><th>Producto</th><th>Reg.</th><th>Contado</th><th>Dif.</th></tr>
+      ${lineas.map(l=>`<tr style="${l.anomalia?'background:var(--red-soft)':''}"><td>${l.nombre}${l.anomalia?' ⚠':''}</td><td>${num(l.registrado)}</td><td><strong>${num(l.contado)} ${l.unidad||''}</strong></td><td style="color:${l.diff<0?'var(--secondary)':l.diff>0?'var(--green)':''}">${l.diff>0?'+':''}${num(l.diff)}</td></tr>`).join('')}</table>
+      <div class="row-meta" style="margin-top:6px">⚠ = diferencia inusual (≥50% o quiebre total). Al aprobar se ajusta el inventario.</div></div>
+    <div class="sheet-section"><div class="grid2"><button class="btn danger" id="rc-rej">Rechazar</button><button class="btn primary" id="rc-ok"><span class="material-symbols-outlined">check</span>Aprobar y aplicar</button></div></div>`;
+  openSheet();
+  $('#rc-rej').onclick=()=>rechazarConteo(s);$('#rc-ok').onclick=()=>aprobarConteo(s);
+}
+async function aprobarConteo(s){
+  const jefe=prompt('Aprobado por (jefe):');if(!jefe)return;
+  const lineas=Array.isArray(s.lineas)?s.lineas:[];const now=hoyISO();const rows=[];
+  lineas.forEach(l=>{if(Number(l.diff)!==0){const p=prod(l.producto_id);rows.push({local_id:LOCAL,producto_id:l.producto_id,tipo:'ajuste',cantidad:Number(l.diff),unidad:l.unidad||p?.unidad,costo_unitario:p?.costo||0,valor_total:+(Number(l.diff)*Number(p?.costo||0)).toFixed(2),fecha:now,motivo:'Conteo aprobado por '+jefe+' (tomó '+s.iniciado_por+')',responsable:s.iniciado_por})}});
+  if(rows.length){const r=await sb.from('inv_movimientos').insert(rows);if(r.error){toast('Atrás: '+r.error.message,'err');return}}
+  await sb.from('inv_sesiones_conteo').update({estado:'aprobado',cerrada_por:jefe,cerrada_at:nowISO()}).eq('id',s.id);
+  closeSheet();await Promise.all([loadMovs(),loadSesiones()]);render();
+  toast('Servido · conteo aprobado por '+jefe+' · inventario actualizado','ok');
+}
+async function rechazarConteo(s){
+  if(!confirm('¿Rechazar este conteo? No se aplicará al inventario.'))return;
+  await sb.from('inv_sesiones_conteo').update({estado:'rechazado',cerrada_at:nowISO()}).eq('id',s.id);
+  closeSheet();await loadSesiones();render();toast('Conteo rechazado','warn');
 }
 
 /* ===== ARMAR PEDIDO (formulario por categoría → consolidado por proveedor) ===== */
