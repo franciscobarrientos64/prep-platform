@@ -78,6 +78,10 @@
       "destination": "/carta.html"
     },
     {
+      "source": "/directorio",
+      "destination": "/directorio.html"
+    },
+    {
       "source": "/el-libro",
       "destination": "/el-libro.html"
     },

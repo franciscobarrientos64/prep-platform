@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Directorio · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{margin-left:auto;display:flex;gap:8px;align-items:center}
+.chip{padding:7px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:2px 2px 0 0 #000;cursor:pointer}.chip.active{background:var(--ink);color:var(--bg)}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.section-t{font-family:var(--font-display);font-size:20px;margin:22px 0 12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px}
+.kpi .v{font-family:var(--font-display);font-size:26px;line-height:1.05;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin-top:5px}
+.kpi.good .v{color:var(--green)}.kpi.bad .v{color:var(--secondary)}.kpi .ico{float:right;opacity:.25}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}@media(max-width:780px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:16px}
+.panel h3{font-family:var(--font-display);font-size:17px;margin-bottom:12px}
+.chart{display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.chart .bar{width:100%;background:var(--primary);border:2px solid var(--outline);border-radius:6px 6px 0 0;min-height:3px}
+.chart .cap{font-family:var(--font-mono);font-size:9px;opacity:.6}.chart .val{font-family:var(--font-mono);font-size:9px;font-weight:600}
+.bar2{margin-bottom:8px}.bar2 .t{display:flex;justify-content:space-between;font-size:13px}.bar2 .track{height:9px;border-radius:99px;background:var(--gray-soft);overflow:hidden;margin-top:3px}.bar2 .fill{height:100%;background:var(--primary)}
+.li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--gray-soft);font-size:14px}.li:last-child{border:none}
+.empty{font-family:var(--font-mono);font-size:12px;opacity:.5;text-align:center;padding:14px}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · consolidando</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Directorio</div></div></div>
+  <div class="header-info" id="per"></div>
+</header>
+<main class="wrap" id="screen"></main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const state={periodo:'mes',data:null};
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
+function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
+function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addD(iso,n){const[y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
+function bounds(){const h=hoyISO();if(state.periodo==='hoy')return{ini:h,fin:addD(h,1)};if(state.periodo==='7d')return{ini:addD(h,-6),fin:addD(h,1)};return{ini:h.slice(0,8)+'01',fin:addD(h,1)}}
+
+async function load(){
+  const{ini,fin}=bounds();
+  const[pe,prod,stock,merm,vu,emp,res,dl,fin_p]=await Promise.all([
+    sb.from('ca_pedidos').select('id,total,estado,origen,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00'),
+    sb.from('inv_productos').select('id,costo,par_level').eq('marca_id',MARCA),
+    sb.from('inv_stock_actual').select('producto_id,stock').eq('local_id',LOCAL),
+    sb.from('inv_mermas').select('valor_perdido,fecha').eq('local_id',LOCAL).gte('fecha',ini).lt('fecha',fin),
+    sb.from('vu_gastos').select('monto,fecha,estado').eq('local_id',LOCAL).neq('estado','rechazado').gte('fecha',ini).lt('fecha',fin),
+    sb.from('rrhh_empleados').select('sueldo,estado').eq('local_id',LOCAL).eq('estado','activo'),
+    sb.from('ms_reservas').select('comensales,estado,fecha').eq('local_id',LOCAL).gte('fecha',ini).lt('fecha',fin),
+    sb.from('dl_pedidos').select('total,estado,created_at').eq('local_id',LOCAL).gte('created_at',ini+'T00:00:00').lt('created_at',fin+'T00:00:00'),
+    sb.from('fin_partidas').select('tipo,monto,activo').eq('local_id',LOCAL).eq('activo',true),
+  ]);
+  const peds=pe.data||[];const ids=peds.map(p=>p.id);
+  let items=[];if(ids.length){const{data}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,precio_total,estado,pedido_id').in('pedido_id',ids).neq('estado','cancelado');items=data||[]}
+  const{data:recetas}=await sb.from('inv_recetas').select('id,ingredientes').eq('marca_id',MARCA);
+  state.data={peds,items,recetas:recetas||[],prod:prod.data||[],stock:stock.data||[],merm:merm.data||[],vu:vu.data||[],emp:emp.data||[],res:res.data||[],dl:dl.data||[],fin:fin_p.data||[]};
+  render();$('#boot').classList.add('gone');
+}
+function costoProd(d,pid){const p=d.prod.find(x=>x.id===pid);return p?Number(p.costo||0):0}
+function costoReceta(d,rid){const r=d.recetas.find(x=>x.id===rid);if(!r||!Array.isArray(r.ingredientes))return 0;return r.ingredientes.reduce((a,ing)=>{if(!ing.pid)return a;const m=Number(ing.merma||0);const f=(m>0&&m<100)?1/(1-m/100):1;return a+Number(ing.cantidad||0)*f*costoProd(d,ing.pid)},0)}
+
+function render(){
+  const d=state.data;const per=[['hoy','Hoy'],['7d','7 días'],['mes','Mes']];
+  $('#per').innerHTML=per.map(p=>`<button class="chip ${state.periodo===p[0]?'active':''}" data-p="${p[0]}">${p[1]}</button>`).join('');
+  $$('#per .chip').forEach(b=>b.onclick=async()=>{state.periodo=b.dataset.p;$('#boot').classList.remove('gone');await load()});
+  // ventas
+  const ventas=d.peds.reduce((a,p)=>a+Number(p.total||0),0);const nped=d.peds.length;const ticket=nped?ventas/nped:0;
+  const porCanal={};d.peds.forEach(p=>{const c=p.origen||'salon';porCanal[c]=(porCanal[c]||0)+Number(p.total||0)});
+  // food cost de lo vendido
+  const cmv=d.items.reduce((a,it)=>a+costoReceta(d,it.receta_id)*Number(it.qty||0),0);
+  const fcPct=ventas>0?cmv/ventas*100:0;
+  // top platos
+  const top={};d.items.forEach(it=>{const k=it.nombre||it.receta_id;if(!top[k])top[k]={qty:0,rev:0};top[k].qty+=Number(it.qty||0);top[k].rev+=Number(it.precio_total||0)});
+  const topArr=Object.entries(top).sort((a,b)=>b[1].rev-a[1].rev).slice(0,8);const maxTop=Math.max(1,...topArr.map(x=>x[1].rev));
+  // inventario
+  const sm={};d.stock.forEach(s=>sm[s.producto_id]=Number(s.stock||0));let valorInv=0,bajoPar=0;d.prod.forEach(p=>{const s=sm[p.id]||0;valorInv+=s*Number(p.costo||0);if(s<Number(p.par_level||0))bajoPar++});
+  const merma=d.merm.reduce((a,m)=>a+Number(m.valor_perdido||0),0);
+  // costos
+  const cajachica=d.vu.reduce((a,g)=>a+Number(g.monto||0),0);
+  const planillaMes=d.emp.reduce((a,e)=>a+Number(e.sueldo||0),0);
+  const planillaPer=state.periodo==='mes'?planillaMes:state.periodo==='7d'?planillaMes/4.3:planillaMes/30;
+  const laborPct=ventas>0?planillaPer/ventas*100:0;
+  // operativo
+  const cubiertos=d.res.filter(r=>['confirmada','sentada','completada'].includes(r.estado)).reduce((a,r)=>a+(r.comensales||0),0);
+  const delivery=d.dl.filter(p=>p.estado!=='cancelado').reduce((a,p)=>a+Number(p.total||0),0);
+  // presupuesto ingresos (mes)
+  const presupIng=d.fin.filter(p=>p.tipo==='ingreso').reduce((a,p)=>a+Number(p.monto||0),0);
+  // utilidad estimada (aprox): ventas - cmv - planilla(per) - cajachica
+  const utilidad=ventas-cmv-planillaPer-cajachica;
+  // ventas 7 días (siempre)
+  const dias={};for(let i=6;i>=0;i--)dias[addD(hoyISO(),-i)]=0;
+  d.peds.forEach(p=>{const dd=(p.cerrada_at||'').slice(0,10);if(dd in dias)dias[dd]+=Number(p.total||0)});
+
+  $('#screen').innerHTML=`
+    <div class="section-t">Resumen ejecutivo · ${state.periodo==='hoy'?'hoy':state.periodo==='7d'?'últimos 7 días':'este mes'}</div>
+    <div class="kpis">
+      <div class="kpi good"><span class="ico material-symbols-outlined">payments</span><div class="v">${money(ventas)}</div><div class="l">Ventas</div></div>
+      <div class="kpi"><div class="v">${money(ticket)}</div><div class="l">Ticket promedio</div></div>
+      <div class="kpi"><div class="v">${num(nped)}</div><div class="l">Pedidos</div></div>
+      <div class="kpi ${fcPct>35?'bad':''}"><div class="v">${fcPct?fcPct.toFixed(0)+'%':'—'}</div><div class="l">Food cost</div></div>
+      <div class="kpi ${laborPct>30?'bad':''}"><div class="v">${laborPct?laborPct.toFixed(0)+'%':'—'}</div><div class="l">Costo laboral</div></div>
+      <div class="kpi ${utilidad>=0?'good':'bad'}"><div class="v">${money(utilidad)}</div><div class="l">Utilidad estimada</div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>Ventas últimos 7 días</h3><div class="chart">${Object.entries(dias).map(([dd,v])=>{const mx=Math.max(1,...Object.values(dias));const dt=new Date(dd+'T00:00:00');const dn=['D','L','M','M','J','V','S'][dt.getDay()];return `<div class="col"><div class="val">${v?('S/'+Math.round(v/1000)+'k').replace('S/0k','S/'+Math.round(v)):''}</div><div class="bar" style="height:${Math.round(v/mx*100)}%;background:${dd===hoyISO()?'var(--tertiary)':'var(--primary)'}"></div><div class="cap">${dn} ${dt.getDate()}</div></div>`}).join('')}</div></div>
+      <div class="panel"><h3>Ventas por canal</h3>${Object.keys(porCanal).length?Object.entries(porCanal).sort((a,b)=>b[1]-a[1]).map(([c,v])=>{const mx=Math.max(1,...Object.values(porCanal));return `<div class="bar2"><div class="t"><span style="text-transform:capitalize">${c}</span><span class="mono">${money(v)}</span></div><div class="track"><div class="fill" style="width:${Math.round(v/mx*100)}%"></div></div></div>`}).join(''):'<div class="empty">Sin ventas en el período</div>'}</div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>Top platos (por venta)</h3>${topArr.length?topArr.map(([n,o])=>`<div class="bar2"><div class="t"><span>${n} · ${num(o.qty)}u</span><span class="mono">${money(o.rev)}</span></div><div class="track"><div class="fill" style="width:${Math.round(o.rev/maxTop*100)}%;background:var(--green)"></div></div></div>`).join(''):'<div class="empty">Sin platos vendidos</div>'}</div>
+      <div class="panel"><h3>Operación</h3>
+        <div class="li"><span>Cubiertos (reservas)</span><strong class="mono">${num(cubiertos)}</strong></div>
+        <div class="li"><span>Ventas delivery</span><strong class="mono">${money(delivery)}</strong></div>
+        <div class="li"><span>Valor de inventario</span><strong class="mono">${money(valorInv)}</strong></div>
+        <div class="li"><span>Insumos bajo par</span><strong class="mono" style="color:${bajoPar?'var(--secondary)':''}">${bajoPar}</strong></div>
+        <div class="li"><span>Mermas</span><strong class="mono">${money(merma)}</strong></div>
+        <div class="li"><span>Caja chica</span><strong class="mono">${money(cajachica)}</strong></div>
+      </div>
+    </div>
+    <div class="panel"><h3>Costos y utilidad (estimado)</h3>
+      <div class="li"><span>Ventas</span><strong class="mono">${money(ventas)}</strong></div>
+      <div class="li"><span>− Costo de insumos (CMV ${fcPct.toFixed(0)}%)</span><strong class="mono">${money(cmv)}</strong></div>
+      <div class="li"><span>− Planilla (${state.periodo})</span><strong class="mono">${money(planillaPer)}</strong></div>
+      <div class="li"><span>− Caja chica</span><strong class="mono">${money(cajachica)}</strong></div>
+      <div class="li" style="font-family:var(--font-display);font-size:17px"><span>Utilidad estimada</span><strong style="color:${utilidad>=0?'var(--green)':'var(--secondary)'}">${money(utilidad)}</strong></div>
+      ${state.periodo==='mes'&&presupIng>0?`<div class="li" style="font-size:12px;opacity:.7"><span>Avance vs presupuesto de ingresos</span><span>${Math.round(ventas/presupIng*100)}% de ${money(presupIng)}</span></div>`:''}
+    </div>
+    <div style="font-family:var(--font-mono);font-size:10px;opacity:.5;text-align:center;padding:8px">Consolidado de POS, Recetas, Mercado, RRHH, Vuelto, Bienvenida y Delivery. Para análisis tributario formal, ver Finanzas/Contabilidad.</div>`;
+}
+load().catch(e=>{console.error(e);$('#boot .msg').textContent='Atrás · '+(e.message||'fallo')});
+</script>
+</body>
+</html>
