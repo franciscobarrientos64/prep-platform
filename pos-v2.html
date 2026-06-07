@@ -65,12 +65,14 @@ button { font-family: inherit; cursor: pointer; }
   gap: 14px;
   min-height: 64px;
 }
-.brand { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+.brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.brand-logo { width: 96px; height: 32px; flex-shrink: 0; background: linear-gradient(100deg, var(--primary), var(--secondary)); -webkit-mask: url(/logo.png) left center/contain no-repeat; mask: url(/logo.png) left center/contain no-repeat; }
+.brand-txt .cli { font-weight: 700; font-size: 14px; line-height: 1.1; }
 .brand .logo { font-family: var(--font-display); font-size: 28px; color: var(--primary); line-height: 0.9; }
 .brand .logo .accent { color: var(--secondary); }
-.brand .mod {
+.brand .mod, .brand-txt .mod {
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; line-height: 1.15;
 }
 .header-info {
   display: flex; align-items: center; gap: 10px; flex: 1;
@@ -896,8 +898,7 @@ button { font-family: inherit; cursor: pointer; }
   transition: opacity 0.3s;
 }
 .boot.gone { opacity: 0; pointer-events: none; }
-.boot .logo { font-family: var(--font-display); font-size: 72px; color: var(--primary); line-height: 1; }
-.boot .logo .accent { color: var(--secondary); }
+.boot .logo { width: 240px; height: 80px; background: linear-gradient(100deg, var(--primary), var(--secondary)); -webkit-mask: url(/logo.png) center/contain no-repeat; mask: url(/logo.png) center/contain no-repeat; }
 .boot .msg { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
 .boot .spinner {
   width: 36px; height: 36px;
@@ -1171,7 +1172,7 @@ button { font-family: inherit; cursor: pointer; }
 <body>
 
 <div id="boot" class="boot">
-  <div class="logo">prep<span class="accent">!</span></div>
+  <div class="logo"></div>
   <div class="spinner"></div>
   <div class="msg">Oído · mise en place</div>
 </div>
@@ -1639,7 +1640,7 @@ function renderHeader() {
         <span class="material-symbols-outlined">arrow_back</span>
         <span>Volver al pedido</span>
       </button>
-      <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">COBRANDO #${ped?.ticket_num||'?'}</span></div>
+      <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS · Cobrando #${ped?.ticket_num||'?'}</div></div></div>
       <div class="header-info">
         <span class="pill" style="background:var(--secondary);color:white;border-color:var(--outline)">
           <span class="material-symbols-outlined" style="font-size:14px">point_of_sale</span>
@@ -1659,7 +1660,7 @@ function renderHeader() {
         <span class="material-symbols-outlined">arrow_back</span>
         <span>Floor</span>
       </button>
-      <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">PEDIDO #${ped?.ticket_num||'?'}</span></div>
+      <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS · Pedido #${ped?.ticket_num||'?'}</div></div></div>
       <div class="header-info">
         <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">table_restaurant</span>${mesa?'Mesa '+mesa.numero:'—'}</span>
         <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">person</span>${fmtMozo(mozo)}</span>
@@ -1685,8 +1686,8 @@ function renderHeader() {
   const editing = state.screen === 'edit';
   h.innerHTML = `
     <div class="brand">
-      <span class="logo">prep<span class="accent">!</span></span>
-      <span class="mod">POS · Casa Italia</span>
+      <div class="brand-logo"></div>
+      <div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS</div></div>
     </div>
     <div class="header-info">
       <span class="pill" id="turno-pill">

@@ -25,10 +25,10 @@ button{font-family:inherit;cursor:pointer}
 .material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle;user-select:none}
 .mono{font-family:var(--font-mono)}
 .header{flex-shrink:0;background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
-.brand{display:flex;align-items:baseline;gap:8px}
-.brand .logo{font-family:var(--font-display);font-size:26px;color:var(--primary);line-height:.9}
-.brand .logo .accent{color:var(--secondary)}
-.brand .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.55}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:90px;height:30px;flex-shrink:0;background:linear-gradient(100deg,var(--primary),var(--secondary));-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}
+.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6;line-height:1.15}
 .header-info{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-family:var(--font-mono)}
 .pill.alert{background:var(--secondary);color:#fff}
@@ -103,7 +103,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes tin{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 .boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .boot.gone{opacity:0;pointer-events:none}
-.boot .logo{font-family:var(--font-display);font-size:64px;color:var(--primary)}.boot .logo .accent{color:var(--secondary)}
+.boot .logo{width:220px;height:73px;background:linear-gradient(100deg,var(--primary),var(--secondary));-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -111,7 +111,7 @@ button{font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="boot" class="boot"><div class="logo">prep<span class="accent">!</span></div><div class="spinner"></div><div class="msg">Oído · mise en place</div></div>
+<div id="boot" class="boot"><div class="logo"></div><div class="spinner"></div><div class="msg">Oído · mise en place</div></div>
 <header class="header" id="app-header"></header>
 <nav class="tabs" id="tabs"></nav>
 <main class="main" id="screen"></main>
@@ -131,7 +131,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],
+const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -152,37 +152,38 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes()]);
+  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado()]);
   render();subscribe();$('#boot').classList.add('gone');
 }
+async function loadStockMap(){const{data}=await sb.from('inv_stock_actual').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m;}
+async function loadPreciosMercado(){const{data}=await sb.from('inv_precios_mercado').select('*').eq('marca_id',MARCA);state.preciosMercado=data||[]}
 async function loadProductos(){const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)return toast('Atrás: '+error.message,'err');state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre))}
 async function loadProveedores(){const{data}=await sb.from('inv_proveedores').select('*');state.proveedores=(data||[]).filter(p=>p.activo!==false)}
 async function loadProvProd(){const{data}=await sb.from('inv_proveedor_productos').select('*');state.provProd=data||[]}
-async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[]}
+async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];await loadStockMap();}
 async function loadMermas(){const{data}=await sb.from('inv_mermas').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(100);state.mermas=data||[]}
 async function loadOrdenes(){const{data}=await sb.from('inv_ordenes_compra').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.ordenes=data||[]}
 
 /* ===== DERIVED ===== */
-const _stock={};
-function recalcStock(){for(const k in _stock)delete _stock[k];state.movs.forEach(m=>{_stock[m.producto_id]=(_stock[m.producto_id]||0)+Number(m.cantidad||0)})}
-function stock(pid){return _stock[pid]||0}
+function stock(pid){return state.stockMap[pid]||0}
 function estadoStock(p){const s=stock(p.id);if(s<=0)return'sin';if(s<Number(p.par_level||0))return'bajo';return'ok'}
 function valorInventario(){return state.productos.reduce((a,p)=>a+stock(p.id)*Number(p.costo||0),0)}
 function categorias(){return Array.from(new Set(state.productos.map(p=>p.categoria||'Otros')))}
 
 /* ===== ROUTER ===== */
-function render(){recalcStock();renderHeader();renderTabs();
+function render(){renderHeader();renderTabs();
   if(state.view==='inventario')renderInventario();
   else if(state.view==='carga')renderCarga();
   else if(state.view==='pedido')renderPedido();
   else if(state.view==='compras')renderCompras();
   else if(state.view==='mermas')renderMermas();
   else if(state.view==='movimientos')renderMovimientos();
+  else if(state.view==='reportes')renderReportes();
 }
 function renderHeader(){
   const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
   $('#app-header').innerHTML=`
-    <div class="brand"><span class="logo">prep<span class="accent">!</span></span><span class="mod">Mercado · Casa Italia</span></div>
+    <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Mercado</div></div></div>
     <div class="header-info">
       <span class="pill">${money(valorInventario())} en stock</span>
       <span class="pill ${bajo?'alert':''}">${bajo} bajo par</span>
@@ -199,7 +200,8 @@ function renderTabs(){
     {k:'pedido',l:'Armar pedido',ico:'list_alt',n:nPedido||null},
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
     {k:'mermas',l:'Mermas',ico:'delete_sweep',n:state.mermas.length},
-    {k:'movimientos',l:'Movimientos',ico:'sync_alt'}];
+    {k:'movimientos',l:'Movimientos',ico:'sync_alt'},
+    {k:'reportes',l:'Reportes',ico:'monitoring'}];
   $('#tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.view===t.k?'active':''}" data-v="${t.k}"><span class="material-symbols-outlined" style="font-size:16px">${t.ico}</span>${t.l}${t.n!=null?`<span class="count">${t.n}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
 }
@@ -417,6 +419,15 @@ function proveedorDe(pid){
   if(!opts.length)return null;
   return opts.find(o=>o.preferido)||opts.slice().sort((a,b)=>Number(a.costo)-Number(b.costo))[0];
 }
+// Precios combinados: proveedores + webs del país, ordenados de más barato a más caro
+function preciosDe(pid){
+  const sup=state.provProd.filter(pp=>pp.producto_id===pid).map(pp=>({fuente:prov(pp.proveedor_id)?.nombre||pp.proveedor_id,tipo:'proveedor',precio:Number(pp.costo),preferido:!!pp.preferido,entrega:pp.tiempo_entrega_dias,url:null}));
+  const web=state.preciosMercado.filter(w=>w.producto_id===pid).map(w=>({fuente:w.fuente,tipo:'web',precio:Number(w.precio),url:w.url}));
+  return [...sup,...web].sort((a,b)=>a.precio-b.precio);
+}
+function precioPreferido(pid){const pp=proveedorDe(pid);return pp?Number(pp.costo):null}
+// Alerta si existe una fuente más barata que el proveedor que usamos
+function alertaPrecio(pid){const pref=precioPreferido(pid);if(pref==null)return null;const best=preciosDe(pid)[0];if(best&&best.precio<pref-0.001)return{best,pref,ahorro:+(pref-best.precio).toFixed(2)};return null;}
 function sugerido(p){return Math.max(0,Number(p.par_level||0)-stock(p.id))}
 function mermaTotal(pid){return state.mermas.filter(m=>m.producto_id===pid).reduce((a,m)=>a+Number(m.cantidad||0),0)}
 function mermaAlta(p){const m=mermaTotal(p.id),par=Number(p.par_level||0);return m>0&&par>0&&m>=par*0.3} // merma ≥ 30% del par
@@ -612,13 +623,14 @@ function renderCompras(){
     body=state.proveedores.map(v=>`<div class="row-card"><span class="row-emoji">🏬</span><div class="row-main"><h3>${v.nombre}</h3><div class="row-meta">${v.ruc?`<span>RUC ${v.ruc}</span>`:''}${v.telefono?`<span>${v.telefono}</span>`:''}<span>${(v.categorias||[]).join(', ')}</span></div></div><div class="row-right"><span class="mono" style="font-size:11px">${state.provProd.filter(pp=>pp.proveedor_id===v.id).length} productos</span></div></div>`).join('')||'<div class="empty-state">Sin proveedores</div>';
   }else if(state.comprasTab==='comparativo'){
     const pid=state.comparaPid||state.productos[0]?.id;
-    const precios=state.provProd.filter(pp=>pp.producto_id===pid).sort((a,b)=>Number(a.costo)-Number(b.costo));
-    body=`<div class="field-lbl">Comparar precios de:</div>
-      <select class="select" id="cmp-prod" style="max-width:340px;margin-bottom:14px">${state.productos.map(p=>`<option value="${p.id}" ${pid===p.id?'selected':''}>${p.emoji||''} ${p.nombre}</option>`).join('')}</select>
-      ${precios.length?`<table class="tbl"><tr><th>Proveedor</th><th>Precio</th><th>Unidad compra</th><th>Entrega</th><th></th></tr>
-        ${precios.map((pp,i)=>`<tr class="${i===0?'best':''}"><td>${prov(pp.proveedor_id)?.nombre||pp.proveedor_id}${pp.preferido?' ⭐':''}</td><td><strong>${money(pp.costo)}</strong></td><td>${pp.unidad_compra||''} ×${num(pp.unidades_por_compra||1)}</td><td>${pp.tiempo_entrega_dias||'?'} días</td><td>${i===0?'<span class="badge ok">mejor precio</span>':''}</td></tr>`).join('')}</table>
-        <div class="row-meta" style="margin-top:8px">Ahorro vs más caro: ${money((Number(precios[precios.length-1].costo)-Number(precios[0].costo)))} por unidad</div>`
-        :'<div class="empty-state">Este producto no tiene precios de proveedor cargados</div>'}`;
+    const precios=preciosDe(pid);const al=alertaPrecio(pid);
+    body=`<div class="field-lbl">Comparar precios (proveedores + webs del país):</div>
+      <select class="select" id="cmp-prod" style="max-width:340px;margin-bottom:12px">${state.productos.map(p=>`<option value="${p.id}" ${pid===p.id?'selected':''}>${p.emoji||''} ${p.nombre}</option>`).join('')}</select>
+      ${al?`<div style="background:var(--red-soft);border:2px solid var(--secondary);border-radius:12px;padding:12px;margin-bottom:12px;font-weight:600">⚠ Más barato en <strong>${al.best.fuente}</strong> (${al.best.tipo}): ${money(al.best.precio)} vs ${money(al.pref)} de tu proveedor → ahorras ${money(al.ahorro)}/unidad${al.best.url?` · <a href="${al.best.url}" target="_blank" rel="noopener">ver</a>`:''}</div>`:''}
+      ${precios.length?`<table class="tbl"><tr><th>Fuente</th><th>Tipo</th><th>Precio</th><th>Entrega</th><th></th></tr>
+        ${precios.map((x,i)=>`<tr class="${i===0?'best':''}"><td>${x.fuente}${x.preferido?' ⭐':''}${x.url?` <a href="${x.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td>${x.tipo}</td><td><strong>${money(x.precio)}</strong></td><td>${x.entrega!=null?x.entrega+'d':'—'}</td><td>${i===0?'<span class="badge ok">más barato</span>':(x.preferido?'<span class="badge enviada">actual</span>':'')}</td></tr>`).join('')}</table>
+        <div class="row-meta" style="margin-top:8px">Rango: ${money(precios[0].precio)} – ${money(precios[precios.length-1].precio)} por unidad</div>`
+        :'<div class="empty-state">Sin precios cargados para este producto</div>'}`;
   }else{
     body=`<div class="toolbar"><button class="btn-ico primary" id="oc-add"><span class="material-symbols-outlined">add</span><span>Nueva orden</span></button></div>
       ${state.ordenes.map(o=>`<div class="row-card" data-oid="${o.id}"><span class="row-emoji">🧾</span>
@@ -704,6 +716,61 @@ async function accionOrden(o,accion){
   const{error}=await sb.from('inv_ordenes_compra').update({estado:nuevo}).eq('id',o.id);
   if(error){toast('Atrás: '+error.message,'err');return}
   closeSheet();await loadOrdenes();render();toast('Va · '+o.numero+' → '+nuevo,'ok');
+}
+
+/* ===== REPORTES (optimizar compras · proveedores · control de inventario) ===== */
+function renderReportes(){
+  const prods=state.productos;
+  const card=(t,inner)=>`<div style="background:#fff;border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:12px"><div style="font-family:var(--font-display);font-size:18px;margin-bottom:10px">${t}</div>${inner}</div>`;
+  const bar=(lbl,v,max,c='var(--primary)')=>`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>${lbl}</span><span class="mono">${typeof v==='number'?money(v):v}</span></div><div style="height:7px;border-radius:99px;background:var(--gray-soft);overflow:hidden"><div style="width:${max>0?Math.round((typeof v==='number'?v:0)/max*100):0}%;height:100%;background:${c}"></div></div></div>`;
+  // valor por categoría
+  const porCat={};prods.forEach(p=>{const c=p.categoria||'Otros';porCat[c]=(porCat[c]||0)+stock(p.id)*Number(p.costo||0)});
+  const catArr=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);const maxCat=Math.max(1,...catArr.map(x=>x[1]));
+  // quiebres / reposición
+  const bajo=prods.filter(p=>estadoStock(p)!=='ok').map(p=>({p,falta:sugerido(p),costo:sugerido(p)*Number(p.costo||0)})).sort((a,b)=>b.costo-a.costo);
+  const costoReponer=bajo.reduce((a,x)=>a+x.costo,0);
+  // mermas
+  const mermaTot=state.mermas.reduce((a,m)=>a+Number(m.valor_perdido||0),0);
+  const mermaMot={};state.mermas.forEach(m=>{mermaMot[m.motivo]=(mermaMot[m.motivo]||0)+Number(m.valor_perdido||0)});
+  const mermaArr=Object.entries(mermaMot).sort((a,b)=>b[1]-a[1]);const maxMer=Math.max(1,...mermaArr.map(x=>x[1]));
+  // consumo (salidas + mermas) por producto
+  const consumo={};state.movs.filter(m=>['salida','merma'].includes(m.tipo)).forEach(m=>{consumo[m.producto_id]=(consumo[m.producto_id]||0)+Math.abs(Number(m.valor_total||0))});
+  const consArr=Object.entries(consumo).sort((a,b)=>b[1]-a[1]).slice(0,6);const maxCons=Math.max(1,...consArr.map(x=>x[1]));
+  // compras por proveedor (entradas)
+  const compra={};state.movs.filter(m=>m.tipo==='entrada'&&m.proveedor_id).forEach(m=>{compra[m.proveedor_id]=(compra[m.proveedor_id]||0)+Math.abs(Number(m.valor_total||0))});
+  const compraArr=Object.entries(compra).sort((a,b)=>b[1]-a[1]);const maxCompra=Math.max(1,...compraArr.map(x=>x[1]));
+  // mejores precios / ahorro potencial
+  const alertas=prods.map(p=>({p,al:alertaPrecio(p.id)})).filter(x=>x.al).sort((a,b)=>b.al.ahorro-a.al.ahorro);
+  // vendor scoring (ME-06)
+  const scoring=state.proveedores.map(v=>{const pps=state.provProd.filter(pp=>pp.proveedor_id===v.id);if(!pps.length)return null;
+    const entrega=pps.reduce((a,pp)=>a+(pp.tiempo_entrega_dias||0),0)/pps.length;
+    const baratos=pps.filter(pp=>{const sup=state.provProd.filter(x=>x.producto_id===pp.producto_id);const min=Math.min(...sup.map(x=>Number(x.costo)));return Number(pp.costo)<=min+0.001}).length;
+    return {v,nprod:pps.length,entrega,baratos,score:Math.round(baratos/pps.length*60+Math.max(0,30-entrega*4)+10)};}).filter(Boolean).sort((a,b)=>b.score-a.score);
+
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="val">${money(valorInventario())}</div><div class="lbl">Valor inventario</div></div>
+      <div class="kpi ${bajo.length?'alert':''}"><div class="val">${bajo.length}</div><div class="lbl">Bajo par</div></div>
+      <div class="kpi"><div class="val">${money(costoReponer)}</div><div class="lbl">Costo reponer par</div></div>
+      <div class="kpi alert"><div class="val">${money(mermaTot)}</div><div class="lbl">Mermas</div></div>
+      <div class="kpi"><div class="val">${alertas.length}</div><div class="lbl">Precios mejorables</div></div>
+    </div>
+    ${card('💸 Mejores precios — ahorro potencial', alertas.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Productos donde hay una fuente más barata que tu proveedor actual:</div>
+      <table class="tbl"><tr><th>Producto</th><th>Tu precio</th><th>Más barato</th><th>Ahorro/u</th></tr>
+      ${alertas.map(x=>`<tr class="best"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.al.pref)}</td><td>${money(x.al.best.precio)} · ${x.al.best.fuente}${x.al.best.url?` <a href="${x.al.best.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td><strong style="color:var(--green)">−${money(x.al.ahorro)}</strong></td></tr>`).join('')}</table>`
+      :'<div class="row-meta">Tus proveedores ya tienen el mejor precio en todos los productos. 👌</div>')}
+    ${card('🛒 Sugerencia de reposición (completar el par)', bajo.length?`<table class="tbl"><tr><th>Producto</th><th>Stock/par</th><th>Falta</th><th>Costo</th></tr>
+      ${bajo.map(x=>`<tr><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${num(stock(x.p.id))}/${num(x.p.par_level)}</td><td>${num(x.falta)} ${x.p.unidad||''}</td><td>${money(x.costo)}</td></tr>`).join('')}
+      <tr><td colspan="3" style="text-align:right;font-weight:700">Total</td><td style="font-weight:700">${money(costoReponer)}</td></tr></table>`
+      :'<div class="row-meta">Todo el inventario está en o sobre el par. ✅')}
+    ${card('🏆 Vendor scoring', scoring.length?`<table class="tbl"><tr><th>Proveedor</th><th>Productos</th><th>Mejor precio en</th><th>Entrega</th><th>Score</th></tr>
+      ${scoring.map(s=>`<tr><td>${s.v.nombre}</td><td>${s.nprod}</td><td>${s.baratos}</td><td>${s.entrega.toFixed(1)}d</td><td><span class="badge ${s.score>=70?'ok':s.score>=50?'bajo':'sin'}">${s.score}</span></td></tr>`).join('')}</table>
+      <div class="row-meta" style="margin-top:6px">Score = competitividad de precio + rapidez de entrega.</div>`:'<div class="row-meta">Sin datos de proveedores.</div>')}
+    ${card('📦 Valor de inventario por categoría', catArr.map(([c,v])=>bar(c,v,maxCat)).join('')||'<div class="row-meta">Sin stock.</div>')}
+    ${card('🔥 Consumo / rotación (salidas + mermas)', consArr.length?consArr.map(([pid,v])=>bar((prod(pid)?.nombre||pid),v,maxCons,'var(--secondary)')).join(''):'<div class="row-meta">Aún sin salidas registradas.</div>')}
+    ${card('🤝 Compras por proveedor', compraArr.length?compraArr.map(([id,v])=>bar(prov(id)?.nombre||id,v,maxCompra,'var(--green)')).join(''):'<div class="row-meta">Aún sin compras (entradas) con proveedor.</div>')}
+    ${card('🗑️ Mermas por motivo', mermaArr.length?mermaArr.map(([m,v])=>bar(m,v,maxMer,'var(--secondary)')).join(''):'<div class="row-meta">Sin mermas. ✅</div>')}
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:8px">Estos reportes se reflejarán también en el módulo Directorio (Reportes ejecutivos).</div>`;
 }
 
 /* ===== REALTIME ===== */
