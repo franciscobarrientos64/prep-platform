@@ -38,6 +38,10 @@
       "destination": "/mercado.html"
     },
     {
+      "source": "/vuelto",
+      "destination": "/vuelto.html"
+    },
+    {
       "source": "/reservar",
       "destination": "/bienvenida.html"
     },

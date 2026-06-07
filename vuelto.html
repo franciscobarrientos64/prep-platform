@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Vuelto · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-family:var(--font-mono)}
+.pill.alert{background:var(--secondary);color:#fff}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
+.tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.main{flex:1;overflow-y:auto;padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px}
+.kpi .v{font-family:var(--font-display);font-size:24px;color:var(--primary);line-height:1}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin-top:4px}
+.kpi.alert .v{color:var(--secondary)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.row-card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.row-main h3{font-size:15px;font-weight:700}.row-meta{font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.row-right{text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.montob{font-family:var(--font-display);font-size:18px}
+.badge{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
+.badge.registrado{background:var(--amber-soft)}.badge.aprobado{background:var(--green);color:#fff}.badge.rechazado{background:var(--gray-soft);opacity:.7}
+.mini-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:12px;box-shadow:2px 2px 0 0 var(--outline)}
+.mini-btn.primary{background:var(--primary);color:#fff}.mini-btn.danger{background:var(--secondary);color:#fff}.mini-btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
+.input,.select,textarea.input{padding:10px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-bottom:6px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 var(--outline)}
+.chip.active{background:var(--ink);color:var(--bg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:50px}
+.btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.danger{background:var(--secondary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
+.bar{margin-bottom:6px}.bar .t{display:flex;justify-content:space-between;font-size:12px}.bar .track{height:8px;border-radius:99px;background:var(--gray-soft);overflow:hidden}.bar .fill{height:100%;background:var(--primary)}
+.empty{text-align:center;padding:50px 20px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:90vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 24px 14px;border-bottom:2px solid var(--outline);display:flex;align-items:center;gap:14px}
+.sheet-mark{width:50px;height:50px;border:2px solid var(--outline);border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px}
+.sheet-title{flex:1}.sheet-title h2{font-family:var(--font-display);font-size:22px;line-height:1;margin-bottom:4px}.sheet-title .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.sheet-close{width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.sheet-body{padding:18px 24px 28px;overflow-y:auto}.sheet-section+.sheet-section{margin-top:16px}
+.info-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--gray-soft);font-size:14px}.info-row strong{font-family:var(--font-mono)}
+.toast-container{position:fixed;top:76px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.ok{background:var(--primary);color:#fff}.toast.err{background:var(--secondary);color:#fff}.toast.warn{background:var(--tertiary)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · mise en place</div></div>
+<header class="header">
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Vuelto</div></div></div>
+  <div class="header-info" id="hinfo"></div>
+  <button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span>Gasto</span></button>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main class="main" id="screen"></main>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const CENTROS=['Cocina','Barra','Limpieza','Mantenimiento','Transporte','Administración','Otros'];
+const METODOS=['efectivo','yape','plin','tarjeta'];
+const state={gastos:[],view:'gastos',fecha:hoyISO(),channel:null};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nowISO(){return new Date().toISOString()}
+function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;const i=t==='ok'?'check_circle':t==='err'?'error':t==='warn'?'warning':'info';e.innerHTML='<span class="material-symbols-outlined">'+i+'</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s,transform .3s';e.style.opacity='0';e.style.transform='translateX(120%)';setTimeout(()=>e.remove(),300)},2800)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=mk;$('#sheet-mark').style.background=bg;$('#sheet-title').textContent=t;$('#sheet-meta').textContent=m||''}
+
+async function loadGastos(){const{data,error}=await sb.from('vu_gastos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(300);if(error)return toast('Atrás: '+error.message,'err');state.gastos=data||[]}
+async function loadAll(){await loadGastos();render();subscribe();$('#boot').classList.add('gone')}
+
+function render(){
+  const hoy=state.gastos.filter(g=>g.fecha===hoyISO()&&g.estado!=='rechazado').reduce((a,g)=>a+Number(g.monto||0),0);
+  const porAprob=state.gastos.filter(g=>g.estado==='registrado').length;
+  $('#hinfo').innerHTML=`<span class="pill">${money(hoy)} hoy</span><span class="pill ${porAprob?'alert':''}">${porAprob} por aprobar</span>`;
+  $('#tabs').innerHTML=[['gastos','Gastos','receipt_long'],['resumen','Resumen / cierre','calculate']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  if(state.view==='gastos')renderGastos();else renderResumen();
+}
+function renderGastos(){
+  const mes=hoyISO().slice(0,7);
+  const gastoMes=state.gastos.filter(g=>g.fecha.slice(0,7)===mes&&g.estado!=='rechazado').reduce((a,g)=>a+Number(g.monto||0),0);
+  const porAprob=state.gastos.filter(g=>g.estado==='registrado');
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="v">${money(state.gastos.filter(g=>g.fecha===hoyISO()&&g.estado!=='rechazado').reduce((a,g)=>a+Number(g.monto||0),0))}</div><div class="l">Gasto de hoy</div></div>
+      <div class="kpi ${porAprob.length?'alert':''}"><div class="v">${porAprob.length}</div><div class="l">Por aprobar</div></div>
+      <div class="kpi"><div class="v">${money(gastoMes)}</div><div class="l">Gasto del mes</div></div>
+    </div>
+    ${state.gastos.map(gastoCard).join('')||'<div class="empty">Sin gastos registrados</div>'}`;
+  $$('#screen .row-card [data-act]').forEach(b=>b.onclick=()=>{const id=b.closest('.row-card').dataset.id;const g=state.gastos.find(x=>x.id===id);const a=b.dataset.act;
+    if(a==='aprobar')aprobarGasto(g);else if(a==='rechazar')rechazarGasto(g);else if(a==='ver'&&g.comprobante_url)window.open(g.comprobante_url,'_blank')});
+}
+function gastoCard(g){
+  return `<div class="row-card" data-id="${g.id}">
+    <div class="row-main"><h3>${g.descripcion||g.categoria||'Gasto'}</h3>
+      <div class="row-meta"><span>${g.fecha}</span><span>${g.categoria||'—'}</span><span>${g.metodo||'efectivo'}</span>${g.responsable?`<span>${g.responsable}</span>`:''}${g.aprobado_por?`<span>✓ ${g.aprobado_por}</span>`:''}</div>
+      <div class="chips" style="margin-top:8px">
+        ${g.comprobante_url?'<button class="mini-btn ghost" data-act="ver">📎 Recibo</button>':''}
+        ${g.estado==='registrado'?'<button class="mini-btn primary" data-act="aprobar">Aprobar</button><button class="mini-btn danger" data-act="rechazar">Rechazar</button>':''}
+      </div>
+    </div>
+    <div class="row-right"><span class="montob">${money(g.monto)}</span><span class="badge ${g.estado}">${g.estado}</span></div>
+  </div>`;
+}
+function renderResumen(){
+  const dia=state.gastos.filter(g=>g.fecha===state.fecha&&g.estado!=='rechazado');
+  const total=dia.reduce((a,g)=>a+Number(g.monto||0),0);
+  const porCat={};dia.forEach(g=>{const c=g.categoria||'Otros';porCat[c]=(porCat[c]||0)+Number(g.monto||0)});
+  const arr=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);const max=Math.max(1,...arr.map(x=>x[1]));
+  $('#screen').innerHTML=`
+    <div class="toolbar"><span class="field-lbl" style="margin:0">Cierre del día</span><input class="input" type="date" id="r-fecha" value="${state.fecha}" style="max-width:180px"></div>
+    <div class="kpis"><div class="kpi"><div class="v">${money(total)}</div><div class="l">Total del día</div></div>
+      <div class="kpi"><div class="v">${dia.length}</div><div class="l">Movimientos</div></div></div>
+    <div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:16px">
+      <div style="font-family:var(--font-display);font-size:17px;margin-bottom:12px">Gasto por centro de costo</div>
+      ${arr.length?arr.map(([c,v])=>`<div class="bar"><div class="t"><span>${c}</span><span class="mono">${money(v)}</span></div><div class="track"><div class="fill" style="width:${Math.round(v/max*100)}%"></div></div></div>`).join(''):'<div class="empty">Sin gastos este día</div>'}
+    </div>`;
+  $('#r-fecha').onchange=e=>{state.fecha=e.target.value;renderResumen()};
+}
+
+/* Registrar gasto */
+function abrirGasto(){
+  let monto='',cat='',desc='',metodo='efectivo',resp='',file=null;
+  setHead('🧾','Registrar gasto','Caja chica');
+  const draw=()=>{
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section grid2"><div><div class="field-lbl">Monto (S/)</div><input class="input" id="g-monto" type="number" step="0.10" inputmode="decimal" value="${monto}" placeholder="0.00"></div>
+        <div><div class="field-lbl">Método</div><select class="select" id="g-met">${METODOS.map(m=>`<option ${metodo===m?'selected':''}>${m}</option>`).join('')}</select></div></div>
+      <div class="sheet-section"><div class="field-lbl">Centro de costo</div><div class="chips" id="g-cat">${CENTROS.map(c=>`<button class="chip ${cat===c?'active':''}" data-c="${c}">${c}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="field-lbl">Descripción</div><input class="input" id="g-desc" value="${desc}" placeholder="Taxi mercado, ferretería…"></div>
+      <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="g-resp" value="${resp}" placeholder="Quién hizo el gasto"></div>
+      <div class="sheet-section"><label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">photo_camera</span>${file?('📎 '+file.name):'Foto / recibo (opcional)'}<input type="file" id="g-file" accept="image/*,application/pdf" style="display:none"></label></div>
+      <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="g-cancel">Atrás</button><button class="btn primary" id="g-save"><span class="material-symbols-outlined">save</span>Registrar gasto</button></div></div>`;
+    $('#g-monto').oninput=e=>monto=e.target.value;$('#g-met').onchange=e=>metodo=e.target.value;
+    $$('#g-cat .chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;draw()});
+    $('#g-desc').oninput=e=>desc=e.target.value;$('#g-resp').oninput=e=>resp=e.target.value;
+    $('#g-file').onchange=e=>{file=e.target.files[0];draw()};
+    $('#g-cancel').onclick=closeSheet;$('#g-save').onclick=()=>guardarGasto({monto:Number(monto),cat,desc,metodo,resp,file});
+  };draw();openSheet();
+}
+async function guardarGasto({monto,cat,desc,metodo,resp,file}){
+  if(!(monto>0)){toast('Monto inválido','warn');return}
+  if(!cat){toast('Elige un centro de costo','warn');return}
+  let url=null,nombre=null;
+  if(file){toast('Subiendo recibo…');const ext=(file.name.split('.').pop()||'bin').toLowerCase();const path=LOCAL+'/'+Date.now()+'.'+ext;
+    const up=await sb.storage.from('vuelto-files').upload(path,file,{upsert:true,contentType:file.type||undefined});
+    if(up.error){toast('Atrás: '+up.error.message,'err');return}url=sb.storage.from('vuelto-files').getPublicUrl(path).data.publicUrl;nombre=file.name;}
+  const{error}=await sb.from('vu_gastos').insert({marca_id:MARCA,local_id:LOCAL,fecha:hoyISO(),monto,categoria:cat,descripcion:desc||null,metodo,responsable:resp||null,estado:'registrado',comprobante_url:url,comprobante_nombre:nombre});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  closeSheet();await loadGastos();render();toast('Va · gasto registrado ('+money(monto)+')','ok');
+}
+async function aprobarGasto(g){const jefe=prompt('Aprobado por (supervisor):');if(!jefe)return;
+  const{error}=await sb.from('vu_gastos').update({estado:'aprobado',aprobado_por:jefe,aprobado_at:nowISO()}).eq('id',g.id);
+  if(error){toast('Atrás: '+error.message,'err');return}await loadGastos();render();toast('Servido · gasto aprobado','ok')}
+async function rechazarGasto(g){if(!confirm('¿Rechazar este gasto?'))return;
+  const{error}=await sb.from('vu_gastos').update({estado:'rechazado'}).eq('id',g.id);
+  if(error){toast('Atrás: '+error.message,'err');return}await loadGastos();render();toast('Gasto rechazado','warn')}
+
+function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('vuelto_'+LOCAL).on('postgres_changes',{event:'*',schema:'public',table:'vu_gastos',filter:'local_id=eq.'+LOCAL},async()=>{await loadGastos();render()}).subscribe()}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);$('#h-add').addEventListener('click',abrirGasto);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
+</script>
+</body>
+</html>
