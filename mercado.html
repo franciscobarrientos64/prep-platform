@@ -701,6 +701,8 @@ function renderCompras(){
         <div class="row-main"><h3>${o.numero||'OC'} · ${prov(o.proveedor_id)?.nombre||o.proveedor_id}</h3>
           <div class="row-meta"><span>${(o.items||[]).length} ítems</span><span>${money(o.total)}</span><span>emisión ${o.fecha_emision||'—'}</span></div></div>
         <div class="row-right"><span class="badge ${o.estado}">${o.estado}</span>
+          <span class="badge" style="font-size:9px;margin-top:4px;${o.pago_estado==='pagado'?'background:var(--green);color:#fff':'background:var(--red-soft)'}">${o.pago_estado==='pagado'?'pagado':'por pagar'}</span>
+          ${o.comprobante_url?'<span class="badge" style="font-size:9px;margin-top:4px;background:var(--primary-soft)">📎</span>':''}
           <div class="chips" style="justify-content:flex-end;margin-top:4px">
             ${o.estado==='borrador'?'<button class="mini-btn" data-oc="enviar">Enviar</button>':''}
             ${o.estado==='enviada'?'<button class="mini-btn warn" data-oc="aprobar">Aprobar</button>':''}
@@ -754,6 +756,15 @@ function verOrden(o){
       <div class="info-row"><span>Total</span><strong>${money(o.total)}</strong></div></div>
     <div class="sheet-section"><div class="field-lbl">Ítems</div><table class="tbl"><tr><th>Producto</th><th>Cant</th><th>Costo</th><th>Subt.</th></tr>
       ${(o.items||[]).map(it=>`<tr><td>${it.nombre}</td><td>${num(it.cantidad)}</td><td>${money(it.costo_unit)}</td><td>${money(it.cantidad*it.costo_unit)}</td></tr>`).join('')}</table></div>
+    <div class="sheet-section"><div class="field-lbl">Comprobante y pago</div>
+      <div class="info-row"><span>Estado de pago</span><strong style="color:${o.pago_estado==='pagado'?'var(--green)':'var(--secondary)'}">${(o.pago_estado||'pendiente')}${o.pago_monto?(' · '+money(o.pago_monto)):''}${o.pago_metodo?(' · '+o.pago_metodo):''}${o.pago_fecha?(' · '+o.pago_fecha):''}</strong></div>
+      ${o.comprobante_url?`<div class="info-row"><span>Comprobante</span><a href="${o.comprobante_url}" target="_blank" rel="noopener">📎 ${o.comprobante_nombre||'ver archivo'} ↗</a></div>`:'<div class="info-row"><span>Comprobante</span><span style="opacity:.5">sin adjuntar</span></div>'}
+      <div class="grid2" style="margin-top:10px">
+        <label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">upload_file</span>Adjuntar (PDF/foto)<input type="file" id="ov-file" accept="image/*,application/pdf" style="display:none"></label>
+        <button class="btn ${o.pago_estado==='pagado'?'':'primary'}" id="ov-pago"><span class="material-symbols-outlined">${o.pago_estado==='pagado'?'check_circle':'payments'}</span>${o.pago_estado==='pagado'?'Pago registrado':'Registrar pago'}</button>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:6px">El comprobante y el pago fluyen a Contabilidad.</div>
+    </div>
     <div class="sheet-section"><div class="field-lbl">Enviar al proveedor</div>
       <div class="chips">
         <button class="mini-btn" id="ov-pdf"><span class="material-symbols-outlined" style="font-size:14px">picture_as_pdf</span>PDF</button>
@@ -765,7 +776,39 @@ function verOrden(o){
   $('#ov-pdf').onclick=()=>imprimirOrden(o);
   $('#ov-mail').onclick=()=>enviarOrden(o,'email');
   $('#ov-wa').onclick=()=>enviarOrden(o,'whatsapp');
+  $('#ov-file').onchange=e=>subirComprobante(o,e.target.files[0]);
+  $('#ov-pago').onclick=()=>abrirPagoOC(o);
   if($('#ov-act'))$('#ov-act').onclick=()=>{const map={borrador:'enviar',enviada:'aprobar',aprobada:'recibir'};accionOrden(o,map[o.estado])};
+}
+async function subirComprobante(o,file){
+  if(!file)return;toast('Subiendo comprobante…');
+  const ext=(file.name.split('.').pop()||'bin').toLowerCase();
+  const path=LOCAL+'/'+o.id+'_'+Date.now()+'.'+ext;
+  const up=await sb.storage.from('compras-files').upload(path,file,{upsert:true,contentType:file.type||undefined});
+  if(up.error){toast('Atrás: '+up.error.message,'err');return}
+  const url=sb.storage.from('compras-files').getPublicUrl(path).data.publicUrl;
+  const{error}=await sb.from('inv_ordenes_compra').update({comprobante_url:url,comprobante_nombre:file.name}).eq('id',o.id);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadOrdenes();render();verOrden(state.ordenes.find(x=>x.id===o.id)||o);
+  toast('Servido · comprobante adjuntado','ok');
+}
+function abrirPagoOC(o){
+  let monto=Number(o.pago_monto||o.total||0),metodo=o.pago_metodo||'transferencia',fecha=o.pago_fecha||hoyISO();
+  const metodos=['efectivo','transferencia','yape','plin','tarjeta','crédito'];
+  setHead('💳','Registrar pago',(o.numero||'')+' · '+(prov(o.proveedor_id)?.nombre||''));
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section grid2">
+      <div><div class="field-lbl">Monto pagado (S/)</div><input class="input" id="pg-monto" type="number" step="0.01" value="${monto}"></div>
+      <div><div class="field-lbl">Fecha</div><input class="input" id="pg-fecha" type="date" value="${fecha}"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Método</div><div class="chips" id="pg-met">${metodos.map(m=>`<button class="chip ${metodo===m?'active':''}" data-m="${m}">${m}</button>`).join('')}</div></div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="pg-cancel">Atrás</button><button class="btn primary" id="pg-save">Marcar como pagado</button></div></div>`;
+  $$('#pg-met .chip').forEach(b=>b.onclick=()=>{metodo=b.dataset.m;$$('#pg-met .chip').forEach(x=>x.classList.toggle('active',x.dataset.m===metodo))});
+  $('#pg-cancel').onclick=()=>verOrden(o);
+  $('#pg-save').onclick=async()=>{const m=Number($('#pg-monto').value)||0;if(!(m>0)){toast('Monto inválido','warn');return}
+    const{error}=await sb.from('inv_ordenes_compra').update({pago_estado:'pagado',pago_monto:m,pago_metodo:metodo,pago_fecha:$('#pg-fecha').value||hoyISO()}).eq('id',o.id);
+    if(error){toast('Atrás: '+error.message,'err');return}
+    await loadOrdenes();render();closeSheet();toast('Servido · pago registrado ('+money(m)+')','ok')};
+  openSheet();
 }
 async function accionOrden(o,accion){
   if(accion==='recibir'){
