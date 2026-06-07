@@ -30,8 +30,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .wrap{max-width:1180px;margin:0 auto;padding:20px 18px 60px}
 .section-t{font-family:var(--font-display);font-size:22px;margin:24px 0 14px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .section-t .sub{font-family:var(--font-mono);font-size:12px;font-weight:400;opacity:.55;text-transform:none;letter-spacing:0}
+.mods-band{background:linear-gradient(160deg,var(--primary-soft),#eaf6ef);border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:8px}
 .mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.mod-card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;display:flex;flex-direction:column;gap:5px;text-decoration:none;color:var(--ink);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden;min-height:118px}
+.mod-card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 16px 14px;display:flex;flex-direction:column;gap:5px;text-decoration:none;color:var(--ink);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden;min-height:120px}
+.mod-card .material-symbols-outlined{font-size:30px}
+.mod-card.on .material-symbols-outlined{color:var(--ac,var(--primary))}
+.mod-card.on::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--ac,var(--primary))}
 .mod-card.on:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
 .mod-card.off{opacity:.5;border-style:dashed;box-shadow:none}
 .mod-card .nm{font-weight:700;font-size:15px}
@@ -86,7 +90,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 </header>
 <main class="wrap">
   <div class="section-t">Módulos <span class="sub">entra a cada área del restaurante</span></div>
-  <div class="mods" id="mods"></div>
+  <div class="mods-band"><div class="mods" id="mods"></div></div>
 
   <div class="section-t">Hoy en Casa Italia <span class="sub">datos en vivo</span></div>
   <div class="kpis" id="kpis"></div>
@@ -105,7 +109,7 @@ const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const MARCA='m6',LOCAL='l11';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s);
-function money(n){return 'S/ '+Number(n||0).toLocaleString('es-PE',{maximumFractionDigits:0})}
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function addD(iso,n){const[y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
 function hhmm(t){return(t||'').slice(0,5)}
@@ -113,15 +117,15 @@ function fechaLarga(){const d=new Date();const dias=['Dom','Lun','Mar','Mié','J
 
 const MODULOS=[
   {n:'Pase',d:'Dashboard ejecutivo',ico:'dashboard',href:null},
-  {n:'POS',d:'Punto de venta',ico:'point_of_sale',href:'/pos'},
+  {n:'POS',d:'Punto de venta',ico:'point_of_sale',href:'/pos',ac:'#1e5af9'},
   {n:'Línea',d:'KDS de cocina',ico:'soup_kitchen',href:null},
-  {n:'Bienvenida',d:'Reservas + hospitalidad',ico:'concierge',href:'/bienvenida'},
-  {n:'Mercado',d:'Compras + inventario',ico:'inventory_2',href:'/mercado'},
+  {n:'Bienvenida',d:'Reservas + hospitalidad',ico:'concierge',href:'/bienvenida',ac:'#ff3b30'},
+  {n:'Mercado',d:'Compras + inventario',ico:'inventory_2',href:'/mercado',ac:'#10b981'},
   {n:'Recetas',d:'Costeo + food cost',ico:'menu_book',href:null},
   {n:'RRHH',d:'Personal',ico:'badge',href:null},
   {n:'Delivery',d:'Marketplace propio',ico:'delivery_dining',href:null},
   {n:'Contabilidad',d:'Tributario',ico:'receipt_long',href:null},
-  {n:'Vuelto',d:'Caja chica',ico:'savings',href:null},
+  {n:'Vuelto',d:'Caja chica',ico:'savings',href:'/vuelto',ac:'#ffcc00'},
   {n:'El Libro',d:'Intranet operativa',ico:'auto_stories',href:null},
   {n:'Directorio',d:'Reportes ejecutivos',ico:'monitoring',href:null},
   {n:'Engagement',d:'Loyalty + CRM',ico:'favorite',href:null},
@@ -132,7 +136,7 @@ function renderMods(){
     const inner=`<span class="material-symbols-outlined" style="font-size:30px">${m.ico}</span>
       <span class="nm">${m.n}</span><span class="ds">${m.d}</span>
       <span class="tag ${on?'activo':'pronto'}">${on?'activo':'pronto'}</span><span class="num">${String(i).padStart(2,'0')}</span>`;
-    return on?`<a class="mod-card on" href="${m.href}">${inner}</a>`:`<div class="mod-card off">${inner}</div>`;
+    return on?`<a class="mod-card on" href="${m.href}" style="--ac:${m.ac||'var(--primary)'}">${inner}</a>`:`<div class="mod-card off">${inner}</div>`;
   }).join('');
 }
 
@@ -170,11 +174,11 @@ async function load(){
     $('#kpis').innerHTML=
       kpi(reservas.filter(r=>r.estado==='confirmada').length,'Reservas por llegar','/bienvenida','','event')+
       kpi(cubiertos,'Cubiertos esperados','/bienvenida','','restaurant')+
-      kpi(wait.length,'En lista de espera','/bienvenida',wait.length?'alert':'','hourglass_top')+
+      kpi(wait.length,'En lista de espera','/bienvenida#waitlist',wait.length?'alert':'','hourglass_top')+
       kpi(pedAb.length,'Mesas abiertas','/pos','','table_restaurant')+
       kpi(money(ventasHoy),'Ventas de hoy','/pos','','payments')+
-      kpi(money(valorInv),'Valor inventario','/mercado','','inventory_2')+
-      kpi(bajoPar.length,'Insumos bajo par','/mercado',bajoPar.length?'alert':'','warning');
+      kpi(money(valorInv),'Valor inventario','/mercado#reportes','','inventory_2')+
+      kpi(bajoPar.length,'Insumos bajo par','/mercado#inventario',bajoPar.length?'alert':'','warning');
 
     const dias={};for(let i=6;i>=0;i--){dias[addD(hoy,-i)]=0;}
     ventas.forEach(v=>{const d=(v.cerrada_at||'').slice(0,10);if(d in dias)dias[d]+=Number(v.total||0)});

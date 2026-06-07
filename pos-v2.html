@@ -1315,7 +1315,7 @@ function timeAgo(dateStr) {
 }
 function fmtMozo(emp) { if (!emp) return '—'; const a = (emp.apellidos||'').split(' ')[0]; return emp.nombre + (a ? ' '+a : ''); }
 function avatarLetters(emp) { return ((emp.nombre||'?').charAt(0) + (emp.apellidos||'').charAt(0)).toUpperCase(); }
-function money(n) { return 'S/ ' + Number(n||0).toFixed(2); }
+function money(n) { return 'S/ ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function nombreClientePOS(c) { return c ? (c.nombre + (c.apellidos ? ' '+c.apellidos.split(' ')[0] : '')) : '—'; }
 async function cargarClienteCache(id) {
   if (!id || state.clientesCache[id]) return state.clientesCache[id];

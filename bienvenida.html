@@ -394,7 +394,7 @@ const state = {
 const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 function hoyISO() { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function money(n) { return 'S/ ' + Number(n||0).toFixed(2); }
+function money(n) { return 'S/ ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function uuid() { return crypto.randomUUID ? crypto.randomUUID() : 'tmp_'+Math.random().toString(36).slice(2); }
 function hhmm(t) { return (t||'').slice(0,5); }
 function fechaLarga(iso) {
@@ -433,6 +433,7 @@ function setSheetHead(mark, title, meta, bg='var(--primary-soft)', color='var(--
 async function loadAll() {
   await Promise.all([loadMesas(), loadClientes(), loadTurno(), loadFloorPlan()]);
   await Promise.all([loadReservas(), loadWaitlist()]);
+  const h = location.hash.replace('#',''); if (['agenda','timeline','mapa','waitlist','comensales'].includes(h)) state.view = h;
   render(); subscribe();
   setInterval(() => { if (state.view==='agenda'||state.view==='waitlist') render(); }, 60000);
   $('#boot').classList.add('gone');

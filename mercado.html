@@ -81,6 +81,8 @@ button{font-family:inherit;cursor:pointer}
 .tbl th{text-align:left;background:var(--ink);color:var(--bg);padding:8px 12px;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
 .tbl td{padding:8px 12px;border-bottom:1px dashed var(--gray-soft)}
 .tbl tr.best td{background:var(--green-soft)}
+.tbl tr.rojo td{background:var(--red-soft)}
+.tbl tr.amar td{background:var(--amber-soft)}
 .empty-state{text-align:center;padding:50px 20px;font-family:var(--font-mono);font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:.08em}
 .com-stepper{display:flex;align-items:center;gap:12px}
 .com-stepper button{width:44px;height:44px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);box-shadow:var(--shadow-sm);font-size:22px;font-family:var(--font-display);line-height:0}
@@ -141,8 +143,8 @@ const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[
 const UNIDADES=['unidad','kg','g','l','ml','lata','botella','atado','caja','paquete','docena','bolsa'];
 
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-function money(n){return 'S/ '+Number(n||0).toFixed(2)}
-function num(n){return Number(n||0).toLocaleString('es-PE',{maximumFractionDigits:2})}
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2})}
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function nowISO(){return new Date().toISOString()}
 function uuid(){return crypto.randomUUID?crypto.randomUUID():'tmp_'+Math.random().toString(36).slice(2)}
@@ -156,6 +158,7 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 /* ===== LOAD ===== */
 async function loadAll(){
   await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones()]);
+  const h=location.hash.replace('#','');if(['inventario','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
@@ -687,13 +690,14 @@ function renderCompras(){
     body=state.proveedores.map(v=>`<div class="row-card"><span class="row-emoji">🏬</span><div class="row-main"><h3>${v.nombre}</h3><div class="row-meta">${v.ruc?`<span>RUC ${v.ruc}</span>`:''}${v.telefono?`<span>${v.telefono}</span>`:''}<span>${(v.categorias||[]).join(', ')}</span></div></div><div class="row-right"><span class="mono" style="font-size:11px">${state.provProd.filter(pp=>pp.proveedor_id===v.id).length} productos</span></div></div>`).join('')||'<div class="empty-state">Sin proveedores</div>';
   }else if(state.comprasTab==='comparativo'){
     const pid=state.comparaPid||state.productos[0]?.id;
-    const precios=preciosDe(pid);const al=alertaPrecio(pid);
+    const precios=preciosDe(pid);const al=alertaPrecio(pid);const pref=precioPreferido(pid);
+    const claseFila=x=>{if(pref==null)return'';if(x.precio<pref*0.98)return'rojo';if(Math.abs(x.precio-pref)<=pref*0.02)return'amar';return''};
     body=`<div class="field-lbl">Comparar precios (proveedores + webs del país):</div>
       <select class="select" id="cmp-prod" style="max-width:340px;margin-bottom:12px">${state.productos.map(p=>`<option value="${p.id}" ${pid===p.id?'selected':''}>${p.emoji||''} ${p.nombre}</option>`).join('')}</select>
-      ${al?`<div style="background:var(--red-soft);border:2px solid var(--secondary);border-radius:12px;padding:12px;margin-bottom:12px;font-weight:600">⚠ Más barato en <strong>${al.best.fuente}</strong> (${al.best.tipo}): ${money(al.best.precio)} vs ${money(al.pref)} de tu proveedor → ahorras ${money(al.ahorro)}/unidad${al.best.url?` · <a href="${al.best.url}" target="_blank" rel="noopener">ver</a>`:''}</div>`:''}
+      ${al?`<div style="background:var(--red-soft);border:2px solid var(--secondary);border-radius:12px;padding:12px;margin-bottom:12px;font-weight:600">🔴 Más barato en <strong>${al.best.fuente}</strong> (${al.best.tipo}): ${money(al.best.precio)} vs ${money(al.pref)} de tu proveedor → ahorras ${money(al.ahorro)}/unidad${al.best.url?` · <a href="${al.best.url}" target="_blank" rel="noopener">ver</a>`:''}</div>`:''}
       ${precios.length?`<table class="tbl"><tr><th>Fuente</th><th>Tipo</th><th>Precio</th><th>Entrega</th><th></th></tr>
-        ${precios.map((x,i)=>`<tr class="${i===0?'best':''}"><td>${x.fuente}${x.preferido?' ⭐':''}${x.url?` <a href="${x.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td>${x.tipo}</td><td><strong>${money(x.precio)}</strong></td><td>${x.entrega!=null?x.entrega+'d':'—'}</td><td>${i===0?'<span class="badge ok">más barato</span>':(x.preferido?'<span class="badge enviada">actual</span>':'')}</td></tr>`).join('')}</table>
-        <div class="row-meta" style="margin-top:8px">Rango: ${money(precios[0].precio)} – ${money(precios[precios.length-1].precio)} por unidad</div>`
+        ${precios.map(x=>{const cl=claseFila(x);return `<tr class="${cl}"><td>${x.fuente}${x.preferido?' ⭐':''}${x.url?` <a href="${x.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td>${x.tipo}</td><td><strong>${money(x.precio)}</strong></td><td>${x.entrega!=null?x.entrega+'d':'—'}</td><td>${cl==='rojo'?'<span class="badge" style="background:var(--secondary);color:#fff">más barato</span>':cl==='amar'?'<span class="badge" style="background:var(--tertiary)">≈ igual</span>':''}</td></tr>`}).join('')}</table>
+        <div class="row-meta" style="margin-top:8px">🔴 rojo = más barato que tu proveedor (conviene cambiar) · 🟡 amarillo = mismo precio o casi. Rango: ${money(precios[0].precio)} – ${money(precios[precios.length-1].precio)}/u</div>`
         :'<div class="empty-state">Sin precios cargados para este producto</div>'}`;
   }else{
     body=`<div class="toolbar"><button class="btn-ico primary" id="oc-add"><span class="material-symbols-outlined">add</span><span>Nueva orden</span></button></div>
@@ -829,7 +833,7 @@ async function accionOrden(o,accion){
 function renderReportes(){
   const prods=state.productos;
   const card=(t,inner)=>`<div style="background:#fff;border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:12px"><div style="font-family:var(--font-display);font-size:18px;margin-bottom:10px">${t}</div>${inner}</div>`;
-  const bar=(lbl,v,max,c='var(--primary)')=>`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>${lbl}</span><span class="mono">${typeof v==='number'?money(v):v}</span></div><div style="height:7px;border-radius:99px;background:var(--gray-soft);overflow:hidden"><div style="width:${max>0?Math.round((typeof v==='number'?v:0)/max*100):0}%;height:100%;background:${c}"></div></div></div>`;
+  const bar=(lbl,v,max,c='var(--primary)',attr='')=>`<div ${attr} style="margin-bottom:6px;${attr?'cursor:pointer':''}"><div style="display:flex;justify-content:space-between;font-size:12px"><span>${lbl}${attr?' <span class="material-symbols-outlined" style="font-size:12px;opacity:.4">chevron_right</span>':''}</span><span class="mono">${typeof v==='number'?money(v):v}</span></div><div style="height:7px;border-radius:99px;background:var(--gray-soft);overflow:hidden"><div style="width:${max>0?Math.round((typeof v==='number'?v:0)/max*100):0}%;height:100%;background:${c}"></div></div></div>`;
   // valor por categoría
   const porCat={};prods.forEach(p=>{const c=p.categoria||'Otros';porCat[c]=(porCat[c]||0)+stock(p.id)*Number(p.costo||0)});
   const catArr=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);const maxCat=Math.max(1,...catArr.map(x=>x[1]));
@@ -864,7 +868,7 @@ function renderReportes(){
     </div>
     ${card('💸 Mejores precios — ahorro potencial', alertas.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Productos donde hay una fuente más barata que tu proveedor actual:</div>
       <table class="tbl"><tr><th>Producto</th><th>Tu precio</th><th>Más barato</th><th>Ahorro/u</th></tr>
-      ${alertas.map(x=>`<tr class="best"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.al.pref)}</td><td>${money(x.al.best.precio)} · ${x.al.best.fuente}${x.al.best.url?` <a href="${x.al.best.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td><strong style="color:var(--green)">−${money(x.al.ahorro)}</strong></td></tr>`).join('')}</table>`
+      ${alertas.map(x=>`<tr class="rojo"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.al.pref)}</td><td>${money(x.al.best.precio)} · ${x.al.best.fuente}${x.al.best.url?` <a href="${x.al.best.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td><strong style="color:var(--secondary)">−${money(x.al.ahorro)}</strong></td></tr>`).join('')}</table>`
       :'<div class="row-meta">Tus proveedores ya tienen el mejor precio en todos los productos. 👌</div>')}
     ${card('🛒 Sugerencia de reposición (completar el par)', bajo.length?`<table class="tbl"><tr><th>Producto</th><th>Stock/par</th><th>Falta</th><th>Costo</th></tr>
       ${bajo.map(x=>`<tr><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${num(stock(x.p.id))}/${num(x.p.par_level)}</td><td>${num(x.falta)} ${x.p.unidad||''}</td><td>${money(x.costo)}</td></tr>`).join('')}
@@ -873,11 +877,35 @@ function renderReportes(){
     ${card('🏆 Vendor scoring', scoring.length?`<table class="tbl"><tr><th>Proveedor</th><th>Productos</th><th>Mejor precio en</th><th>Entrega</th><th>Score</th></tr>
       ${scoring.map(s=>`<tr><td>${s.v.nombre}</td><td>${s.nprod}</td><td>${s.baratos}</td><td>${s.entrega.toFixed(1)}d</td><td><span class="badge ${s.score>=70?'ok':s.score>=50?'bajo':'sin'}">${s.score}</span></td></tr>`).join('')}</table>
       <div class="row-meta" style="margin-top:6px">Score = competitividad de precio + rapidez de entrega.</div>`:'<div class="row-meta">Sin datos de proveedores.</div>')}
-    ${card('📦 Valor de inventario por categoría', catArr.map(([c,v])=>bar(c,v,maxCat)).join('')||'<div class="row-meta">Sin stock.</div>')}
-    ${card('🔥 Consumo / rotación (salidas + mermas)', consArr.length?consArr.map(([pid,v])=>bar((prod(pid)?.nombre||pid),v,maxCons,'var(--secondary)')).join(''):'<div class="row-meta">Aún sin salidas registradas.</div>')}
-    ${card('🤝 Compras por proveedor', compraArr.length?compraArr.map(([id,v])=>bar(prov(id)?.nombre||id,v,maxCompra,'var(--green)')).join(''):'<div class="row-meta">Aún sin compras (entradas) con proveedor.</div>')}
-    ${card('🗑️ Mermas por motivo', mermaArr.length?mermaArr.map(([m,v])=>bar(m,v,maxMer,'var(--secondary)')).join(''):'<div class="row-meta">Sin mermas. ✅</div>')}
-    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:8px">Estos reportes se reflejarán también en el módulo Directorio (Reportes ejecutivos).</div>`;
+    ${card('📦 Valor de inventario por categoría', catArr.map(([c,v])=>bar(c,v,maxCat,'var(--primary)','data-rep="cat" data-key="'+c+'"')).join('')||'<div class="row-meta">Sin stock.</div>')}
+    ${card('🔥 Consumo / rotación (salidas + mermas)', consArr.length?consArr.map(([pid,v])=>bar((prod(pid)?.nombre||pid),v,maxCons,'var(--secondary)','data-rep="cons" data-key="'+pid+'"')).join(''):'<div class="row-meta">Aún sin salidas registradas.</div>')}
+    ${card('🤝 Compras por proveedor', compraArr.length?compraArr.map(([id,v])=>bar(prov(id)?.nombre||id,v,maxCompra,'var(--green)','data-rep="prov" data-key="'+id+'"')).join(''):'<div class="row-meta">Aún sin compras (entradas) con proveedor.</div>')}
+    ${card('🗑️ Mermas por motivo', mermaArr.length?mermaArr.map(([m,v])=>bar(m,v,maxMer,'var(--secondary)','data-rep="merma" data-key="'+m+'"')).join(''):'<div class="row-meta">Sin mermas. ✅</div>')}
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:8px">Estos reportes se reflejarán también en el módulo Directorio (Reportes ejecutivos). Toca cualquier barra para ver el detalle.</div>`;
+  document.querySelectorAll('#screen [data-rep]').forEach(el=>el.onclick=()=>abrirDetalleReporte(el.dataset.rep,el.dataset.key));
+}
+function abrirDetalleReporte(rep,key){
+  let titulo='',filas='';
+  if(rep==='merma'){
+    const items=state.mermas.filter(m=>m.motivo===key);
+    titulo='Mermas · '+key;
+    filas=`<table class="tbl"><tr><th>Fecha</th><th>Producto</th><th>Cant.</th><th>Valor</th><th>Resp.</th></tr>${items.map(m=>`<tr><td>${m.fecha}</td><td>${prod(m.producto_id)?.nombre||m.producto_id}</td><td>${num(m.cantidad)}</td><td>${money(m.valor_perdido)}</td><td>${m.responsable||'—'}</td></tr>${m.notas?`<tr><td></td><td colspan="4" style="opacity:.65;font-size:11px">» ${m.notas}</td></tr>`:''}`).join('')}</table>`;
+  }else if(rep==='prov'){
+    const items=state.movs.filter(m=>m.tipo==='entrada'&&m.proveedor_id===key);
+    titulo='Compras · '+(prov(key)?.nombre||key);
+    filas=`<table class="tbl"><tr><th>Fecha</th><th>Producto</th><th>Cant.</th><th>Valor</th><th>Ref.</th></tr>${items.map(m=>`<tr><td>${m.fecha}</td><td>${prod(m.producto_id)?.nombre||m.producto_id}</td><td>${num(m.cantidad)}</td><td>${money(Math.abs(m.valor_total||0))}</td><td>${m.referencia||''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;opacity:.5;padding:14px">Sin compras</td></tr>'}</table>`;
+  }else if(rep==='cons'){
+    const items=state.movs.filter(m=>m.producto_id===key&&['salida','merma'].includes(m.tipo));
+    titulo='Consumo · '+(prod(key)?.nombre||key);
+    filas=`<table class="tbl"><tr><th>Fecha</th><th>Tipo</th><th>Cant.</th><th>Valor</th><th>Motivo</th></tr>${items.map(m=>`<tr><td>${m.fecha}</td><td>${m.tipo}</td><td>${num(Math.abs(m.cantidad))}</td><td>${money(Math.abs(m.valor_total||0))}</td><td>${m.motivo||''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;opacity:.5;padding:14px">Sin movimientos</td></tr>'}</table>`;
+  }else if(rep==='cat'){
+    const items=state.productos.filter(p=>(p.categoria||'Otros')===key);
+    titulo='Categoría · '+key;
+    filas=`<table class="tbl"><tr><th>Producto</th><th>Stock</th><th>Costo</th><th>Valor</th></tr>${items.map(p=>`<tr><td>${p.emoji||''} ${p.nombre}</td><td>${num(stock(p.id))} ${p.unidad||''}</td><td>${money(p.costo)}</td><td>${money(stock(p.id)*Number(p.costo||0))}</td></tr>`).join('')}</table>`;
+  }
+  setHead('🔎',titulo,'Detalle del reporte');
+  $('#sheet-body').innerHTML=filas+'<div class="sheet-section"><button class="btn ghost" id="dr-close">Cerrar</button></div>';
+  openSheet();$('#dr-close').onclick=closeSheet;
 }
 
 /* ===== REALTIME ===== */
