@@ -220,22 +220,28 @@ function renderInventario(){
   $('#inv-q').oninput=e=>{state.q=e.target.value;renderInventario()};
   $$('#screen .chip[data-cat]').forEach(b=>b.onclick=()=>{state.cat=b.dataset.cat;renderInventario()});
   $$('#screen .row-card [data-act]').forEach(b=>b.onclick=()=>{const pid=b.closest('.row-card').dataset.pid;const a=b.dataset.act;
-    if(a==='entrada')abrirMovimiento(pid,'entrada');else if(a==='salida')abrirMovimiento(pid,'salida');else if(a==='ajuste')abrirMovimiento(pid,'ajuste');else if(a==='merma')abrirMerma(pid);else if(a==='ficha')abrirFichaProducto(pid)});
+    if(a==='pedir')abrirAgregarPedido(pid);else if(a==='entrada')abrirMovimiento(pid,'entrada');else if(a==='salida')abrirMovimiento(pid,'salida');else if(a==='ajuste')abrirMovimiento(pid,'ajuste');else if(a==='merma')abrirMerma(pid);else if(a==='ficha')abrirFichaProducto(pid)});
 }
 function invCard(p){const s=stock(p.id),est=estadoStock(p);const lbl={ok:'En stock',bajo:'Bajo par',sin:'Sin stock'}[est];
+  const col=est==='ok'?'var(--green)':est==='bajo'?'#c98a00':'var(--secondary)';
+  const enPedido=state.pedidoQty[p.id]||0;
   return `<div class="row-card" data-pid="${p.id}">
     <span class="row-emoji">${p.emoji||'📦'}</span>
     <div class="row-main"><h3>${p.nombre}</h3>
-      <div class="row-meta"><span>${p.categoria||'—'}</span><span>par ${num(p.par_level)} ${p.unidad||''}</span><span>${money(p.costo)}/${p.unidad||'u'}</span><span>valor ${money(s*Number(p.costo||0))}</span></div>
+      <div class="row-meta"><span>${p.categoria||'—'}</span><span>${money(p.costo)}/${p.unidad||'u'}</span><span>valor ${money(s*Number(p.costo||0))}</span></div>
       <div class="chips" style="margin-top:8px">
+        <button class="mini-btn warn" data-act="pedir"><span class="material-symbols-outlined" style="font-size:14px">add_shopping_cart</span>Agregar al pedido${enPedido?' ('+num(enPedido)+')':''}</button>
         <button class="mini-btn primary" data-act="entrada">+ Entrada</button>
         <button class="mini-btn" data-act="salida">− Salida</button>
-        <button class="mini-btn warn" data-act="ajuste">Ajustar</button>
+        <button class="mini-btn" data-act="ajuste">Ajustar</button>
         <button class="mini-btn danger" data-act="merma">Merma</button>
         <button class="mini-btn ghost" data-act="ficha">Ficha</button>
       </div>
     </div>
-    <div class="row-right"><span class="stockbig">${num(s)}<span style="font-size:11px;opacity:.6"> ${p.unidad||''}</span></span><span class="badge ${est}">${lbl}</span></div>
+    <div class="row-right">
+      <span class="stockbig" style="color:${col}">${num(s)} <span style="font-size:13px;font-weight:400;opacity:.7">de ${num(p.par_level)} ${p.unidad||''}</span></span>
+      <span class="badge ${est}">${lbl}</span>
+    </div>
   </div>`;
 }
 async function abrirFichaProducto(pid){const p=prod(pid);if(!p)return;const s=stock(pid);
@@ -426,6 +432,63 @@ async function generarOrdenesPedido(){
   toast('Servido · '+rows.length+' orden(es) generada(s) como borrador','ok');
 }
 
+// Selector de cantidad estilo supermercado → agrega a state.pedidoQty
+function abrirAgregarPedido(pid){
+  const p=prod(pid);if(!p)return;let qty=state.pedidoQty[pid]||sugerido(p)||1;const pp=proveedorDe(pid);
+  const draw=()=>{
+    setHead(p.emoji||'🛒','Agregar al pedido',p.nombre+' · '+(p.categoria||''));
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section">
+        <div class="info-row"><span>Stock / par</span><strong style="color:${estadoStock(p)==='ok'?'var(--green)':'var(--secondary)'}">${num(stock(pid))} de ${num(p.par_level)} ${p.unidad||''}</strong></div>
+        <div class="info-row"><span>Sugerido (par − stock)</span><strong>${num(sugerido(p))} ${p.unidad||''}</strong></div>
+        <div class="info-row"><span>Se le pedirá a</span><strong>${pp?(prov(pp.proveedor_id)?.nombre+' · '+money(pp.costo)):'⚠ sin proveedor'}</strong></div>
+      </div>
+      <div class="sheet-section"><div class="field-lbl">Cantidad a pedir (${p.unidad||''})</div>
+        <div class="com-stepper"><button id="ap-minus">−</button><span class="num" id="ap-num">${num(qty)}</span><button id="ap-plus">+</button></div>
+        <div class="chips" style="justify-content:center;margin-top:10px">
+          <button class="chip" data-add="1">+1</button><button class="chip" data-add="5">+5</button><button class="chip" data-add="10">+10</button>
+          <button class="chip" data-set="sug">Sugerido</button></div>
+        <input class="input" id="ap-in" type="number" min="0" step="0.5" value="${qty}" style="margin-top:10px;text-align:center"></div>
+      <div class="sheet-section"><div class="info-row"><span>Costo estimado</span><strong>${pp?money(qty*Number(pp.costo)):'—'}</strong></div></div>
+      <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="ap-cancel">Atrás</button><button class="btn primary" id="ap-save"><span class="material-symbols-outlined">add_shopping_cart</span>Agregar al pedido</button></div></div>`;
+    $('#ap-minus').onclick=()=>{qty=Math.max(0,+(qty-1));draw()};
+    $('#ap-plus').onclick=()=>{qty=+(qty+1);draw()};
+    $$('#sheet-body [data-add]').forEach(b=>b.onclick=()=>{qty=+(qty+Number(b.dataset.add));draw()});
+    $$('#sheet-body [data-set]').forEach(b=>b.onclick=()=>{qty=sugerido(p)||1;draw()});
+    $('#ap-in').oninput=e=>{qty=Number(e.target.value)||0};
+    $('#ap-cancel').onclick=closeSheet;
+    $('#ap-save').onclick=()=>{if(!(qty>0)){toast('Cantidad inválida','warn');return}state.pedidoQty[pid]=qty;closeSheet();render();toast('🛒 '+p.nombre+' × '+num(qty)+' al pedido','ok')};
+  };draw();openSheet();
+}
+// PDF + envío de orden al proveedor (email / WhatsApp)
+function buildOrderText(o){const p=prov(o.proveedor_id);let t='Casa Italia — Orden de compra '+(o.numero||'')+'\n';
+  t+='Proveedor: '+(p?.nombre||o.proveedor_id)+'\nFecha: '+(o.fecha_emision||hoyISO())+'\n\nÍtems:\n';
+  (o.items||[]).forEach(it=>{t+='• '+it.nombre+' x'+num(it.cantidad)+' @ '+money(it.costo_unit)+' = '+money(it.cantidad*it.costo_unit)+'\n'});
+  t+='\nSubtotal: '+money(o.subtotal)+'\nIGV 18%: '+money(o.igv)+'\nTOTAL: '+money(o.total)+'\n\nGracias · Casa Italia (vía Prep!)';return t;}
+function imprimirA4(titulo,html){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';document.body.appendChild(f);
+  const d=f.contentWindow.document;d.open();
+  d.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+titulo+'</title><style>@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:13px}table td,table th{padding:7px 8px}tbody td{border-bottom:1px solid #ddd}hr{border:none;border-top:2px solid #111;margin:10px 0}</style></head><body>'+html+'</body></html>');
+  d.close();let done=false;const cl=()=>{if(done)return;done=true;setTimeout(()=>f.remove(),600)};f.contentWindow.onafterprint=cl;setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}setTimeout(cl,3000)},250);}
+function imprimirOrden(o){const p=prov(o.proveedor_id);
+  const filas=(o.items||[]).map(it=>`<tr><td>${it.nombre}</td><td style="text-align:right">${num(it.cantidad)}</td><td style="text-align:right">${money(it.costo_unit)}</td><td style="text-align:right">${money(it.cantidad*it.costo_unit)}</td></tr>`).join('');
+  imprimirA4('Orden '+(o.numero||''),`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div style="font-size:28px;font-weight:800">Casa Italia</div><div style="color:#666">Orden de compra</div></div>
+      <div style="text-align:right"><div style="font-size:20px;font-weight:700">${o.numero||''}</div><div>${o.fecha_emision||hoyISO()}</div></div></div>
+    <hr>
+    <div style="margin-bottom:6px"><strong>Proveedor:</strong> ${p?.nombre||o.proveedor_id}${p?.ruc?' · RUC '+p.ruc:''}</div>
+    <div style="color:#555">${p?.telefono?'Tel '+p.telefono:''}${p?.email?' · '+p.email:''}</div>
+    <table style="width:100%;border-collapse:collapse;margin-top:14px">
+      <thead><tr style="background:#111;color:#fff"><th style="text-align:left">Producto</th><th style="text-align:right">Cant.</th><th style="text-align:right">Costo</th><th style="text-align:right">Subtotal</th></tr></thead>
+      <tbody>${filas}</tbody></table>
+    <div style="text-align:right;margin-top:14px;line-height:1.7">Subtotal: ${money(o.subtotal)}<br>IGV 18%: ${money(o.igv)}<br><strong style="font-size:18px">TOTAL: ${money(o.total)}</strong></div>
+    <p style="margin-top:30px;color:#999;font-size:11px">Generado por Prep! · ${o.numero||''}</p>`);
+}
+function enviarOrden(o,canal){const p=prov(o.proveedor_id);const txt=buildOrderText(o);
+  if(canal==='email'){const to=p?.email||'';window.open('mailto:'+to+'?subject='+encodeURIComponent('Orden de compra '+(o.numero||'')+' — Casa Italia')+'&body='+encodeURIComponent(txt));toast(to?'Abriendo email a '+to:'Proveedor sin email — adjunta el PDF','warn');}
+  else{const tel=(p?.telefono||'').replace(/\D/g,'');const dest=tel?(tel.length<=9?'51'+tel:tel):'';window.open('https://wa.me/'+dest+'?text='+encodeURIComponent(txt),'_blank');toast(tel?'Abriendo WhatsApp':'Proveedor sin teléfono','warn');}
+}
+
 /* ===== COMPRAS (proveedores + comparativo + órdenes) ===== */
 function renderCompras(){
   const sub=`<div class="seg" style="margin-bottom:14px">
@@ -503,8 +566,17 @@ function verOrden(o){
       <div class="info-row"><span>Total</span><strong>${money(o.total)}</strong></div></div>
     <div class="sheet-section"><div class="field-lbl">Ítems</div><table class="tbl"><tr><th>Producto</th><th>Cant</th><th>Costo</th><th>Subt.</th></tr>
       ${(o.items||[]).map(it=>`<tr><td>${it.nombre}</td><td>${num(it.cantidad)}</td><td>${money(it.costo_unit)}</td><td>${money(it.cantidad*it.costo_unit)}</td></tr>`).join('')}</table></div>
-    <div class="sheet-section">${o.estado==='borrador'?'<button class="btn" id="ov-act">Enviar al proveedor</button>':o.estado==='enviada'?'<button class="btn warn" id="ov-act">Aprobar orden</button>':o.estado==='aprobada'?'<button class="btn primary" id="ov-act">Recibir (ingresar a stock)</button>':'<div class="row-meta">Orden '+o.estado+'</div>'}</div>`;
+    <div class="sheet-section"><div class="field-lbl">Enviar al proveedor</div>
+      <div class="chips">
+        <button class="mini-btn" id="ov-pdf"><span class="material-symbols-outlined" style="font-size:14px">picture_as_pdf</span>PDF</button>
+        <button class="mini-btn" id="ov-mail"><span class="material-symbols-outlined" style="font-size:14px">mail</span>Email</button>
+        <button class="mini-btn" id="ov-wa" style="background:#25d366;color:#fff;border-color:#000"><span class="material-symbols-outlined" style="font-size:14px">chat</span>WhatsApp</button>
+      </div></div>
+    <div class="sheet-section">${o.estado==='borrador'?'<button class="btn" id="ov-act">Marcar enviada al proveedor</button>':o.estado==='enviada'?'<button class="btn warn" id="ov-act">Aprobar orden</button>':o.estado==='aprobada'?'<button class="btn primary" id="ov-act">Recibir (ingresar a stock)</button>':'<div class="row-meta">Orden '+o.estado+'</div>'}</div>`;
   openSheet();
+  $('#ov-pdf').onclick=()=>imprimirOrden(o);
+  $('#ov-mail').onclick=()=>enviarOrden(o,'email');
+  $('#ov-wa').onclick=()=>enviarOrden(o,'whatsapp');
   if($('#ov-act'))$('#ov-act').onclick=()=>{const map={borrador:'enviar',enviada:'aprobar',aprobada:'recibir'};accionOrden(o,map[o.estado])};
 }
 async function accionOrden(o,accion){
