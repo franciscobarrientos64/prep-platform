@@ -66,7 +66,10 @@ button { font-family: inherit; cursor: pointer; }
   min-height: 64px;
 }
 .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.brand-logo { width: 96px; height: 32px; flex-shrink: 0; background: linear-gradient(100deg, var(--primary), var(--secondary)); -webkit-mask: url(/logo.png) left center/contain no-repeat; mask: url(/logo.png) left center/contain no-repeat; }
+.brand-logo { position:relative; width: 100px; height: 32px; flex-shrink: 0; display:block; text-decoration:none; }
+.brand-logo .l, .boot .logo .l { position:absolute; inset:0; -webkit-mask: url(/logo.png) left center/contain no-repeat; mask: url(/logo.png) left center/contain no-repeat; }
+.brand-logo .l.base, .boot .logo .l.base { background: var(--ink); }
+.brand-logo .l.bang, .boot .logo .l.bang { background: linear-gradient(135deg, var(--primary), var(--tertiary), var(--secondary)); clip-path: inset(0 0 0 86%); }
 .brand-txt .cli { font-weight: 700; font-size: 14px; line-height: 1.1; }
 .brand .logo { font-family: var(--font-display); font-size: 28px; color: var(--primary); line-height: 0.9; }
 .brand .logo .accent { color: var(--secondary); }
@@ -898,7 +901,7 @@ button { font-family: inherit; cursor: pointer; }
   transition: opacity 0.3s;
 }
 .boot.gone { opacity: 0; pointer-events: none; }
-.boot .logo { width: 240px; height: 80px; background: linear-gradient(100deg, var(--primary), var(--secondary)); -webkit-mask: url(/logo.png) center/contain no-repeat; mask: url(/logo.png) center/contain no-repeat; }
+.boot .logo { position:relative; width: 240px; height: 80px; }
 .boot .msg { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
 .boot .spinner {
   width: 36px; height: 36px;
@@ -1172,7 +1175,7 @@ button { font-family: inherit; cursor: pointer; }
 <body>
 
 <div id="boot" class="boot">
-  <div class="logo"></div>
+  <div class="logo"><span class="l base"></span><span class="l bang"></span></div>
   <div class="spinner"></div>
   <div class="msg">Oído · mise en place</div>
 </div>
@@ -1640,7 +1643,7 @@ function renderHeader() {
         <span class="material-symbols-outlined">arrow_back</span>
         <span>Volver al pedido</span>
       </button>
-      <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS · Cobrando #${ped?.ticket_num||'?'}</div></div></div>
+      <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo POS · Cobrando #${ped?.ticket_num||'?'}</div></div></div>
       <div class="header-info">
         <span class="pill" style="background:var(--secondary);color:white;border-color:var(--outline)">
           <span class="material-symbols-outlined" style="font-size:14px">point_of_sale</span>
@@ -1660,7 +1663,7 @@ function renderHeader() {
         <span class="material-symbols-outlined">arrow_back</span>
         <span>Floor</span>
       </button>
-      <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS · Pedido #${ped?.ticket_num||'?'}</div></div></div>
+      <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo POS · Pedido #${ped?.ticket_num||'?'}</div></div></div>
       <div class="header-info">
         <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">table_restaurant</span>${mesa?'Mesa '+mesa.numero:'—'}</span>
         <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">person</span>${fmtMozo(mozo)}</span>
@@ -1686,8 +1689,8 @@ function renderHeader() {
   const editing = state.screen === 'edit';
   h.innerHTML = `
     <div class="brand">
-      <div class="brand-logo"></div>
-      <div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">POS</div></div>
+      <a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a>
+      <div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo POS</div></div>
     </div>
     <div class="header-info">
       <span class="pill" id="turno-pill">

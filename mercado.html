@@ -26,7 +26,10 @@ button{font-family:inherit;cursor:pointer}
 .mono{font-family:var(--font-mono)}
 .header{flex-shrink:0;background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
 .brand{display:flex;align-items:center;gap:10px}
-.brand-logo{width:90px;height:30px;flex-shrink:0;background:linear-gradient(100deg,var(--primary),var(--secondary));-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l,.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat}
+.brand-logo .l.base,.boot .logo .l.base{background:var(--ink)}
+.brand-logo .l.bang,.boot .logo .l.bang{background:linear-gradient(135deg,var(--primary),var(--tertiary),var(--secondary));clip-path:inset(0 0 0 86%)}
 .brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}
 .brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6;line-height:1.15}
 .header-info{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap}
@@ -103,7 +106,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes tin{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 .boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .boot.gone{opacity:0;pointer-events:none}
-.boot .logo{width:220px;height:73px;background:linear-gradient(100deg,var(--primary),var(--secondary));-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat}
+.boot .logo{position:relative;width:220px;height:73px}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -111,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="boot" class="boot"><div class="logo"></div><div class="spinner"></div><div class="msg">Oído · mise en place</div></div>
+<div id="boot" class="boot"><div class="logo"><span class="l base"></span><span class="l bang"></span></div><div class="spinner"></div><div class="msg">Oído · mise en place</div></div>
 <header class="header" id="app-header"></header>
 <nav class="tabs" id="tabs"></nav>
 <main class="main" id="screen"></main>
@@ -186,7 +189,7 @@ function render(){renderHeader();renderTabs();
 function renderHeader(){
   const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
   $('#app-header').innerHTML=`
-    <div class="brand"><div class="brand-logo"></div><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Mercado</div></div></div>
+    <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Mercado</div></div></div>
     <div class="header-info">
       <span class="pill">${money(valorInventario())} en stock</span>
       <span class="pill ${bajo?'alert':''}">${bajo} bajo par</span>
