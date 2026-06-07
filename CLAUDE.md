@@ -20,8 +20,12 @@ git clone https://$GITHUB_TOKEN@github.com/franciscobarrientos64/prep-platform.g
 cd prep-platform
 
 # 2. Configurar (solo la primera vez)
-git config user.email "francisco@prep.rest"
+git config user.email "franciscobarrientos64@gmail.com"
 git config user.name "Francisco Barrientos"
+# IMPORTANTE: el email del commit DEBE ser el de la cuenta de Vercel/GitHub
+# (franciscobarrientos64@gmail.com). Si el autor del commit no pertenece a tu
+# cuenta, Vercel descarta el deploy silenciosamente (el push llega a GitHub pero
+# no se construye). NO usar otros emails (ej. francisco@prep.rest).
 
 # 3. Después de editar archivos:
 git add .
