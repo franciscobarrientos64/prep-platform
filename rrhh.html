@@ -90,7 +90,13 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const AREAS=[['Cocina','restaurant'],['Salón','room_service'],['Bar','local_bar'],['Admin','badge'],['Gerencia','workspace_premium'],['Mantenimiento','cleaning_services']];
 const CONTRATOS=['planilla','recibos','part-time','practicante'];
-const state={emp:[],roles:[],asis:[],docs:[],view:'equipo',channel:null};
+const state={emp:[],roles:[],asis:[],docs:[],prog:[],view:'equipo',semana:lunesDe(new Date()),channel:null};
+const DIAS=['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+const TURNOS=[['mañana','07:00','15:00'],['tarde','15:00','23:00'],['noche','18:00','01:00'],['partido','12:00','22:00']];
+function lunesDe(d){const x=new Date(d);const dw=(x.getDay()+6)%7;x.setDate(x.getDate()-dw);x.setHours(0,0,0,0);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function addDias(iso,n){const[y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
+function diaSemana(iso){const[y,m,d]=iso.split('-').map(Number);return DIAS[(new Date(y,m-1,d).getDay()+6)%7]}
+function turnoData(k){return TURNOS.find(t=>t[0]===k)}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -108,7 +114,8 @@ async function loadEmp(){const{data}=await sb.from('rrhh_empleados').select('*')
 async function loadRoles(){const{data}=await sb.from('rrhh_roles').select('*').order('area');state.roles=data||[]}
 async function loadAsis(){const desde=new Date();desde.setDate(desde.getDate()-30);const d=desde.toISOString().slice(0,10);const{data}=await sb.from('rrhh_asistencia').select('*').eq('local_id',LOCAL).gte('fecha',d).order('fecha',{ascending:false});state.asis=data||[]}
 async function loadDocs(){const{data}=await sb.from('rrhh_documentos').select('*').eq('archivado',false).order('fecha_vencimiento');state.docs=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadProg(){const fin=addDias(state.semana,7);const{data}=await sb.from('rrhh_programacion').select('*').eq('local_id',LOCAL).gte('fecha',state.semana).lt('fecha',fin);state.prog=data||[]}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg()]);render();subscribe();$('#boot').classList.add('gone')}
 
 const activos=()=>state.emp.filter(e=>e.estado==='activo');
 const asisHoy=id=>state.asis.find(a=>a.empleado_id===id&&a.fecha===hoyISO());
@@ -119,9 +126,9 @@ function render(){
   const planilla=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['asistencia','Asistencia','schedule'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='asistencia')renderAsistencia();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else renderPlanilla();
 }
 
 function renderEquipo(){
@@ -183,6 +190,56 @@ function renderPlanilla(){
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:10px">Esta planilla alimenta el grupo "Personal" del módulo Finanzas.</div>`;
 }
 
+/* ====== TURNOS / PROGRAMACIÓN ====== */
+function horasTurno(p){if(!p.hora_ini||!p.hora_fin)return 0;let a=p.hora_ini.split(':').map(Number),b=p.hora_fin.split(':').map(Number);let ini=a[0]+a[1]/60,fin=b[0]+b[1]/60;if(fin<=ini)fin+=24;return +(fin-ini).toFixed(2)}
+function sueldoHora(e){return Number(e.sueldo||0)/192}
+function progDia(fecha){return state.prog.filter(p=>p.fecha===fecha)}
+function empById(id){return state.emp.find(e=>e.id===id)}
+function violaRestriccion(e,fecha,turno){const r=e&&e.restricciones||{};const out=[];if(Array.isArray(r.dias_no)&&r.dias_no.includes(diaSemana(fecha)))out.push('no disponible '+diaSemana(fecha));if(Array.isArray(r.turnos)&&r.turnos.length&&turno&&!r.turnos.includes(turno))out.push('no hace turno '+turno);return out}
+function renderTurnos(){
+  const dias=Array.from({length:7},(_,i)=>addDias(state.semana,i));
+  const horasSem=state.prog.reduce((a,p)=>a+horasTurno(p),0);
+  const costo=state.prog.reduce((a,p)=>{const e=empById(p.empleado_id);return a+(e?horasTurno(p)*sueldoHora(e):0)},0);
+  const finSem=addDias(state.semana,6);
+  $('#screen').innerHTML=`
+    <div class="toolbar"><button class="mini-btn" id="sem-prev">‹</button><span class="pill">${state.semana.slice(5)} – ${finSem.slice(5)}</span><button class="mini-btn" id="sem-next">›</button><button class="mini-btn ghost" id="sem-hoy">Hoy</button></div>
+    <div class="kpis"><div class="kpi"><div class="v">${state.prog.length}</div><div class="l">Turnos asignados</div></div><div class="kpi"><div class="v">${horasSem.toFixed(0)}h</div><div class="l">Horas semana</div></div><div class="kpi"><div class="v">${money(costo)}</div><div class="l">Costo laboral est.</div></div></div>
+    ${dias.map(f=>{const ps=progDia(f);const esHoy=f===hoyISO();
+      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div class="grp-t" style="margin:0;text-transform:capitalize">${diaSemana(f)} <span style="font-family:var(--font-mono);font-size:11px;opacity:.55">${f.slice(8)}/${f.slice(5,7)}${esHoy?' · hoy':''}</span></div><button class="mini-btn primary" data-add="${f}">+ turno</button></div>
+        ${ps.map(p=>{const e=empById(p.empleado_id);const v=e?violaRestriccion(e,p.fecha,p.turno):[];return `<div class="arow" data-pid="${p.id}" style="${v.length?'border-color:var(--secondary)':''}"><div class="av" style="width:36px;height:36px;font-size:13px">${e?iniciales(e):'?'}</div><div><div style="font-weight:700;font-size:14px">${e?(e.nombre+' '+(e.apellidos||'')):'—'}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.7">${p.turno||''} · ${p.hora_ini}-${p.hora_fin} · ${horasTurno(p)}h${v.length?' · ⚠ '+v.join(', '):''}</div></div><button class="mini-btn" data-del="${p.id}">✕</button></div>`}).join('')||'<div style="font-family:var(--font-mono);font-size:11px;opacity:.45;padding:4px 0">Sin turnos</div>'}
+      </div>`}).join('')}`;
+  $('#sem-prev').onclick=async()=>{state.semana=addDias(state.semana,-7);await loadProg();render()};
+  $('#sem-next').onclick=async()=>{state.semana=addDias(state.semana,7);await loadProg();render()};
+  $('#sem-hoy').onclick=async()=>{state.semana=lunesDe(new Date());await loadProg();render()};
+  $$('#screen [data-add]').forEach(b=>b.onclick=()=>abrirTurno(b.dataset.add));
+  $$('#screen [data-del]').forEach(b=>b.onclick=()=>eliminarTurno(b.dataset.del));
+}
+function abrirTurno(fecha){
+  let empId='',turno='noche';const tt=turnoData(turno);let ini=tt[1],fin=tt[2];
+  setHead('🗓️','Asignar turno',diaSemana(fecha)+' '+fecha.slice(5));
+  const draw=()=>{const e=empById(empId);const v=e?violaRestriccion(e,fecha,turno):[];
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section"><div class="field-lbl">Colaborador</div><select class="select" id="t-emp"><option value="">— elegir —</option>${activos().map(x=>`<option value="${x.id}" ${empId===x.id?'selected':''}>${x.nombre} ${x.apellidos||''} · ${x.rol||''}</option>`).join('')}</select></div>
+      ${v.length?`<div class="sheet-section"><div style="background:var(--red-soft);border:2px solid var(--secondary);border-radius:10px;padding:10px;font-size:13px;font-weight:600">⚠ ${e.nombre}: ${v.join(' · ')}</div></div>`:''}
+      ${e&&e.restricciones&&(e.restricciones.dias_no||e.restricciones.turnos)?`<div class="sheet-section"><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">Disponibilidad: ${(e.restricciones.turnos||[]).join('/')||'cualquier turno'}${e.restricciones.dias_no&&e.restricciones.dias_no.length?(' · libre: '+e.restricciones.dias_no.join(', ')):''}</div></div>`:''}
+      <div class="sheet-section"><div class="field-lbl">Turno</div><div class="chips" id="t-turno">${TURNOS.map(t=>`<button class="chip ${turno===t[0]?'active':''}" data-t="${t[0]}">${t[0]}</button>`).join('')}</div></div>
+      <div class="sheet-section grid2"><div><div class="field-lbl">Entra</div><input class="input" id="t-ini" type="time" value="${ini}"></div><div><div class="field-lbl">Sale</div><input class="input" id="t-fin" type="time" value="${fin}"></div></div>
+      <div class="sheet-section"><button class="btn primary" id="t-save"><span class="material-symbols-outlined">save</span>Asignar turno</button></div>`;
+    $('#t-emp').onchange=ev=>{empId=ev.target.value;draw()};
+    $$('#t-turno .chip').forEach(b=>b.onclick=()=>{turno=b.dataset.t;const d=turnoData(turno);ini=d[1];fin=d[2];draw()});
+    $('#t-ini').onchange=ev=>ini=ev.target.value;$('#t-fin').onchange=ev=>fin=ev.target.value;
+    $('#t-save').onclick=()=>guardarTurno(fecha,empId,turno,$('#t-ini').value,$('#t-fin').value);
+  };draw();openSheet();
+}
+async function guardarTurno(fecha,empId,turno,ini,fin){
+  if(!empId){toast('Elige colaborador','warn');return}
+  const e=empById(empId);const v=violaRestriccion(e,fecha,turno);
+  if(v.length&&!confirm('⚠ '+e.nombre+': '+v.join(', ')+'. ¿Asignar igual?'))return;
+  const{error}=await sb.from('rrhh_programacion').insert({marca_id:MARCA,local_id:LOCAL,empleado_id:empId,fecha,turno,hora_ini:ini,hora_fin:fin,rol:e.rol||null,estado:'programado'});
+  if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadProg();render();toast('Servido · turno asignado','ok');
+}
+async function eliminarTurno(id){const{error}=await sb.from('rrhh_programacion').delete().eq('id',id);if(error){toast('Atrás','err');return}await loadProg();render();toast('Turno quitado','warn')}
+
 function abrirFicha(e){
   const docs=state.docs.filter(d=>d.empleado_id===e.id);
   const asis=state.asis.filter(a=>a.empleado_id===e.id).slice(0,8);
@@ -208,7 +265,8 @@ function abrirFicha(e){
 }
 
 function abrirEditor(e){
-  const ed=!!e;const c=Object.assign({nombre:'',apellidos:'',dni:'',telefono:'',email:'',rol:'',area:'Cocina',sueldo:'',tipo_contrato:'planilla',fecha_ingreso:hoyISO(),estado:'activo',banco:'',cuenta:'',cci:'',contacto_emergencia_nombre:'',contacto_emergencia_telefono:'',notas:''},e||{});
+  const ed=!!e;const c=Object.assign({nombre:'',apellidos:'',dni:'',telefono:'',email:'',rol:'',area:'Cocina',sueldo:'',tipo_contrato:'planilla',fecha_ingreso:hoyISO(),estado:'activo',banco:'',cuenta:'',cci:'',contacto_emergencia_nombre:'',contacto_emergencia_telefono:'',notas:'',restricciones:{}},e||{});
+  if(!c.restricciones||typeof c.restricciones!=='object')c.restricciones={};if(!Array.isArray(c.restricciones.dias_no))c.restricciones.dias_no=[];if(!Array.isArray(c.restricciones.turnos))c.restricciones.turnos=[];
   setHead(ed?iniciales(c):'➕',ed?'Editar empleado':'Nuevo empleado','RRHH',ed?c.foto_url:null);
   const draw=()=>{
     $('#sheet-body').innerHTML=`
@@ -220,17 +278,21 @@ function abrirEditor(e){
       <div class="sheet-section"><div class="field-lbl">Email</div><input class="input" id="e-email" value="${c.email||''}"></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Banco</div><input class="input" id="e-banco" value="${c.banco||''}"></div><div><div class="field-lbl">Cuenta</div><input class="input" id="e-cuenta" value="${c.cuenta||''}"></div></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Emergencia (nombre)</div><input class="input" id="e-emn" value="${c.contacto_emergencia_nombre||''}"></div><div><div class="field-lbl">Emergencia (tel)</div><input class="input" id="e-emt" value="${c.contacto_emergencia_telefono||''}"></div></div>
+      <div class="sheet-section"><div class="field-lbl">Días que NO puede trabajar</div><div class="chips" id="e-diasno">${DIAS.map(d=>`<button class="chip ${c.restricciones.dias_no.includes(d)?'active':''}" data-d="${d}" style="text-transform:capitalize">${d}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="field-lbl">Turnos permitidos (vacío = cualquiera)</div><div class="chips" id="e-turnos">${TURNOS.map(t=>`<button class="chip ${c.restricciones.turnos.includes(t[0])?'active':''}" data-t="${t[0]}">${t[0]}</button>`).join('')}</div></div>
       <div class="sheet-section"><div class="field-lbl">Estado</div><div class="chips" id="e-estado">${['activo','inactivo'].map(s=>`<button class="chip ${c.estado===s?'active':''}" data-s="${s}">${s}</button>`).join('')}</div></div>
       <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="e-cancel">Atrás</button><button class="btn primary" id="e-save"><span class="material-symbols-outlined">save</span>Guardar</button></div></div>`;
     $('#e-rol').onchange=ev=>{c.rol=ev.target.value;const ar=ev.target.selectedOptions[0].dataset.area;if(ar){c.area=normArea(ar);$('#e-area').value=normArea(ar)}const r=state.roles.find(x=>x.nombre===c.rol);if(r&&!$('#e-sueldo').value){$('#e-sueldo').value=r.sueldo_referencia_min;c.sueldo=r.sueldo_referencia_min}};
     $$('#e-estado .chip').forEach(b=>b.onclick=()=>{c.estado=b.dataset.s;draw()});
+    $$('#e-diasno .chip').forEach(b=>b.onclick=()=>{const a=c.restricciones.dias_no,i=a.indexOf(b.dataset.d);i>=0?a.splice(i,1):a.push(b.dataset.d);b.classList.toggle('active')});
+    $$('#e-turnos .chip').forEach(b=>b.onclick=()=>{const a=c.restricciones.turnos,i=a.indexOf(b.dataset.t);i>=0?a.splice(i,1):a.push(b.dataset.t);b.classList.toggle('active')});
     $('#e-cancel').onclick=()=>ed?abrirFicha(e):closeSheet();
     $('#e-save').onclick=()=>guardarEmp(ed?e.id:null,c);
   };draw();openSheet();
 }
 async function guardarEmp(id,c){
   const g=k=>{const el=$('#'+k);return el?el.value:''};
-  const payload={marca_id:MARCA,local_id:LOCAL,nombre:g('e-nom'),apellidos:g('e-ape'),rol:g('e-rol'),area:g('e-area'),sueldo:Number(g('e-sueldo'))||0,tipo_contrato:g('e-contrato'),fecha_ingreso:g('e-ingreso')||null,dni:g('e-dni'),telefono:g('e-tel'),email:g('e-email'),banco:g('e-banco'),cuenta:g('e-cuenta'),contacto_emergencia_nombre:g('e-emn'),contacto_emergencia_telefono:g('e-emt'),estado:c.estado,updated_at:nowISO()};
+  const payload={marca_id:MARCA,local_id:LOCAL,nombre:g('e-nom'),apellidos:g('e-ape'),rol:g('e-rol'),area:g('e-area'),sueldo:Number(g('e-sueldo'))||0,tipo_contrato:g('e-contrato'),fecha_ingreso:g('e-ingreso')||null,dni:g('e-dni'),telefono:g('e-tel'),email:g('e-email'),banco:g('e-banco'),cuenta:g('e-cuenta'),contacto_emergencia_nombre:g('e-emn'),contacto_emergencia_telefono:g('e-emt'),estado:c.estado,restricciones:c.restricciones||{},updated_at:nowISO()};
   if(!payload.nombre){toast('Falta el nombre','warn');return}
   let error;
   if(id){({error}=await sb.from('rrhh_empleados').update(payload).eq('id',id))}
