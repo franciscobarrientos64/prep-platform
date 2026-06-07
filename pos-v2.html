@@ -1258,6 +1258,7 @@ const state = {
   turno: null,
   pedidos: [],
   pedidoItemsCache: {}, // pedido_id → items[]
+  clientesCache: {},    // cliente_id → {nombre, apellidos, alergias, ...} (CRM)
   mozoId: localStorage.getItem('prep_pos_mozo') || null,
   zonaActiva: 'todas',
 
@@ -1311,6 +1312,13 @@ function timeAgo(dateStr) {
 function fmtMozo(emp) { if (!emp) return '—'; const a = (emp.apellidos||'').split(' ')[0]; return emp.nombre + (a ? ' '+a : ''); }
 function avatarLetters(emp) { return ((emp.nombre||'?').charAt(0) + (emp.apellidos||'').charAt(0)).toUpperCase(); }
 function money(n) { return 'S/ ' + Number(n||0).toFixed(2); }
+function nombreClientePOS(c) { return c ? (c.nombre + (c.apellidos ? ' '+c.apellidos.split(' ')[0] : '')) : '—'; }
+async function cargarClienteCache(id) {
+  if (!id || state.clientesCache[id]) return state.clientesCache[id];
+  const { data } = await sb.from('ms_clientes').select('id,nombre,apellidos,telefono,alergias,tags,segmento,total_visitas,ticket_promedio,platos_favoritos').eq('id', id).maybeSingle();
+  if (data) state.clientesCache[id] = data;
+  return data;
+}
 function uuid() { return crypto.randomUUID ? crypto.randomUUID() : 'tmp_' + Math.random().toString(36).slice(2); }
 
 function toast(msg, tipo='') {
@@ -1505,7 +1513,7 @@ async function loadMesas() {
 }
 async function loadPedidos() {
   const { data, error } = await sb.from('ca_pedidos')
-    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla, tab_nombre')
+    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla, tab_nombre, cliente_id')
     .eq('marca_id', MARCA).eq('local_id', LOCAL)
     .in('estado', ['abierta', 'suspended']);
   if (error) return toast('Atrás: ' + error.message, 'err');
@@ -2617,7 +2625,93 @@ async function abrirPedidoScreen(pedidoId) {
   state.screen = 'pedido';
   state.sillaActiva = 1;
   await loadPedidoItems(pedidoId);
+  const ped = state.pedidos.find(p => p.id === pedidoId);
+  if (ped && ped.cliente_id) await cargarClienteCache(ped.cliente_id);
   render();
+}
+
+/* ========= ASIGNAR COMENSAL AL PEDIDO (CRM) ========= */
+function abrirAsignarComensal(ped) {
+  const actual = ped.cliente_id ? state.clientesCache[ped.cliente_id] : null;
+  $('#item-modal-inner').innerHTML = `
+    <div class="modal-head">
+      <span class="icon">👤</span>
+      <h3>Comensal del pedido</h3>
+      <button class="sheet-close" id="ac-close"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="modal-body">
+      ${actual ? `<div class="sheet-section">
+        <div class="sheet-section-label">Asignado</div>
+        <div class="item-row" style="border:2px solid var(--outline);border-radius:12px">
+          <span class="nm"><strong>${nombreClientePOS(actual)}</strong>
+            <span class="notas">${actual.telefono||''} · ${actual.total_visitas||0} visitas · ${actual.segmento||''}</span></span>
+          <button class="ico-btn" id="ac-quitar" title="Quitar"><span class="material-symbols-outlined" style="font-size:16px">link_off</span></button>
+        </div>
+      </div>` : ''}
+      <div class="sheet-section">
+        <div class="sheet-section-label">Buscar comensal</div>
+        <input class="input" id="ac-search" placeholder="Nombre o teléfono…" autocomplete="off">
+        <div id="ac-results" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+      <div class="sheet-section">
+        <div class="sheet-section-label">¿No está registrado?</div>
+        <div style="display:flex;gap:8px">
+          <input class="input" id="ac-nuevo-nombre" placeholder="Nombre" style="flex:1">
+          <input class="input" id="ac-nuevo-tel" placeholder="Teléfono" style="flex:1" inputmode="tel">
+        </div>
+        <button class="btn dark" id="ac-crear" style="margin-top:8px"><span class="material-symbols-outlined">person_add</span>Crear y asignar</button>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost" id="ac-cancel">Cerrar</button></div>
+  `;
+  $('#item-modal').classList.add('open');
+  const cerrar = () => $('#item-modal').classList.remove('open');
+  $('#ac-close').onclick = cerrar;
+  $('#ac-cancel').onclick = cerrar;
+  if ($('#ac-quitar')) $('#ac-quitar').onclick = () => asignarComensal(ped, null);
+  const inp = $('#ac-search');
+  inp.oninput = async () => {
+    const q = inp.value.trim();
+    const res = $('#ac-results');
+    if (q.length < 2) { res.innerHTML = ''; return; }
+    const { data } = await sb.from('ms_clientes')
+      .select('id,nombre,apellidos,telefono,alergias,tags,segmento,total_visitas,ticket_promedio,platos_favoritos')
+      .eq('marca_id', MARCA).or(`nombre.ilike.%${q}%,apellidos.ilike.%${q}%,telefono.ilike.%${q}%`).limit(8);
+    res.innerHTML = (data||[]).map(c => `<button class="btn ghost" data-cid="${c.id}" style="justify-content:space-between">
+        <span>${nombreClientePOS(c)} ${(c.tags||[]).some(t=>/vip/i.test(t))?'⭐':''}</span>
+        <span class="mono" style="opacity:.6;font-size:11px">${c.telefono||''} · ${c.total_visitas||0}v</span></button>`).join('')
+      || '<div class="empty-state" style="padding:14px">Sin resultados</div>';
+    (data||[]).forEach(c => state.clientesCache[c.id] = c);
+    $$('#ac-results [data-cid]').forEach(b => b.onclick = () => asignarComensal(ped, b.dataset.cid));
+  };
+  $('#ac-crear').onclick = async () => {
+    const nombre = ($('#ac-nuevo-nombre').value||'').trim();
+    if (!nombre) { toast('Ingresa un nombre', 'warn'); return; }
+    const partes = nombre.split(' ');
+    const { data, error } = await sb.from('ms_clientes').insert({
+      marca_id: MARCA, nombre: partes.shift(), apellidos: partes.join(' ')||null,
+      telefono: ($('#ac-nuevo-tel').value||'').trim()||null, origen:'manual',
+    }).select().single();
+    if (error) { toast('Atrás: '+error.message,'err'); return; }
+    state.clientesCache[data.id] = data;
+    asignarComensal(ped, data.id);
+  };
+}
+async function asignarComensal(ped, clienteId) {
+  const { error } = await sb.from('ca_pedidos').update({ cliente_id: clienteId }).eq('id', ped.id);
+  if (error) { toast('Atrás: '+error.message,'err'); return; }
+  ped.cliente_id = clienteId;
+  const p = state.pedidos.find(x => x.id === ped.id); if (p) p.cliente_id = clienteId;
+  $('#item-modal').classList.remove('open');
+  if (clienteId) {
+    const c = await cargarClienteCache(clienteId);
+    render();
+    toast('Va · comensal ' + nombreClientePOS(c) + ' asignado', 'ok');
+    if (c && (c.alergias||[]).length) toast('⚠ Alergias de ' + nombreClientePOS(c) + ': ' + c.alergias.join(', '), 'warn');
+  } else {
+    render();
+    toast('Comensal desvinculado', 'warn');
+  }
 }
 
 function renderPedidoScreen() {
@@ -2716,9 +2810,14 @@ function renderPedidoScreen() {
             <span>${items.length} ítem${items.length===1?'':'s'}</span>
             <span>${items.filter(it=>it.estado==='oido').length} sin marchar</span>
             <span>Silla activa: ${state.sillaActiva===0?'CENTRO':state.sillaActiva}</span>
+            ${ped.cliente_id && state.clientesCache[ped.cliente_id] ? `<span style="color:var(--primary);font-weight:700">👤 ${nombreClientePOS(state.clientesCache[ped.cliente_id])}</span>` : ''}
           </div>
         </div>
         <div class="actions">
+          <button class="btn-ico ${ped.cliente_id?'primary':''}" id="btn-comensal-ped">
+            <span class="material-symbols-outlined">person</span>
+            <span>${ped.cliente_id && state.clientesCache[ped.cliente_id] ? nombreClientePOS(state.clientesCache[ped.cliente_id]) : 'Comensal'}</span>
+          </button>
           <button class="btn-ico" id="btn-alergias-ped">
             <span class="material-symbols-outlined">health_and_safety</span>
             <span>Alergias</span>
@@ -2796,6 +2895,7 @@ function renderPedidoScreen() {
     eliminarItem(id, ped.id);
   });
   $$('[data-marchar-course]').forEach(b => b.onclick = () => marcharCurso(+b.dataset.marcharCourse));
+  $('#btn-comensal-ped').onclick = () => abrirAsignarComensal(ped);
   $('#btn-alergias-ped').onclick = () => abrirDialogoAlergias(ped);
   $('#btn-precuenta-ped').onclick = () => {
     imprimirPreCuenta(ped, totalesBasicos(ped));

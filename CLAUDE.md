@@ -329,6 +329,7 @@ Cada módulo nuevo debe seguir esta estructura HTML:
   - **Implementados (19/23):** CA-01, CA-02 (course timing + marchar por tiempo), CA-03 (split por proporción y por ítem), CA-04 + CA-18 (tabs de barra concurrentes con nombre y asientos agrupados), CA-06 (impresión real de comandas por estación, 80mm), CA-07 (cortesías con aprobación de gerente), CA-08 (multipago, fix `mercado_pago`), CA-10 (modificadores priceados), CA-11, CA-13 (gift cards: vender + recargar + cobrar), CA-15, CA-16, CA-17, CA-19, CA-20, CA-21, CA-22 (captura/edición de alergias por silla + extrapolación a compartidos), CA-23 (pre-cuenta imprimible).
   - **Pendientes (4/23):** CA-05 (tableside QR), CA-09 (facturación SUNAT/Nubefact), CA-12 (audit log universal), CA-14 (customer-facing display).
   - **Nota DB:** se agregó columna `ca_pedidos.tab_nombre` (text) para las tabs de barra. La impresión usa `li_estaciones.impresora_ip/impresora_nombre`.
+  - **Comensal del pedido (CRM):** botón "Comensal" en la pantalla de pedido para buscar/crear y asignar `ca_pedidos.cliente_id` (atribuye walk-ins directos del POS). Al cerrar la cuenta, el trigger `trg_pedido_visita` alimenta el guest 360 (ver módulo Bienvenida). Avisa de alergias del comensal al asignarlo.
 - **casa-italia.html** (72K) — Demo con 4 módulos en vivo (Pase, Caja, Línea, Mesa) + 9 previews. Se sirve como index.html en la raíz.
 
 ### Módulos legacy (versiones anteriores, mantener como referencia):
