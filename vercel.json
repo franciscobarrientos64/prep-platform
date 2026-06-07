@@ -50,6 +50,10 @@
       "destination": "/engagement.html"
     },
     {
+      "source": "/delivery",
+      "destination": "/delivery.html"
+    },
+    {
       "source": "/finanzas",
       "destination": "/finanzas.html"
     },
