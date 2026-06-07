@@ -340,6 +340,7 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - pos-legacy.html, inventario.html, hub.html, reservas-spec.html, reservas-widget.html
 
 ### Módulos por construir:
+- **mercado.html** (parcial) — Módulo 05 (Compras + Inventario). Vistas: Inventario (stock vs par + valor, ME-07), Compras (proveedores + comparativo de precios ME-01 + órdenes de compra con aprobación borrador→enviada→aprobada→recibida ME-13), Mermas (ME-08), Movimientos (ledger). Stock = suma de `inv_movimientos.cantidad` (signed) por local. Recibir una OC genera entradas a stock. Pendiente: conteo físico ciego (ME-12, ver inventario.html), lotes FEFO/FIFO (ME-09/14), transferencias multi-sede (ME-15), facturas/OCR (ME-05/10), histórico de precios y alertas (ME-02/03/04), vendor scoring (ME-06), predictivo (ME-11). Ruta /mercado.
 - Línea/KDS (linea.html)
 - Pase/Dashboard (pase.html)
 - Mercado (mercado.html)

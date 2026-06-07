@@ -34,6 +34,10 @@
       "destination": "/bienvenida.html"
     },
     {
+      "source": "/mercado",
+      "destination": "/mercado.html"
+    },
+    {
       "source": "/reservar",
       "destination": "/bienvenida.html"
     },
