@@ -76,7 +76,14 @@ function ini(n){return (n||'?').split(' ').map(x=>x[0]).slice(0,2).join('').toUp
 function marcaNom(id){const m=state.marcas.find(x=>x.id===id);return m?m.nombre:(id||'—')}
 function rolNom(id){const r=state.roles.find(x=>x.id===id);return r?r.nombre:null}
 
+async function guard(){
+  let sess=null;try{sess=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(sess&&sess.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',sess.user.email).maybeSingle()).data;
+    if(me&&!['superadmin','admin_marca','gerente'].includes(me.rol_sistema)){alert('No tienes permiso para gestionar usuarios.');location.href='/';return false}}
+  return true;
+}
 async function load(){
+  if(!(await guard()))return;
   const[us,ro,ma,lo,em]=await Promise.all([
     sb.from('prep_usuarios').select('*').order('created_at'),
     sb.from('prep_roles').select('*').order('nombre'),

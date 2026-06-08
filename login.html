@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171c20">
+<title>Ingresar · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--bg:#11151a;--surface:#fff;--ink:#171c20;--outline:#000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--surface);border:3px solid var(--outline);border-radius:22px;box-shadow:10px 10px 0 0 #000;padding:30px 26px;width:100%;max-width:380px}
+.logo{position:relative;width:150px;height:48px;margin:0 auto 18px}.logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:linear-gradient(100deg,var(--primary),var(--secondary))}
+h1{font-family:var(--font-display);font-size:24px;text-align:center;margin-bottom:4px}
+.sub{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:22px;text-transform:uppercase;letter-spacing:.08em}
+label{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;display:block;margin:12px 0 6px}
+input{width:100%;padding:12px 14px;border:2px solid var(--outline);border-radius:12px;font-size:15px;font-family:var(--font-body)}
+.btn{width:100%;padding:14px;border:2px solid var(--outline);border-radius:14px;font-weight:700;font-size:15px;background:var(--primary);color:#fff;box-shadow:4px 4px 0 0 #000;cursor:pointer;margin-top:18px}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.btn.ghost{background:var(--surface);color:var(--ink);box-shadow:none;border-style:dashed;margin-top:10px}
+.msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}.msg.err{color:var(--secondary)}.msg.ok{color:#0a7d3b}
+.foot{text-align:center;margin-top:16px;font-size:12px}.foot a{color:var(--primary);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo"><span class="l"></span></div>
+  <h1>Bienvenido</h1>
+  <div class="sub">Sistema operativo Prep!</div>
+  <div id="form">
+    <label>Email</label><input id="email" type="email" autocomplete="email" placeholder="tu@correo.com">
+    <label>Contraseña</label><input id="pass" type="password" autocomplete="current-password" placeholder="••••••••">
+    <button class="btn" id="btn-in">Ingresar</button>
+    <button class="btn ghost" id="btn-up">Crear cuenta</button>
+    <button class="btn ghost" id="btn-magic">Enviar enlace mágico</button>
+    <div class="msg" id="msg"></div>
+  </div>
+  <div class="foot"><a href="/">← Volver al inicio (modo demo)</a></div>
+</div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s);
+const next=new URLSearchParams(location.search).get('next')||'/';
+function msg(t,cls){const m=$('#msg');m.textContent=t;m.className='msg '+(cls||'')}
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(session)location.href=next;})();
+$('#btn-in').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||!password){msg('Completa email y contraseña','err');return}
+  msg('Ingresando…');const{error}=await sb.auth.signInWithPassword({email,password});
+  if(error){msg(error.message,'err');return}location.href=next};
+$('#btn-up').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||password.length<6){msg('Email válido y clave de 6+ caracteres','err');return}
+  msg('Creando cuenta…');const{data,error}=await sb.auth.signUp({email,password});
+  if(error){msg(error.message,'err');return}
+  if(data.session){location.href=next}else{msg('Cuenta creada. Revisa tu correo para confirmar y luego ingresa.','ok')}};
+$('#btn-magic').onclick=async()=>{const email=$('#email').value.trim();if(!email){msg('Escribe tu email','err');return}
+  msg('Enviando enlace…');const{error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+next}});
+  if(error){msg(error.message,'err');return}msg('Te enviamos un enlace a tu correo ✉️','ok')};
+</script>
+</body>
+</html>

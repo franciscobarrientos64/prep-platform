@@ -53,7 +53,16 @@ const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(
 const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
 const state={marcas:[],locales:[],mm:[],usuarios:[]};
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2000)}
+async function guard(){
+  let sess=null;try{sess=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(sess&&sess.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',sess.user.email).maybeSingle()).data;
+    if(!me||me.rol_sistema!=='superadmin'){alert('Esta consola es solo para Super Admin.');location.href='/';return false}
+    $('.badge-sa').textContent='SUPER ADMIN · '+sess.user.email;
+  }else{$('.badge-sa').textContent='⏻ INGRESAR (demo)';$('.badge-sa').style.cursor='pointer';$('.badge-sa').onclick=()=>location.href='/login?next=/prep';}
+  return true;
+}
 async function load(){
+  if(!(await guard()))return;
   const[ma,lo,mm,us]=await Promise.all([
     sb.from('inv_marcas').select('*').order('id'),
     sb.from('inv_locales').select('*').order('id'),

@@ -138,20 +138,35 @@ const MODULOS=[
   {n:'Carta QR',d:'Menú digital + pedido en mesa',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
 ];
 const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement'};
-const access={user:null,mm:[],roles:[],usuarios:[]};
+const access={user:null,mm:[],roles:[],usuarios:[],authed:false,authEmail:null};
 async function loadAccess(){
   const[us,mm,ro]=await Promise.all([sb.from('prep_usuarios').select('*').eq('activo',true).order('rol_sistema'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_roles').select('*')]);
   access.usuarios=us.data||[];access.mm=mm.data||[];access.roles=ro.data||[];
-  const uid=localStorage.getItem('prep_uid');
-  access.user=access.usuarios.find(u=>u.id===uid)||access.usuarios.find(u=>u.rol_sistema==='superadmin')||access.usuarios[0]||null;
+  let sess=null;try{sess=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(sess&&sess.user&&sess.user.email){
+    access.authed=true;access.authEmail=sess.user.email;
+    access.user=access.usuarios.find(u=>(u.email||'').toLowerCase()===sess.user.email.toLowerCase())||{id:'_auth',nombre:sess.user.email,email:sess.user.email,rol_sistema:'operativo',marca_id:'m6'};
+  }else{
+    const uid=localStorage.getItem('prep_uid');
+    access.user=access.usuarios.find(u=>u.id===uid)||access.usuarios.find(u=>u.rol_sistema==='superadmin')||access.usuarios[0]||null;
+  }
 }
 function nivelDeMod(k){const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||'ninguno'}
 function moduloActivo(k){const u=access.user;if(!u||u.rol_sistema==='superadmin')return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
 function canSee(m){const k=MODKEY[m.n];if(!k)return true;return moduloActivo(k)&&nivelDeMod(k)!=='ninguno'}
 function renderUserSwitcher(){
   const sel=$('#p-user');if(!sel)return;
-  sel.innerHTML=access.usuarios.map(u=>`<option value="${u.id}" ${access.user&&access.user.id===u.id?'selected':''}>👤 ${u.nombre} (${u.rol_sistema==='superadmin'?'super':u.rol_sistema==='admin_marca'?'admin':u.rol_sistema})</option>`).join('');
-  sel.onchange=()=>{localStorage.setItem('prep_uid',sel.value);location.reload()};
+  let auth=$('#p-auth');if(!auth){auth=document.createElement('span');auth.id='p-auth';auth.className='pill';auth.style.cursor='pointer';sel.parentNode.appendChild(auth);}
+  if(access.authed){
+    sel.style.display='none';
+    auth.textContent='⏻ Salir · '+((access.user&&access.user.nombre)||access.authEmail||'');
+    auth.onclick=async()=>{await sb.auth.signOut();localStorage.removeItem('prep_uid');location.reload()};
+  }else{
+    sel.style.display='';
+    sel.innerHTML=access.usuarios.map(u=>`<option value="${u.id}" ${access.user&&access.user.id===u.id?'selected':''}>👤 ${u.nombre} (${u.rol_sistema==='superadmin'?'super':u.rol_sistema==='admin_marca'?'admin':u.rol_sistema})</option>`).join('');
+    sel.onchange=()=>{localStorage.setItem('prep_uid',sel.value);location.reload()};
+    auth.textContent='⏻ Ingresar';auth.onclick=()=>location.href='/login';
+  }
 }
 function renderMods(){
   const u=access.user;const sa=u&&u.rol_sistema==='superadmin';const adm=sa||(u&&['admin_marca','gerente'].includes(u.rol_sistema));
