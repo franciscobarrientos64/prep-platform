@@ -154,15 +154,23 @@ async function loadAccess(){
 function nivelDeMod(k){const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||'ninguno'}
 function moduloActivo(k){const u=access.user;if(!u||u.rol_sistema==='superadmin')return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
 function canSee(m){const k=MODKEY[m.n];if(!k)return true;return moduloActivo(k)&&nivelDeMod(k)!=='ninguno'}
+async function cambiarClave(){
+  const np=prompt('Nueva contraseña (mínimo 6 caracteres):');if(np==null)return;
+  if(np.length<6){alert('Debe tener al menos 6 caracteres');return}
+  const{error}=await sb.auth.updateUser({password:np});
+  if(error){alert('No se pudo: '+error.message);return}
+  alert('Contraseña actualizada ✓');
+}
 function renderUserSwitcher(){
   const sel=$('#p-user');if(!sel)return;
   let auth=$('#p-auth');if(!auth){auth=document.createElement('span');auth.id='p-auth';auth.className='pill';auth.style.cursor='pointer';sel.parentNode.appendChild(auth);}
+  let pass=$('#p-pass');if(!pass){pass=document.createElement('span');pass.id='p-pass';pass.className='pill';pass.style.cursor='pointer';pass.textContent='🔑 Clave';pass.onclick=cambiarClave;sel.parentNode.appendChild(pass);}
   if(access.authed){
-    sel.style.display='none';
+    sel.style.display='none';pass.style.display='';
     auth.textContent='⏻ Salir · '+((access.user&&access.user.nombre)||access.authEmail||'');
     auth.onclick=async()=>{await sb.auth.signOut();localStorage.removeItem('prep_uid');location.reload()};
   }else{
-    sel.style.display='';
+    sel.style.display='';pass.style.display='none';
     sel.innerHTML=access.usuarios.map(u=>`<option value="${u.id}" ${access.user&&access.user.id===u.id?'selected':''}>👤 ${u.nombre} (${u.rol_sistema==='superadmin'?'super':u.rol_sistema==='admin_marca'?'admin':u.rol_sistema})</option>`).join('');
     sel.onchange=()=>{localStorage.setItem('prep_uid',sel.value);location.reload()};
     auth.textContent='⏻ Ingresar';auth.onclick=()=>location.href='/login';
