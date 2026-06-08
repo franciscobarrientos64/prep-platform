@@ -181,7 +181,7 @@ function renderUserSwitcher(){
     html+=`<div class="lbl">Ver como (demo)</div><select id="acct-ver">${access.usuarios.map(x=>`<option value="${x.id}" ${u&&u.id===x.id?'selected':''}>${x.nombre} · ${ROLLBL[x.rol_sistema]||x.rol_sistema}</option>`).join('')}</select><hr><div class="mi" data-act="login"><span class="material-symbols-outlined">login</span> Iniciar sesión</div>`;
   }
   menu.innerHTML=html;
-  btn.textContent='⚙️ '+(u?(u.nombre.split(' ')[0]):'Ajustes');
+  btn.innerHTML=`<span style="display:inline-flex;align-items:center;gap:7px"><span class="material-symbols-outlined" style="font-size:18px">account_circle</span><span style="display:flex;flex-direction:column;line-height:1.05;text-align:left"><span style="font-weight:700">${u?u.nombre.split(' ')[0]:'Ajustes'}</span><span style="font-size:9px;opacity:.7;font-family:var(--font-mono);text-transform:uppercase">${u?(ROLLBL[u.rol_sistema]||u.rol_sistema):'invitado'}</span></span></span>`;
   btn.onclick=e=>{e.stopPropagation();menu.classList.toggle('open')};
   menu.onclick=e=>e.stopPropagation();
   document.addEventListener('click',()=>menu.classList.remove('open'));
