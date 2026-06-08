@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
+<script src="/prep-sync.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
 <script src="/client-name.js"></script>
@@ -1515,48 +1516,66 @@ async function loadAll() {
 }
 
 async function loadMesas() {
-  const { data, error } = await sb.from('ca_mesas').select('*')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.mesas = (data || []).filter(m => m.activa !== false);
+  try {
+    const { data, error } = await sb.from('ca_mesas').select('*')
+      .eq('marca_id', MARCA).eq('local_id', LOCAL);
+    if (error) throw error;
+    state.mesas = (data || []).filter(m => m.activa !== false);
+    PrepSync.cacheSet('mesas', state.mesas);
+  } catch (e) { state.mesas = PrepSync.cacheGet('mesas') || state.mesas || []; }
 }
 async function loadPedidos() {
-  const { data, error } = await sb.from('ca_pedidos')
-    .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla, tab_nombre, cliente_id')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL)
-    .in('estado', ['abierta', 'suspended']);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.pedidos = data || [];
+  try {
+    const { data, error } = await sb.from('ca_pedidos')
+      .select('id, mesa_id, mozo_id, estado, estado_servicio, comensales, abierta_at, ticket_num, total, subtotal, servicio_monto, igv, alergias_por_silla, tab_nombre, cliente_id')
+      .eq('marca_id', MARCA).eq('local_id', LOCAL)
+      .in('estado', ['abierta', 'suspended']);
+    if (error) throw error;
+    state.pedidos = data || [];
+    PrepSync.cacheSet('pedidos', state.pedidos);
+  } catch (e) { state.pedidos = PrepSync.cacheGet('pedidos') || state.pedidos || []; }
 }
 async function loadEmpleados() {
-  const { data, error } = await sb.from('rrhh_empleados')
-    .select('id, nombre, apellidos, rol, area')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
-    .in('area', ['Salón', 'Bar']);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.empleados = data || [];
+  try {
+    const { data, error } = await sb.from('rrhh_empleados')
+      .select('id, nombre, apellidos, rol, area')
+      .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
+      .in('area', ['Salón', 'Bar']);
+    if (error) throw error;
+    state.empleados = data || [];
+    PrepSync.cacheSet('empleados', state.empleados);
+  } catch (e) { state.empleados = PrepSync.cacheGet('empleados') || state.empleados || []; }
 }
 async function loadTurno() {
-  const { data, error } = await sb.from('ca_turnos')
-    .select('id, nombre, fecha, estado, hora_inicio')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'abierto')
-    .order('fecha', { ascending: false }).limit(1);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.turno = (data && data[0]) || null;
+  try {
+    const { data, error } = await sb.from('ca_turnos')
+      .select('id, nombre, fecha, estado, hora_inicio')
+      .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'abierto')
+      .order('fecha', { ascending: false }).limit(1);
+    if (error) throw error;
+    state.turno = (data && data[0]) || null;
+    PrepSync.cacheSet('turno', state.turno);
+  } catch (e) { state.turno = PrepSync.cacheGet('turno') || state.turno || null; }
 }
 async function loadRecetas() {
-  const { data, error } = await sb.from('inv_recetas')
-    .select('id, nombre, precio_venta, tipo, categoria_menu, sub_categoria, modulo, emoji, estacion_id, alergenos, activo, orden_menu, descripcion')
-    .eq('marca_id', MARCA);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.recetas = (data || []).filter(r => r.activo !== false);
+  try {
+    const { data, error } = await sb.from('inv_recetas')
+      .select('id, nombre, precio_venta, tipo, categoria_menu, sub_categoria, modulo, emoji, estacion_id, alergenos, activo, orden_menu, descripcion')
+      .eq('marca_id', MARCA);
+    if (error) throw error;
+    state.recetas = (data || []).filter(r => r.activo !== false);
+    PrepSync.cacheSet('recetas', state.recetas);
+  } catch (e) { state.recetas = PrepSync.cacheGet('recetas') || state.recetas || []; }
 }
 async function loadEstaciones() {
-  const { data, error } = await sb.from('li_estaciones')
-    .select('id, nombre, emoji, color, es_delivery, orden_pase, impresora_ip, impresora_nombre')
-    .eq('marca_id', MARCA).eq('local_id', LOCAL);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.estaciones = data || [];
+  try {
+    const { data, error } = await sb.from('li_estaciones')
+      .select('id, nombre, emoji, color, es_delivery, orden_pase, impresora_ip, impresora_nombre')
+      .eq('marca_id', MARCA).eq('local_id', LOCAL);
+    if (error) throw error;
+    state.estaciones = data || [];
+    PrepSync.cacheSet('estaciones', state.estaciones);
+  } catch (e) { state.estaciones = PrepSync.cacheGet('estaciones') || state.estaciones || []; }
 }
 // CA-07: gerentes/admins que pueden aprobar cortesías (rol distinto al área de salón)
 async function loadGerentes() {
@@ -1580,13 +1599,20 @@ async function loadFloorPlan() {
   }
 }
 async function loadPedidoItems(pedidoId) {
-  const { data, error } = await sb.from('ca_pedido_items')
-    .select('*')
-    .eq('pedido_id', pedidoId)
-    .order('created_at', { ascending: true });
-  if (error) { toast('Atrás: ' + error.message, 'err'); return []; }
-  state.pedidoItemsCache[pedidoId] = data || [];
-  return data || [];
+  try {
+    const { data, error } = await sb.from('ca_pedido_items')
+      .select('*')
+      .eq('pedido_id', pedidoId)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    state.pedidoItemsCache[pedidoId] = data || [];
+    PrepSync.cacheSet('items_' + pedidoId, data || []);
+    return data || [];
+  } catch (e) {
+    const c = state.pedidoItemsCache[pedidoId] || PrepSync.cacheGet('items_' + pedidoId) || [];
+    state.pedidoItemsCache[pedidoId] = c;
+    return c;
+  }
 }
 
 /* ========= DERIVED ========= */
@@ -2053,30 +2079,35 @@ async function abrirPedido(mesa, comensales, tabNombre = null) {
   if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige el mozo en turno', 'warn'); return; }
   if (!state.turno) { toast('No hay turno abierto', 'err'); return; }
   const barra = esBarra(mesa);
-  const intentar = async () => {
-    const { data: nums } = await sb.from('ca_pedidos')
-      .select('ticket_num').eq('local_id', LOCAL).eq('turno_id', state.turno.id)
-      .order('ticket_num',{ascending:false}).limit(1);
-    const nextTicket = ((nums && nums[0]?.ticket_num) || 0) + 1;
-    return await sb.from('ca_pedidos').insert({
-      ticket_num: nextTicket, marca_id: MARCA, local_id: LOCAL, turno_id: state.turno.id,
-      mesa_id: mesa.id, comensales, mozo_id: state.mozoId,
-      estado:'abierta', estado_servicio:'abierta', origen: barra ? 'barra' : 'salon',
-      tab_nombre: tabNombre,
-      abierta_at: new Date().toISOString(),
-      subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
-      descuento:0, propina_monto:0, total:0,
-      moneda:'PEN', alergias_por_silla:{},
-    }).select().single();
+  // Ticket: online consulta el último; offline usa el mayor local + 1
+  let nextTicket = 1;
+  if (PrepSync.online()) {
+    try {
+      const { data: nums } = await sb.from('ca_pedidos')
+        .select('ticket_num').eq('local_id', LOCAL).eq('turno_id', state.turno.id)
+        .order('ticket_num',{ascending:false}).limit(1);
+      nextTicket = ((nums && nums[0]?.ticket_num) || 0) + 1;
+    } catch (e) { nextTicket = (state.pedidos.reduce((m,p)=>Math.max(m, Number(p.ticket_num)||0), 0)) + 1; }
+  } else {
+    nextTicket = (state.pedidos.reduce((m,p)=>Math.max(m, Number(p.ticket_num)||0), 0)) + 1;
+  }
+  const row = {
+    id: PrepSync.uuid(),
+    ticket_num: nextTicket, marca_id: MARCA, local_id: LOCAL, turno_id: state.turno.id,
+    mesa_id: mesa.id, comensales, mozo_id: state.mozoId,
+    estado:'abierta', estado_servicio:'abierta', origen: barra ? 'barra' : 'salon',
+    tab_nombre: tabNombre, abierta_at: new Date().toISOString(),
+    subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
+    descuento:0, propina_monto:0, total:0, moneda:'PEN', alergias_por_silla:{},
   };
-  let { data, error } = await intentar();
-  if (error && error.code === '23505') ({ data, error } = await intentar());
+  const { error, queued } = await PrepSync.write('ca_pedidos', 'insert', { values: row });
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  state.pedidos.push(data);
-  toast('Va · ' + (barra ? 'tab ' + (tabNombre || '#'+data.ticket_num) + ' en barra' : 'pedido #' + data.ticket_num + ' en mesa ' + mesa.numero), 'ok');
+  state.pedidos.push(row);
+  state.pedidoItemsCache[row.id] = [];
+  PrepSync.cacheSet('pedidos', state.pedidos);
+  toast((queued?'Sin conexión · ':'Va · ') + (barra ? 'tab ' + (tabNombre || '#'+row.ticket_num) + ' en barra' : 'pedido #' + row.ticket_num + ' en mesa ' + mesa.numero) + (queued?' (se sincroniza luego)':''), queued?'warn':'ok');
   closeSheet();
-  // Pasar directo a la pantalla de pedido
-  abrirPedidoScreen(data.id);
+  abrirPedidoScreen(row.id);
 }
 async function suspender(pedidoId) {
   const { error } = await sb.from('ca_pedidos').update({
@@ -3104,13 +3135,16 @@ async function agregarItem(r, qty, seat, notas, urgente, ped, mods = [], course 
     seat_position: seat === 0 ? null : seat, // null = centro/compartido
     urgente: !!urgente,
   };
-  const { data, error } = await sb.from('ca_pedido_items').insert(payload).select().single();
+  payload.id = PrepSync.uuid();
+  payload.created_at = new Date().toISOString();
+  const { error, queued } = await PrepSync.write('ca_pedido_items', 'insert', { values: payload });
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
-  state.pedidoItemsCache[ped.id] = [...(state.pedidoItemsCache[ped.id]||[]), data];
+  state.pedidoItemsCache[ped.id] = [...(state.pedidoItemsCache[ped.id]||[]), payload];
+  PrepSync.cacheSet('items_' + ped.id, state.pedidoItemsCache[ped.id]);
   await recalcularYPersistirTotales(ped.id);
-  await loadPedidos();
+  if (PrepSync.online()) await loadPedidos();
   render();
-  toast('Va · ' + r.nombre + (seat?' · silla '+seat:' · centro') + ' · ' + courseDe(course).label, 'ok');
+  toast((queued?'Sin conexión · ':'Va · ') + r.nombre + (seat?' · silla '+seat:' · centro') + ' · ' + courseDe(course).label, queued?'warn':'ok');
 }
 
 async function eliminarItem(itemId, pedidoId) {
@@ -3235,9 +3269,9 @@ async function recalcularYPersistirTotales(pedidoId) {
   const servicio_monto = +(sub * 0.10).toFixed(2);
   const igv = +(sub * 18 / 118).toFixed(2); // IGV ya incluido en sub
   const total = +(sub + servicio_monto).toFixed(2);
-  await sb.from('ca_pedidos').update({
-    subtotal: sub, servicio_monto, igv, total,
-  }).eq('id', pedidoId);
+  const p = state.pedidos.find(x => x.id === pedidoId);
+  if (p) { p.subtotal = sub; p.servicio_monto = servicio_monto; p.igv = igv; p.total = total; PrepSync.cacheSet('pedidos', state.pedidos); }
+  await PrepSync.write('ca_pedidos', 'update', { values: { subtotal: sub, servicio_monto, igv, total }, match: { id: pedidoId } });
 }
 
 /* ========= COBRO (BLOQUE 3) ========= */
