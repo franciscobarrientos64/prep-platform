@@ -71,7 +71,8 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTI=[['oido','Oído','#3b4a5a'],['va','Va','#d4a000'],['fuego','En fuego','#ff3b30'],['servido','Servido','#10b981']];
 const FLUJO={oido:'va',va:'fuego',fuego:'servido'};
-const state={pedidos:[],items:[],station:'todas',channel:null};
+const state={pedidos:[],items:[],deliv:[],station:'todas',channel:null};
+const DLNEXT={recibido:'preparando',preparando:'listo',listo:'en_camino'};
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function estData(k){return ESTI.find(e=>e[0]===k)||['?','?','#666']}
 function normStation(s){const m={est_fria:'Fría',fria:'Fría',est_caliente:'Caliente',caliente:'Caliente',bar:'Barra',barra:'Barra',pizza:'Pizza',parrilla:'Parrilla',postres:'Postres',pasta:'Pasta'};return m[(s||'').toLowerCase()]||(s?s[0].toUpperCase()+s.slice(1):'Sin estación')}
@@ -85,9 +86,9 @@ async function loadData(){
   const{data:peds}=await sb.from('ca_pedidos').select('id,ticket_num,mesa_id,tab_nombre,origen,abierta_at,estado').eq('local_id',LOCAL).eq('estado','abierta');
   state.pedidos=peds||[];
   const ids=state.pedidos.map(p=>p.id);
-  if(!ids.length){state.items=[];return}
-  const{data:its}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');
-  state.items=its||[];
+  if(ids.length){const{data:its}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');state.items=its||[];}else{state.items=[];}
+  const{data:dl}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).in('estado',['recibido','preparando','listo']).order('created_at');
+  state.deliv=dl||[];
 }
 async function loadAll(){await loadData();render();subscribe();$('#boot').classList.add('gone')}
 
@@ -98,7 +99,8 @@ function render(){
   const sts=stationsActivas();
   const items=state.station==='todas'?state.items:state.items.filter(i=>normStation(i.station)===state.station);
   const viejo=Math.max(0,...state.items.map(i=>mins(i.enviado_cocina_at||i.created_at)));
-  $('#hinfo').innerHTML=`<span class="pill">${state.items.length} ítems</span><span class="pill ${tClass(viejo)}">↑ ${viejo} min</span>`;
+  const avg=state.items.length?Math.round(state.items.reduce((a,i)=>a+mins(i.enviado_cocina_at||i.created_at),0)/state.items.length):0;
+  $('#hinfo').innerHTML=`<span class="pill">${state.items.length} ítems</span>${state.deliv.length?`<span class="pill">🛵 ${state.deliv.length}</span>`:''}<span class="pill ${tClass(viejo)}">↑ ${viejo}′ · prom ${avg}′</span>`;
   $('#chips').innerHTML=['todas',...sts].map(s=>`<button class="chip ${state.station===s?'active':''}" data-s="${s}">${s==='todas'?'Todas':s}${s!=='todas'?(' · '+state.items.filter(i=>normStation(i.station)===s).length):''}</button>`).join('');
   $$('#chips .chip').forEach(b=>b.onclick=()=>{state.station=b.dataset.s;render()});
   // agrupar por pedido
@@ -110,11 +112,19 @@ function render(){
       <div class="items">${its.sort((a,b)=>(a.seat_position||0)-(b.seat_position||0)).map(itRow).join('')}</div>
       <div class="cf"><button class="btn go" data-allnext="${pid}">Avanzar todo</button><button class="btn done" data-alldone="${pid}">Servir todo</button></div></div>`;
   }).join('');
-  $('#screen').innerHTML=Object.keys(porPed).length?`<div class="grid">${cards}</div>`:'<div class="empty">🍃 Línea limpia — sin comandas pendientes</div>';
-  $$('#screen .it').forEach(el=>el.onclick=()=>bump(el.dataset.id));
+  const delivCards=(state.station==='todas'?state.deliv:[]).map(delivCard).join('');
+  $('#screen').innerHTML=(Object.keys(porPed).length||delivCards)?`<div class="grid">${cards}${delivCards}</div>`:'<div class="empty">🍃 Línea limpia — sin comandas pendientes</div>';
+  $$('#screen .it[data-id]').forEach(el=>el.onclick=()=>bump(el.dataset.id));
   $$('#screen [data-allnext]').forEach(b=>b.onclick=()=>avanzarTodo(b.dataset.allnext));
   $$('#screen [data-alldone]').forEach(b=>b.onclick=()=>servirTodo(b.dataset.alldone));
+  $$('#screen [data-dl]').forEach(b=>b.onclick=()=>avanzarDl(b.dataset.dl,b.dataset.nx));
 }
+function delivCard(p){const m=Math.floor((Date.now()-new Date(p.created_at).getTime())/60000);const nx=DLNEXT[p.estado];
+  return `<div class="card" style="border-color:#7c3aed"><div class="ch" style="background:#221a36"><div><div class="tk">🛵 ${p.codigo||''}</div><div class="mesa">${p.canal||'delivery'} · ${p.zona||''} · ${p.estado}</div></div><span class="timer ${tClass(m)}">${m}′</span></div>
+    <div class="items"><div class="it" style="cursor:default"><div class="body"><div class="nm">${p.detalle||'—'}</div><div class="mod">${p.nombre||''}${p.referencia?(' · '+p.referencia):''}</div></div></div></div>
+    <div class="cf">${nx?`<button class="btn go" data-dl="${p.id}" data-nx="${nx}">→ ${nx}</button>`:''}</div></div>`;
+}
+async function avanzarDl(id,nx){const patch={estado:nx};if(nx==='entregado')patch.entregado_at=new Date().toISOString();const{error}=await sb.from('dl_pedidos').update(patch).eq('id',id);if(error){toast('Error');return}await loadData();render();toast('Delivery → '+nx)}
 function itRow(i){const e=estData(i.estado);const mod=modTxt(i.modificadores);
   return `<div class="it" data-id="${i.id}"><span class="qty">${Number(i.qty||1)}×</span><div class="body"><div class="nm">${i.nombre}${i.urgente?' <span class="urg">⚡URGENTE</span>':''}</div>${mod?`<div class="mod">${mod}</div>`:''}${i.notas?`<div class="nota">📝 ${i.notas}</div>`:''}</div><span class="est" style="background:${e[2]};color:#fff">${e[1]}</span></div>`;
 }
@@ -137,6 +147,7 @@ function subscribe(){if(state.channel)sb.removeChannel(state.channel);
   state.channel=sb.channel('kds_'+LOCAL)
     .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedido_items'},async()=>{await loadData();render()})
     .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},async()=>{await loadData();render()})
+    .on('postgres_changes',{event:'*',schema:'public',table:'dl_pedidos',filter:'local_id=eq.'+LOCAL},async()=>{await loadData();render()})
     .subscribe();
 }
 setInterval(()=>{if(!$('#boot').classList.contains('gone'))return;render()},30000); // refresca timers
