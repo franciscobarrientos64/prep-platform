@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/tenant.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -59,7 +60,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const qs=new URLSearchParams(location.search);const MARCA='m6',LOCAL=qs.get('local')||'l11';
+const qs=new URLSearchParams(location.search);const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'l11');
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const state={recetas:[],zonas:[],cart:{},sec:null,form:{nombre:'',telefono:'',direccion:'',referencia:'',zona:'',metodo:'efectivo'}};
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}

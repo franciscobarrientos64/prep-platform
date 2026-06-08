@@ -76,7 +76,8 @@ const MODULOS=[
   {n:'Directorio',k:'directorio',d:'Reportes',ico:'monitoring',href:'/directorio',ac:'#0d3d34'},
   {n:'Engagement',k:'engagement',d:'Loyalty + CRM',ico:'favorite',href:'/engagement',ac:'#e8735a'}
 ];
-const state={marcas:[],locales:[],mm:[],subs:[],sel:'m6'};
+const state={marcas:[],locales:[],mm:[],subs:[],sel:'m6',selLocal:'l11'};
+function localesDe(marca){return state.locales.filter(l=>l.marca_id===marca)}
 function modActivo(marca,k){const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===k);return r?r.activo:false}
 async function guard(){let s=null;try{s=(await sb.auth.getSession()).data.session;}catch(e){}
   if(s&&s.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle()).data;if(!me||me.rol_sistema!=='superadmin'){alert('Portal solo para Super Admin.');location.href='/';return false}}return true}
@@ -85,6 +86,7 @@ async function load(){
   const[ma,lo,mm,su]=await Promise.all([sb.from('inv_marcas').select('*').order('id'),sb.from('inv_locales').select('*').order('id'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_suscripciones').select('*')]);
   state.marcas=ma.data||[];state.locales=lo.data||[];state.mm=mm.data||[];state.subs=su.data||[];
   if(!state.marcas.find(m=>m.id===state.sel))state.sel=state.marcas[0]?.id;
+  if(!localesDe(state.sel).find(l=>l.id===state.selLocal))state.selLocal=localesDe(state.sel)[0]?.id||'';
   render();$('#boot').classList.add('gone');
 }
 function render(){
@@ -102,15 +104,17 @@ function render(){
     <div class="section-t">Clientes <span class="sub">navega entre los restaurantes</span></div>
     <div class="clientbar">
       <select id="cliente">${state.marcas.map(x=>`<option value="${x.id}" ${state.sel===x.id?'selected':''}>${x.emoji||''} ${x.nombre}</option>`).join('')}</select>
-      <span class="meta">${locs.map(l=>l.nombre).join(', ')||'sin locales'} · ${nact}/${MODULOS.length} módulos${sub?(' · '+sub.plan+' · '+sub.estado):''}</span>
-      <a class="pill" href="/?marca=${state.sel}" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">open_in_new</span>Abrir hub del cliente</a>
+      ${locs.length>1?`<select id="local">${locs.map(l=>`<option value="${l.id}" ${state.selLocal===l.id?'selected':''}>${l.nombre}</option>`).join('')}</select>`:''}
+      <span class="meta">${nact}/${MODULOS.length} módulos${sub?(' · '+sub.plan+' · '+sub.estado):''}</span>
+      <a class="pill" href="/?marca=${state.sel}&local=${state.selLocal}" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">open_in_new</span>Abrir sistema del cliente</a>
     </div>
     <div class="mods-band"><div class="mods">${MODULOS.map(mo=>{const on=modActivo(state.sel,mo.k);
       const inner=`<span class="material-symbols-outlined">${mo.ico}</span><span class="nm">${mo.n}</span><span class="ds">${mo.d}</span><span class="tag ${on?'on':'off'}">${on?'activo':'off'}</span>`;
-      return on&&mo.href?`<a class="mod-card on" href="${mo.href}?marca=${state.sel}" style="--ac:${mo.ac}">${inner}</a>`:`<div class="mod-card ${on?'on':'off'}" style="--ac:${mo.ac}">${inner}</div>`;
+      return on&&mo.href?`<a class="mod-card on" href="${mo.href}?marca=${state.sel}&local=${state.selLocal}" style="--ac:${mo.ac}">${inner}</a>`:`<div class="mod-card ${on?'on':'off'}" style="--ac:${mo.ac}">${inner}</div>`;
     }).join('')}</div></div>
     <div class="note">Selecciona un cliente para ver y entrar a sus módulos. (La data por-cliente se activa con el multi-tenant; hoy los módulos operan sobre Casa Italia.)</div>`;
-  $('#cliente').onchange=e=>{state.sel=e.target.value;render()};
+  $('#cliente').onchange=e=>{state.sel=e.target.value;state.selLocal=localesDe(state.sel)[0]?.id||'';render()};
+  if($('#local'))$('#local').onchange=e=>{state.selLocal=e.target.value;render()};
 }
 $('#logout').onclick=async()=>{await sb.auth.signOut();location.href='/login'};
 load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="note">Error al cargar</div>'});

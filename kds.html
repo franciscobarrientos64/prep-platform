@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#11151a;--surface:#1c2128;--ink:#f3f5f7;--outline:#000;--green:#10b981;--amber:#d4a000;--muted:#8b949e;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -68,7 +69,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <main class="main" id="screen"></main>
 <div class="toast-container" id="toasts"></div>
 <script>
-const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTI=[['oido','Oído','#3b4a5a'],['va','Va','#d4a000'],['fuego','En fuego','#ff3b30'],['servido','Servido','#10b981']];
 const FLUJO={oido:'va',va:'fuego',fuego:'servido'};

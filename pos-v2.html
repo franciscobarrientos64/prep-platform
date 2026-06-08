@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
 
 <style>
 /* ============ TOKENS ============ */
@@ -1243,8 +1244,8 @@ button { font-family: inherit; cursor: pointer; }
    ========================================================================= */
 const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA = 'm6';
-const LOCAL = 'l11';
+const MARCA = (window.PREP_MARCA||'m6');
+const LOCAL = (window.PREP_LOCAL||'l11');
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 /* ========= STATE ========= */

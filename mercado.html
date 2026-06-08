@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
 <style>
 :root{
   --primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;
@@ -132,7 +133,7 @@ button{font-family:inherit;cursor:pointer}
 /* ===== PREP! · Módulo 05 · MERCADO (Compras + Inventario) ===== */
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA='m6', LOCAL='l11';
+const MARCA=(window.PREP_MARCA||'m6'), LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];

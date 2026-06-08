@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -122,7 +123,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA='m6',LOCAL='l11';
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s);
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
@@ -211,6 +212,7 @@ function renderMods(){
 
 async function load(){
   try{await loadAccess();}catch(e){console.error(e)}
+  try{const{data:mk}=await sb.from('inv_marcas').select('nombre').eq('id',MARCA).maybeSingle();if(mk&&mk.nombre){const el=document.querySelector('.brand-txt .cli');if(el)el.textContent=mk.nombre;}}catch(e){}
   renderUserSwitcher();
   renderMods();
   $('#p-fecha').textContent=fechaLarga();
