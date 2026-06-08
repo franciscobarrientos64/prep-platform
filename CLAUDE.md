@@ -355,10 +355,37 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - **directorio.html** (`/directorio`) — Reportes ejecutivos consolidados (ventas, food cost, labor%, utilidad, top platos, operación, P&L vs presupuesto) por hoy/7d/mes.
 - **engagement.html** (`/engagement`) — CRM 360 + Loyalty (niveles+puntos, eng_puntos) + Campañas (audiencias + WhatsApp, eng_campanas).
 
+### Dominios y acceso (al 2026-06-08)
+- **prep.rest** → web de marketing (repo prep-landing). Redirige /portal /login /app /prep /admin /negocio → os.prep.rest.
+- **os.prep.rest** → la APP completa (este repo prep-platform): login, hub, módulos y consolas super admin. Es la casa del super admin.
+- **casa-italia.prep.rest** → subdominio del cliente Casa Italia: carga su data sola (m6/l11) vía `tenant.js`.
+- Para un cliente nuevo con su URL: agregar subdominio en Vercel+DNS y mapearlo en `tenant.js` (SUB). Futuro: resolución por `slug` en BD (sin tocar código).
+
+### Auth, multi-tenant y rótulos (scripts compartidos en `<head>`)
+- **auth-guard.js** — login obligatorio en toda la app; redirige a /login si no hay sesión. Públicas: /carta /menu /m /pedir /reservar /login.
+- **tenant.js** — fija `window.PREP_MARCA`/`window.PREP_LOCAL` desde subdominio cliente, o `?marca=&local=`, o localStorage `prep_ctx`, o default m6/l11. Los módulos leen estas variables (ya NO m6/l11 fijo).
+- **client-name.js** — pone el nombre del cliente activo en el header de cada módulo.
+- Login: Supabase Auth (email+clave o magic link) en `login.html`. Cuenta super admin: franciscobarrientos64@gmail.com.
+
+### Consolas Super Admin (solo superadmin)
+- **portal.html** (/portal) — Portal: herramientas (Consola/Usuarios/Negocio) + dropdown de clientes con grilla de módulos por marca.
+- **prep.html** (/prep) — Consola de módulos: activar/desactivar por cliente y **por feature** con dependencias.
+- **admin.html** (/admin) — Usuarios & permisos (roles con niveles ver/operar/aprobar/admin).
+- **prep-negocio.html** (/prep-negocio) — Negocio: suscripciones (plan/estado/precio), MRR/ARR, morosos, pagos, facturación.
+- Tablas: prep_usuarios, prep_roles, prep_marca_modulos, prep_marca_features, prep_suscripciones, prep_pagos.
+
+### Seguridad / RLS (estado al 2026-06-08)
+- Helpers en BD: `prep_is_super()`, `prep_marca()`, `prep_can_marca(text)`, `prep_can_local(text)` (SECURITY DEFINER).
+- **RLS por tenant ACTIVO** en: prep_* (capa 1), y CRM/loyalty/finanzas/caja/RRHH (capa 2 sensibles) y ventas/inventario/delivery/reservas/El Libro (capa 2 operativas). Verificado: anon solo ve `carta_publica`; super ve su data; ajeno autenticado ve 0.
+- **carta_publica** = vista pública con solo columnas no sensibles (sin ingredientes/costos); carta/pedir leen de ahí e insertan con uuid de cliente.
+- **PENDIENTE seguridad**: buckets compras-files/vuelto-files a privados + URLs firmadas; barrer políticas always-true en tablas catálogo restantes; **rotar service_role key + token GitHub** (acción del dueño); activar HIBP/MFA/2FA.
+- Regla: toda tabla nueva → habilitar RLS con política por tenant (no `tmp_all` en producción).
+
 ### Pendientes (backlog):
 - **Pase** (dashboard ejecutivo dedicado) — hoy cubierto por el hub + Directorio.
 - **SUNAT** — facturación electrónica (boleta/factura/NC vía PSE/OSE). CRÍTICO Perú, construir cuando el cliente esté listo.
-- v2 por módulo: POS (tips/giftcards/kiosko/offline), KDS (multicanal/insights), Delivery (página pública + integración real agregadores), Engagement (email marketing/reseñas), Recetas (sub-recetas, ingeniería de menú, "qué puedo preparar con stock", alérgenos heredados), OCR de recibos/recetario con IA (requiere API key Anthropic), multi-sucursal en Directorio.
+- v2 por módulo: POS (tips/giftcards/kiosko/offline), OCR de recibos/recetario con IA (requiere API key Anthropic), multi-sucursal en Directorio. (Ya hechos: KDS multicanal, Delivery página pública /pedir, Engagement email+reseñas, Recetas sub-recetas + ingeniería de menú + "qué preparar".)
+- Multi-tenant fino: rótulos 100% por cliente, resolución por slug, RLS para que admin_marca solo gestione su marca.
 
 ### Landing (repo separado: prep-landing):
 - index.html (356K) — Landing v7 con logo animado, 13 módulos, 404 page personalizada
