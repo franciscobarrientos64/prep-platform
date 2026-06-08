@@ -139,7 +139,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],teoPeriodo:'7d',
+const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -160,7 +160,7 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems()]);
+  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist()]);
   const h=location.hash.replace('#','');if(['inventario','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
@@ -666,6 +666,9 @@ function abrirConfigProducto(pid){
       <div><div class="field-lbl">Par level (${p.unidad||''})</div><input class="input" id="cfg-par" type="number" min="0" step="0.5" value="${Number(p.par_level||0)}"></div>
       <div><div class="field-lbl">Costo (S/)</div><input class="input" id="cfg-costo" type="number" min="0" step="0.5" value="${Number(p.costo||0)}"></div>
     </div>
+    ${(()=>{const h=histDe(pid);if(!h.length)return'';const c=cambioPrecio(pid);const max=Math.max(...h.map(x=>Number(x.costo)),Number(p.costo||0));const pts=[...h.map(x=>x.costo),p.costo];return `<div class="sheet-section"><div class="field-lbl">Histórico de precio ${c?`<span style="color:${c.pct>0?'var(--secondary)':'var(--green)'}">(${c.pct>0?'▲':'▼'} ${Math.abs(c.pct).toFixed(0)}% desde ${c.desde})</span>`:''}</div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:50px">${pts.map(v=>`<div style="flex:1;background:var(--primary);border:1px solid var(--outline);border-radius:3px 3px 0 0;height:${Math.round(Number(v)/max*100)}%" title="${money(v)}"></div>`).join('')}</div>
+      <div class="row-meta" style="margin-top:4px">${h.map(x=>x.fecha+': '+money(x.costo)).join(' · ')} · hoy ${money(p.costo)}</div></div>`})()}
     <div class="sheet-section"><div class="field-lbl">Proveedor preferido (a quién se le pide)</div>
       ${opts.length?opts.map(pp=>`<button class="btn ${pp.preferido?'primary':'ghost'}" data-pref="${pp.proveedor_id}" style="justify-content:space-between;margin-bottom:6px"><span>${prov(pp.proveedor_id)?.nombre||pp.proveedor_id}</span><span class="mono">${money(pp.costo)} ${pp.preferido?'⭐':''}</span></button>`).join(''):'<div class="row-meta">Sin proveedores cargados. Agrégalos en Compras→Comparativo.</div>'}</div>
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="cfg-cancel">Atrás</button><button class="btn primary" id="cfg-save">Guardar configuración</button></div></div>`;
@@ -682,10 +685,16 @@ async function marcarPreferido(pid,provId){
 }
 async function guardarConfigProducto(pid,par,costo){
   if(!(par>=0)){toast('Par inválido','warn');return}
+  const ant=Number(prod(pid)?.costo||0);
   const{error}=await sb.from('inv_productos').update({par_level:par,costo:costo}).eq('id',pid);
   if(error){toast('Atrás: '+error.message,'err');return}
+  if(Number(costo)!==ant){await sb.from('inv_precios_hist').insert({marca_id:MARCA,producto_id:pid,costo:Number(costo),fuente:'manual',fecha:hoyISO()});await loadHist();}
   await loadProductos();closeSheet();render();toast('Servido · configuración guardada','ok');
 }
+async function loadHist(){const{data}=await sb.from('inv_precios_hist').select('*').eq('marca_id',MARCA).order('fecha');state.hist=data||[]}
+function histDe(pid){return state.hist.filter(h=>h.producto_id===pid).sort((a,b)=>(a.fecha<b.fecha?-1:1))}
+function cambioPrecio(pid){const h=histDe(pid);if(h.length<1)return null;const actual=Number(prod(pid)?.costo||0);const prev=h.length>=2?Number(h[h.length-2].costo):Number(h[0].costo);if(!prev||prev===actual)return null;return{prev,actual,pct:(actual-prev)/prev*100,desde:h[h.length-1].fecha}}
+function platosConInsumo(pid){return state.recetas.filter(r=>Array.isArray(r.ingredientes)&&r.ingredientes.some(i=>i.pid===pid))}
 
 /* ===== COMPRAS (proveedores + comparativo + órdenes) ===== */
 function renderCompras(){
@@ -915,6 +924,12 @@ function renderReportes(){
       <div class="kpi alert"><div class="val">${money(mermaTot)}</div><div class="lbl">Mermas</div></div>
       <div class="kpi"><div class="val">${alertas.length}</div><div class="lbl">Precios mejorables</div></div>
     </div>
+    ${(()=>{const alzas=prods.map(p=>({p,c:cambioPrecio(p.id)})).filter(x=>x.c&&x.c.pct>0.5).sort((a,b)=>b.c.pct-a.c.pct);
+      return card('📈 Precios al alza · impacto en food cost', alzas.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Insumos que subieron de precio y qué platos afectan:</div>
+        <table class="tbl"><tr><th>Insumo</th><th>Antes→Ahora</th><th>Sube</th><th>Platos afectados</th></tr>
+        ${alzas.map(x=>{const pl=platosConInsumo(x.p.id);return `<tr class="rojo"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.c.prev)}→${money(x.c.actual)}</td><td><strong style="color:var(--secondary)">▲ ${x.c.pct.toFixed(0)}%</strong></td><td>${pl.length?pl.slice(0,3).map(r=>r.nombre).join(', ')+(pl.length>3?(' +'+(pl.length-3)):''):'—'}</td></tr>`}).join('')}</table>
+        <div class="row-meta" style="margin-top:6px">Revisa el precio de venta de esos platos si su food cost subió.</div>`
+        :'<div class="row-meta">Ningún insumo subió de precio recientemente. ✅</div>')})()}
     ${card('💸 Mejores precios — ahorro potencial', alertas.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Productos donde hay una fuente más barata que tu proveedor actual:</div>
       <table class="tbl"><tr><th>Producto</th><th>Tu precio</th><th>Más barato</th><th>Ahorro/u</th></tr>
       ${alertas.map(x=>`<tr class="rojo"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.al.pref)}</td><td>${money(x.al.best.precio)} · ${x.al.best.fuente}${x.al.best.url?` <a href="${x.al.best.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td><strong style="color:var(--secondary)">−${money(x.al.ahorro)}</strong></td></tr>`).join('')}</table>`
