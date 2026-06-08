@@ -11,37 +11,52 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#11151a;--surface:#1c2128;--ink:#f3f5f7;--outline:#000;--green:#10b981;--muted:#8b949e;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#11151a;--surface:#1c2128;--ink:#f3f5f7;--green:#10b981;--muted:#8b949e;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 .material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
 .header{background:#0c0f13;border-bottom:2px solid #000;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-logo{position:relative;width:92px;height:30px}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:#fff}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{position:relative;display:block;width:96px;height:30px;flex-shrink:0;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:#fff}
 .brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .badge-sa{margin-left:auto;font-family:var(--font-mono);font-size:11px;font-weight:700;background:var(--secondary);color:#fff;padding:5px 12px;border-radius:999px;border:2px solid #000}
+a.linkbtn{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid #000;border-radius:999px;padding:6px 12px;background:var(--surface)}
 .wrap{max-width:1100px;margin:0 auto;padding:18px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.seg{display:inline-flex;border:2px solid #000;border-radius:999px;overflow:hidden}
+.seg button{padding:8px 16px;background:var(--surface);color:var(--ink);font-weight:700;font-size:13px;border:none;cursor:pointer}
+.seg button.active{background:var(--primary);color:#fff}
+.inp{padding:9px 12px;border:2px solid #000;border-radius:10px;background:var(--surface);color:var(--ink);font-size:14px;font-family:var(--font-body)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
 .kpi{background:var(--surface);border:2px solid #000;border-radius:14px;padding:14px 16px}.kpi .v{font-family:var(--font-display);font-size:26px;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .cli-card{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:14px}
 .cli-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .cli-head h3{font-family:var(--font-display);font-size:20px}.cli-head .sub{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.mod-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0c0f13;border:2px solid #000;border-radius:10px;padding:8px 10px}
-.mod-row .nm{font-size:13px;font-weight:600}
+.mrow{border:2px solid #000;border-radius:12px;margin-bottom:8px;overflow:hidden;background:#0c0f13}
+.mrow .top{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.mrow .top .nm{font-weight:700;font-size:15px;flex:1}
+.mrow .top .cnt{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.mrow .feats{padding:0 12px 10px 40px;display:none}
+.mrow.open .feats{display:block}
+.frow{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px dashed #2a313a}
+.frow .fb{flex:1}.frow .fn{font-size:13px;font-weight:600}
+.frow .dep{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px}
+.frow .dep .bad{color:var(--secondary)}
 .switch{width:42px;height:24px;border:2px solid #000;border-radius:999px;background:#3a4250;position:relative;flex-shrink:0;cursor:pointer}.switch.on{background:var(--green)}.switch .k{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #000;transition:left .15s}.switch.on .k{left:18px}
-.bn{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;border:2px solid #000}
-.bn.on{background:var(--green);color:#fff}.bn.off{background:#3a4250}
+.switch.sm{width:36px;height:21px}.switch.sm .k{width:15px;height:15px}.switch.sm.on .k{left:16px}
+.chev{transition:transform .15s}.mrow.open .chev{transform:rotate(90deg)}
+.op-card{background:var(--surface);border:2px solid #000;border-radius:14px;box-shadow:var(--shadow-sm);padding:13px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
 .empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;color:var(--muted)}
 .toast{position:fixed;top:16px;right:16px;z-index:200;background:#000;color:#fff;border:2px solid var(--primary);border-radius:12px;padding:11px 16px;font-weight:600}
 .boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:200px;height:60px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
-a.linkbtn{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid #000;border-radius:999px;padding:6px 12px;background:var(--surface)}
 </style>
 </head>
 <body>
 <div id="boot" class="boot"><div class="l"></div></div>
 <header class="header">
-  <div class="brand"><a href="/" style="display:block"><span class="brand-logo"><span class="l"></span></span></a><div class="brand-txt"><div class="cli">Prep Platform</div><div class="mod">Consola · Super Admin</div></div></div>
+  <a href="/" class="brand-logo" title="Volver al inicio"><span class="l"></span></a>
+  <div class="brand-txt"><div class="cli">Prep Platform</div><div class="mod">Consola · Super Admin</div></div>
   <a class="linkbtn" href="/admin" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">group</span>Usuarios</a>
   <span class="badge-sa">SUPER ADMIN</span>
 </header>
@@ -51,51 +66,146 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
-const state={marcas:[],locales:[],mm:[],usuarios:[]};
+const FEATURES={
+  pase:[['resumen','Resumen del día']],
+  pos:[['comanda','Toma de comanda'],['cobro','Cobro y pagos'],['cortesias','Cortesías/descuentos'],['giftcards','Gift cards'],['propinas','Propinas'],['comprobante','Comprobante']],
+  linea:[['estaciones','Estaciones'],['multicanal','Multicanal (delivery)'],['metricas','Métricas de tiempo']],
+  bienvenida:[['reservas','Reservas'],['waitlist','Lista de espera'],['mapa','Mapa de mesas'],['crm','CRM comensales']],
+  mercado:[['inventario','Inventario + PAR'],['carga','Carga rápida'],['conteo','Conteo con aprobación'],['pedido','Armar pedido'],['precios','Comparador de precios'],['comprobante','Comprobante + pago'],['teorico','Teórico vs real'],['reportes','Reportes']],
+  recetas:[['costeo','Costeo / food cost'],['subrecetas','Sub-recetas'],['carta','Gestión de carta'],['menus','Menús'],['ingenieria','Ingeniería de menú']],
+  carta:[['menu_qr','Menú QR'],['pedido_mesa','Pedido en mesa'],['pago_mesa','Pago en mesa']],
+  rrhh:[['equipo','Equipo / fichas'],['asistencia','Asistencia'],['planilla','Planilla'],['turnos','Turnos']],
+  delivery:[['pedidos','Pedidos'],['repartidores','Repartidores'],['zonas','Zonas'],['publica','Página pública']],
+  contabilidad:[['presupuesto','Presupuesto'],['real_auto','Real automático'],['variacion','Alertas de variación']],
+  vuelto:[['gastos','Gastos'],['voz','Captura por voz'],['aprobacion','Aprobación'],['cierre','Cierre diario']],
+  libro:[['tablon','Tablón'],['sops','Procedimientos'],['checklists','Checklists'],['bitacora','Bitácora']],
+  directorio:[['dashboard','Dashboard ejecutivo']],
+  engagement:[['crm360','CRM 360'],['loyalty','Loyalty'],['campanas','Campañas'],['resenas','Reseñas']]
+};
+// Dependencias: 'modulo.feature' -> requiere [ 'modulo.feature' | 'modulo' ]
+const DEPS={
+  'mercado.teorico':['recetas.costeo','pos.comanda'],
+  'mercado.precios':['mercado.inventario'],
+  'recetas.costeo':['mercado.inventario'],
+  'recetas.ingenieria':['recetas.costeo','pos.comanda'],
+  'carta.menu_qr':['recetas.carta'],
+  'carta.pedido_mesa':['pos.comanda'],
+  'carta.pago_mesa':['pos.cobro'],
+  'delivery.publica':['recetas.carta','delivery.zonas'],
+  'linea.multicanal':['delivery.pedidos'],
+  'contabilidad.real_auto':['pos.cobro','mercado.inventario','vuelto.gastos'],
+  'contabilidad.variacion':['contabilidad.presupuesto'],
+  'directorio.dashboard':['pos.cobro','mercado.inventario','rrhh.planilla','recetas.costeo'],
+  'engagement.loyalty':['engagement.crm360'],
+  'engagement.campanas':['engagement.crm360']
+};
+const state={marcas:[],locales:[],mm:[],mf:[],usuarios:[],view:'marcas',filtro:'',open:{}};
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2000)}
+function modLbl(k){const m=MODS.find(x=>x[0]===k);return m?m[1]:k}
+function featLbl(mk,fk){const f=(FEATURES[mk]||[]).find(x=>x[0]===fk);return f?f[1]:fk}
+function depLbl(d){if(d.includes('.')){const[m,f]=d.split('.');return featLbl(m,f)+' ('+modLbl(m)+')'}return modLbl(d)}
+
 async function guard(){
   let sess=null;try{sess=(await sb.auth.getSession()).data.session;}catch(e){}
   if(sess&&sess.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',sess.user.email).maybeSingle()).data;
     if(!me||me.rol_sistema!=='superadmin'){alert('Esta consola es solo para Super Admin.');location.href='/';return false}
-    $('.badge-sa').textContent='SUPER ADMIN · '+sess.user.email;
-  }else{$('.badge-sa').textContent='⏻ INGRESAR (demo)';$('.badge-sa').style.cursor='pointer';$('.badge-sa').onclick=()=>location.href='/login?next=/prep';}
+    $('.badge-sa').textContent='SUPER ADMIN';
+  }else{$('.badge-sa').textContent='⏻ INGRESAR';$('.badge-sa').style.cursor='pointer';$('.badge-sa').onclick=()=>location.href='/login?next=/prep';}
   return true;
 }
 async function load(){
   if(!(await guard()))return;
-  const[ma,lo,mm,us]=await Promise.all([
+  const[ma,lo,mm,mf,us]=await Promise.all([
     sb.from('inv_marcas').select('*').order('id'),
     sb.from('inv_locales').select('*').order('id'),
     sb.from('prep_marca_modulos').select('*'),
+    sb.from('prep_marca_features').select('*'),
     sb.from('prep_usuarios').select('id,marca_id,activo')
   ]);
-  state.marcas=ma.data||[];state.locales=lo.data||[];state.mm=mm.data||[];state.usuarios=us.data||[];
+  state.marcas=ma.data||[];state.locales=lo.data||[];state.mm=mm.data||[];state.mf=mf.data||[];state.usuarios=us.data||[];
   render();$('#boot').classList.add('gone');
 }
-function activo(marca,mod){const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===mod);return r?r.activo:false}
+function modActivo(marca,mod){const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===mod);return r?r.activo:false}
+function featActivo(marca,mod,feat){if(!modActivo(marca,mod))return false;const r=state.mf.find(x=>x.marca_id===marca&&x.modulo===mod&&x.feature===feat);return r?r.activo:true}
+// estado de una dependencia 'mod' o 'mod.feat'
+function depActivo(marca,d){if(d.includes('.')){const[m,f]=d.split('.');return featActivo(marca,m,f)}return modActivo(marca,d)}
+function featActivasMod(marca,mod){return (FEATURES[mod]||[]).filter(([fk])=>featActivo(marca,mod,fk)).length}
+// quién depende de esta feature/módulo (dependents)
+function dependientes(marca,mod,feat){const key=mod+'.'+feat;const out=[];Object.entries(DEPS).forEach(([k,reqs])=>{if(reqs.includes(key)||reqs.includes(mod)){const[dm,df]=k.split('.');if(featActivo(marca,dm,df))out.push(k)}});return out}
+
 function render(){
-  const totalAct=state.mm.filter(x=>x.activo).length;
   $('#screen').innerHTML=`
-    <div class="kpis">
-      <div class="kpi"><div class="v">${state.marcas.length}</div><div class="l">Clientes (marcas)</div></div>
-      <div class="kpi"><div class="v">${state.locales.length}</div><div class="l">Locales</div></div>
-      <div class="kpi"><div class="v">${totalAct}</div><div class="l">Módulos activos</div></div>
-      <div class="kpi"><div class="v">${state.usuarios.length}</div><div class="l">Usuarios</div></div>
+    <div class="toolbar">
+      <div class="seg"><button class="${state.view==='marcas'?'active':''}" data-v="marcas">Por marca</button><button class="${state.view==='operaciones'?'active':''}" data-v="operaciones">Por operación</button></div>
+      <input class="inp" id="f" placeholder="Filtrar..." value="${state.filtro}" style="flex:1;max-width:280px">
     </div>
-    ${state.marcas.map(m=>{const locs=state.locales.filter(l=>l.marca_id===m.id);const nact=MODS.filter(([k])=>activo(m.id,k)).length;const nus=state.usuarios.filter(u=>u.marca_id===m.id).length;
-      return `<div class="cli-card"><div class="cli-head"><div><h3>${m.emoji||''} ${m.nombre}</h3><div class="sub">${m.id} · ${locs.map(l=>l.nombre).join(', ')||'sin locales'} · ${nus} usuario(s)</div></div><span class="bn ${nact?'on':'off'}">${nact}/${MODS.length} módulos</span></div>
-        <div class="mod-grid">${MODS.map(([k,l])=>`<div class="mod-row"><span class="nm">${l}</span><div class="switch ${activo(m.id,k)?'on':''}" data-m="${m.id}" data-k="${k}"><div class="k"></div></div></div>`).join('')}</div></div>`;
-    }).join('')||'<div class="empty">Sin clientes</div>'}
-    <div class="empty">Activa/desactiva módulos por cliente. El restaurante solo ve lo activado. (Cobro por módulo — la facturación se conecta luego.)</div>`;
-  $$('#screen .switch').forEach(sw=>sw.onclick=()=>toggle(sw.dataset.m,sw.dataset.k));
+    <div id="body"></div>`;
+  $$('#screen .seg button').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $('#f').oninput=e=>{state.filtro=e.target.value;renderBody()};
+  renderBody();
 }
-async function toggle(marca,mod){
-  const cur=activo(marca,mod);
+function renderBody(){
+  const q=state.filtro.toLowerCase();
+  if(state.view==='operaciones'){
+    let locs=state.locales;if(q)locs=locs.filter(l=>(l.nombre+' '+(state.marcas.find(m=>m.id===l.marca_id)?.nombre||'')).toLowerCase().includes(q));
+    $('#body').innerHTML=`<div class="kpis"><div class="kpi"><div class="v">${state.locales.length}</div><div class="l">Operaciones (locales)</div></div><div class="kpi"><div class="v">${state.marcas.length}</div><div class="l">Marcas</div></div></div>`+
+      locs.map(l=>{const ma=state.marcas.find(m=>m.id===l.marca_id);const nact=MODS.filter(([k])=>modActivo(l.marca_id,k)).length;
+        return `<div class="op-card" data-marca="${l.marca_id}"><div><div style="font-weight:700;font-size:15px">${l.nombre}</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${ma?ma.nombre:l.marca_id} · ${l.id}</div></div><div style="text-align:right"><div style="font-family:var(--font-display);font-size:18px;color:var(--primary)">${nact}/${MODS.length}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">módulos</div></div></div>`;
+      }).join('')||'<div class="empty">Sin operaciones</div>';
+    $$('#body .op-card').forEach(c=>c.onclick=()=>{state.view='marcas';state.filtro=state.marcas.find(m=>m.id===c.dataset.marca)?.nombre||'';render()});
+    return;
+  }
+  let marcas=state.marcas;if(q)marcas=marcas.filter(m=>m.nombre.toLowerCase().includes(q)||m.id===state.filtro);
+  const totalAct=state.mm.filter(x=>x.activo).length;
+  $('#body').innerHTML=`<div class="kpis"><div class="kpi"><div class="v">${state.marcas.length}</div><div class="l">Clientes</div></div><div class="kpi"><div class="v">${state.locales.length}</div><div class="l">Operaciones</div></div><div class="kpi"><div class="v">${totalAct}</div><div class="l">Módulos activos</div></div><div class="kpi"><div class="v">${state.usuarios.length}</div><div class="l">Usuarios</div></div></div>`+
+    marcas.map(marcaCard).join('')||'<div class="empty">Sin clientes</div>';
+  $$('#body .mrow .top').forEach(t=>t.onclick=e=>{if(e.target.closest('.switch'))return;const k=t.dataset.k;state.open[k]=!state.open[k];t.closest('.mrow').classList.toggle('open')});
+  $$('#body [data-modsw]').forEach(sw=>sw.onclick=e=>{e.stopPropagation();const[ma,mod]=sw.dataset.modsw.split('|');toggleModulo(ma,mod)});
+  $$('#body [data-featsw]').forEach(sw=>sw.onclick=e=>{e.stopPropagation();const[ma,mod,feat]=sw.dataset.featsw.split('|');toggleFeature(ma,mod,feat)});
+}
+function marcaCard(m){
+  const locs=state.locales.filter(l=>l.marca_id===m.id);const nact=MODS.filter(([k])=>modActivo(m.id,k)).length;
+  return `<div class="cli-card"><div class="cli-head"><div><h3>${m.emoji||''} ${m.nombre}</h3><div class="sub">${m.id} · ${locs.map(l=>l.nombre).join(', ')||'sin locales'}</div></div><span class="kpi" style="padding:6px 12px"><span class="v" style="font-size:18px">${nact}/${MODS.length}</span></span></div>
+    ${MODS.map(([mk,ml])=>{const on=modActivo(m.id,mk);const okey=m.id+'_'+mk;const feats=FEATURES[mk]||[];const nf=featActivasMod(m.id,mk);
+      return `<div class="mrow ${state.open[okey]?'open':''}"><div class="top" data-k="${okey}">
+        <span class="material-symbols-outlined chev" style="font-size:18px;color:var(--muted)">chevron_right</span>
+        <span class="nm">${ml}</span><span class="cnt">${on?nf+'/'+feats.length+' features':'inactivo'}</span>
+        <div class="switch ${on?'on':''}" data-modsw="${m.id}|${mk}"><div class="k"></div></div></div>
+        <div class="feats">${feats.map(([fk,fl])=>{const fon=featActivo(m.id,mk,fk);const reqs=DEPS[mk+'.'+fk]||[];const deps=dependientes(m.id,mk,fk);
+          const reqHtml=reqs.length?'🔗 Requiere: '+reqs.map(d=>`<span class="${depActivo(m.id,d)?'':'bad'}">${depLbl(d)}</span>`).join(', '):'';
+          const useHtml=deps.length?' · ↘ Lo usan: '+deps.map(d=>depLbl(d)).join(', '):'';
+          return `<div class="frow"><div class="fb"><div class="fn">${fl}</div>${(reqHtml||useHtml)?`<div class="dep">${reqHtml}${useHtml}</div>`:''}</div><div class="switch sm ${fon?'on':''}" data-featsw="${m.id}|${mk}|${fk}" style="${on?'':'opacity:.4;pointer-events:none'}"><div class="k"></div></div></div>`;
+        }).join('')}</div></div>`;
+    }).join('')}</div>`;
+}
+async function toggleModulo(marca,mod){
+  const cur=modActivo(marca,mod);
   const{error}=await sb.from('prep_marca_modulos').upsert({marca_id:marca,modulo:mod,activo:!cur,updated_at:new Date().toISOString()},{onConflict:'marca_id,modulo'});
   if(error){toast('Error: '+error.message);return}
   const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===mod);if(r)r.activo=!cur;else state.mm.push({marca_id:marca,modulo:mod,activo:!cur});
-  render();toast((!cur?'Activado':'Desactivado')+': '+mod);
+  renderBody();toast((!cur?'Activado':'Desactivado')+': '+modLbl(mod));
 }
+async function setFeature(marca,mod,feat,val){
+  const{error}=await sb.from('prep_marca_features').upsert({marca_id:marca,modulo:mod,feature:feat,activo:val,updated_at:new Date().toISOString()},{onConflict:'marca_id,modulo,feature'});
+  if(error){toast('Error: '+error.message);return false}
+  const r=state.mf.find(x=>x.marca_id===marca&&x.modulo===mod&&x.feature===feat);if(r)r.activo=val;else state.mf.push({marca_id:marca,modulo:mod,feature:feat,activo:val});
+  return true;
+}
+async function toggleFeature(marca,mod,feat){
+  const cur=featActivo(marca,mod,feat);
+  if(cur){ // desactivar: avisar dependientes
+    const deps=dependientes(marca,mod,feat);
+    if(deps.length&&!confirm('Esto afecta a: '+deps.map(depLbl).join(', ')+'. ¿Desactivar igual? (se recomienda desactivarlas también)'))return;
+    await setFeature(marca,mod,feat,false);
+  }else{ // activar: revisar requisitos
+    const reqs=(DEPS[mod+'.'+feat]||[]).filter(d=>!depActivo(marca,d));
+    if(reqs.length){if(!confirm('Requiere activar: '+reqs.map(depLbl).join(', ')+'. ¿Activarlas también?'))return;
+      for(const d of reqs){if(d.includes('.')){const[m,f]=d.split('.');if(!modActivo(marca,m))await toggleModuloSilent(marca,m);await setFeature(marca,m,f,true)}else{if(!modActivo(marca,d))await toggleModuloSilent(marca,d)}}}
+    await setFeature(marca,mod,feat,true);
+  }
+  renderBody();toast((!cur?'Activado':'Desactivado')+': '+featLbl(mod,feat));
+}
+async function toggleModuloSilent(marca,mod){await sb.from('prep_marca_modulos').upsert({marca_id:marca,modulo:mod,activo:true,updated_at:new Date().toISOString()},{onConflict:'marca_id,modulo'});const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===mod);if(r)r.activo=true;else state.mm.push({marca_id:marca,modulo:mod,activo:true})}
 load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="empty">Error al cargar</div>'});
 </script>
 </body>
