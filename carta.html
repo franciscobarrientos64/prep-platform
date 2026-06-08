@@ -73,7 +73,7 @@ function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classL
 
 async function load(){
   if(MESA)$('#mesa').textContent='Mesa '+MESA.replace(/^t_/,'').toUpperCase();
-  const{data}=await sb.from('inv_recetas').select('*').eq('marca_id',MARCA).eq('activo',true).order('categoria_menu').order('orden_menu');
+  const{data}=await sb.from('carta_publica').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu');
   state.recetas=(data||[]).filter(r=>Number(r.precio_venta||0)>0);
   render();$('#boot').classList.add('gone');
 }
@@ -119,10 +119,10 @@ async function enviarPedido(){
   $('#c-send').disabled=true;
   const total=cartTotal();const subtotal=+(total/1.18).toFixed(2);const igv=+(total-subtotal).toFixed(2);
   let ticket=Math.floor(Date.now()/1000)%100000;
-  try{const{data:mx}=await sb.from('ca_pedidos').select('ticket_num').eq('local_id',LOCAL).order('ticket_num',{ascending:false}).limit(1);if(mx&&mx[0]&&mx[0].ticket_num)ticket=Number(mx[0].ticket_num)+1;}catch(e){}
-  const{data:ped,error}=await sb.from('ca_pedidos').insert({marca_id:MARCA,local_id:LOCAL,ticket_num:ticket,mesa_id:MESA||null,origen:'qr',estado:'abierta',estado_servicio:'oido',abierta_at:new Date().toISOString(),subtotal,igv,total,moneda:'PEN',notas:'Pedido por carta QR'}).select().single();
-  if(error||!ped){toast('No se pudo enviar: '+(error?.message||''));$('#c-send').disabled=false;return}
-  const rows=items.map(it=>({pedido_id:ped.id,receta_id:it.r.id,nombre:it.r.nombre,qty:it.qty,precio_unit:Number(it.r.precio_venta),precio_total:+(it.qty*Number(it.r.precio_venta)).toFixed(2),estado:'oido',enviado_cocina_at:new Date().toISOString()}));
+  const pid=(crypto&&crypto.randomUUID)?crypto.randomUUID():(''+Date.now()+Math.random());
+  const{error}=await sb.from('ca_pedidos').insert({id:pid,marca_id:MARCA,local_id:LOCAL,ticket_num:ticket,mesa_id:MESA||null,origen:'qr',estado:'abierta',estado_servicio:'oido',abierta_at:new Date().toISOString(),subtotal,igv,total,moneda:'PEN',notas:'Pedido por carta QR'});
+  if(error){toast('No se pudo enviar: '+(error.message||''));$('#c-send').disabled=false;return}
+  const rows=items.map(it=>({pedido_id:pid,receta_id:it.r.id,nombre:it.r.nombre,qty:it.qty,precio_unit:Number(it.r.precio_venta),precio_total:+(it.qty*Number(it.r.precio_venta)).toFixed(2),estado:'oido',enviado_cocina_at:new Date().toISOString()}));
   const{error:e2}=await sb.from('ca_pedido_items').insert(rows);
   if(e2){toast('Pedido creado pero falló el detalle: '+e2.message);$('#c-send').disabled=false;return}
   state.cart={};closeSheet();render();
