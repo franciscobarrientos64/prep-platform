@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5af9">
+<title>Pedir delivery · Casa Italia</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-bottom:90px}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+.hero{background:var(--ink);color:var(--bg);padding:22px 18px 18px;text-align:center;border-bottom:3px solid var(--outline)}
+.hero .logo{position:relative;width:150px;height:48px;margin:0 auto 8px}.hero .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+.hero h1{font-family:var(--font-display);font-size:26px}.hero .sub{font-family:var(--font-mono);font-size:12px;opacity:.8;margin-top:4px}
+.navsec{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid var(--outline);display:flex;gap:8px;padding:10px 14px;overflow-x:auto}
+.navsec button{flex-shrink:0;padding:7px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:2px 2px 0 0 #000;cursor:pointer}
+.navsec button.active{background:var(--primary);color:#fff}
+.wrap{max-width:680px;margin:0 auto;padding:14px}
+.sec-t{font-family:var(--font-display);font-size:22px;margin:18px 0 10px}
+.dish{display:flex;gap:12px;background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:12px;margin-bottom:10px}
+.dish .ph{width:74px;height:74px;border-radius:12px;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;background-size:cover;background-position:center}
+.dish .b{flex:1;min-width:0}.dish h3{font-size:16px;font-weight:700}.dish .ds{font-size:13px;opacity:.7;margin-top:2px;line-height:1.35}
+.dish .ft{display:flex;justify-content:space-between;align-items:center;margin-top:8px}.dish .pr{font-family:var(--font-display);font-size:18px}
+.add{width:38px;height:38px;border:2px solid var(--outline);border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000;cursor:pointer;flex-shrink:0}
+.qtyc{display:flex;align-items:center;gap:10px}.qtyc button{width:32px;height:32px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);font-weight:700;box-shadow:2px 2px 0 0 #000;cursor:pointer}.qtyc .n{font-family:var(--font-display);font-size:16px;min-width:18px;text-align:center}
+.cartbar{position:fixed;bottom:0;left:0;right:0;z-index:40;padding:12px 16px;background:var(--bg);border-top:2px solid var(--outline)}
+.cartbar .btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:14px 18px;border:2px solid var(--outline);border-radius:14px;background:var(--primary);color:#fff;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);cursor:pointer}
+.cartbar .btn:disabled{opacity:.45}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:92vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 22px 12px;border-bottom:2px solid var(--outline);display:flex;justify-content:space-between;align-items:center}.sheet-head h2{font-family:var(--font-display);font-size:22px}
+.sheet-close{width:38px;height:38px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000}
+.sheet-body{padding:16px 22px 26px;overflow-y:auto}
+.ci{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--gray-soft)}.ci .nm{flex:1;font-weight:600;font-size:14px}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin:10px 0 6px;display:block}
+.input,.select{padding:11px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:15px;box-shadow:var(--shadow-sm);width:100%}
+.tot{display:flex;justify-content:space-between;font-family:var(--font-display);font-size:20px;margin:12px 0}
+.btn2{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border:2px solid var(--outline);border-radius:14px;font-weight:700;font-size:16px;box-shadow:var(--shadow-sm);cursor:pointer;background:var(--primary);color:#fff;margin-top:10px}
+.empty{text-align:center;padding:30px;font-family:var(--font-mono);font-size:13px;opacity:.6}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;background:var(--ink);color:#fff;border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-weight:600;box-shadow:var(--shadow);max-width:90%}
+.boot{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:200px;height:64px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<div class="hero"><div class="logo"><span class="l"></span></div><h1>Casa Italia</h1><div class="sub">🛵 Pedido a domicilio</div></div>
+<nav class="navsec" id="nav"></nav>
+<main class="wrap" id="screen"></main>
+<div class="cartbar"><button class="btn" id="cart-btn" disabled><span><span class="material-symbols-outlined">shopping_bag</span> <span id="cart-n">0</span> ítems</span><span id="cart-t">S/ 0.00</span></button></div>
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><h2 id="sheet-title">Tu pedido</h2><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const qs=new URLSearchParams(location.search);const MARCA='m6',LOCAL=qs.get('local')||'l11';
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const state={recetas:[],zonas:[],cart:{},sec:null,form:{nombre:'',telefono:'',direccion:'',referencia:'',zona:'',metodo:'efectivo'}};
+function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2600)}
+function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
+async function load(){
+  const[r,z]=await Promise.all([sb.from('inv_recetas').select('*').eq('marca_id',MARCA).eq('activo',true).order('categoria_menu').order('orden_menu'),sb.from('dl_zonas').select('*').eq('local_id',LOCAL).eq('activo',true).order('nombre')]);
+  state.recetas=(r.data||[]).filter(x=>Number(x.precio_venta||0)>0);state.zonas=z.data||[];
+  render();$('#boot').classList.add('gone');
+}
+function secs(){return [...new Set(state.recetas.map(r=>r.categoria_menu||'Otros'))]}
+function render(){
+  const ss=secs();if(!state.sec)state.sec=ss[0];
+  $('#nav').innerHTML=ss.map(s=>`<button class="${state.sec===s?'active':''}" data-s="${s}">${s}</button>`).join('');
+  $$('#nav button').forEach(b=>b.onclick=()=>{state.sec=b.dataset.s;render()});
+  $('#screen').innerHTML=ss.map(sec=>`<div><div class="sec-t">${sec}</div>${state.recetas.filter(r=>(r.categoria_menu||'Otros')===sec).map(dish).join('')}</div>`).join('')||'<div class="empty">Carta no disponible</div>';
+  $$('#screen [data-p]').forEach(b=>b.onclick=()=>chg(b.dataset.p,1));$$('#screen [data-m]').forEach(b=>b.onclick=()=>chg(b.dataset.m,-1));
+  updateCart();
+}
+function dish(r){const q=state.cart[r.id]?.qty||0;
+  return `<div class="dish"><div class="ph" style="${r.foto_url?`background-image:url(${r.foto_url})`:''}">${r.foto_url?'':(r.emoji||'🍽️')}</div><div class="b"><h3>${r.nombre}</h3>${r.descripcion?`<div class="ds">${r.descripcion}</div>`:''}<div class="ft"><span class="pr">${money(r.precio_venta)}</span>${q>0?`<div class="qtyc"><button data-m="${r.id}">−</button><span class="n">${q}</span><button data-p="${r.id}">+</button></div>`:`<div class="add" data-p="${r.id}"><span class="material-symbols-outlined">add</span></div>`}</div></div></div>`;
+}
+function chg(id,d){const r=state.recetas.find(x=>x.id===id);if(!r)return;const q=Math.max(0,(state.cart[id]?.qty||0)+d);if(q===0)delete state.cart[id];else state.cart[id]={qty:q,r};render()}
+function items(){return Object.values(state.cart)}
+function subtotal(){return items().reduce((a,it)=>a+it.qty*Number(it.r.precio_venta||0),0)}
+function feeZona(){const z=state.zonas.find(x=>x.nombre===state.form.zona);return z?Number(z.tarifa||0):0}
+function updateCart(){const n=items().reduce((a,it)=>a+it.qty,0);$('#cart-n').textContent=n;$('#cart-t').textContent=money(subtotal());$('#cart-btn').disabled=n===0}
+$('#cart-btn').onclick=()=>{if(items().length)abrirCheckout()};
+function abrirCheckout(){
+  const f=state.form;const fee=feeZona();const total=subtotal()+fee;
+  $('#sheet-title').textContent='Tu pedido';
+  $('#sheet-body').innerHTML=`${items().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${it.r.nombre}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${money(it.qty*it.r.precio_venta)}</span></div>`).join('')}
+    <div class="field-lbl">Tus datos</div>
+    <input class="input" id="f-nom" placeholder="Nombre" value="${f.nombre}" style="margin-bottom:8px">
+    <input class="input" id="f-tel" placeholder="Teléfono / WhatsApp" value="${f.telefono}" style="margin-bottom:8px">
+    <input class="input" id="f-dir" placeholder="Dirección" value="${f.direccion}" style="margin-bottom:8px">
+    <input class="input" id="f-ref" placeholder="Referencia (opcional)" value="${f.referencia}">
+    <div class="field-lbl">Zona de entrega</div>
+    <select class="select" id="f-zona"><option value="">— elige tu zona —</option>${state.zonas.map(z=>`<option ${f.zona===z.nombre?'selected':''}>${z.nombre} (+${money(z.tarifa)} · ${z.tiempo_min}min)</option>`).join('')}</select>
+    <div class="field-lbl">Pago</div>
+    <select class="select" id="f-pago">${['efectivo','yape','plin','tarjeta'].map(x=>`<option ${f.metodo===x?'selected':''}>${x}</option>`).join('')}</select>
+    <div class="tot" style="margin-top:14px"><span>Subtotal</span><span>${money(subtotal())}</span></div>
+    <div class="ci"><span>Envío${state.form.zona?(' · '+state.form.zona):''}</span><span style="font-family:var(--font-mono)">${money(fee)}</span></div>
+    <div class="tot"><span>Total</span><span>${money(total)}</span></div>
+    <button class="btn2" id="f-send"><span class="material-symbols-outlined">send</span>Enviar pedido</button>`;
+  $$('#sheet-body [data-p]').forEach(b=>b.onclick=()=>{chg(b.dataset.p,1);abrirCheckout()});
+  $$('#sheet-body [data-m]').forEach(b=>b.onclick=()=>{chg(b.dataset.m,-1);items().length?abrirCheckout():closeSheet()});
+  ['f-nom','f-tel','f-dir','f-ref','f-pago'].forEach(id=>{const el=$('#'+id);el.oninput=el.onchange=()=>{f.nombre=$('#f-nom').value;f.telefono=$('#f-tel').value;f.direccion=$('#f-dir').value;f.referencia=$('#f-ref').value;f.metodo=$('#f-pago').value}});
+  $('#f-zona').onchange=e=>{f.zona=e.target.value.split(' (+')[0];abrirCheckout()};
+  $('#f-send').onclick=enviar;
+  openSheet();
+}
+async function enviar(){
+  const f=state.form;f.nombre=$('#f-nom').value;f.telefono=$('#f-tel').value;f.direccion=$('#f-dir').value;f.referencia=$('#f-ref').value;f.metodo=$('#f-pago').value;
+  if(!f.nombre||!f.telefono||!f.direccion){toast('Completa nombre, teléfono y dirección');return}
+  if(!f.zona){toast('Elige tu zona de entrega');return}
+  $('#f-send').disabled=true;
+  const fee=feeZona();const sub=subtotal();const detalle=items().map(it=>it.qty+'× '+it.r.nombre).join(', ');
+  const z=state.zonas.find(x=>x.nombre===f.zona);
+  let codigo='D-'+String(Math.floor(Date.now()/1000)%100000);
+  const{error}=await sb.from('dl_pedidos').insert({marca_id:MARCA,local_id:LOCAL,codigo,nombre:f.nombre,telefono:f.telefono,direccion:f.direccion,referencia:f.referencia,canal:'propio',detalle,subtotal:sub,delivery_fee:fee,total:sub+fee,metodo_pago:f.metodo,estado:'recibido',zona:f.zona,eta_min:z?z.tiempo_min:null});
+  if(error){toast('No se pudo enviar: '+error.message);$('#f-send').disabled=false;return}
+  state.cart={};render();
+  $('#sheet-title').textContent='¡Pedido recibido!';
+  $('#sheet-body').innerHTML=`<div style="text-align:center;padding:24px"><div style="font-size:54px">🛵</div><h2 style="font-family:var(--font-display);font-size:24px;margin:8px 0">¡Gracias, ${f.nombre}!</h2><p style="opacity:.75">Pedido ${codigo} recibido. Te llega en ~${z?z.tiempo_min:'—'} min a ${f.direccion}. Te contactamos por WhatsApp.</p><button class="btn2" id="ok" style="margin-top:16px">Seguir viendo la carta</button></div>`;
+  $('#ok').onclick=closeSheet;openSheet();
+}
+$('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);
+load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="empty">No se pudo cargar.</div>'});
+</script>
+</body>
+</html>

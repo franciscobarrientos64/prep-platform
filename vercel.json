@@ -2,6 +2,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/pedir",
+      "destination": "/pedir.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin.html"
     },
