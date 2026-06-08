@@ -177,7 +177,10 @@ function renderUserSwitcher(){
   const u=access.user;
   let html=`<div class="who">${u?u.nombre:'Invitado'}</div><div class="role">${u?(ROLLBL[u.rol_sistema]||u.rol_sistema)+(u.marca_id?(' · '+u.marca_id):'')+(access.authed?'':' · demo'):'sin sesión'}</div>`;
   if(access.authed){
-    html+=`<div class="mi" data-act="pass"><span class="material-symbols-outlined">key</span> Cambiar contraseña</div><hr><div class="mi" data-act="logout"><span class="material-symbols-outlined">logout</span> Cerrar sesión</div>`;
+    let adm='';
+    if(u&&u.rol_sistema==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div><hr>`;
+    else if(u&&['admin_marca','gerente'].includes(u.rol_sistema))adm=`<div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios y permisos</div><hr>`;
+    html+=adm+`<div class="mi" data-act="pass"><span class="material-symbols-outlined">key</span> Cambiar contraseña</div><hr><div class="mi" data-act="logout"><span class="material-symbols-outlined">logout</span> Cerrar sesión</div>`;
   }else{
     html+=`<div class="lbl">Ver como (demo)</div><select id="acct-ver">${access.usuarios.map(x=>`<option value="${x.id}" ${u&&u.id===x.id?'selected':''}>${x.nombre} · ${ROLLBL[x.rol_sistema]||x.rol_sistema}</option>`).join('')}</select><hr><div class="mi" data-act="login"><span class="material-symbols-outlined">login</span> Iniciar sesión</div>`;
   }
@@ -190,7 +193,9 @@ function renderUserSwitcher(){
   menu.querySelectorAll('[data-act]').forEach(el=>el.onclick=()=>{const a=el.dataset.act;
     if(a==='pass')cambiarClave();
     else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');location.reload()});
-    else if(a==='login')location.href='/login';});
+    else if(a==='login')location.href='/login';
+    else if(a==='portal')location.href='/portal';
+    else if(a==='usuarios')location.href='/admin';});
 }
 function renderMods(){
   const u=access.user;const sa=u&&u.rol_sistema==='superadmin';const adm=sa||(u&&['admin_marca','gerente'].includes(u.rol_sistema));
@@ -201,8 +206,6 @@ function renderMods(){
       <span class="tag ${on?'activo':'pronto'}">${on?'activo':'pronto'}</span><span class="num">${String(i).padStart(2,'0')}</span>`;
     return on?`<a class="mod-card on" href="${m.href}" style="--ac:${m.ac||'var(--primary)'}">${inner}</a>`:`<div class="mod-card off">${inner}</div>`;
   });
-  if(adm)cards.push(`<a class="mod-card on" href="/admin" style="--ac:#7c3aed"><span class="material-symbols-outlined" style="font-size:30px">group</span><span class="nm">Usuarios</span><span class="ds">Usuarios y permisos</span><span class="tag activo">admin</span></a>`);
-  if(sa)cards.push(`<a class="mod-card on" href="/prep" style="--ac:#ff3b30"><span class="material-symbols-outlined" style="font-size:30px">tune</span><span class="nm">Consola Prep</span><span class="ds">Activar módulos por cliente</span><span class="tag activo" style="background:var(--secondary);color:#fff">super</span></a>`);
   $('#mods').innerHTML=cards.join('');
 }
 

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Portal Prep · Super Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--ink);color:var(--bg);border-bottom:2px solid var(--outline);padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{position:relative;width:104px;height:34px;flex-shrink:0;display:block}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:#fff}
+.brand-txt .cli{font-weight:700;font-size:15px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.hinfo{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink);font-weight:600;font-size:12px;font-family:var(--font-mono);cursor:pointer}
+.badge-sa{font-family:var(--font-mono);font-size:11px;font-weight:700;background:var(--secondary);color:#fff;padding:5px 12px;border-radius:999px;border:2px solid #000}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 18px 60px}
+.section-t{font-family:var(--font-display);font-size:22px;margin:22px 0 12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.section-t .sub{font-family:var(--font-mono);font-size:12px;opacity:.55}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.tool{display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;text-decoration:none;transition:transform .12s,box-shadow .12s}
+.tool:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.tool .material-symbols-outlined{font-size:30px;color:var(--tertiary)}
+.tool .nm{font-weight:700;font-size:16px}.tool .ds{font-family:var(--font-mono);font-size:10px;opacity:.7}
+.clientbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:6px}
+.clientbar select{padding:10px 12px;border:2px solid var(--outline);border-radius:12px;font-size:15px;font-weight:700;font-family:var(--font-body);background:var(--bg);min-width:240px}
+.clientbar .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.mods-band{background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(30,90,249,.10) 23px 24px),repeating-linear-gradient(90deg,transparent 0 23px,rgba(30,90,249,.10) 23px 24px),var(--surface);border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-sm);padding:18px}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.mod-card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 16px 14px;display:flex;flex-direction:column;gap:5px;text-decoration:none;color:var(--ink);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden;min-height:118px}
+.mod-card .material-symbols-outlined{font-size:30px;color:var(--ac,var(--primary))}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--ac,var(--primary))}
+.mod-card.on:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.mod-card.off{opacity:.45;border-style:dashed;box-shadow:none}.mod-card.off::before{background:var(--gray-soft)}
+.mod-card .nm{font-weight:700;font-size:15px}.mod-card .ds{font-size:11px;font-family:var(--font-mono);opacity:.6;line-height:1.3}
+.mod-card .tag{position:absolute;top:10px;right:10px;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1.5px solid var(--outline)}
+.mod-card .tag.on{background:var(--green);color:#fff}.mod-card .tag.off{background:var(--gray-soft)}
+.note{font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:12px}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:220px;height:70px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<header class="header">
+  <div class="brand"><div class="brand-logo"><span class="l"></span></div><div class="brand-txt"><div class="cli">Prep Platform</div><div class="mod">Portal · Super Admin</div></div></div>
+  <div class="hinfo"><span class="pill" id="logout">⏻ Salir</span><span class="badge-sa">SUPER ADMIN</span></div>
+</header>
+<main class="wrap" id="screen"></main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const MODULOS=[
+  {n:'Pase',k:'pase',d:'Dashboard',ico:'dashboard',href:null,ac:'#1e5af9'},
+  {n:'POS',k:'pos',d:'Punto de venta',ico:'point_of_sale',href:'/pos',ac:'#1e5af9'},
+  {n:'Línea',k:'linea',d:'KDS de cocina',ico:'soup_kitchen',href:'/kds',ac:'#ff3b30'},
+  {n:'Bienvenida',k:'bienvenida',d:'Reservas',ico:'concierge',href:'/bienvenida',ac:'#ff3b30'},
+  {n:'Mercado',k:'mercado',d:'Compras + inventario',ico:'inventory_2',href:'/mercado',ac:'#10b981'},
+  {n:'Recetas',k:'recetas',d:'Costeo + carta',ico:'menu_book',href:'/recetas',ac:'#d4a000'},
+  {n:'Carta QR',k:'carta',d:'Menú digital',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
+  {n:'RRHH',k:'rrhh',d:'Personal',ico:'badge',href:'/rrhh',ac:'#e8735a'},
+  {n:'Delivery',k:'delivery',d:'Pedidos',ico:'delivery_dining',href:'/delivery',ac:'#7c3aed'},
+  {n:'Finanzas',k:'contabilidad',d:'Presupuesto',ico:'receipt_long',href:'/finanzas',ac:'#0d3d34'},
+  {n:'Vuelto',k:'vuelto',d:'Caja chica',ico:'savings',href:'/vuelto',ac:'#ffcc00'},
+  {n:'El Libro',k:'libro',d:'Intranet',ico:'auto_stories',href:'/el-libro',ac:'#0d7a8a'},
+  {n:'Directorio',k:'directorio',d:'Reportes',ico:'monitoring',href:'/directorio',ac:'#0d3d34'},
+  {n:'Engagement',k:'engagement',d:'Loyalty + CRM',ico:'favorite',href:'/engagement',ac:'#e8735a'}
+];
+const state={marcas:[],locales:[],mm:[],subs:[],sel:'m6'};
+function modActivo(marca,k){const r=state.mm.find(x=>x.marca_id===marca&&x.modulo===k);return r?r.activo:false}
+async function guard(){let s=null;try{s=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(s&&s.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle()).data;if(!me||me.rol_sistema!=='superadmin'){alert('Portal solo para Super Admin.');location.href='/';return false}}return true}
+async function load(){
+  if(!(await guard()))return;
+  const[ma,lo,mm,su]=await Promise.all([sb.from('inv_marcas').select('*').order('id'),sb.from('inv_locales').select('*').order('id'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_suscripciones').select('*')]);
+  state.marcas=ma.data||[];state.locales=lo.data||[];state.mm=mm.data||[];state.subs=su.data||[];
+  if(!state.marcas.find(m=>m.id===state.sel))state.sel=state.marcas[0]?.id;
+  render();$('#boot').classList.add('gone');
+}
+function render(){
+  const m=state.marcas.find(x=>x.id===state.sel);
+  const locs=state.locales.filter(l=>l.marca_id===state.sel);
+  const sub=state.subs.find(s=>s.marca_id===state.sel);
+  const nact=MODULOS.filter(x=>modActivo(state.sel,x.k)).length;
+  $('#screen').innerHTML=`
+    <div class="section-t">Herramientas Prep <span class="sub">administración de la plataforma</span></div>
+    <div class="tools">
+      <a class="tool" href="/prep"><span class="material-symbols-outlined">tune</span><div><div class="nm">Consola de módulos</div><div class="ds">Activar features por cliente</div></div></a>
+      <a class="tool" href="/admin"><span class="material-symbols-outlined">group</span><div><div class="nm">Usuarios & permisos</div><div class="ds">Roles y accesos</div></div></a>
+      <a class="tool" href="/prep-negocio"><span class="material-symbols-outlined">payments</span><div><div class="nm">Negocio</div><div class="ds">Suscripciones · pagos</div></div></a>
+    </div>
+    <div class="section-t">Clientes <span class="sub">navega entre los restaurantes</span></div>
+    <div class="clientbar">
+      <select id="cliente">${state.marcas.map(x=>`<option value="${x.id}" ${state.sel===x.id?'selected':''}>${x.emoji||''} ${x.nombre}</option>`).join('')}</select>
+      <span class="meta">${locs.map(l=>l.nombre).join(', ')||'sin locales'} · ${nact}/${MODULOS.length} módulos${sub?(' · '+sub.plan+' · '+sub.estado):''}</span>
+      <a class="pill" href="/?marca=${state.sel}" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">open_in_new</span>Abrir hub del cliente</a>
+    </div>
+    <div class="mods-band"><div class="mods">${MODULOS.map(mo=>{const on=modActivo(state.sel,mo.k);
+      const inner=`<span class="material-symbols-outlined">${mo.ico}</span><span class="nm">${mo.n}</span><span class="ds">${mo.d}</span><span class="tag ${on?'on':'off'}">${on?'activo':'off'}</span>`;
+      return on&&mo.href?`<a class="mod-card on" href="${mo.href}?marca=${state.sel}" style="--ac:${mo.ac}">${inner}</a>`:`<div class="mod-card ${on?'on':'off'}" style="--ac:${mo.ac}">${inner}</div>`;
+    }).join('')}</div></div>
+    <div class="note">Selecciona un cliente para ver y entrar a sus módulos. (La data por-cliente se activa con el multi-tenant; hoy los módulos operan sobre Casa Italia.)</div>`;
+  $('#cliente').onchange=e=>{state.sel=e.target.value;render()};
+}
+$('#logout').onclick=async()=>{await sb.auth.signOut();location.href='/login'};
+load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="note">Error al cargar</div>'});
+</script>
+</body>
+</html>
