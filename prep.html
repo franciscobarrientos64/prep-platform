@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#11151a;--surface:#1c2128;--ink:#f3f5f7;--green:#10b981;--muted:#8b949e;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -57,7 +58,8 @@ a.linkbtn{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-
 <header class="header">
   <a href="/" class="brand-logo" title="Volver al inicio"><span class="l"></span></a>
   <div class="brand-txt"><div class="cli">Prep Platform</div><div class="mod">Consola · Super Admin</div></div>
-  <a class="linkbtn" href="/admin" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">group</span>Usuarios</a>
+  <a class="linkbtn" href="/prep-negocio" style="margin-left:auto"><span class="material-symbols-outlined" style="font-size:16px">payments</span>Negocio</a>
+  <a class="linkbtn" href="/admin"><span class="material-symbols-outlined" style="font-size:16px">group</span>Usuarios</a>
   <span class="badge-sa">SUPER ADMIN</span>
 </header>
 <main class="wrap" id="screen"></main>
@@ -137,10 +139,12 @@ function render(){
   $('#screen').innerHTML=`
     <div class="toolbar">
       <div class="seg"><button class="${state.view==='marcas'?'active':''}" data-v="marcas">Por marca</button><button class="${state.view==='operaciones'?'active':''}" data-v="operaciones">Por operación</button></div>
-      <input class="inp" id="f" placeholder="Filtrar..." value="${state.filtro}" style="flex:1;max-width:280px">
+      <select class="inp" id="marca-sel"><option value="">🍽️ Todos los restaurantes</option>${state.marcas.map(m=>`<option value="${m.nombre}" ${state.filtro===m.nombre?'selected':''}>${m.emoji||''} ${m.nombre}</option>`).join('')}</select>
+      <input class="inp" id="f" placeholder="Buscar..." value="${state.filtro}" style="flex:1;max-width:220px">
     </div>
     <div id="body"></div>`;
   $$('#screen .seg button').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $('#marca-sel').onchange=e=>{state.filtro=e.target.value;render()};
   $('#f').oninput=e=>{state.filtro=e.target.value;renderBody()};
   renderBody();
 }
