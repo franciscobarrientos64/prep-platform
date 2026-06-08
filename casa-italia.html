@@ -24,6 +24,15 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .brand-txt .cli{font-weight:700;font-size:15px;line-height:1.1}
 .brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
 .header-info{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.acct-menu{position:absolute;right:0;top:40px;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);min-width:240px;padding:12px;display:none;z-index:50}
+.acct-menu.open{display:block}
+.acct-menu .who{font-weight:700;font-size:15px}
+.acct-menu .role{font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:8px;text-transform:capitalize}
+.acct-menu .mi{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600}
+.acct-menu .mi:hover{background:var(--gray-soft)}
+.acct-menu .lbl{font-family:var(--font-mono);font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.06em;margin:4px 0 4px}
+.acct-menu select{width:100%;padding:9px 10px;border:2px solid var(--outline);border-radius:10px;font-family:var(--font-body);font-size:13px}
+.acct-menu hr{border:none;border-top:1px dashed var(--gray-soft);margin:8px 0}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:11px;font-family:var(--font-mono)}
 .pill.live{background:var(--primary);color:#fff}.pill.live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--tertiary);animation:pulse 1.4s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -91,7 +100,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
   <div class="header-info">
     <span class="pill live" id="p-fecha">—</span>
     <span class="pill" id="p-turno">—</span>
-    <select class="pill" id="p-user" title="Ver como (demo)" style="cursor:pointer"></select>
+    <div style="position:relative"><button class="pill" id="p-acct" style="cursor:pointer">⚙️ Ajustes</button><div id="acct-menu" class="acct-menu"></div></div>
   </div>
 </header>
 <main class="wrap">
@@ -161,20 +170,26 @@ async function cambiarClave(){
   if(error){alert('No se pudo: '+error.message);return}
   alert('Contraseña actualizada ✓');
 }
+const ROLLBL={superadmin:'Super Admin',admin_marca:'Admin restaurante',gerente:'Gerente',operativo:'Operativo'};
 function renderUserSwitcher(){
-  const sel=$('#p-user');if(!sel)return;
-  let auth=$('#p-auth');if(!auth){auth=document.createElement('span');auth.id='p-auth';auth.className='pill';auth.style.cursor='pointer';sel.parentNode.appendChild(auth);}
-  let pass=$('#p-pass');if(!pass){pass=document.createElement('span');pass.id='p-pass';pass.className='pill';pass.style.cursor='pointer';pass.textContent='🔑 Clave';pass.onclick=cambiarClave;sel.parentNode.appendChild(pass);}
+  const btn=$('#p-acct'),menu=$('#acct-menu');if(!btn||!menu)return;
+  const u=access.user;
+  let html=`<div class="who">${u?u.nombre:'Invitado'}</div><div class="role">${u?(ROLLBL[u.rol_sistema]||u.rol_sistema)+(u.marca_id?(' · '+u.marca_id):'')+(access.authed?'':' · demo'):'sin sesión'}</div>`;
   if(access.authed){
-    sel.style.display='none';pass.style.display='';
-    auth.textContent='⏻ Salir · '+((access.user&&access.user.nombre)||access.authEmail||'');
-    auth.onclick=async()=>{await sb.auth.signOut();localStorage.removeItem('prep_uid');location.reload()};
+    html+=`<div class="mi" data-act="pass"><span class="material-symbols-outlined">key</span> Cambiar contraseña</div><hr><div class="mi" data-act="logout"><span class="material-symbols-outlined">logout</span> Cerrar sesión</div>`;
   }else{
-    sel.style.display='';pass.style.display='none';
-    sel.innerHTML=access.usuarios.map(u=>`<option value="${u.id}" ${access.user&&access.user.id===u.id?'selected':''}>👤 ${u.nombre} (${u.rol_sistema==='superadmin'?'super':u.rol_sistema==='admin_marca'?'admin':u.rol_sistema})</option>`).join('');
-    sel.onchange=()=>{localStorage.setItem('prep_uid',sel.value);location.reload()};
-    auth.textContent='⏻ Ingresar';auth.onclick=()=>location.href='/login';
+    html+=`<div class="lbl">Ver como (demo)</div><select id="acct-ver">${access.usuarios.map(x=>`<option value="${x.id}" ${u&&u.id===x.id?'selected':''}>${x.nombre} · ${ROLLBL[x.rol_sistema]||x.rol_sistema}</option>`).join('')}</select><hr><div class="mi" data-act="login"><span class="material-symbols-outlined">login</span> Iniciar sesión</div>`;
   }
+  menu.innerHTML=html;
+  btn.textContent='⚙️ '+(u?(u.nombre.split(' ')[0]):'Ajustes');
+  btn.onclick=e=>{e.stopPropagation();menu.classList.toggle('open')};
+  menu.onclick=e=>e.stopPropagation();
+  document.addEventListener('click',()=>menu.classList.remove('open'));
+  const ver=$('#acct-ver');if(ver)ver.onchange=()=>{localStorage.setItem('prep_uid',ver.value);location.reload()};
+  menu.querySelectorAll('[data-act]').forEach(el=>el.onclick=()=>{const a=el.dataset.act;
+    if(a==='pass')cambiarClave();
+    else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');location.reload()});
+    else if(a==='login')location.href='/login';});
 }
 function renderMods(){
   const u=access.user;const sa=u&&u.rol_sistema==='superadmin';const adm=sa||(u&&['admin_marca','gerente'].includes(u.rol_sistema));
