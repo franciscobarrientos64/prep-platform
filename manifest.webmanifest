@@ -1,0 +1,13 @@
+{
+  "name": "Prep — Sistema operativo para restaurantes",
+  "short_name": "Prep",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fcf9f8",
+  "theme_color": "#1e5af9",
+  "icons": [
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
