@@ -118,7 +118,10 @@ async function loadRoles(){const{data}=await sb.from('rrhh_roles').select('*').o
 async function loadAsis(){const desde=new Date();desde.setDate(desde.getDate()-30);const d=desde.toISOString().slice(0,10);const{data}=await sb.from('rrhh_asistencia').select('*').eq('local_id',LOCAL).gte('fecha',d).order('fecha',{ascending:false});state.asis=data||[]}
 async function loadDocs(){const{data}=await sb.from('rrhh_documentos').select('*').eq('archivado',false).order('fecha_vencimiento');state.docs=data||[]}
 async function loadProg(){const fin=addDias(state.semana,7);const{data}=await sb.from('rrhh_programacion').select('*').eq('local_id',LOCAL).gte('fecha',state.semana).lt('fecha',fin);state.prog=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadPermisos(){const{data}=await sb.from('rrhh_permisos').select('*').eq('local_id',LOCAL).order('fecha_inicio',{ascending:false});state.permisos=data||[]}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos()]);render();subscribe();$('#boot').classList.add('gone')}
+function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
+function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
 const activos=()=>state.emp.filter(e=>e.estado==='activo');
 const asisHoy=id=>state.asis.find(a=>a.empleado_id===id&&a.fecha===hoyISO());
@@ -129,11 +132,57 @@ function render(){
   const planilla=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  const pend=(state.permisos||[]).filter(p=>p.estado==='pendiente').length;
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else renderPlanilla();
 }
 
+const TIPOPERM={vacaciones:'🌴 Vacaciones',permiso:'📋 Permiso',descanso_medico:'🏥 Descanso médico',falta_justificada:'📝 Falta justificada'};
+function permBadge(e){const c=e==='aprobado'?'var(--green)':e==='rechazado'?'var(--secondary)':'var(--tertiary)';return `<span class="badge" style="background:${c};color:${e==='pendiente'?'var(--ink)':'#fff'}">${e}</span>`}
+function renderPermisos(){
+  const ps=state.permisos||[];const pend=ps.filter(p=>p.estado==='pendiente');
+  const mes=hoyISO().slice(0,7);
+  const vacMes=ps.filter(p=>p.estado==='aprobado'&&p.tipo==='vacaciones'&&(p.fecha_inicio||'').slice(0,7)===mes).reduce((s,p)=>s+Number(p.dias||0),0);
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi ${pend.length?'':'good'}"><div class="v">${pend.length}</div><div class="l">Solicitudes pendientes</div></div>
+      <div class="kpi"><div class="v">${ps.filter(p=>p.estado==='aprobado').length}</div><div class="l">Aprobadas</div></div>
+      <div class="kpi"><div class="v">${vacMes}</div><div class="l">Días de vacaciones este mes</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn primary" id="perm-new"><span class="material-symbols-outlined" style="font-size:18px">add</span>Nueva solicitud</button></div>
+    ${ps.length?ps.map(p=>`<div class="kpi" style="cursor:default;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px"><div style="font-weight:700">${nomEmp(p.empleado_id)}</div><div class="mono" style="font-size:12px;opacity:.7">${TIPOPERM[p.tipo]||p.tipo} · ${p.fecha_inicio}${p.fecha_fin&&p.fecha_fin!==p.fecha_inicio?(' → '+p.fecha_fin):''} · ${Number(p.dias||0)}d</div>${p.motivo?`<div style="font-size:12px;opacity:.6">${p.motivo}</div>`:''}</div>
+        ${permBadge(p.estado)}
+        ${p.estado==='pendiente'?`<div style="display:flex;gap:6px"><button class="btn primary" style="padding:7px 12px" data-ap="${p.id}">Aprobar</button><button class="btn ghost" style="padding:7px 12px" data-rj="${p.id}">Rechazar</button></div>`:''}
+      </div>`).join(''):'<div class="kpi" style="text-align:center;opacity:.6">Sin solicitudes. Crea la primera.</div>'}`;
+  $('#perm-new').onclick=solicitarPermiso;
+  $$('#screen [data-ap]').forEach(b=>b.onclick=()=>resolverPermiso(b.dataset.ap,'aprobado'));
+  $$('#screen [data-rj]').forEach(b=>b.onclick=()=>resolverPermiso(b.dataset.rj,'rechazado'));
+}
+function solicitarPermiso(){
+  const act=activos();
+  setHead('🌴','Nueva solicitud','Permiso o vacaciones');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Empleado</div><select class="select" id="pf-emp">${act.map(e=>`<option value="${e.id}">${(e.nombre||'')+' '+(e.apellidos||'')}</option>`).join('')}</select></div>
+    <div class="sheet-section"><div class="field-lbl">Tipo</div><select class="select" id="pf-tipo">${Object.entries(TIPOPERM).map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Desde</div><input class="input" id="pf-ini" type="date" value="${hoyISO()}"></div><div><div class="field-lbl">Hasta</div><input class="input" id="pf-fin" type="date" value="${hoyISO()}"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Motivo</div><input class="input" id="pf-mot" placeholder="Motivo de la solicitud"></div>
+    <div class="sheet-section"><button class="btn primary" id="pf-save" style="width:100%">Registrar solicitud</button></div>`;
+  openSheet();
+  $('#pf-save').onclick=async()=>{
+    const ini=$('#pf-ini').value,fin=$('#pf-fin').value||$('#pf-ini').value;if(!ini){toast('Falta fecha','warn');return}
+    const dias=Math.max(1,Math.round((new Date(fin)-new Date(ini))/86400000)+1);
+    const{error}=await sb.from('rrhh_permisos').insert({marca_id:MARCA,local_id:LOCAL,empleado_id:$('#pf-emp').value,tipo:$('#pf-tipo').value,fecha_inicio:ini,fecha_fin:fin,dias,motivo:$('#pf-mot').value||null,estado:'pendiente'});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    closeSheet();await loadPermisos();render();toast('Servido · solicitud registrada','ok');
+  };
+}
+async function resolverPermiso(id,estado){
+  const{error}=await sb.from('rrhh_permisos').update({estado,aprobado_por:'gerencia',resuelto_at:nowISO()}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadPermisos();render();toast(estado==='aprobado'?'Va · aprobado':'Rechazado',estado==='aprobado'?'ok':'warn');
+}
 function renderEquipo(){
   const act=activos();const planilla=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
   const areas=[...new Set(state.emp.map(e=>normArea(e.area)))];
