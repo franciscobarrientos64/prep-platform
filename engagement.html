@@ -111,13 +111,14 @@ async function loadClientes(){const{data}=await sb.from('ms_clientes').select('*
 async function loadPuntos(){const{data}=await sb.from('eng_puntos').select('*').eq('marca_id',MARCA);state.puntos=data||[]}
 async function loadCampanas(){const{data}=await sb.from('eng_campanas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false}).limit(50);state.campanas=data||[]}
 async function loadResenas(){const{data}=await sb.from('eng_resenas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.resenas=data||[]}
-async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas()]);render();$('#boot').classList.add('gone')}
+async function loadEventos(){const{data}=await sb.from('eng_eventos').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.eventos=data||[]}
+async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas(),loadEventos()]);render();$('#boot').classList.add('gone')}
 
 function render(){
   $('#hinfo').innerHTML=`<span class="pill">${state.clientes.length} clientes</span><span class="pill">${money(state.clientes.reduce((a,c)=>a+Number(c.total_gastado||0),0))} histórico</span>`;
-  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews'],['eventos','Catering','celebration']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else renderResenas();
+  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else if(state.view==='eventos')renderEventos();else renderResenas();
 }
 
 function renderClientes(){
@@ -195,6 +196,47 @@ async function registrarCampana(a,canal){
   const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:canal||'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:canal==='email'?a.cs.filter(c=>c.email).length:a.cs.length,estado:'enviada',fecha:hoyISO()});
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadCampanas();render();toast('Servido · campaña '+(canal||'whatsapp')+' registrada','ok');
+}
+const TIPOEV={catering:'🍽️ Catering',evento_local:'🎉 Evento en local',privado:'🥂 Privado'};
+const ESTEV={cotizacion:'Cotización',confirmado:'Confirmado',realizado:'Realizado',cancelado:'Cancelado'};
+function evBadge(e){const c=e==='confirmado'?'var(--green)':e==='realizado'?'var(--primary)':e==='cancelado'?'var(--secondary)':'var(--tertiary)';return `<span class="badge" style="background:${c};color:${e==='cotizacion'?'var(--ink)':'#fff'}">${ESTEV[e]||e}</span>`}
+function renderEventos(){
+  const ev=state.eventos||[];const hoy=hoyISO();
+  const prox=ev.filter(e=>e.fecha>=hoy&&e.estado!=='cancelado');
+  const pipeline=ev.filter(e=>['cotizacion','confirmado'].includes(e.estado)).reduce((s,e)=>s+Number(e.monto_total||0),0);
+  const porCobrar=ev.filter(e=>e.estado!=='cancelado').reduce((s,e)=>s+(Number(e.monto_total||0)-Number(e.adelanto||0)),0);
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="v">${prox.length}</div><div class="l">Eventos próximos</div></div>
+      <div class="kpi good"><div class="v">${money(pipeline)}</div><div class="l">Pipeline (cotiz.+confirm.)</div></div>
+      <div class="kpi"><div class="v">${money(porCobrar)}</div><div class="l">Saldo por cobrar</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn primary" id="ev-new"><span class="material-symbols-outlined" style="font-size:18px">add</span>Nuevo evento / cotización</button></div>
+    ${ev.length?ev.map(e=>{const saldo=Number(e.monto_total||0)-Number(e.adelanto||0);return `<div class="kpi" style="cursor:pointer;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap" data-ev="${e.id}">
+      <div style="flex:1;min-width:170px"><div style="font-weight:700">${e.nombre||'Evento'}</div><div class="mono" style="font-size:12px;opacity:.7">${TIPOEV[e.tipo]||e.tipo} · ${e.fecha||''} · ${e.personas||0} pax</div>${e.contacto?`<div style="font-size:12px;opacity:.6">📞 ${e.contacto}</div>`:''}</div>
+      <div style="text-align:right"><div style="font-family:var(--font-display);font-size:18px">${money(e.monto_total)}</div><div class="mono" style="font-size:11px;opacity:.7">${saldo>0?('saldo '+money(saldo)):'pagado'}</div></div>
+      ${evBadge(e.estado)}</div>`}).join(''):'<div class="kpi" style="text-align:center;opacity:.6">Sin eventos. Crea una cotización.</div>'}`;
+  $('#ev-new').onclick=()=>editarEvento(null);
+  $$('#screen [data-ev]').forEach(b=>b.onclick=()=>editarEvento(b.dataset.ev));
+}
+function editarEvento(id){
+  const e=id?(state.eventos.find(x=>x.id===id)||{}):{};
+  setHead('🎉',id?'Evento':'Nuevo evento','Catering / eventos');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Nombre del evento</div><input class="input" id="ev-nom" value="${e.nombre||''}" placeholder="Ej. Cumpleaños, catering oficina"></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Tipo</div><select class="select" id="ev-tipo">${Object.entries(TIPOEV).map(([k,l])=>`<option value="${k}" ${e.tipo===k?'selected':''}>${l}</option>`).join('')}</select></div><div><div class="field-lbl">Fecha</div><input class="input" id="ev-fecha" type="date" value="${e.fecha||hoyISO()}"></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Personas</div><input class="input" id="ev-pax" type="number" value="${e.personas||0}"></div><div><div class="field-lbl">Contacto</div><input class="input" id="ev-cont" value="${e.contacto||''}"></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Monto total (S/)</div><input class="input" id="ev-monto" type="number" value="${e.monto_total||0}"></div><div><div class="field-lbl">Adelanto (S/)</div><input class="input" id="ev-adel" type="number" value="${e.adelanto||0}"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Estado</div><select class="select" id="ev-estado">${Object.entries(ESTEV).map(([k,l])=>`<option value="${k}" ${e.estado===k?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="sheet-section"><div class="field-lbl">Notas</div><input class="input" id="ev-notas" value="${e.notas||''}" placeholder="Menú, requerimientos..."></div>
+    <div class="sheet-section"><button class="btn primary" id="ev-save" style="width:100%">${id?'Guardar':'Crear evento'}</button></div>`;
+  openSheet();
+  $('#ev-save').onclick=async()=>{
+    const row={marca_id:MARCA,local_id:LOCAL,nombre:$('#ev-nom').value||'Evento',tipo:$('#ev-tipo').value,fecha:$('#ev-fecha').value||null,personas:Number($('#ev-pax').value)||0,monto_total:Number($('#ev-monto').value)||0,adelanto:Number($('#ev-adel').value)||0,estado:$('#ev-estado').value,contacto:$('#ev-cont').value||null,notas:$('#ev-notas').value||null};
+    const{error}=id?await sb.from('eng_eventos').update(row).eq('id',id):await sb.from('eng_eventos').insert(row);
+    if(error){toast('Atrás: '+error.message,'err');return}
+    closeSheet();await loadEventos();render();toast('Servido · evento guardado','ok');
+  };
 }
 function renderResenas(){
   const r=state.resenas;const prom=r.length?(r.reduce((a,x)=>a+Number(x.rating||0),0)/r.length):0;
