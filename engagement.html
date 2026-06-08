@@ -86,7 +86,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA='m6',LOCAL='l11';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const NIVELES=[{k:'Diamante',min:5000,emoji:'💎',c:'#7c3aed'},{k:'Oro',min:2000,emoji:'🥇',c:'#d4a000'},{k:'Plata',min:800,emoji:'🥈',c:'#9aa0a6'},{k:'Bronce',min:0,emoji:'🥉',c:'#b87333'}];
-const state={clientes:[],puntos:[],campanas:[],view:'clientes',q:'',seg:'todos',channel:null};
+const state={clientes:[],puntos:[],campanas:[],resenas:[],view:'clientes',q:'',seg:'todos',channel:null};
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
 function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
@@ -107,13 +107,14 @@ function waLink(tel,msg){const t=(tel||'').replace(/\D/g,'');return 'https://wa.
 async function loadClientes(){const{data}=await sb.from('ms_clientes').select('*').eq('marca_id',MARCA).order('total_gastado',{ascending:false});state.clientes=data||[]}
 async function loadPuntos(){const{data}=await sb.from('eng_puntos').select('*').eq('marca_id',MARCA);state.puntos=data||[]}
 async function loadCampanas(){const{data}=await sb.from('eng_campanas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false}).limit(50);state.campanas=data||[]}
-async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas()]);render();$('#boot').classList.add('gone')}
+async function loadResenas(){const{data}=await sb.from('eng_resenas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.resenas=data||[]}
+async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas()]);render();$('#boot').classList.add('gone')}
 
 function render(){
   $('#hinfo').innerHTML=`<span class="pill">${state.clientes.length} clientes</span><span class="pill">${money(state.clientes.reduce((a,c)=>a+Number(c.total_gastado||0),0))} histórico</span>`;
-  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else renderCampanas();
+  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else renderResenas();
 }
 
 function renderClientes(){
@@ -180,15 +181,38 @@ function renderCampanas(){
       <div class="ah"><h3>${a.t}</h3><span class="pill">${a.cs.length}</span></div>
       ${a.cs.length?a.cs.slice(0,6).map(c=>`<div class="ci"><span>${nombre(c)} <span style="opacity:.5">· ${c.telefono||'sin tel'}</span></span><a class="mini-btn wa" href="${waLink(c.telefono,MSGS[a.k](c))}" target="_blank" rel="noopener">WhatsApp</a></div>`).join(''):'<div style="opacity:.5;font-size:12px;padding:6px 0">Sin clientes en esta audiencia</div>'}
       ${a.cs.length>6?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;padding:6px 0">+${a.cs.length-6} más…</div>`:''}
-      ${a.cs.length?`<button class="btn" style="margin-top:8px" data-camp="${a.k}"><span class="material-symbols-outlined">campaign</span>Registrar campaña (${a.cs.length})</button>`:''}
+      ${a.cs.length?`<div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><a class="btn" style="background:var(--secondary);color:#fff" href="${mailtoAud(a)}" target="_blank" rel="noopener" data-email="${a.k}"><span class="material-symbols-outlined">mail</span>Email (${a.cs.filter(c=>c.email).length})</a><button class="btn" data-camp="${a.k}"><span class="material-symbols-outlined">campaign</span>Registrar WhatsApp</button></div>`:''}
     </div>`).join('')}
     ${state.campanas.length?`<div class="grp-t">Historial de campañas</div>${state.campanas.map(c=>`<div class="cli" style="cursor:default"><div class="info"><h3>${c.nombre||c.audiencia}</h3><div class="meta"><span>${c.fecha}</span><span>${c.canal}</span><span>${c.n_destinatarios} destinatarios</span></div></div></div>`).join('')}`:''}`;
-  $$('#screen [data-camp]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.camp);registrarCampana(a)});
+  $$('#screen [data-camp]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.camp);registrarCampana(a,'whatsapp')});
+  $$('#screen [data-email]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.email);setTimeout(()=>registrarCampana(a,'email'),200)});
 }
-async function registrarCampana(a){
-  const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:a.cs.length,estado:'enviada',fecha:hoyISO()});
+function mailtoAud(a){const correos=a.cs.filter(c=>c.email).map(c=>c.email);const msg=a.cs[0]?MSGS[a.k](a.cs[0]).replace(/\{nombre\}/g,''):'';return 'mailto:?bcc='+encodeURIComponent(correos.join(','))+'&subject='+encodeURIComponent('Casa Italia 🇮🇹')+'&body='+encodeURIComponent(msg)}
+async function registrarCampana(a,canal){
+  const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:canal||'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:canal==='email'?a.cs.filter(c=>c.email).length:a.cs.length,estado:'enviada',fecha:hoyISO()});
   if(error){toast('Atrás: '+error.message,'err');return}
-  await loadCampanas();render();toast('Servido · campaña registrada ('+a.cs.length+' destinatarios)','ok');
+  await loadCampanas();render();toast('Servido · campaña '+(canal||'whatsapp')+' registrada','ok');
+}
+function renderResenas(){
+  const r=state.resenas;const prom=r.length?(r.reduce((a,x)=>a+Number(x.rating||0),0)/r.length):0;
+  const nuevas=r.filter(x=>x.estado==='nueva').length;
+  const estrellas=n=>'★'.repeat(n||0)+'☆'.repeat(5-(n||0));
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${prom?prom.toFixed(1):'—'}</div><div class="l">Rating promedio</div></div>
+      <div class="kpi"><div class="v">${r.length}</div><div class="l">Reseñas</div></div>
+      <div class="kpi"><div class="v">${nuevas}</div><div class="l">Por responder</div></div></div>
+    ${r.map(x=>`<div class="cli" style="cursor:pointer;align-items:flex-start" data-rid="${x.id}"><div class="av">${x.fuente==='google'?'G':x.fuente==='tripadvisor'?'T':x.fuente==='instagram'?'IG':'★'}</div>
+      <div class="info"><h3>${x.nombre||'Anónimo'} <span style="color:var(--tertiary)">${estrellas(x.rating)}</span></h3><div style="font-size:13px;opacity:.8;margin-top:2px">${x.comentario||''}</div>${x.respuesta?`<div style="font-size:12px;opacity:.7;margin-top:4px;border-left:2px solid var(--primary);padding-left:8px">↳ ${x.respuesta}</div>`:''}<div class="meta" style="margin-top:4px"><span>${x.fuente}</span><span>${x.fecha}</span><span class="tier" style="background:${x.estado==='respondida'?'var(--green)':x.estado==='nueva'?'var(--secondary)':'var(--gray-soft)'};color:${x.estado==='archivada'?'var(--ink)':'#fff'}">${x.estado}</span></div></div></div>`).join('')||'<div class="empty">Sin reseñas</div>'}`;
+  $$('#screen [data-rid]').forEach(el=>el.onclick=()=>responderResena(state.resenas.find(x=>x.id===el.dataset.rid)));
+}
+function responderResena(x){
+  setHead(x.fuente==='google'?'G':'★','Reseña de '+(x.nombre||'Anónimo'),x.fuente+' · '+'★'.repeat(x.rating||0));
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div style="font-size:15px;line-height:1.5">${x.comentario||''}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Respuesta pública</div><textarea class="input" id="rs-resp" style="min-height:90px" placeholder="Gracias por tu reseña...">${x.respuesta||''}</textarea></div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="rs-arch">Archivar</button><button class="btn primary" id="rs-save">Guardar respuesta</button></div></div>`;
+  openSheet();
+  $('#rs-save').onclick=async()=>{const resp=$('#rs-resp').value;const{error}=await sb.from('eng_resenas').update({respuesta:resp,estado:resp?'respondida':'nueva'}).eq('id',x.id);if(error){toast('Atrás','err');return}await loadResenas();closeSheet();render();toast('Servido · respuesta guardada','ok')};
+  $('#rs-arch').onclick=async()=>{await sb.from('eng_resenas').update({estado:'archivada'}).eq('id',x.id);await loadResenas();closeSheet();render();toast('Reseña archivada','warn')};
 }
 
 function abrirFicha(c){
