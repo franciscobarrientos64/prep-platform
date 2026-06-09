@@ -83,7 +83,11 @@ async function load(){
   const peds=pe.data||[];const ids=peds.map(p=>p.id);
   let items=[];if(ids.length){const{data}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,precio_total,estado,pedido_id').in('pedido_id',ids).neq('estado','cancelado');items=data||[]}
   const{data:recetas}=await sb.from('inv_recetas').select('id,ingredientes').eq('marca_id',MARCA);
-  state.data={peds,items,recetas:recetas||[],prod:prod.data||[],stock:stock.data||[],merm:merm.data||[],vu:vu.data||[],emp:emp.data||[],res:res.data||[],dl:dl.data||[],fin:fin_p.data||[]};
+  const[allPe,locs]=await Promise.all([
+    sb.from('ca_pedidos').select('local_id,total').eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00'),
+    sb.from('inv_locales').select('id,nombre').order('id')
+  ]);
+  state.data={peds,items,recetas:recetas||[],prod:prod.data||[],stock:stock.data||[],merm:merm.data||[],vu:vu.data||[],emp:emp.data||[],res:res.data||[],dl:dl.data||[],fin:fin_p.data||[],sedesRaw:allPe.data||[],locales:locs.data||[]};
   render();$('#boot').classList.add('gone');
 }
 function costoProd(d,pid){const p=d.prod.find(x=>x.id===pid);return p?Number(p.costo||0):0}
@@ -155,8 +159,20 @@ function render(){
       <div class="li" style="font-family:var(--font-display);font-size:17px"><span>Utilidad estimada</span><strong style="color:${utilidad>=0?'var(--green)':'var(--secondary)'}">${money(utilidad)}</strong></div>
       ${state.periodo==='mes'&&presupIng>0?`<div class="li" style="font-size:12px;opacity:.7"><span>Avance vs presupuesto de ingresos</span><span>${Math.round(ventas/presupIng*100)}% de ${money(presupIng)}</span></div>`:''}
     </div>
+    ${sedesPanel()}
     <div style="font-family:var(--font-mono);font-size:10px;opacity:.5;text-align:center;padding:8px">Consolidado de POS, Recetas, Mercado, RRHH, Vuelto, Bienvenida y Delivery. Para análisis tributario formal, ver Finanzas/Contabilidad.</div>`;
   $('#exp-csv').onclick=exportarCSV;
+}
+function sedesPanel(){
+  const d=state.data;const locs=d.locales||[];if(locs.length<2)return'';
+  const g={};(d.sedesRaw||[]).forEach(p=>{const k=p.local_id;(g[k]=g[k]||{v:0,n:0});g[k].v+=Number(p.total||0);g[k].n++;});
+  const rows=locs.map(l=>({l,v:(g[l.id]||{}).v||0,n:(g[l.id]||{}).n||0})).sort((a,b)=>b.v-a.v);
+  const max=Math.max(1,...rows.map(r=>r.v));
+  return `<div class="section-t" style="margin-top:22px">Comparativo de sedes · ${state.periodo==='hoy'?'hoy':state.periodo==='7d'?'7 días':'este mes'}</div>
+    <div class="panel"><table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="text-align:left;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6"><th style="padding:6px">Sede</th><th style="text-align:right">Ventas</th><th style="text-align:right">Pedidos</th><th style="text-align:right">Ticket</th></tr>
+      ${rows.map(r=>`<tr style="border-top:1px solid var(--gray-soft)"><td style="padding:8px 6px"><strong>${r.l.nombre||r.l.id}</strong><div class="track" style="height:6px;border-radius:99px;background:var(--gray-soft);margin-top:4px"><div style="height:100%;border-radius:99px;background:var(--primary);width:${Math.round(r.v/max*100)}%"></div></div></td><td style="text-align:right;font-family:var(--font-mono)">${money(r.v)}</td><td style="text-align:right;font-family:var(--font-mono)">${num(r.n)}</td><td style="text-align:right;font-family:var(--font-mono)">${money(r.n?r.v/r.n:0)}</td></tr>`).join('')}
+    </table></div>`;
 }
 function exportarCSV(){
   const r=state.resumen||{};const per=state.periodo;
