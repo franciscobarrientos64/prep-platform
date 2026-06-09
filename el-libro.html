@@ -107,20 +107,54 @@ async function loadPosts(){const{data}=await sb.from('lb_posts').select('*').eq(
 async function loadChecklists(){const{data}=await sb.from('lb_checklists').select('*').eq('local_id',LOCAL).eq('activo',true).order('turno');state.checklists=data||[]}
 async function loadRuns(){const{data}=await sb.from('lb_checklist_runs').select('*').eq('local_id',LOCAL).eq('fecha',hoyISO());state.runs=data||[]}
 async function loadBitacora(){const{data}=await sb.from('lb_bitacora').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(60);state.bitacora=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadRecetario(){
+  try{
+    const[r,p]=await Promise.all([
+      sb.from('inv_recetas').select('id,nombre,emoji,categoria_menu,tipo,etapas,ingredientes,activo,rendimiento,porciones').eq('marca_id',MARCA),
+      sb.from('inv_productos').select('id,nombre,unidad').eq('marca_id',MARCA)]);
+    state.recetario=(r.data||[]).filter(x=>x.activo!==false);
+    state.prodMap={};(p.data||[]).forEach(x=>state.prodMap[x.id]=x);
+  }catch(e){state.recetario=state.recetario||[];state.prodMap=state.prodMap||{}}
+}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadRecetario()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
-  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='checklists')renderChecklists();else renderBitacora();
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
+  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='checklists')renderChecklists();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
   return `<div class="post ${p.fijado?'fij':''}" data-id="${p.id}"><div class="ph"><h3>${p.fijado?'📌 ':''}${p.titulo}</h3>${p.prioridad==='alta'?'<span class="tagx alta">importante</span>':''}</div>
     <div class="ex">${ex}</div><div class="meta"><span class="tagx cat">${p.categoria||'General'}</span><span>${p.autor||''}</span><span>${fechaCorta(p.created_at)}</span></div></div>`;
+}
+function ingTxt(i){const p=state.prodMap&&state.prodMap[i.pid];const nom=i.nombre||(p&&p.nombre)||i.pid||'ingrediente';const u=i.unidad||(p&&p.unidad)||'';return (i.cantidad!=null?(Number(i.cantidad)+' '+u+' · '):'')+nom}
+function renderRecetario(){
+  state.recOpen=state.recOpen||{};
+  const recs=(state.recetario||[]).slice().sort((a,b)=>(a.categoria_menu||'').localeCompare(b.categoria_menu||'')||a.nombre.localeCompare(b.nombre));
+  const q=(state.recQuery||'').toLowerCase();
+  const fil=q?recs.filter(r=>r.nombre.toLowerCase().includes(q)):recs;
+  const cats=[...new Set(fil.map(r=>r.categoria_menu||'Otros'))];
+  $('#screen').innerHTML=`
+    <div style="margin-bottom:12px"><input id="rec-q" placeholder="Buscar plato..." value="${state.recQuery||''}" style="width:100%;padding:11px 14px;border:2px solid var(--outline);border-radius:12px;font-size:14px"></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">${fil.length} recetas activas · toca una para ver su preparación 👨‍🍳</div>
+    ${cats.map(c=>`<div style="font-family:var(--font-display);font-size:17px;margin:14px 0 8px">${c}</div>
+      ${fil.filter(r=>(r.categoria_menu||'Otros')===c).map(r=>{const op=!!state.recOpen[r.id];const et=Array.isArray(r.etapas)?r.etapas:[];const ing=Array.isArray(r.ingredientes)?r.ingredientes:[];
+        return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);margin-bottom:8px;overflow:hidden">
+          <div data-rec="${r.id}" style="padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+            <span style="font-size:22px">${r.emoji||'🍽️'}</span><div style="flex:1"><div style="font-weight:700">${r.nombre}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${ing.length} insumos · ${et.length||1} pasos${r.rendimiento?(' · rinde '+r.rendimiento):''}</div></div>
+            <span class="material-symbols-outlined" style="opacity:.5;transform:rotate(${op?90:0}deg);transition:.15s">chevron_right</span></div>
+          ${op?`<div style="padding:0 14px 14px;border-top:1px dashed var(--gray-soft)">
+            ${ing.length?`<div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:10px 0 6px">Ingredientes</div><div style="font-size:13px;line-height:1.7">${ing.map(i=>'• '+ingTxt(i)).join('<br>')}</div>`:''}
+            <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:12px 0 6px">Preparación</div>
+            ${et.length?et.map((e,ix)=>`<div style="margin-bottom:8px"><div style="font-weight:700;font-size:13px">${ix+1}. ${e.nombre||e.titulo||('Paso '+(ix+1))}</div>${(e.metodo||e.pasos||e.descripcion)?`<div style="font-size:13px;opacity:.85;white-space:pre-wrap">${e.metodo||e.pasos||e.descripcion}</div>`:''}${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<div style="font-size:12px;opacity:.6;margin-top:3px">${e.ingredientes.map(ingTxt).join(' · ')}</div>`:''}</div>`).join(''):'<div style="font-size:13px;opacity:.6">Sin pasos cargados. Pídele al chef que complete la receta en el módulo Recetas.</div>'}
+          </div>`:''}
+        </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
+  $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
+  $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
 }
 function renderTablon(){
   const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
