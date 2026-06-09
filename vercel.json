@@ -2,6 +2,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/audit",
+      "destination": "/audit.html"
+    },
+    {
       "source": "/display",
       "destination": "/display.html"
     },

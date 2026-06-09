@@ -2078,6 +2078,15 @@ function abrirMover(ped, mesaActual) {
   $$('#sheet-body button[data-target]').forEach(b => b.onclick = () => moverMesa(ped.id, b.dataset.target));
 }
 
+/* ========= AUDIT LOG (CA-12) ========= */
+function logAudit(accion, detalle, pedidoId, monto) {
+  try {
+    const u = state.empleados.find(e => e.id === state.mozoId) || {};
+    const nom = (u.nombre ? (u.nombre + ' ' + (u.apellidos || '')) : 'POS').trim();
+    PrepSync.write('ca_audit', 'insert', { values: { id: PrepSync.uuid(), marca_id: MARCA, local_id: LOCAL, pedido_id: pedidoId || null, usuario: nom, accion, detalle: detalle || null, monto: (monto != null ? monto : null), created_at: new Date().toISOString() } });
+  } catch (e) {}
+}
+
 /* ========= ACCIONES DB (pedido shell) ========= */
 async function abrirPedido(mesa, comensales, tabNombre = null) {
   if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige el mozo en turno', 'warn'); return; }
@@ -2109,6 +2118,7 @@ async function abrirPedido(mesa, comensales, tabNombre = null) {
   state.pedidos.push(row);
   state.pedidoItemsCache[row.id] = [];
   PrepSync.cacheSet('pedidos', state.pedidos);
+  logAudit('abrir_pedido', (barra?'tab barra':'mesa '+mesa.numero)+' · #'+row.ticket_num, row.id);
   toast((queued?'Sin conexión · ':'Va · ') + (barra ? 'tab ' + (tabNombre || '#'+row.ticket_num) + ' en barra' : 'pedido #' + row.ticket_num + ' en mesa ' + mesa.numero) + (queued?' (se sincroniza luego)':''), queued?'warn':'ok');
   closeSheet();
   abrirPedidoScreen(row.id);
@@ -2134,6 +2144,7 @@ async function cancelar(pedidoId) {
     estado:'cancelada', cerrada_at:new Date().toISOString(),
   }).eq('id', pedidoId);
   if (error) return toast('Atrás: '+error.message,'err');
+  logAudit('cancelar_pedido', 'pedido cancelado', pedidoId);
   toast('Servido · pedido cancelado','ok');
   await loadPedidos(); closeSheet(); render();
 }
@@ -3145,6 +3156,7 @@ async function agregarItem(r, qty, seat, notas, urgente, ped, mods = [], course 
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
   state.pedidoItemsCache[ped.id] = [...(state.pedidoItemsCache[ped.id]||[]), payload];
   PrepSync.cacheSet('items_' + ped.id, state.pedidoItemsCache[ped.id]);
+  logAudit('agregar_item', r.nombre + ' ×' + qty, ped.id, payload.precio_total);
   await recalcularYPersistirTotales(ped.id);
   if (PrepSync.online()) await loadPedidos();
   render();
@@ -3940,6 +3952,7 @@ async function confirmarCobro() {
     const r5 = await sb.from('ca_pedidos').update(updPed).eq('id', ped.id);
     if (r5.error) throw new Error('Pedido: ' + r5.error.message);
 
+    logAudit('cobro', 'mesa cerrada' + (T.propina>0?(' · propina '+money(T.propina)):''), ped.id, T.total);
     toast('Servido · mesa cerrada · ' + money(T.total), 'ok');
     await loadPedidos();
     state.screen = 'floor';
