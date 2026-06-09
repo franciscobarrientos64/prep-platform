@@ -271,13 +271,20 @@ function renderIntel(){
   conMargen.forEach(x=>cats[clasifica(x)[0]].push(x));
   // qué preparar
   const prep=conIng.map(r=>({r,mp:maxPorciones(r)})).filter(x=>x.mp).sort((a,b)=>a.mp.n-b.mp.n);
+  state.meExport=conMargen.map(x=>({nombre:x.r.nombre,categoria:x.r.categoria_menu||'',clase:clasifica(x)[0].replace(/[^\w áéíóúÁÉÍÓÚñ]/g,'').trim(),vendidos:x.pop,precio:Number(x.r.precio_venta||0).toFixed(2),margen:x.margen.toFixed(2),food_cost_pct:foodCost(x.r)!=null?foodCost(x.r).toFixed(1):''}));
   $('#screen').innerHTML=`
-    <div class="grp-t">🧠 Ingeniería de menú <span style="font-family:var(--font-mono);font-size:12px;opacity:.55">· ventas últimos 30 días × margen</span></div>
+    <div class="grp-t" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span>🧠 Ingeniería de menú <span style="font-family:var(--font-mono);font-size:12px;opacity:.55">· ventas últimos 30 días × margen</span></span>${conMargen.length?`<button id="me-exp" class="mini-btn"><span class="material-symbols-outlined" style="font-size:15px">download</span>CSV</button>`:''}</div>
     ${conMargen.length?Object.entries(cats).map(([k,arr])=>arr.length?`<div style="margin-bottom:6px"><div style="font-weight:700;font-size:14px;margin:8px 0 4px">${k} <span style="opacity:.5;font-family:var(--font-mono);font-size:11px">${k==='⭐ Estrella'?'mantener y destacar':k==='🐄 Vaca'?'subir precio o bajar costo':k==='🧩 Dilema'?'promocionar / reubicar':'evaluar quitar'}</span></div>${arr.sort((a,b)=>b.pop-a.pop).map(x=>`<div class="rec" style="cursor:pointer" data-id="${x.r.id}"><div class="em">${x.r.emoji||'🍽️'}</div><div class="info"><h3>${x.r.nombre}</h3><div class="meta"><span>${x.pop} vendidos</span><span>margen ${money(x.margen)}</span><span>FC ${foodCost(x.r)!=null?foodCost(x.r).toFixed(0)+'%':'—'}</span></div></div></div>`).join('')}</div>`:'').join('')
       :'<div class="empty">Costea recetas y registra ventas para ver la ingeniería de menú.</div>'}
     <div class="grp-t" style="margin-top:20px">🍳 ¿Qué puedo preparar con el stock actual?</div>
     ${prep.length?prep.map(x=>`<div class="rec" data-id="${x.r.id}"><div class="em">${x.r.emoji||'🍽️'}</div><div class="info"><h3>${x.r.nombre}</h3><div class="meta"><span>alcanza para <b>${x.mp.n}</b> porc.</span>${x.mp.lim?`<span>limita: ${x.mp.lim}</span>`:''}</div></div><div class="right"><span class="fc ${x.mp.n<=2?'bad':x.mp.n<=8?'mid':'ok'}">${x.mp.n}</span></div></div>`).join(''):'<div class="empty">Vincula ingredientes a Mercado para calcular porciones disponibles.</div>'}`;
   $$('#screen .rec[data-id]').forEach(c=>c.onclick=()=>verReceta(state.recetas.find(r=>r.id===c.dataset.id)));
+  if($('#me-exp'))$('#me-exp').onclick=()=>{
+    const cols=['nombre','categoria','clase','vendidos','precio','margen','food_cost_pct'];
+    const rows=[cols].concat((state.meExport||[]).map(o=>cols.map(c=>o[c])));
+    const csv='﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='prep-ingenieria-menu-'+(new Date().toISOString().slice(0,10))+'.csv';document.body.appendChild(a);a.click();a.remove();
+  };
 }
 
 /* ====== MENÚS ====== */
