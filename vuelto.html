@@ -111,9 +111,41 @@ function render(){
   const hoy=state.gastos.filter(g=>g.fecha===hoyISO()&&g.estado!=='rechazado').reduce((a,g)=>a+Number(g.monto||0),0);
   const porAprob=state.gastos.filter(g=>g.estado==='registrado').length;
   $('#hinfo').innerHTML=`<span class="pill">${money(hoy)} hoy</span><span class="pill ${porAprob?'alert':''}">${porAprob} por aprobar</span>`;
-  $('#tabs').innerHTML=[['gastos','Gastos','receipt_long'],['resumen','Resumen / cierre','calculate']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['gastos','Gastos','receipt_long'],['resumen','Resumen / cierre','calculate'],['conciliacion','Conciliación','account_balance_wallet']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='gastos')renderGastos();else renderResumen();
+  if(state.view==='gastos')renderGastos();else if(state.view==='conciliacion')renderConciliacion();else renderResumen();
+}
+function renderConciliacion(){
+  const fkey='prep_vuelto_fondo_'+LOCAL;
+  const fondo=Number(localStorage.getItem(fkey)||300);
+  const mes=hoyISO().slice(0,7);
+  const gastosEf=state.gastos.filter(g=>g.estado!=='rechazado'&&(g.metodo==='efectivo'||!g.metodo)&&(g.fecha||'').slice(0,7)===mes).reduce((a,g)=>a+Number(g.monto||0),0);
+  const esperado=+(fondo-gastosEf).toFixed(2);
+  const contado=state.contadoCaja!=null?state.contadoCaja:esperado;
+  const dif=+(contado-esperado).toFixed(2);
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${money(fondo)}</div><div class="l">Fondo de caja chica</div></div>
+      <div class="kpi"><div class="v">${money(gastosEf)}</div><div class="l">Gastos efectivo (mes)</div></div>
+      <div class="kpi"><div class="v">${money(esperado)}</div><div class="l">Efectivo esperado</div></div></div>
+    <div class="card" style="background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:12px">
+      <div class="field-lbl">Fondo inicial (S/) — el monto con el que arranca la caja</div>
+      <input class="input" id="cc-fondo" type="number" value="${fondo}" style="margin-bottom:12px">
+      <div class="field-lbl">Efectivo contado ahora (S/)</div>
+      <input class="input" id="cc-contado" type="number" value="${contado}" placeholder="Cuenta el efectivo y anótalo">
+    </div>
+    <div class="card" style="background:${dif===0?'var(--green-soft)':Math.abs(dif)<5?'var(--amber-soft)':'var(--red-soft)'};border:2px solid var(--outline);border-radius:16px;padding:16px;margin-bottom:12px;text-align:center">
+      <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;opacity:.6">${dif===0?'Cuadra ✅':dif>0?'Sobrante':'Faltante'}</div>
+      <div style="font-family:var(--font-display);font-size:34px;color:${dif===0?'var(--green)':dif>0?'var(--primary)':'var(--secondary)'}">${dif>0?'+':''}${money(dif)}</div>
+      <div style="font-size:12px;opacity:.7">Esperado ${money(esperado)} · Contado ${money(contado)}</div>
+    </div>
+    <button class="btn primary" id="cc-save" style="width:100%"><span class="material-symbols-outlined">save</span>Registrar arqueo</button>`;
+  $('#cc-fondo').onchange=e=>{localStorage.setItem(fkey,Number(e.target.value)||0);renderConciliacion()};
+  $('#cc-contado').oninput=e=>{state.contadoCaja=Number(e.target.value)||0;const el=$('#cc-contado');renderConciliacion();const n=$('#cc-contado');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}};
+  $('#cc-save').onclick=async()=>{
+    const{error}=await sb.from('vu_arqueos').insert({marca_id:MARCA,local_id:LOCAL,fecha:hoyISO(),fondo,gastos_efectivo:gastosEf,esperado,contado,diferencia:dif,responsable:'gerencia'});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    toast(dif===0?'Servido · caja cuadra':'Arqueo registrado ('+(dif>0?'sobrante':'faltante')+' '+money(Math.abs(dif))+')',dif===0?'ok':'warn');
+  };
 }
 function renderGastos(){
   const mes=hoyISO().slice(0,7);
