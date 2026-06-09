@@ -184,11 +184,13 @@ function editarPost(p){
   setHead('✏️',ed?'Editar':'Nuevo '+(tipo==='procedimiento'?'procedimiento':'comunicado'),'El Libro');
   $('#sheet-body').innerHTML=`
     <div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="x-tit" value="${(c.titulo||'').replace(/"/g,'&quot;')}"></div>
-    <div class="sheet-section grid2"><div><div class="field-lbl">Categoría</div><input class="input" id="x-cat" value="${c.categoria||''}" placeholder="Cocina, Salón…"></div><div><div class="field-lbl">Autor</div><input class="input" id="x-aut" value="${c.autor||''}"></div></div>
+    ${tipo==='procedimiento'?`<div class="sheet-section"><div class="field-lbl">Categoría</div><div class="chips" id="x-catchips">${['HACCP','Manual de posición','Onboarding','Seguridad','Cocina','Salón','Bar','General'].map(x=>`<button class="chip ${c.categoria===x?'active':''}" data-cc="${x}">${x}</button>`).join('')}</div></div>`:''}
+    <div class="sheet-section grid2"><div><div class="field-lbl">Categoría${tipo==='procedimiento'?' (o escribe otra)':''}</div><input class="input" id="x-cat" value="${c.categoria||''}" placeholder="Cocina, Salón…"></div><div><div class="field-lbl">Autor</div><input class="input" id="x-aut" value="${c.autor||''}"></div></div>
     ${tipo!=='procedimiento'?`<div class="sheet-section"><div class="field-lbl">Prioridad</div><div class="chips" id="x-pri">${['normal','alta'].map(x=>`<button class="chip ${c.prioridad===x?'active':''}" data-p="${x}">${x}</button>`).join('')}</div></div>`:''}
     <div class="sheet-section"><div class="field-lbl">Contenido</div><textarea class="input" id="x-cont" placeholder="Escribe aquí…">${c.contenido||''}</textarea></div>
     <div class="sheet-section"><button class="btn primary" id="x-save"><span class="material-symbols-outlined">save</span>Guardar</button></div>`;
   let pri=c.prioridad;if($('#x-pri'))$$('#x-pri .chip').forEach(b=>b.onclick=()=>{pri=b.dataset.p;$$('#x-pri .chip').forEach(x=>x.classList.toggle('active',x.dataset.p===pri))});
+  $$('#x-catchips .chip').forEach(b=>b.onclick=()=>{$('#x-cat').value=b.dataset.cc;$$('#x-catchips .chip').forEach(x=>x.classList.toggle('active',x.dataset.cc===b.dataset.cc))});
   $('#x-save').onclick=async()=>{const tit=$('#x-tit').value;if(!tit){toast('Falta título','warn');return}
     const payload={marca_id:MARCA,local_id:LOCAL,tipo,titulo:tit,categoria:$('#x-cat').value,autor:$('#x-aut').value,contenido:$('#x-cont').value,prioridad:pri,updated_at:nowISO()};
     const{error}=ed?await sb.from('lb_posts').update(payload).eq('id',p.id):await sb.from('lb_posts').insert(payload);
