@@ -115,13 +115,14 @@ async function loadCampanas(){const{data}=await sb.from('eng_campanas').select('
 async function loadResenas(){const{data}=await sb.from('eng_resenas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.resenas=data||[]}
 async function loadEventos(){const{data}=await sb.from('eng_eventos').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.eventos=data||[]}
 async function loadMenuTrad(){const{data}=await sb.from('inv_recetas').select('id,nombre,descripcion,categoria_menu,traducciones,activo,emoji').eq('marca_id',MARCA).eq('activo',true).order('categoria_menu');state.menu=data||[]}
-async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas(),loadEventos(),loadMenuTrad()]);render();$('#boot').classList.add('gone')}
+async function loadDark(){const{data}=await sb.from('eng_marcas_virtuales').select('*').eq('marca_id',MARCA).order('created_at');state.dark=data||[]}
+async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas(),loadEventos(),loadMenuTrad(),loadDark()]);render();$('#boot').classList.add('gone')}
 
 function render(){
   $('#hinfo').innerHTML=`<span class="pill">${state.clientes.length} clientes</span><span class="pill">${money(state.clientes.reduce((a,c)=>a+Number(c.total_gastado||0),0))} histórico</span>`;
-  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews'],['eventos','Catering','celebration'],['idiomas','Menú idiomas','translate']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews'],['eventos','Catering','celebration'],['idiomas','Menú idiomas','translate'],['dark','Dark kitchen','storefront']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else if(state.view==='eventos')renderEventos();else if(state.view==='idiomas')renderIdiomas();else renderResenas();
+  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else if(state.view==='eventos')renderEventos();else if(state.view==='idiomas')renderIdiomas();else if(state.view==='dark')renderDark();else renderResenas();
 }
 
 function renderClientes(){
@@ -202,6 +203,36 @@ async function registrarCampana(a,canal){
   const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:canal||'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:canal==='email'?a.cs.filter(c=>c.email).length:a.cs.length,estado:'enviada',fecha:hoyISO()});
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadCampanas();render();toast('Servido · campaña '+(canal||'whatsapp')+' registrada','ok');
+}
+const CANALES=['Propio','Rappi','PedidosYa','WhatsApp'];
+function renderDark(){
+  const ds=state.dark||[];
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${ds.length}</div><div class="l">Marcas virtuales</div></div><div class="kpi good"><div class="v">${ds.filter(d=>d.activo).length}</div><div class="l">Activas</div></div></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Una cocina, varias marcas de delivery. Crea marcas virtuales que comparten tu cocina pero tienen su propia carta y canales.</div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn primary" id="dk-new" style="width:auto;padding:11px 16px"><span class="material-symbols-outlined" style="font-size:18px">add_business</span>Nueva marca virtual</button></div>
+    ${ds.map(d=>{const platos=Array.isArray(d.platos)?d.platos.length:0;const can=Array.isArray(d.canales)?d.canales:[];
+      return `<div class="cli" data-dk="${d.id}"><div class="av" style="font-size:24px">${d.emoji||'🏪'}</div><div class="info"><h3>${d.nombre}${!d.activo?' <span style="font-size:10px;opacity:.5">(inactiva)</span>':''}</h3><div class="meta"><span>${platos} platos</span>${can.map(c=>`<span>${c}</span>`).join('')}</div>${d.descripcion?`<div style="font-size:12px;opacity:.6">${d.descripcion}</div>`:''}</div><span class="material-symbols-outlined" style="opacity:.4">edit</span></div>`}).join('')||'<div class="empty">Sin marcas virtuales. Crea la primera.</div>'}`;
+  $('#dk-new').onclick=()=>editarDark(null);
+  $$('#screen [data-dk]').forEach(b=>b.onclick=()=>editarDark(b.dataset.dk));
+}
+function editarDark(id){
+  const d=id?(state.dark.find(x=>x.id===id)||{}):{};const can=Array.isArray(d.canales)?d.canales.slice():[];const platos=Array.isArray(d.platos)?d.platos.slice():[];
+  setHead(d.emoji||'🏪',id?'Marca virtual':'Nueva marca virtual','Dark kitchen');
+  const draw=()=>{$('#sheet-body').innerHTML=`
+    <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="dk-nom" value="${(d.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Emoji</div><input class="input" id="dk-emo" value="${d.emoji||''}" placeholder="🍝"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Descripción</div><input class="input" id="dk-desc" value="${(d.descripcion||'').replace(/"/g,'&quot;')}"></div>
+    <div class="sheet-section"><div class="field-lbl">Canales</div><div class="chips" id="dk-can">${CANALES.map(c=>`<button class="chip ${can.includes(c)?'active':''}" data-c="${c}">${c}</button>`).join('')}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Platos de esta marca (${platos.length})</div><div class="chips" id="dk-platos" style="max-height:200px;overflow:auto">${(state.menu||[]).map(r=>`<button class="chip ${platos.includes(r.id)?'active':''}" data-r="${r.id}">${r.emoji||''} ${r.nombre}</button>`).join('')}</div></div>
+    ${id?'<div class="sheet-section"><button class="btn ghost" id="dk-toggle" style="width:100%">'+(d.activo?'Desactivar marca':'Activar marca')+'</button></div>':''}
+    <div class="sheet-section"><button class="btn primary" id="dk-save" style="width:100%">${id?'Guardar':'Crear marca'}</button></div>`;
+    $$('#dk-can .chip').forEach(b=>b.onclick=()=>{const c=b.dataset.c;const i=can.indexOf(c);i<0?can.push(c):can.splice(i,1);draw()});
+    $$('#dk-platos .chip').forEach(b=>b.onclick=()=>{const r=b.dataset.r;const i=platos.indexOf(r);i<0?platos.push(r):platos.splice(i,1);draw()});
+    if($('#dk-toggle'))$('#dk-toggle').onclick=async()=>{await sb.from('eng_marcas_virtuales').update({activo:!d.activo}).eq('id',id);closeSheet();await loadDark();render();toast('Va · actualizado','ok')};
+    $('#dk-save').onclick=async()=>{const row={marca_id:MARCA,local_id:LOCAL,nombre:$('#dk-nom').value||'Marca',emoji:$('#dk-emo').value||'🏪',descripcion:$('#dk-desc').value||null,canales:can,platos:platos,activo:d.activo!==false};
+      const{error}=id?await sb.from('eng_marcas_virtuales').update(row).eq('id',id):await sb.from('eng_marcas_virtuales').insert(row);
+      if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadDark();render();toast('Servido · marca guardada','ok')};
+  };draw();openSheet();
 }
 const LANGSE=[['en','🇬🇧 Inglés'],['pt','🇧🇷 Portugués']];
 function renderIdiomas(){
