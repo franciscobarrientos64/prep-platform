@@ -114,13 +114,14 @@ async function loadPuntos(){const{data}=await sb.from('eng_puntos').select('*').
 async function loadCampanas(){const{data}=await sb.from('eng_campanas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false}).limit(50);state.campanas=data||[]}
 async function loadResenas(){const{data}=await sb.from('eng_resenas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.resenas=data||[]}
 async function loadEventos(){const{data}=await sb.from('eng_eventos').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});state.eventos=data||[]}
-async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas(),loadEventos()]);render();$('#boot').classList.add('gone')}
+async function loadMenuTrad(){const{data}=await sb.from('inv_recetas').select('id,nombre,descripcion,categoria_menu,traducciones,activo,emoji').eq('marca_id',MARCA).eq('activo',true).order('categoria_menu');state.menu=data||[]}
+async function loadAll(){await Promise.all([loadClientes(),loadPuntos(),loadCampanas(),loadResenas(),loadEventos(),loadMenuTrad()]);render();$('#boot').classList.add('gone')}
 
 function render(){
   $('#hinfo').innerHTML=`<span class="pill">${state.clientes.length} clientes</span><span class="pill">${money(state.clientes.reduce((a,c)=>a+Number(c.total_gastado||0),0))} histórico</span>`;
-  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews'],['eventos','Catering','celebration']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['clientes','Clientes','groups'],['loyalty','Loyalty','workspace_premium'],['campanas','Campañas','campaign'],['resenas','Reseñas','reviews'],['eventos','Catering','celebration'],['idiomas','Menú idiomas','translate']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else if(state.view==='eventos')renderEventos();else renderResenas();
+  if(state.view==='clientes')renderClientes();else if(state.view==='loyalty')renderLoyalty();else if(state.view==='campanas')renderCampanas();else if(state.view==='eventos')renderEventos();else if(state.view==='idiomas')renderIdiomas();else renderResenas();
 }
 
 function renderClientes(){
@@ -198,6 +199,27 @@ async function registrarCampana(a,canal){
   const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:canal||'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:canal==='email'?a.cs.filter(c=>c.email).length:a.cs.length,estado:'enviada',fecha:hoyISO()});
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadCampanas();render();toast('Servido · campaña '+(canal||'whatsapp')+' registrada','ok');
+}
+const LANGSE=[['en','🇬🇧 Inglés'],['pt','🇧🇷 Portugués']];
+function renderIdiomas(){
+  const menu=state.menu||[];const trad=menu.filter(r=>r.traducciones&&Object.keys(r.traducciones).length).length;
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${menu.length}</div><div class="l">Platos en carta</div></div><div class="kpi good"><div class="v">${trad}</div><div class="l">Con traducción</div></div><div class="kpi"><div class="v">${menu.length-trad}</div><div class="l">Sin traducir</div></div></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Traduce los platos para zonas turísticas. La carta QR mostrará el selector ES/EN/PT.</div>
+    ${menu.map(r=>{const t=r.traducciones||{};const done=LANGSE.filter(([k])=>t[k]&&t[k].nombre).map(([,l])=>l.split(' ')[0]).join(' ');
+      return `<div class="cli" data-tr="${r.id}"><div class="av">${r.emoji||'🍽️'}</div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${r.categoria_menu||''}</span>${done?`<span style="color:var(--green)">✓ ${done}</span>`:'<span style="opacity:.5">sin traducir</span>'}</div></div><span class="material-symbols-outlined" style="opacity:.4">edit</span></div>`}).join('')||'<div class="empty">No hay platos activos.</div>'}`;
+  $$('#screen [data-tr]').forEach(b=>b.onclick=()=>editarTrad(b.dataset.tr));
+}
+function editarTrad(id){
+  const r=state.menu.find(x=>x.id===id);if(!r)return;const t=Object.assign({},r.traducciones||{});
+  setHead(r.emoji||'🌐','Traducir plato',r.nombre);
+  $('#sheet-body').innerHTML=`<div class="sheet-section" style="opacity:.7"><div class="field-lbl">Original (ES)</div><strong>${r.nombre}</strong>${r.descripcion?`<div style="font-size:13px">${r.descripcion}</div>`:''}</div>`+
+    LANGSE.map(([k,l])=>`<div class="sheet-section"><div class="field-lbl">${l}</div><input class="input" id="tr-${k}-n" placeholder="Nombre" value="${(t[k]&&t[k].nombre||'').replace(/"/g,'&quot;')}" style="margin-bottom:6px"><input class="input" id="tr-${k}-d" placeholder="Descripción" value="${(t[k]&&t[k].descripcion||'').replace(/"/g,'&quot;')}"></div>`).join('')+
+    `<div class="sheet-section"><button class="btn primary" id="tr-save" style="width:100%">Guardar traducciones</button></div>`;
+  openSheet();
+  $('#tr-save').onclick=async()=>{const out={};LANGSE.forEach(([k])=>{const n=$('#tr-'+k+'-n').value.trim(),d=$('#tr-'+k+'-d').value.trim();if(n||d)out[k]={nombre:n,descripcion:d};});
+    const{error}=await sb.from('inv_recetas').update({traducciones:out}).eq('id',id);
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadMenuTrad();render();toast('Servido · traducción guardada','ok')};
 }
 const TIPOEV={catering:'🍽️ Catering',evento_local:'🎉 Evento en local',privado:'🥂 Privado'};
 const ESTEV={cotizacion:'Cotización',confirmado:'Confirmado',realizado:'Realizado',cancelado:'Cancelado'};

@@ -67,7 +67,9 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const qs=new URLSearchParams(location.search);
 const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'l11'),MESA=qs.get('mesa')||'';
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const state={recetas:[],cart:{},sec:null};
+const state={recetas:[],cart:{},sec:null,lang:'es'};
+const LANGS=[['es','ES'],['en','EN'],['pt','PT']];
+function tr(r,f){if(state.lang!=='es'&&r.traducciones&&r.traducciones[state.lang]&&r.traducciones[state.lang][f])return r.traducciones[state.lang][f];return r[f]||''}
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2600)}
 function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
@@ -82,6 +84,11 @@ async function load(){
 function secciones(){return [...new Set(state.recetas.map(r=>r.categoria_menu||'Otros'))]}
 function render(){
   const secs=secciones();if(!state.sec)state.sec=secs[0];
+  const hasTrad=state.recetas.some(r=>r.traducciones&&Object.keys(r.traducciones).length);
+  let lb=document.getElementById('langbar');
+  if(hasTrad){if(!lb){lb=document.createElement('div');lb.id='langbar';lb.style.cssText='display:flex;gap:6px;justify-content:center;padding:8px;background:var(--ink)';document.querySelector('.hero').after(lb);}
+    lb.innerHTML=LANGS.map(([k,l])=>`<button data-lang="${k}" style="padding:5px 12px;border:2px solid #000;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;background:${state.lang===k?'var(--primary)':'#fff'};color:${state.lang===k?'#fff':'#000'}">${l}</button>`).join('');
+    lb.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{state.lang=b.dataset.lang;render()});}
   $('#nav').innerHTML=secs.map(s=>`<button class="${state.sec===s?'active':''}" data-s="${s}">${s}</button>`).join('');
   $$('#nav button').forEach(b=>b.onclick=()=>{state.sec=b.dataset.s;render();document.querySelector('#screen').scrollIntoView({behavior:'smooth',block:'start'})});
   $('#screen').innerHTML=secs.map(sec=>{const rs=state.recetas.filter(r=>(r.categoria_menu||'Otros')===sec);
@@ -90,7 +97,7 @@ function render(){
 }
 function dish(r){const q=state.cart[r.id]?.qty||0;
   return `<div class="dish" data-id="${r.id}"><div class="ph" style="${r.foto_url?`background-image:url(${r.foto_url})`:''}">${r.foto_url?'':(r.emoji||'🍽️')}</div>
-    <div class="b"><h3>${r.nombre}</h3>${r.descripcion?`<div class="ds">${r.descripcion}</div>`:''}${(r.alergenos&&r.alergenos.length)?`<div class="alg">⚠ ${r.alergenos.join(', ')}</div>`:''}
+    <div class="b"><h3>${tr(r,'nombre')}</h3>${tr(r,'descripcion')?`<div class="ds">${tr(r,'descripcion')}</div>`:''}${(r.alergenos&&r.alergenos.length)?`<div class="alg">⚠ ${r.alergenos.join(', ')}</div>`:''}
       <div class="ft"><span class="pr">${money(r.precio_venta)}</span>${q>0?`<div class="qtyc"><button data-m="${r.id}">−</button><span class="n">${q}</span><button data-p="${r.id}">+</button></div>`:`<div class="add" data-p="${r.id}"><span class="material-symbols-outlined">add</span></div>`}</div></div></div>`;
 }
 function bindDishes(){
