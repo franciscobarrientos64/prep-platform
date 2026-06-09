@@ -121,10 +121,10 @@ async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRun
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
-  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='checklists')renderChecklists();else renderBitacora();
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
+  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='checklists')renderChecklists();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -132,6 +132,26 @@ function postCard(p){const ex=(p.contenido||'').split('\n')[0];
     <div class="ex">${ex}</div><div class="meta"><span class="tagx cat">${p.categoria||'General'}</span><span>${p.autor||''}</span><span>${fechaCorta(p.created_at)}</span></div></div>`;
 }
 function ingTxt(i){const p=state.prodMap&&state.prodMap[i.pid];const nom=i.nombre||(p&&p.nombre)||i.pid||'ingrediente';const u=i.unidad||(p&&p.unidad)||'';return (i.cantidad!=null?(Number(i.cantidad)+' '+u+' · '):'')+nom}
+const PLANTILLAS=[
+  {titulo:'Checklist de apertura',categoria:'Apertura',emoji:'🌅',contenido:'☐ Encender equipos (cocina, hornos, refrigeración)\n☐ Verificar temperaturas — HACCP\n☐ Mise en place completo\n☐ Caja con fondo y vuelto\n☐ Limpieza de salón y baños\n☐ Revisar reservas del día\n☐ Briefing con el equipo'},
+  {titulo:'Checklist de cierre',categoria:'Cierre',emoji:'🌙',contenido:'☐ Arqueo de caja chica\n☐ Cuadre de ventas del día\n☐ Apagar y limpiar equipos\n☐ Rotación de stock (FEFO)\n☐ Sacar basura y reciclaje\n☐ Limpieza profunda de cocina\n☐ Cerrar con llave y activar alarma'},
+  {titulo:'SOP · Limpieza y desinfección',categoria:'Limpieza',emoji:'🧼',contenido:'1. Retirar residuos.\n2. Lavar con detergente.\n3. Enjuagar.\n4. Desinfectar (solución clorada 100-200 ppm).\n5. Secar al aire.\nFrecuencia: superficies de contacto cada 4h; pisos 2x/día; campanas semanal.'},
+  {titulo:'Protocolo ante reclamo de cliente',categoria:'Servicio',emoji:'🤝',contenido:'Método LAST:\n• Listen (escucha sin interrumpir)\n• Apologize (discúlpate con empatía)\n• Solve (resuelve: reponer plato, descuento, cortesía)\n• Thank (agradece el feedback)\nEscalar a gerencia si supera tu autoridad. Registrar en Bitácora.'},
+  {titulo:'Manual de Cajero',categoria:'Manual de posición',emoji:'💳',contenido:'- Apertura de caja con fondo registrado.\n- Cobro por POS, verificar método (efectivo/Yape/tarjeta).\n- Emitir comprobante.\n- No dejar la caja abierta ni desatendida.\n- Arqueo al cierre y reporte de diferencias.'},
+  {titulo:'Protocolo de seguridad y emergencias',categoria:'Seguridad',emoji:'🚨',contenido:'- Salidas y extintores señalizados.\n- En sismo: alejarse de ventanas, zona segura, evacuar tras el movimiento.\n- En incendio: cortar gas, usar extintor si es seguro, evacuar y llamar a bomberos (116).\n- Botiquín ubicado en: ____. Responsable de turno coordina.'}
+];
+function renderPlantillas(){
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Plantillas listas para tu operación. Toca "Usar" para copiarlas a tus Procedimientos y editarlas. 📚</div>`+
+    PLANTILLAS.map((p,ix)=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="font-size:22px">${p.emoji}</span><div style="flex:1"><div style="font-weight:700">${p.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${p.categoria}</div></div><button class="btn-ico primary" data-use="${ix}" style="width:auto;padding:8px 14px"><span class="material-symbols-outlined" style="font-size:16px">download</span>Usar</button></div>
+      <div style="font-size:12px;opacity:.7;white-space:pre-wrap;max-height:60px;overflow:hidden">${p.contenido}</div></div>`).join('');
+  $$('#screen [data-use]').forEach(b=>b.onclick=()=>usarPlantilla(PLANTILLAS[Number(b.dataset.use)]));
+}
+async function usarPlantilla(p){
+  const{error}=await sb.from('lb_posts').insert({marca_id:MARCA,local_id:LOCAL,tipo:'procedimiento',titulo:p.titulo,categoria:p.categoria,autor:'Plantilla Prep',contenido:p.contenido,prioridad:'normal',vigente:true});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadPosts();state.view='procedimientos';state.cat='todas';render();toast('Servido · plantilla copiada a Procedimientos','ok');
+}
 function renderRecetario(){
   state.recOpen=state.recOpen||{};
   const recs=(state.recetario||[]).slice().sort((a,b)=>(a.categoria_menu||'').localeCompare(b.categoria_menu||'')||a.nombre.localeCompare(b.nombre));
