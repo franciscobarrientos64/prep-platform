@@ -671,6 +671,7 @@ function abrirConfigProducto(pid){
       <div><div class="field-lbl">Par level (${p.unidad||''})</div><input class="input" id="cfg-par" type="number" min="0" step="0.5" value="${Number(p.par_level||0)}"></div>
       <div><div class="field-lbl">Costo (S/)</div><input class="input" id="cfg-costo" type="number" min="0" step="0.5" value="${Number(p.costo||0)}"></div>
     </div>
+    <div class="sheet-section"><div class="field-lbl">Vida útil / caducidad (días desde recepción) — para alertas FEFO</div><input class="input" id="cfg-cad" type="number" min="0" value="${p.dias_caducidad!=null?p.dias_caducidad:''}" placeholder="ej. 7 (lácteos), 3 (carnes), 180 (abarrotes)">${vencimientoPid(pid)?`<div class="row-meta" style="margin-top:4px">Próximo vencimiento estimado: <strong>${vencimientoPid(pid)}</strong> (${diasParaVencer(pid)<0?'vencido':'en '+diasParaVencer(pid)+'d'})</div>`:''}</div>
     ${(()=>{const h=histDe(pid);if(!h.length)return'';const c=cambioPrecio(pid);const max=Math.max(...h.map(x=>Number(x.costo)),Number(p.costo||0));const pts=[...h.map(x=>x.costo),p.costo];return `<div class="sheet-section"><div class="field-lbl">Histórico de precio ${c?`<span style="color:${c.pct>0?'var(--secondary)':'var(--green)'}">(${c.pct>0?'▲':'▼'} ${Math.abs(c.pct).toFixed(0)}% desde ${c.desde})</span>`:''}</div>
       <div style="display:flex;align-items:flex-end;gap:4px;height:50px">${pts.map(v=>`<div style="flex:1;background:var(--primary);border:1px solid var(--outline);border-radius:3px 3px 0 0;height:${Math.round(Number(v)/max*100)}%" title="${money(v)}"></div>`).join('')}</div>
       <div class="row-meta" style="margin-top:4px">${h.map(x=>x.fecha+': '+money(x.costo)).join(' · ')} · hoy ${money(p.costo)}</div></div>`})()}
@@ -681,17 +682,18 @@ function abrirConfigProducto(pid){
   if($('#cfg-usesug'))$('#cfg-usesug').onclick=()=>{$('#cfg-par').value=sug};
   $$('#sheet-body [data-pref]').forEach(b=>b.onclick=()=>marcarPreferido(pid,b.dataset.pref));
   $('#cfg-cancel').onclick=closeSheet;
-  $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-par').value),Number($('#cfg-costo').value));
+  $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-par').value),Number($('#cfg-costo').value),$('#cfg-cad').value===''?null:Number($('#cfg-cad').value));
 }
 async function marcarPreferido(pid,provId){
   await sb.from('inv_proveedor_productos').update({preferido:false}).eq('producto_id',pid);
   await sb.from('inv_proveedor_productos').update({preferido:true}).eq('producto_id',pid).eq('proveedor_id',provId);
   await loadProvProd();abrirConfigProducto(pid);toast('Va · proveedor preferido actualizado','ok');
 }
-async function guardarConfigProducto(pid,par,costo){
+async function guardarConfigProducto(pid,par,costo,diasCad){
   if(!(par>=0)){toast('Par inválido','warn');return}
   const ant=Number(prod(pid)?.costo||0);
-  const{error}=await sb.from('inv_productos').update({par_level:par,costo:costo}).eq('id',pid);
+  const patch={par_level:par,costo:costo};if(diasCad!==undefined)patch.dias_caducidad=diasCad;
+  const{error}=await sb.from('inv_productos').update(patch).eq('id',pid);
   if(error){toast('Atrás: '+error.message,'err');return}
   if(Number(costo)!==ant){await sb.from('inv_precios_hist').insert({marca_id:MARCA,producto_id:pid,costo:Number(costo),fuente:'manual',fecha:hoyISO()});await loadHist();}
   await loadProductos();closeSheet();render();toast('Servido · configuración guardada','ok');
@@ -700,6 +702,9 @@ async function loadHist(){const{data}=await sb.from('inv_precios_hist').select('
 function histDe(pid){return state.hist.filter(h=>h.producto_id===pid).sort((a,b)=>(a.fecha<b.fecha?-1:1))}
 function cambioPrecio(pid){const h=histDe(pid);if(h.length<1)return null;const actual=Number(prod(pid)?.costo||0);const prev=h.length>=2?Number(h[h.length-2].costo):Number(h[0].costo);if(!prev||prev===actual)return null;return{prev,actual,pct:(actual-prev)/prev*100,desde:h[h.length-1].fecha}}
 function platosConInsumo(pid){return state.recetas.filter(r=>Array.isArray(r.ingredientes)&&r.ingredientes.some(i=>i.pid===pid))}
+function ultimaEntrada(pid){const es=state.movs.filter(m=>m.producto_id===pid&&m.tipo==='entrada'&&m.fecha).map(m=>m.fecha).sort();return es.length?es[es.length-1]:null}
+function vencimientoPid(pid){const p=prod(pid);if(!p||!p.dias_caducidad)return null;const ue=ultimaEntrada(pid);if(!ue)return null;const d=new Date(ue+'T00:00:00');d.setDate(d.getDate()+Number(p.dias_caducidad));return d.toISOString().slice(0,10)}
+function diasParaVencer(pid){const v=vencimientoPid(pid);if(!v)return null;return Math.round((new Date(v+'T00:00:00')-new Date(hoyISO()+'T00:00:00'))/86400000)}
 
 /* ===== COMPRAS (proveedores + comparativo + órdenes) ===== */
 function renderCompras(){
@@ -929,6 +934,11 @@ function renderReportes(){
       <div class="kpi alert"><div class="val">${money(mermaTot)}</div><div class="lbl">Mermas</div></div>
       <div class="kpi"><div class="val">${alertas.length}</div><div class="lbl">Precios mejorables</div></div>
     </div>
+    ${(()=>{const venc=prods.map(p=>({p,d:diasParaVencer(p.id),v:vencimientoPid(p.id)})).filter(x=>x.d!=null&&x.d<=5&&stock(x.p.id)>0).sort((a,b)=>a.d-b.d);
+      return card('⏳ Vencimientos próximos (FEFO)', venc.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Insumos por vencer según su última recepción — usar/rotar primero (PEPS):</div>
+        <table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Vence</th><th>Estado</th></tr>
+        ${venc.map(x=>{const cls=x.d<0?'rojo':x.d<=2?'rojo':'';const txt=x.d<0?('venció hace '+Math.abs(x.d)+'d'):x.d===0?'vence hoy':('en '+x.d+'d');return `<tr class="${cls}"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${num(stock(x.p.id))} ${x.p.unidad||''}</td><td>${x.v}</td><td><strong style="color:${x.d<=2?'var(--secondary)':'var(--tertiary-dark,#a07800)'}">${txt}</strong></td></tr>`}).join('')}</table>`
+        :'<div class="row-meta">Nada por vencer en los próximos 5 días. ✅</div>')})()}
     ${(()=>{const alzas=prods.map(p=>({p,c:cambioPrecio(p.id)})).filter(x=>x.c&&x.c.pct>0.5).sort((a,b)=>b.c.pct-a.c.pct);
       return card('📈 Precios al alza · impacto en food cost', alzas.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Insumos que subieron de precio y qué platos afectan:</div>
         <table class="tbl"><tr><th>Insumo</th><th>Antes→Ahora</th><th>Sube</th><th>Platos afectados</th></tr>
