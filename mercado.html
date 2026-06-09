@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
+<script src="/prep-sync.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
 <script src="/client-name.js"></script>
@@ -174,7 +175,7 @@ function diffPct(c,r){if(r<=0)return c>0?1:0;return Math.abs(c-r)/r}
 function esAnomalia(c,r){if(isNaN(c))return false;return diffPct(c,r)>=0.5||(r>0&&c===0)} // ≥50% de diferencia o quiebre total
 async function loadStockMap(){const{data}=await sb.from('inv_stock_actual').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m;}
 async function loadPreciosMercado(){const{data}=await sb.from('inv_precios_mercado').select('*').eq('marca_id',MARCA);state.preciosMercado=data||[]}
-async function loadProductos(){const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)return toast('Atrás: '+error.message,'err');state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre))}
+async function loadProductos(){try{const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)throw error;state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre));PrepSync.cacheSet('productos',state.productos);}catch(e){state.productos=PrepSync.cacheGet('productos')||state.productos||[]}}
 async function loadProveedores(){const{data}=await sb.from('inv_proveedores').select('*');state.proveedores=(data||[]).filter(p=>p.activo!==false)}
 async function loadProvProd(){const{data}=await sb.from('inv_proveedor_productos').select('*');state.provProd=data||[]}
 async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];await loadStockMap();}
@@ -434,10 +435,11 @@ async function guardarCarga(){
     rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:'recepción',responsable:'Mercado'});}
   if(!rows.length){toast('Sin cantidades válidas','warn');return}
   if(!confirm('Ingresar a stock '+rows.length+' producto(s)?'))return;
-  const{error}=await sb.from('inv_movimientos').insert(rows);
+  rows.forEach(r=>r.id=PrepSync.uuid());
+  const{error,queued}=await PrepSync.write('inv_movimientos','insert',{values:rows});
   if(error){toast('Atrás: '+error.message,'err');return}
-  state.cargaVals={};await loadMovs();state.view='inventario';render();
-  toast('Servido · '+rows.length+' producto(s) ingresados a stock','ok');
+  state.cargaVals={};if(PrepSync.online())await loadMovs();state.view='inventario';render();
+  toast((queued?'Sin conexión · ':'Servido · ')+rows.length+' producto(s) ingresados a stock'+(queued?' (se sincroniza luego)':''),queued?'warn':'ok');
 }
 /* Conteo con doble aprobación (quien lo toma → jefe que aprueba) */
 async function enviarConteoAprobacion(){
@@ -449,10 +451,11 @@ async function enviarConteoAprobacion(){
     if(diff!==0)difs++;valDif+=Math.abs(diff)*Number(p.costo||0);
     lineas.push({producto_id:pid,nombre:p.nombre,unidad:p.unidad,contado:c,registrado:reg,diff,valor:+(diff*Number(p.costo||0)).toFixed(2),anomalia:esAnomalia(c,reg)});}
   if(!lineas.length){toast('Sin datos','warn');return}
-  const{error}=await sb.from('inv_sesiones_conteo').insert({local_id:LOCAL,area:'general',modo:'conteo',estado:'tomado',iniciado_por:quien,iniciada_at:nowISO(),total_productos:lineas.length,total_diferencias:difs,valor_diferencia:+valDif.toFixed(2),lineas});
+  const ses={id:PrepSync.uuid(),local_id:LOCAL,area:'general',modo:'conteo',estado:'tomado',iniciado_por:quien,iniciada_at:nowISO(),total_productos:lineas.length,total_diferencias:difs,valor_diferencia:+valDif.toFixed(2),lineas};
+  const{error,queued}=await PrepSync.write('inv_sesiones_conteo','insert',{values:ses});
   if(error){toast('Atrás: '+error.message,'err');return}
-  state.cargaVals={};await loadSesiones();render();
-  toast('Servido · conteo enviado a aprobación del jefe ('+lineas.length+' productos)','ok');
+  state.cargaVals={};if(PrepSync.online())await loadSesiones();render();
+  toast((queued?'Sin conexión · ':'Servido · ')+'conteo enviado a aprobación del jefe ('+lineas.length+' productos)'+(queued?' (se sincroniza luego)':''),queued?'warn':'ok');
 }
 function abrirAprobaciones(){
   setHead('✔️','Conteos por aprobar',state.sesiones.length+' pendiente(s)');

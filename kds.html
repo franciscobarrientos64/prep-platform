@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
+<script src="/prep-sync.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
 <script src="/client-name.js"></script>
@@ -88,12 +89,20 @@ function modTxt(m){if(!m)return'';try{const a=Array.isArray(m)?m:(typeof m==='st
 function toast(m){const e=document.createElement('div');e.className='toast';e.innerHTML='<span class="material-symbols-outlined">check_circle</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s';e.style.opacity='0';setTimeout(()=>e.remove(),300)},2000)}
 
 async function loadData(){
-  const{data:peds}=await sb.from('ca_pedidos').select('id,ticket_num,mesa_id,tab_nombre,origen,abierta_at,estado').eq('local_id',LOCAL).eq('estado','abierta');
-  state.pedidos=peds||[];
-  const ids=state.pedidos.map(p=>p.id);
-  if(ids.length){const{data:its}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');state.items=its||[];}else{state.items=[];}
-  const{data:dl}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).in('estado',['recibido','preparando','listo']).order('created_at');
-  state.deliv=dl||[];
+  try{
+    const{data:peds,error:e1}=await sb.from('ca_pedidos').select('id,ticket_num,mesa_id,tab_nombre,origen,abierta_at,estado').eq('local_id',LOCAL).eq('estado','abierta');
+    if(e1)throw e1;
+    state.pedidos=peds||[];
+    const ids=state.pedidos.map(p=>p.id);
+    if(ids.length){const{data:its,error:e2}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');if(e2)throw e2;state.items=its||[];}else{state.items=[];}
+    const{data:dl,error:e3}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).in('estado',['recibido','preparando','listo']).order('created_at');if(e3)throw e3;
+    state.deliv=dl||[];
+    PrepSync.cacheSet('kds_pedidos',state.pedidos);PrepSync.cacheSet('kds_items',state.items);PrepSync.cacheSet('kds_deliv',state.deliv);
+  }catch(e){
+    state.pedidos=PrepSync.cacheGet('kds_pedidos')||state.pedidos||[];
+    state.items=PrepSync.cacheGet('kds_items')||state.items||[];
+    state.deliv=PrepSync.cacheGet('kds_deliv')||state.deliv||[];
+  }
 }
 async function loadAll(){await loadData();render();subscribe();$('#boot').classList.add('gone')}
 
@@ -129,23 +138,29 @@ function delivCard(p){const m=Math.floor((Date.now()-new Date(p.created_at).getT
     <div class="items"><div class="it" style="cursor:default"><div class="body"><div class="nm">${p.detalle||'—'}</div><div class="mod">${p.nombre||''}${p.referencia?(' · '+p.referencia):''}</div></div></div></div>
     <div class="cf">${nx?`<button class="btn go" data-dl="${p.id}" data-nx="${nx}">→ ${nx}</button>`:''}</div></div>`;
 }
-async function avanzarDl(id,nx){const patch={estado:nx};if(nx==='entregado')patch.entregado_at=new Date().toISOString();const{error}=await sb.from('dl_pedidos').update(patch).eq('id',id);if(error){toast('Error');return}await loadData();render();toast('Delivery → '+nx)}
+async function avanzarDl(id,nx){const patch={estado:nx};if(nx==='entregado')patch.entregado_at=new Date().toISOString();
+  const d=state.deliv.find(x=>x.id===id);if(d)Object.assign(d,patch);PrepSync.cacheSet('kds_deliv',state.deliv);
+  const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id}});if(error){toast('Error');return}
+  if(PrepSync.online())await loadData();render();toast('Delivery → '+nx+(queued?' (sin conexión)':''))}
 function itRow(i){const e=estData(i.estado);const mod=modTxt(i.modificadores);
   return `<div class="it" data-id="${i.id}"><span class="qty">${Number(i.qty||1)}×</span><div class="body"><div class="nm">${i.nombre}${i.urgente?' <span class="urg">⚡URGENTE</span>':''}</div>${mod?`<div class="mod">${mod}</div>`:''}${i.notas?`<div class="nota">📝 ${i.notas}</div>`:''}</div><span class="est" style="background:${e[2]};color:#fff">${e[1]}</span></div>`;
 }
 
 async function bump(itemId){const i=state.items.find(x=>x.id===itemId);if(!i)return;const sig=FLUJO[i.estado];if(!sig)return;
   const patch={estado:sig};if(sig==='servido')patch.servido_at=new Date().toISOString();
-  const{error}=await sb.from('ca_pedido_items').update(patch).eq('id',itemId);if(error){toast('Error');return}
-  await loadData();render();
+  Object.assign(i,patch);PrepSync.cacheSet('kds_items',state.items);
+  const{error}=await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:itemId}});if(error){toast('Error');return}
+  if(PrepSync.online())await loadData();render();
 }
 async function avanzarTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&FLUJO[i.estado]);
-  await Promise.all(its.map(i=>sb.from('ca_pedido_items').update({estado:FLUJO[i.estado]}).eq('id',i.id)));
-  await loadData();render();toast('Comanda avanzada');
+  for(const i of its){const patch={estado:FLUJO[i.estado]};Object.assign(i,patch);await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:i.id}});}
+  PrepSync.cacheSet('kds_items',state.items);
+  if(PrepSync.online())await loadData();render();toast('Comanda avanzada');
 }
-async function servirTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&i.estado!=='servido');
-  await Promise.all(its.map(i=>sb.from('ca_pedido_items').update({estado:'servido',servido_at:new Date().toISOString()}).eq('id',i.id)));
-  await loadData();render();toast('Comanda servida');
+async function servirTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&i.estado!=='servido');const now=new Date().toISOString();
+  for(const i of its){const patch={estado:'servido',servido_at:now};Object.assign(i,patch);await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:i.id}});}
+  PrepSync.cacheSet('kds_items',state.items);
+  if(PrepSync.online())await loadData();render();toast('Comanda servida');
 }
 
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);
