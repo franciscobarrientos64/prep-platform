@@ -172,17 +172,20 @@ const MSGS={
 };
 function audiencias(){
   const mes=mesDe(hoyISO());
+  const cc=state.clientes.filter(c=>c.acepta_marketing); // Ley 29733: solo consentidos
   return [
-    {k:'cumple',t:'🎂 Cumpleaños del mes',cs:state.clientes.filter(c=>mesDe(c.fecha_nacimiento)===mes)},
-    {k:'aniversario',t:'🥂 Aniversarios del mes',cs:state.clientes.filter(c=>mesDe(c.aniversario)===mes)},
-    {k:'riesgo',t:'⚠ En riesgo (no vienen hace +45 días)',cs:state.clientes.filter(c=>diasDesde(c.ultima_visita)!=null&&diasDesde(c.ultima_visita)>45&&Number(c.total_visitas||0)>=2)},
-    {k:'nuevos',t:'✨ Nuevos (última visita ≤30 días, 1 visita)',cs:state.clientes.filter(c=>Number(c.total_visitas||0)<=1&&diasDesde(c.primera_visita)!=null&&diasDesde(c.primera_visita)<=30)},
-    {k:'vip',t:'⭐ VIP (Oro / Diamante)',cs:state.clientes.filter(c=>['Oro','Diamante'].includes(nivelDe(c).k))},
+    {k:'cumple',t:'🎂 Cumpleaños del mes',cs:cc.filter(c=>mesDe(c.fecha_nacimiento)===mes)},
+    {k:'aniversario',t:'🥂 Aniversarios del mes',cs:cc.filter(c=>mesDe(c.aniversario)===mes)},
+    {k:'riesgo',t:'⚠ En riesgo (no vienen hace +45 días)',cs:cc.filter(c=>diasDesde(c.ultima_visita)!=null&&diasDesde(c.ultima_visita)>45&&Number(c.total_visitas||0)>=2)},
+    {k:'nuevos',t:'✨ Nuevos (última visita ≤30 días, 1 visita)',cs:cc.filter(c=>Number(c.total_visitas||0)<=1&&diasDesde(c.primera_visita)!=null&&diasDesde(c.primera_visita)<=30)},
+    {k:'vip',t:'⭐ VIP (Oro / Diamante)',cs:cc.filter(c=>['Oro','Diamante'].includes(nivelDe(c).k))},
   ];
 }
 function renderCampanas(){
   const auds=audiencias();
+  const consent=state.clientes.filter(c=>c.acepta_marketing).length;
   $('#screen').innerHTML=`
+    <div style="background:var(--primary-soft);border:2px solid var(--outline);border-radius:12px;padding:9px 13px;margin-bottom:12px;font-size:12px">🔒 <strong>Ley 29733:</strong> solo se contactan los <strong>${consent}</strong> clientes que dieron consentimiento. Actívalo en la ficha de cada cliente.</div>
     <div class="grp-t">Audiencias para contactar</div>
     ${auds.map(a=>`<div class="aud">
       <div class="ah"><h3>${a.t}</h3><span class="pill">${a.cs.length}</span></div>
@@ -303,9 +306,13 @@ function abrirFicha(c){
     ${(c.bebida_preferida||fav.length||c.zona_preferida)?`<div class="sheet-section"><div class="field-lbl">Gustos</div>${fav.length?`<div class="info-row"><span>Platos favoritos</span><strong>${fav.slice(0,3).join(', ')}</strong></div>`:''}${c.bebida_preferida?`<div class="info-row"><span>Bebida</span><strong>${c.bebida_preferida}</strong></div>`:''}${c.zona_preferida?`<div class="info-row"><span>Zona</span><strong>${c.zona_preferida}</strong></div>`:''}</div>`:''}
     ${(c.alergias&&c.alergias.length)?`<div class="sheet-section"><div class="field-lbl">⚠ Alergias</div>${c.alergias.map(a=>`<span class="tagline" style="border-color:var(--secondary);color:var(--secondary)">${a}</span>`).join('')}</div>`:''}
     ${(c.tags&&c.tags.length)?`<div class="sheet-section"><div class="field-lbl">Tags</div>${c.tags.map(t=>`<span class="tagline">${t}</span>`).join('')}</div>`:''}
+    <div class="sheet-section"><div class="field-lbl">Marketing (Ley 29733)</div>
+      <div class="info-row" style="align-items:center"><span>Acepta recibir promociones</span><button class="btn ${c.acepta_marketing?'wa':'ghost'}" id="f-consent" style="width:auto;min-height:0;padding:8px 14px">${c.acepta_marketing?'✓ Consiente'+(c.consentimiento_at?(' · '+String(c.consentimiento_at).slice(0,10)):''):'Sin consentimiento'}</button></div>
+      <div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:4px">Solo se incluye en campañas si dio su consentimiento.</div></div>
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="f-bono"><span class="material-symbols-outlined">add_circle</span>Otorgar puntos</button><button class="btn ghost" id="f-canje"><span class="material-symbols-outlined">redeem</span>Canjear</button></div></div>
     <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de Casa Italia 🇮🇹')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>`;
   openSheet();
+  $('#f-consent').onclick=async()=>{const nv=!c.acepta_marketing;const{error}=await sb.from('ms_clientes').update({acepta_marketing:nv,consentimiento_at:nv?new Date().toISOString():null}).eq('id',c.id);if(error){toast('Atrás','err');return}c.acepta_marketing=nv;c.consentimiento_at=nv?new Date().toISOString():null;await loadClientes();abrirFicha(state.clientes.find(x=>x.id===c.id)||c);toast(nv?'Va · consentimiento registrado':'Consentimiento retirado',nv?'ok':'warn')};
   $('#f-bono').onclick=()=>ajustarPuntos(c,1);
   $('#f-canje').onclick=()=>ajustarPuntos(c,-1);
 }
