@@ -121,8 +121,9 @@ function render(){
   const dias={};for(let i=6;i>=0;i--)dias[addD(hoyISO(),-i)]=0;
   d.peds.forEach(p=>{const dd=(p.cerrada_at||'').slice(0,10);if(dd in dias)dias[dd]+=Number(p.total||0)});
 
+  state.resumen={ventas,ticket,nped,fcPct,cmv,planillaPer,laborPct,cajachica,utilidad};
   $('#screen').innerHTML=`
-    <div class="section-t">Resumen ejecutivo · ${state.periodo==='hoy'?'hoy':state.periodo==='7d'?'últimos 7 días':'este mes'}</div>
+    <div class="section-t" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>Resumen ejecutivo · ${state.periodo==='hoy'?'hoy':state.periodo==='7d'?'últimos 7 días':'este mes'}</span><button id="exp-csv" style="font-family:var(--font-mono);font-size:12px;font-weight:700;border:2px solid var(--outline);border-radius:999px;padding:6px 12px;background:var(--surface);cursor:pointer;display:inline-flex;gap:6px;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">download</span>Exportar CSV</button></div>
     <div class="kpis">
       <div class="kpi good"><span class="ico material-symbols-outlined">payments</span><div class="v">${money(ventas)}</div><div class="l">Ventas</div></div>
       <div class="kpi"><div class="v">${money(ticket)}</div><div class="l">Ticket promedio</div></div>
@@ -155,7 +156,20 @@ function render(){
       ${state.periodo==='mes'&&presupIng>0?`<div class="li" style="font-size:12px;opacity:.7"><span>Avance vs presupuesto de ingresos</span><span>${Math.round(ventas/presupIng*100)}% de ${money(presupIng)}</span></div>`:''}
     </div>
     <div style="font-family:var(--font-mono);font-size:10px;opacity:.5;text-align:center;padding:8px">Consolidado de POS, Recetas, Mercado, RRHH, Vuelto, Bienvenida y Delivery. Para análisis tributario formal, ver Finanzas/Contabilidad.</div>`;
+  $('#exp-csv').onclick=exportarCSV;
 }
+function exportarCSV(){
+  const r=state.resumen||{};const per=state.periodo;
+  const rows=[['Reporte','Prep · '+CLIENTE_NOM],['Periodo',per],['Generado',hoyISO()],[],
+    ['Métrica','Valor'],
+    ['Ventas',(r.ventas||0).toFixed(2)],['Ticket promedio',(r.ticket||0).toFixed(2)],['Pedidos',r.nped||0],
+    ['Food cost %',(r.fcPct||0).toFixed(1)],['CMV',(r.cmv||0).toFixed(2)],
+    ['Planilla ('+per+')',(r.planillaPer||0).toFixed(2)],['Labor cost %',(r.laborPct||0).toFixed(1)],
+    ['Caja chica',(r.cajachica||0).toFixed(2)],['Utilidad estimada',(r.utilidad||0).toFixed(2)]];
+  const csv='﻿'+rows.map(row=>row.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='prep-resumen-'+per+'-'+hoyISO()+'.csv';document.body.appendChild(a);a.click();a.remove();
+}
+const CLIENTE_NOM='Casa Italia';
 load().catch(e=>{console.error(e);$('#boot .msg').textContent='Atrás · '+(e.message||'fallo')});
 </script>
 </body>
