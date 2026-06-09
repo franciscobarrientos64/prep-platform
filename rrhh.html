@@ -122,8 +122,9 @@ async function loadDocs(){const{data}=await sb.from('rrhh_documentos').select('*
 async function loadProg(){const fin=addDias(state.semana,7);const{data}=await sb.from('rrhh_programacion').select('*').eq('local_id',LOCAL).gte('fecha',state.semana).lt('fecha',fin);state.prog=data||[]}
 async function loadPermisos(){const{data}=await sb.from('rrhh_permisos').select('*').eq('local_id',LOCAL).order('fecha_inicio',{ascending:false});state.permisos=data||[]}
 async function loadVentas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_pedidos').select('total,estado,abierta_at').eq('local_id',LOCAL).gte('abierta_at',ini+'T00:00:00');state.ventasMes=(data||[]).filter(p=>!['abierta','suspended','cancelada'].includes(p.estado)).reduce((s,p)=>s+Number(p.total||0),0)}
+async function loadPostulantes(){const{data}=await sb.from('rrhh_postulantes').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.postulantes=data||[]}
 async function loadPropinas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_propinas').select('*').gte('created_at',ini+'T00:00:00');state.propinas=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes()]);render();subscribe();$('#boot').classList.add('gone')}
 function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
 function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
@@ -137,9 +138,9 @@ function render(){
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
   const pend=(state.permisos||[]).filter(p=>p.estado==='pendiente').length;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['reclutamiento','Reclutamiento','person_search'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='reclutamiento')renderReclutamiento();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
 }
 
 const TIPOPERM={vacaciones:'🌴 Vacaciones',permiso:'📋 Permiso',descanso_medico:'🏥 Descanso médico',falta_justificada:'📝 Falta justificada'};
@@ -186,6 +187,43 @@ async function resolverPermiso(id,estado){
   const{error}=await sb.from('rrhh_permisos').update({estado,aprobado_por:'gerencia',resuelto_at:nowISO()}).eq('id',id);
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadPermisos();render();toast(estado==='aprobado'?'Va · aprobado':'Rechazado',estado==='aprobado'?'ok':'warn');
+}
+const PIPE=[['nuevo','Nuevos','var(--gray-soft)'],['entrevista','Entrevista','var(--amber-soft)'],['prueba','En prueba','var(--primary-soft)'],['contratado','Contratados','var(--green)'],['descartado','Descartados','#e5e7eb']];
+function renderReclutamiento(){
+  const ps=state.postulantes||[];
+  $('#screen').innerHTML=`
+    <div class="kpis">${PIPE.slice(0,4).map(([k,l])=>`<div class="kpi"><div class="v">${ps.filter(p=>p.estado===k).length}</div><div class="l">${l}</div></div>`).join('')}</div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn primary" id="post-new" style="width:auto;padding:11px 16px"><span class="material-symbols-outlined" style="font-size:18px">person_add</span>Nuevo postulante</button></div>
+    ${PIPE.map(([k,l,c])=>{const lst=ps.filter(p=>p.estado===k);if(!lst.length)return'';
+      return `<div class="grp-t" style="margin:14px 0 8px"><span class="badge" style="background:${c};color:${k==='contratado'?'#fff':'var(--ink)'}">${l}</span> <span style="font-family:var(--font-mono);font-size:12px;opacity:.5">${lst.length}</span></div>
+        ${lst.map(p=>{const idx=PIPE.findIndex(x=>x[0]===p.estado);const next=idx>=0&&idx<2?PIPE[idx+1]:null;
+          return `<div class="emp" style="cursor:default"><div class="av">${(p.nombre||'?')[0]}</div><div class="info"><h3>${p.nombre}</h3><div class="meta"><span>${p.puesto||''}</span>${p.telefono?`<span>📞 ${p.telefono}</span>`:''}${p.fuente?`<span>${p.fuente}</span>`:''}</div></div>
+            <div class="right" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+              ${next?`<button class="mini-btn primary" data-mv="${p.id}" data-to="${next[0]}">→ ${next[1]}</button>`:''}
+              ${p.estado==='prueba'?`<button class="mini-btn" style="background:var(--green);color:#fff" data-mv="${p.id}" data-to="contratado">Contratar</button>`:''}
+              ${!['contratado','descartado'].includes(p.estado)?`<button class="mini-btn ghost" data-mv="${p.id}" data-to="descartado">Descartar</button>`:''}
+            </div></div>`}).join('')}`}).join('')||'<div style="text-align:center;opacity:.6;padding:30px">Sin postulantes. Agrega el primero.</div>'}`;
+  $('#post-new').onclick=nuevoPostulante;
+  $$('#screen [data-mv]').forEach(b=>b.onclick=()=>moverPostulante(b.dataset.mv,b.dataset.to));
+}
+async function moverPostulante(id,estado){
+  const{error}=await sb.from('rrhh_postulantes').update({estado}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadPostulantes();render();toast(estado==='contratado'?'🎉 ¡Contratado! Crea su ficha en Equipo':estado==='descartado'?'Descartado':'Movido a '+estado,estado==='descartado'?'warn':'ok');
+}
+function nuevoPostulante(){
+  setHead('👤','Nuevo postulante','Reclutamiento');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Nombre</div><input class="input" id="po-nom"></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Puesto</div><input class="input" id="po-puesto" placeholder="Mozo, cocina..."></div><div><div class="field-lbl">Teléfono</div><input class="input" id="po-tel"></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Email</div><input class="input" id="po-email"></div><div><div class="field-lbl">Fuente</div><input class="input" id="po-fuente" placeholder="Recomendado, Computrabajo..."></div></div>
+    <div class="sheet-section"><div class="field-lbl">Notas</div><input class="input" id="po-notas"></div>
+    <div class="sheet-section"><button class="btn primary" id="po-save" style="width:100%">Agregar al pipeline</button></div>`;
+  openSheet();
+  $('#po-save').onclick=async()=>{const nom=$('#po-nom').value;if(!nom){toast('Falta nombre','warn');return}
+    const{error}=await sb.from('rrhh_postulantes').insert({marca_id:MARCA,local_id:LOCAL,nombre:nom,puesto:$('#po-puesto').value||null,telefono:$('#po-tel').value||null,email:$('#po-email').value||null,fuente:$('#po-fuente').value||null,notas:$('#po-notas').value||null,estado:'nuevo'});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    closeSheet();await loadPostulantes();render();toast('Servido · postulante agregado','ok')};
 }
 function horasMesEmp(id){return state.asis.filter(a=>a.empleado_id===id&&a.hora_entrada&&a.hora_salida).reduce((s,a)=>{const e=new Date(a.hora_entrada),x=new Date(a.hora_salida);let h=(x-e)/3600000;if(h<0)h+=24;return s+(h>0&&h<16?h:0)},0)}
 function renderPropinas(){
