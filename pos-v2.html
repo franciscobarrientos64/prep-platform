@@ -1705,6 +1705,9 @@ function renderHeader() {
         <span class="material-symbols-outlined">local_fire_department</span>
         <span>Marchar todo</span>
       </button>
+      <button class="btn-ico" id="btn-display-ped" title="Pantalla para el comensal">
+        <span class="material-symbols-outlined">cast</span>
+      </button>
       <button class="btn-ico danger" id="btn-cobrar-ped">
         <span class="material-symbols-outlined">point_of_sale</span>
         <span>Cobrar</span>
@@ -1712,6 +1715,7 @@ function renderHeader() {
     `;
     $('#back-floor').onclick = () => { state.screen = 'floor'; state.pedidoAbiertoId = null; render(); };
     $('#btn-marchar-todo').onclick = () => marcharTodoPendientes();
+    if ($('#btn-display-ped')) $('#btn-display-ped').onclick = () => window.open('/display?pedido=' + state.pedidoAbiertoId, 'prep_display', 'width=480,height=720');
     $('#btn-cobrar-ped').onclick = () => abrirCobroScreen(state.pedidoAbiertoId);
     return;
   }

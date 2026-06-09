@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171c20">
+<title>Tu pedido · Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/tenant.js"></script>
+<style>
+:root{--primary:#1e5af9;--tertiary:#ffcc00;--bg:#171c20;--ink:#fcf9f8;--mut:#8b949e;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+.top{padding:24px;text-align:center;border-bottom:2px solid #2a313a}
+.top .logo{width:160px;height:50px;margin:0 auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+.top .mesa{font-family:var(--font-mono);font-size:14px;color:var(--mut);margin-top:8px;text-transform:uppercase;letter-spacing:.1em}
+.items{flex:1;overflow-y:auto;padding:20px 24px;max-width:760px;margin:0 auto;width:100%}
+.it{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #2a313a;font-size:20px}
+.it .q{font-family:var(--font-display);color:var(--tertiary);min-width:44px}
+.it .n{flex:1}.it .p{font-family:var(--font-mono);font-weight:600}
+.empty{text-align:center;color:var(--mut);padding:60px;font-size:18px}
+.tot{border-top:3px solid var(--tertiary);padding:24px;background:#0c0f13}
+.tot .row{display:flex;justify-content:space-between;max-width:760px;margin:0 auto;font-size:18px;padding:4px 0;color:var(--mut)}
+.tot .row.big{color:var(--ink);font-family:var(--font-display);font-size:34px;padding-top:10px}
+.flash{animation:fl .6s}@keyframes fl{0%{background:#1e5af933}100%{background:transparent}}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo"></div><div class="mesa" id="mesa">—</div></div>
+<div class="items" id="items"><div class="empty">Esperando tu pedido…</div></div>
+<div class="tot" id="tot"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const qs=new URLSearchParams(location.search);let PEDIDO=qs.get('pedido')||null;const MESA=qs.get('mesa')||null;
+const $=s=>document.querySelector(s);const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+async function resolverPedido(){
+  if(PEDIDO)return PEDIDO;
+  let q=sb.from('ca_pedidos').select('id,mesa_id,ticket_num').eq('local_id',LOCAL).eq('estado','abierta').order('abierta_at',{ascending:false}).limit(1);
+  if(MESA)q=q.eq('mesa_id',MESA);
+  const{data}=await q;return data&&data[0]?data[0].id:null;
+}
+async function load(){
+  PEDIDO=await resolverPedido();
+  if(!PEDIDO){$('#items').innerHTML='<div class="empty">Esperando tu pedido…</div>';$('#tot').innerHTML='';return;}
+  const[{data:ped},{data:its}]=await Promise.all([
+    sb.from('ca_pedidos').select('ticket_num,mesa_id,subtotal,servicio_monto,total').eq('id',PEDIDO).maybeSingle().then(r=>({data:r.data})),
+    sb.from('ca_pedido_items').select('nombre,qty,precio_total,es_cortesia').eq('pedido_id',PEDIDO)
+  ]);
+  if(ped)$('#mesa').textContent=(ped.mesa_id?('Mesa '+ped.mesa_id):'')+(ped.ticket_num?(' · Pedido #'+ped.ticket_num):'');
+  const items=its||[];
+  $('#items').innerHTML=items.length?items.map(i=>`<div class="it"><span class="q">${Number(i.qty||1)}×</span><span class="n">${i.nombre}${i.es_cortesia?' 🎁':''}</span><span class="p">${i.es_cortesia?'cortesía':money(i.precio_total)}</span></div>`).join(''):'<div class="empty">Esperando tu pedido…</div>';
+  const sub=ped?Number(ped.subtotal||0):items.reduce((a,i)=>a+(i.es_cortesia?0:Number(i.precio_total||0)),0);
+  const serv=ped?Number(ped.servicio_monto||0):+(sub*0.10).toFixed(2);
+  const tot=ped?Number(ped.total||0):+(sub+serv).toFixed(2);
+  $('#tot').innerHTML=items.length?`<div class="row"><span>Subtotal</span><span>${money(sub)}</span></div><div class="row"><span>Servicio (10%)</span><span>${money(serv)}</span></div><div class="row big"><span>Total</span><span>${money(tot)}</span></div>`:'';
+  $('#items').classList.remove('flash');void $('#items').offsetWidth;$('#items').classList.add('flash');
+}
+sb.channel('disp_'+LOCAL)
+  .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedido_items'},()=>load())
+  .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos'},()=>load())
+  .subscribe();
+load();setInterval(load,15000);
+</script>
+</body>
+</html>

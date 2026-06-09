@@ -2,6 +2,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/display",
+      "destination": "/display.html"
+    },
+    {
       "source": "/portal",
       "destination": "/portal.html"
     },
