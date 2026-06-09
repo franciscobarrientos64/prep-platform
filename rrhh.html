@@ -121,7 +121,9 @@ async function loadAsis(){const desde=new Date();desde.setDate(desde.getDate()-3
 async function loadDocs(){const{data}=await sb.from('rrhh_documentos').select('*').eq('archivado',false).order('fecha_vencimiento');state.docs=data||[]}
 async function loadProg(){const fin=addDias(state.semana,7);const{data}=await sb.from('rrhh_programacion').select('*').eq('local_id',LOCAL).gte('fecha',state.semana).lt('fecha',fin);state.prog=data||[]}
 async function loadPermisos(){const{data}=await sb.from('rrhh_permisos').select('*').eq('local_id',LOCAL).order('fecha_inicio',{ascending:false});state.permisos=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadVentas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_pedidos').select('total,estado,abierta_at').eq('local_id',LOCAL).gte('abierta_at',ini+'T00:00:00');state.ventasMes=(data||[]).filter(p=>!['abierta','suspended','cancelada'].includes(p.estado)).reduce((s,p)=>s+Number(p.total||0),0)}
+async function loadPropinas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_propinas').select('*').gte('created_at',ini+'T00:00:00');state.propinas=data||[]}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas()]);render();subscribe();$('#boot').classList.add('gone')}
 function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
 function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
@@ -135,9 +137,9 @@ function render(){
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
   const pend=(state.permisos||[]).filter(p=>p.estado==='pendiente').length;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
 }
 
 const TIPOPERM={vacaciones:'🌴 Vacaciones',permiso:'📋 Permiso',descanso_medico:'🏥 Descanso médico',falta_justificada:'📝 Falta justificada'};
@@ -184,6 +186,35 @@ async function resolverPermiso(id,estado){
   const{error}=await sb.from('rrhh_permisos').update({estado,aprobado_por:'gerencia',resuelto_at:nowISO()}).eq('id',id);
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadPermisos();render();toast(estado==='aprobado'?'Va · aprobado':'Rechazado',estado==='aprobado'?'ok':'warn');
+}
+function horasMesEmp(id){return state.asis.filter(a=>a.empleado_id===id&&a.hora_entrada&&a.hora_salida).reduce((s,a)=>{const e=new Date(a.hora_entrada),x=new Date(a.hora_salida);let h=(x-e)/3600000;if(h<0)h+=24;return s+(h>0&&h<16?h:0)},0)}
+function renderPropinas(){
+  const ps=state.propinas||[];const total=ps.reduce((s,p)=>s+Number(p.monto||0),0);
+  const metodo=state.tipMethod||'equitativo';
+  const act=activos().filter(e=>['Salón','Bar','Cocina'].includes(normArea(e.area)));
+  let reparto=[];
+  if(metodo==='horas'){const hs=act.map(e=>({e,h:horasMesEmp(e.id)}));const th=hs.reduce((s,x)=>s+x.h,0);reparto=hs.map(x=>({e:x.e,base:x.h,monto:th>0?+(total*x.h/th).toFixed(2):0}));}
+  else{const n=act.length||1;reparto=act.map(e=>({e,base:1,monto:+(total/n).toFixed(2)}));}
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi good"><div class="v">${money(total)}</div><div class="l">Propinas del mes</div></div>
+      <div class="kpi"><div class="v">${ps.length}</div><div class="l">Registros</div></div>
+      <div class="kpi"><div class="v">${act.length}</div><div class="l">A repartir entre</div></div></div>
+    <div class="toolbar"><span class="field-lbl" style="margin:0">Método de reparto:</span>
+      <button class="chip ${metodo==='equitativo'?'active':''}" data-tm="equitativo">Equitativo</button>
+      <button class="chip ${metodo==='horas'?'active':''}" data-tm="horas">Por horas trabajadas</button></div>
+    <div class="pl"><table><tr><th>Colaborador</th><th>Área</th><th>${metodo==='horas'?'Horas':'Partes'}</th><th>Le toca</th></tr>
+      ${reparto.map(r=>`<tr><td>${r.e.nombre} ${r.e.apellidos||''}</td><td style="opacity:.6">${normArea(r.e.area)}</td><td>${metodo==='horas'?r.base.toFixed(1)+'h':'1'}</td><td>${money(r.monto)}</td></tr>`).join('')}
+      <tr class="tot"><td colspan="3">TOTAL REPARTIDO</td><td>${money(reparto.reduce((s,r)=>s+r.monto,0))}</td></tr></table></div>
+    <button class="btn primary" id="tip-save" style="margin-top:12px"><span class="material-symbols-outlined" style="font-size:18px">check</span>Registrar reparto del mes</button>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:10px">Las propinas vienen del cobro en POS (Caja). El reparto queda registrado para la planilla.</div>`;
+  $$('#screen [data-tm]').forEach(b=>b.onclick=()=>{state.tipMethod=b.dataset.tm;render()});
+  $('#tip-save').onclick=async()=>{
+    if(!(total>0)){toast('No hay propinas este mes','warn');return}
+    const rep=reparto.map(r=>({empleado_id:r.e.id,nombre:(r.e.nombre+' '+(r.e.apellidos||'')).trim(),base:r.base,monto:r.monto}));
+    const{error}=await sb.from('rrhh_tip_pool').insert({marca_id:MARCA,local_id:LOCAL,periodo:hoyISO().slice(0,7),total,metodo,reparto:rep,creado_por:'gerencia'});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    toast('Servido · reparto registrado','ok');
+  };
 }
 function renderEquipo(){
   const act=activos();const planilla=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
@@ -236,10 +267,13 @@ function renderPlanilla(){
   let rows='';areas.forEach(ar=>{const es=act.filter(e=>normArea(e.area)===ar);const sub=es.reduce((s,e)=>s+Number(e.sueldo||0),0);
     rows+=es.map(e=>`<tr><td>${e.nombre} ${e.apellidos||''}</td><td style="opacity:.6">${ar}</td><td>${e.tipo_contrato||'—'}</td><td>${money(e.sueldo)}</td></tr>`).join('');
     rows+=`<tr class="tot"><td colspan="3">Subtotal ${ar}</td><td>${money(sub)}</td></tr>`;});
+  const dia=new Date().getDate();const planillaMTD=total/30*dia;const ventasMes=Number(state.ventasMes||0);
+  const laborPct=ventasMes>0?(planillaMTD/ventasMes*100):0;const alto=laborPct>30;
   $('#screen').innerHTML=`
     <div class="kpis"><div class="kpi"><div class="v">${money(total)}</div><div class="l">Planilla mensual</div></div>
       <div class="kpi"><div class="v">${act.length}</div><div class="l">Colaboradores</div></div>
-      <div class="kpi"><div class="v">${money(total*12)}</div><div class="l">Costo anual base</div></div></div>
+      <div class="kpi ${alto?'':'good'}" style="${alto?'border-color:var(--secondary)':''}"><div class="v" style="${alto?'color:var(--secondary)':''}">${laborPct?laborPct.toFixed(1)+'%':'—'}</div><div class="l">Labor cost ${alto?'⚠ >30%':'(mes)'}</div></div></div>
+    ${ventasMes>0?`<div style="background:${alto?'var(--red-soft)':'var(--green-soft)'};border:2px solid var(--outline);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px">Costo laboral al día de hoy: <strong>${money(planillaMTD)}</strong> sobre ventas del mes <strong>${money(ventasMes)}</strong> = <strong style="color:${alto?'var(--secondary)':'var(--green)'}">${laborPct.toFixed(1)}%</strong>. ${alto?'Por encima del 30% recomendado — revisa turnos/horas.':'Dentro del rango saludable (≤30%).'}</div>`:''}
     <div class="pl"><table><tr><th>Colaborador</th><th>Área</th><th>Contrato</th><th>Sueldo</th></tr>${rows}<tr class="tot"><td colspan="3">TOTAL PLANILLA</td><td>${money(total)}</td></tr></table></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:10px">Esta planilla alimenta el grupo "Personal" del módulo Finanzas.</div>`;
 }
