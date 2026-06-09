@@ -123,7 +123,7 @@ function render(){
     const t0=Math.min(...its.map(i=>new Date(i.enviado_cocina_at||i.created_at).getTime()));const m=Math.floor((Date.now()-t0)/60000);
     const urg=its.some(i=>i.urgente);
     return `<div class="card ${urg?'urg':''}"><div class="ch"><div><div class="tk">#${p.ticket_num||'—'}</div><div class="mesa">${mesaLabel(p)}</div></div><span class="timer ${tClass(m)}">${m}′</span></div>
-      <div class="items">${its.sort((a,b)=>(a.seat_position||0)-(b.seat_position||0)).map(itRow).join('')}</div>
+      <div class="items">${renderItemsPorTiempo(its)}</div>
       <div class="cf"><button class="btn go" data-allnext="${pid}">Avanzar todo</button><button class="btn done" data-alldone="${pid}">Servir todo</button></div></div>`;
   }).join('');
   const delivCards=(state.station==='todas'?state.deliv:[]).map(delivCard).join('');
@@ -142,6 +142,14 @@ async function avanzarDl(id,nx){const patch={estado:nx};if(nx==='entregado')patc
   const d=state.deliv.find(x=>x.id===id);if(d)Object.assign(d,patch);PrepSync.cacheSet('kds_deliv',state.deliv);
   const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id}});if(error){toast('Error');return}
   if(PrepSync.online())await loadData();render();toast('Delivery → '+nx+(queued?' (sin conexión)':''))}
+const COURSE={1:'⏱ Tiempo 1 · Entradas',2:'⏱ Tiempo 2 · Fondos',3:'⏱ Tiempo 3 · Postres'};
+function renderItemsPorTiempo(its){
+  const g={};its.forEach(i=>{const c=Number(i.course_step||2);(g[c]=g[c]||[]).push(i)});
+  const keys=Object.keys(g).sort((a,b)=>a-b);
+  const sortSeat=arr=>arr.sort((a,b)=>(a.seat_position||0)-(b.seat_position||0));
+  if(keys.length<=1)return sortSeat(its).map(itRow).join('');
+  return keys.map(c=>`<div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#ffcc00;padding:7px 2px 3px;border-top:1px dashed #2a313a;margin-top:4px">${COURSE[c]||('Tiempo '+c)}</div>`+sortSeat(g[c]).map(itRow).join('')).join('');
+}
 function itRow(i){const e=estData(i.estado);const mod=modTxt(i.modificadores);
   return `<div class="it" data-id="${i.id}"><span class="qty">${Number(i.qty||1)}×</span><div class="body"><div class="nm">${i.nombre}${i.urgente?' <span class="urg">⚡URGENTE</span>':''}</div>${mod?`<div class="mod">${mod}</div>`:''}${i.notas?`<div class="nota">📝 ${i.notas}</div>`:''}</div><span class="est" style="background:${e[2]};color:#fff">${e[1]}</span></div>`;
 }
