@@ -123,8 +123,10 @@ async function loadProg(){const fin=addDias(state.semana,7);const{data}=await sb
 async function loadPermisos(){const{data}=await sb.from('rrhh_permisos').select('*').eq('local_id',LOCAL).order('fecha_inicio',{ascending:false});state.permisos=data||[]}
 async function loadVentas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_pedidos').select('total,estado,abierta_at').eq('local_id',LOCAL).gte('abierta_at',ini+'T00:00:00');state.ventasMes=(data||[]).filter(p=>!['abierta','suspended','cancelada'].includes(p.estado)).reduce((s,p)=>s+Number(p.total||0),0)}
 async function loadPostulantes(){const{data}=await sb.from('rrhh_postulantes').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.postulantes=data||[]}
+async function loadTalks(){const{data}=await sb.from('rrhh_the_talk').select('*').order('fecha',{ascending:false}).limit(100);state.talks=data||[]}
+async function loadEvals(){const{data}=await sb.from('rrhh_evaluaciones').select('*').order('fecha',{ascending:false}).limit(100);state.evals=data||[]}
 async function loadPropinas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_propinas').select('*').gte('created_at',ini+'T00:00:00');state.propinas=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes(),loadTalks(),loadEvals()]);render();subscribe();$('#boot').classList.add('gone')}
 function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
 function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
@@ -138,9 +140,9 @@ function render(){
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
   const pend=(state.permisos||[]).filter(p=>p.estado==='pendiente').length;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['reclutamiento','Reclutamiento','person_search'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['reclutamiento','Reclutamiento','person_search'],['desempeno','Desempeño','trending_up'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='reclutamiento')renderReclutamiento();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='reclutamiento')renderReclutamiento();else if(state.view==='desempeno')renderDesempeno();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
 }
 
 const TIPOPERM={vacaciones:'🌴 Vacaciones',permiso:'📋 Permiso',descanso_medico:'🏥 Descanso médico',falta_justificada:'📝 Falta justificada'};
@@ -187,6 +189,51 @@ async function resolverPermiso(id,estado){
   const{error}=await sb.from('rrhh_permisos').update({estado,aprobado_por:'gerencia',resuelto_at:nowISO()}).eq('id',id);
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadPermisos();render();toast(estado==='aprobado'?'Va · aprobado':'Rechazado',estado==='aprobado'?'ok':'warn');
+}
+const TALKTIPO={reconocimiento:'⭐ Reconocimiento',feedback:'💬 Feedback',correctiva:'⚠️ Correctiva',seguimiento:'🔁 Seguimiento'};
+function estrellas(n){n=Number(n)||0;return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function renderDesempeno(){
+  const talks=state.talks||[],evals=state.evals||[];
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="v">${talks.length}</div><div class="l">Conversaciones (The Talk)</div></div>
+      <div class="kpi"><div class="v">${evals.length}</div><div class="l">Evaluaciones</div></div>
+      <div class="kpi"><div class="v">${talks.filter(t=>t.estado!=='cerrado'&&t.fecha_seguimiento).length}</div><div class="l">Con seguimiento</div></div></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button class="btn primary" id="nt" style="width:auto;padding:11px 16px"><span class="material-symbols-outlined" style="font-size:18px">forum</span>The Talk</button><button class="btn ghost" id="ne" style="width:auto;padding:11px 16px"><span class="material-symbols-outlined" style="font-size:18px">grade</span>Nueva evaluación</button></div>
+    <div class="grp-t">Conversaciones recientes</div>
+    ${talks.length?talks.slice(0,30).map(t=>`<div class="emp" style="cursor:default;align-items:flex-start"><div class="av">${(nomEmp(t.empleado_id)||'?')[0]}</div><div class="info"><h3>${nomEmp(t.empleado_id)} <span style="font-family:var(--font-mono);font-size:11px;opacity:.6">${t.fecha||''}</span></h3><div class="meta"><span>${TALKTIPO[t.tipo]||t.tipo||''}</span>${t.tema?`<span>${t.tema}</span>`:''}</div>${t.areas_oportunidad?`<div style="font-size:12px;opacity:.7;margin-top:3px">Oportunidad: ${t.areas_oportunidad}</div>`:''}${t.fecha_seguimiento?`<div style="font-size:11px;color:var(--primary);margin-top:2px">📅 seguimiento ${t.fecha_seguimiento}</div>`:''}</div></div>`).join(''):'<div style="opacity:.6;padding:14px">Sin conversaciones registradas.</div>'}
+    ${evals.length?`<div class="grp-t">Evaluaciones</div>`+evals.slice(0,20).map(e=>`<div class="emp" style="cursor:default"><div class="av">${(nomEmp(e.empleado_id)||'?')[0]}</div><div class="info"><h3>${nomEmp(e.empleado_id)}</h3><div class="meta"><span>${e.periodo||''}</span><span>${e.fecha||''}</span></div>${e.fortalezas?`<div style="font-size:12px;opacity:.7">💪 ${e.fortalezas}</div>`:''}</div><div class="right" style="font-size:16px;color:var(--tertiary)">${estrellas(e.calificacion_general)}</div></div>`).join(''):''}`;
+  $('#nt').onclick=nuevoTalk;$('#ne').onclick=nuevaEval;
+}
+function nuevoTalk(){
+  const act=activos();
+  setHead('💬','The Talk','Conversación de desempeño');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Colaborador</div><select class="select" id="t-emp">${act.map(e=>`<option value="${e.id}">${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
+    <div class="sheet-section"><div class="field-lbl">Tipo</div><div class="chips" id="t-tipo">${Object.entries(TALKTIPO).map(([k,l],i)=>`<button class="chip ${i===0?'active':''}" data-t="${k}">${l}</button>`).join('')}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Tema</div><input class="input" id="t-tema" placeholder="Puntualidad, actitud, logro..."></div>
+    <div class="sheet-section"><div class="field-lbl">Qué está funcionando bien</div><input class="input" id="t-bien"></div>
+    <div class="sheet-section"><div class="field-lbl">Áreas de oportunidad</div><input class="input" id="t-area"></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Compromisos</div><input class="input" id="t-comp"></div><div><div class="field-lbl">Fecha de seguimiento</div><input class="input" id="t-seg" type="date"></div></div>
+    <div class="sheet-section"><button class="btn primary" id="t-save" style="width:100%">Registrar conversación</button></div>`;
+  let tipo='reconocimiento';$$('#t-tipo .chip').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;$$('#t-tipo .chip').forEach(x=>x.classList.toggle('active',x.dataset.t===tipo))});
+  openSheet();
+  $('#t-save').onclick=async()=>{const{error}=await sb.from('rrhh_the_talk').insert({empleado_id:$('#t-emp').value,conductor_nombre:'Gerencia',fecha:hoyISO(),tipo,tema:$('#t-tema').value||null,funcionando_bien:$('#t-bien').value||null,areas_oportunidad:$('#t-area').value||null,compromisos_empleado:$('#t-comp').value||null,fecha_seguimiento:$('#t-seg').value||null,estado:'abierta'});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadTalks();render();toast('Servido · conversación registrada','ok')};
+}
+function nuevaEval(){
+  const act=activos();
+  setHead('⭐','Evaluación','Desempeño por periodo');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Colaborador</div><select class="select" id="e-emp">${act.map(e=>`<option value="${e.id}">${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Periodo</div><input class="input" id="e-per" value="${hoyISO().slice(0,7)}"></div><div><div class="field-lbl">Calificación</div><div class="chips" id="e-cal">${[1,2,3,4,5].map(n=>`<button class="chip ${n===4?'active':''}" data-n="${n}">${n}★</button>`).join('')}</div></div></div>
+    <div class="sheet-section"><div class="field-lbl">Fortalezas</div><input class="input" id="e-for"></div>
+    <div class="sheet-section"><div class="field-lbl">Oportunidades</div><input class="input" id="e-opo"></div>
+    <div class="sheet-section"><div class="field-lbl">Plan de desarrollo</div><input class="input" id="e-plan"></div>
+    <div class="sheet-section"><button class="btn primary" id="e-save" style="width:100%">Guardar evaluación</button></div>`;
+  let cal=4;$$('#e-cal .chip').forEach(b=>b.onclick=()=>{cal=Number(b.dataset.n);$$('#e-cal .chip').forEach(x=>x.classList.toggle('active',Number(x.dataset.n)===cal))});
+  openSheet();
+  $('#e-save').onclick=async()=>{const{error}=await sb.from('rrhh_evaluaciones').insert({empleado_id:$('#e-emp').value,evaluador_nombre:'Gerencia',periodo:$('#e-per').value,fecha:hoyISO(),calificacion_general:cal,fortalezas:$('#e-for').value||null,oportunidades:$('#e-opo').value||null,plan_desarrollo:$('#e-plan').value||null,estado:'cerrada'});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadEvals();render();toast('Servido · evaluación guardada','ok')};
 }
 const PIPE=[['nuevo','Nuevos','var(--gray-soft)'],['entrevista','Entrevista','var(--amber-soft)'],['prueba','En prueba','var(--primary-soft)'],['contratado','Contratados','var(--green)'],['descartado','Descartados','#e5e7eb']];
 function renderReclutamiento(){
