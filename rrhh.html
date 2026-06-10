@@ -30,6 +30,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
 .btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
 .tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm)}
 .tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
 .main{flex:1;overflow-y:auto;padding:16px}
@@ -396,7 +397,6 @@ function renderPlanilla(){
 function horasTurno(p){if(!p.hora_ini||!p.hora_fin)return 0;let a=p.hora_ini.split(':').map(Number),b=p.hora_fin.split(':').map(Number);let ini=a[0]+a[1]/60,fin=b[0]+b[1]/60;if(fin<=ini)fin+=24;return +(fin-ini).toFixed(2)}
 function sueldoHora(e){return Number(e.sueldo||0)/192}
 function progDia(fecha){return state.prog.filter(p=>p.fecha===fecha)}
-function empById(id){return state.emp.find(e=>e.id===id)}
 function violaRestriccion(e,fecha,turno){const r=e&&e.restricciones||{};const out=[];if(Array.isArray(r.dias_no)&&r.dias_no.includes(diaSemana(fecha)))out.push('no disponible '+diaSemana(fecha));if(Array.isArray(r.turnos)&&r.turnos.length&&turno&&!r.turnos.includes(turno))out.push('no hace turno '+turno);return out}
 function renderTurnos(){
   const dias=Array.from({length:7},(_,i)=>addDias(state.semana,i));

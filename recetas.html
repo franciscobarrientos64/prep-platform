@@ -259,7 +259,7 @@ async function cambiarSeccion(id,sec){const{error}=await sb.from('inv_recetas').
 
 /* ====== INTELIGENCIA: ingeniería de menú + qué preparar ====== */
 function ventasDe(rid){return state.ventas.filter(v=>v.receta_id===rid).reduce((a,v)=>a+Number(v.qty||0),0)}
-function maxPorciones(r){const ings=Array.isArray(r.ingredientes)?r.ingredientes.filter(i=>i.pid):[];if(!ings.length)return null;let min=Infinity,lim=null;ings.forEach(it=>{const m=Number(it.merma||0);const need=Number(it.cantidad||0)*((m>0&&m<100)?1/(1-m/100):1);if(need<=0)return;const pos=stockP(it.pid)/need;if(pos<min){min=pos;lim=it.nombre||prod(it.pid)?.nombre}});return{n:Math.floor(min),lim}}
+function maxPorciones(r){const ings=Array.isArray(r.ingredientes)?r.ingredientes.filter(i=>i.pid):[];if(!ings.length)return null;let min=Infinity,lim=null;ings.forEach(it=>{const m=Number(it.merma||0);const need=Number(it.cantidad||0)*((m>0&&m<100)?1/(1-m/100):1);if(need<=0)return;const pos=stockP(it.pid)/need;if(pos<min){min=pos;lim=it.nombre||prod(it.pid)?.nombre}});if(!isFinite(min))return null;return{n:Math.floor(min),lim}}
 function renderIntel(){
   const conIng=state.recetas.filter(r=>Array.isArray(r.ingredientes)&&r.ingredientes.some(i=>i.pid));
   // ingeniería de menú: popularidad (ventas) x margen

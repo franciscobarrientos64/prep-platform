@@ -117,7 +117,7 @@ function updateCart(){const n=cartItems().reduce((a,it)=>a+it.qty,0);$('#cart-n'
 $('#cart-btn').onclick=()=>{if(!cartItems().length)return;abrirCarrito()};
 function abrirCarrito(){
   $('#sheet-title').textContent='Tu pedido'+(MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):'');
-  $('#sheet-body').innerHTML=`${cartItems().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${it.r.nombre}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${pmoney(it.qty*it.r.precio_venta)}</span></div>`).join('')}
+  $('#sheet-body').innerHTML=`${cartItems().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${tr(it.r,'nombre')}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${pmoney(it.qty*it.r.precio_venta)}</span></div>`).join('')}
     <div class="tot"><span>Total</span><span>${pmoney(cartTotal())}</span></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:6px">El pedido llega directo a cocina. ${MESA?'Lo llevamos a tu mesa.':'Acércate a caja o indícanos tu mesa.'}</div>
     <button class="btn2 primary" id="c-send"><span class="material-symbols-outlined">send</span>Enviar pedido a cocina</button>

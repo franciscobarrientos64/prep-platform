@@ -200,7 +200,7 @@ function abrirPedido(p){const e=estData(p.estado);const sig=FLUJO[p.estado];
 }
 async function asignarRep(p,rid){const{error}=await sb.from('dl_pedidos').update({repartidor_id:rid}).eq('id',p.id);if(error){toast('Atrás: '+error.message,'err');return}await sb.from('dl_repartidores').update({estado:'en_ruta'}).eq('id',rid);await Promise.all([loadPedidos(),loadReps()]);abrirPedido(state.pedidos.find(x=>x.id===p.id));render();toast('Va · repartidor asignado','ok')}
 async function avanzar(p){const sig=FLUJO[p.estado];if(!sig)return;cambiarEstado(p,sig)}
-async function cambiarEstado(p,est){const patch={estado:est};if(est==='entregado'){patch.entregado_at=nowISO();if(p.repartidor_id)await PrepSync.write('dl_repartidores','update',{values:{estado:'disponible'},match:{id:p.repartidor_id}})}
+async function cambiarEstado(p,est){const patch={estado:est};if(est==='entregado'){patch.entregado_at=nowISO();if(p.repartidor_id){const rp=state.reps.find(x=>x.id===p.repartidor_id);if(rp)rp.estado='disponible';PrepSync.cacheSet('dl_reps',state.reps);await PrepSync.write('dl_repartidores','update',{values:{estado:'disponible'},match:{id:p.repartidor_id}})}}
   const local=state.pedidos.find(x=>x.id===p.id);if(local)Object.assign(local,patch);PrepSync.cacheSet('dl_pedidos',state.pedidos);
   const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id:p.id}});if(error){toast('Atrás: '+error.message,'err');return}
   if(PrepSync.online())await Promise.all([loadPedidos(),loadReps()]);closeSheet();render();toast((queued?'Sin conexión · ':'Servido · ')+estData(est)[1],queued?'warn':'ok')}
@@ -228,7 +228,8 @@ function abrirNuevo(){
 async function guardarPedido(c){
   if(!c.nombre&&c.canal==='propio'){toast('Falta el cliente','warn');return}
   const z=state.zonas.find(x=>x.nombre===c.zona);const fee=z?Number(z.tarifa):0;const sub=Number(c.subtotal)||0;
-  const codigo='D-'+String((state.pedidos.length+1)).padStart(4,'0');
+  const maxNum=state.pedidos.reduce((m,p)=>{const n=parseInt(String(p.codigo||'').replace(/\D/g,''),10);return (n&&n>m)?n:m;},0);
+  const codigo='D-'+String(maxNum+1).padStart(4,'0');
   const{error}=await sb.from('dl_pedidos').insert({marca_id:MARCA,local_id:LOCAL,codigo,nombre:c.nombre,telefono:c.telefono,direccion:c.direccion,referencia:c.referencia,canal:c.canal,detalle:c.detalle,subtotal:sub,delivery_fee:fee,total:sub+fee,metodo_pago:c.metodo_pago,estado:'recibido',zona:c.zona,eta_min:z?z.tiempo_min:null});
   if(error){toast('Atrás: '+error.message,'err');return}
   closeSheet();await loadPedidos();render();toast('Servido · pedido '+codigo+' creado','ok');
