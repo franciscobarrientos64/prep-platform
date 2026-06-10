@@ -126,8 +126,9 @@ async function loadPostulantes(){const{data}=await sb.from('rrhh_postulantes').s
 async function loadTalks(){const{data}=await sb.from('rrhh_the_talk').select('*').order('fecha',{ascending:false}).limit(100);state.talks=data||[]}
 async function loadEvals(){const{data}=await sb.from('rrhh_evaluaciones').select('*').order('fecha',{ascending:false}).limit(100);state.evals=data||[]}
 async function loadSwaps(){const{data}=await sb.from('rrhh_swaps').select('*').eq('local_id',LOCAL).neq('estado','rechazado').order('created_at',{ascending:false});state.swaps=data||[]}
+async function loadDocsV(){const{data}=await sb.from('rrhh_doc_versiones').select('*').eq('local_id',LOCAL).order('puesto').order('created_at',{ascending:false});state.docsv=data||[]}
 async function loadPropinas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_propinas').select('*').gte('created_at',ini+'T00:00:00');state.propinas=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes(),loadTalks(),loadEvals(),loadSwaps()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes(),loadTalks(),loadEvals(),loadSwaps(),loadDocsV()]);render();subscribe();$('#boot').classList.add('gone')}
 function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
 function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
@@ -141,9 +142,9 @@ function render(){
   const presentes=act.filter(e=>statusAsis(e.id).k==='trab').length;
   $('#hinfo').innerHTML=`<span class="pill">${act.length} activos</span><span class="pill">${money(planilla)}/mes</span><span class="pill">${presentes} presentes</span>`;
   const pend=(state.permisos||[]).filter(p=>p.estado==='pendiente').length;
-  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['reclutamiento','Reclutamiento','person_search'],['desempeno','Desempeño','trending_up'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
+  $('#tabs').innerHTML=[['equipo','Equipo','groups'],['turnos','Turnos','calendar_month'],['asistencia','Asistencia','schedule'],['permisos','Permisos','event_available'],['reclutamiento','Reclutamiento','person_search'],['desempeno','Desempeño','trending_up'],['documentos','Documentos','description'],['propinas','Propinas','volunteer_activism'],['planilla','Planilla','payments']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}${k==='permisos'&&pend?` <span class="badge" style="background:var(--tertiary);margin-left:2px">${pend}</span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='reclutamiento')renderReclutamiento();else if(state.view==='desempeno')renderDesempeno();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
+  if(state.view==='equipo')renderEquipo();else if(state.view==='turnos')renderTurnos();else if(state.view==='asistencia')renderAsistencia();else if(state.view==='permisos')renderPermisos();else if(state.view==='reclutamiento')renderReclutamiento();else if(state.view==='desempeno')renderDesempeno();else if(state.view==='documentos')renderDocumentos();else if(state.view==='propinas')renderPropinas();else renderPlanilla();
 }
 
 const TIPOPERM={vacaciones:'🌴 Vacaciones',permiso:'📋 Permiso',descanso_medico:'🏥 Descanso médico',falta_justificada:'📝 Falta justificada'};
@@ -190,6 +191,33 @@ async function resolverPermiso(id,estado){
   const{error}=await sb.from('rrhh_permisos').update({estado,aprobado_por:'gerencia',resuelto_at:nowISO()}).eq('id',id);
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadPermisos();render();toast(estado==='aprobado'?'Va · aprobado':'Rechazado',estado==='aprobado'?'ok':'warn');
+}
+function renderDocumentos(){
+  const ds=state.docsv||[];const puestos=[...new Set(ds.map(d=>d.puesto||'General'))];
+  $('#screen').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="grp-t" style="margin:0">Contratos y manuales versionados</div><button class="btn primary" id="dv-new" style="width:auto;padding:10px 14px"><span class="material-symbols-outlined" style="font-size:18px">add</span>Documento</button></div>
+    ${puestos.map(pu=>`<div class="grp-t" style="font-size:15px">📁 ${pu}</div>${ds.filter(d=>(d.puesto||'General')===pu).map(d=>`<div class="emp" style="cursor:pointer" data-dv="${d.id}"><div class="av">${d.tipo==='contrato'?'📄':'📘'}</div><div class="info"><h3>${d.titulo} <span style="font-family:var(--font-mono);font-size:11px;opacity:.6">${d.version}</span></h3><div class="meta"><span>${d.tipo}</span>${d.activo?'<span style="color:var(--green)">● versión activa</span>':'<span style="opacity:.5">histórica</span>'}</div></div></div>`).join('')}`).join('')||'<div class="empty">Sin documentos. Crea el primero.</div>'}`;
+  $('#dv-new').onclick=()=>editarDocV(null);
+  $$('#screen [data-dv]').forEach(b=>b.onclick=()=>editarDocV(b.dataset.dv));
+}
+function editarDocV(id){
+  const d=id?(state.docsv.find(x=>x.id===id)||{}):{tipo:'contrato',version:'v1',activo:true};
+  setHead(d.tipo==='manual'?'📘':'📄',id?'Documento':'Nuevo documento','Contratos y manuales');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section grid2"><div><div class="field-lbl">Tipo</div><select class="select" id="dv-tipo"><option value="contrato" ${d.tipo==='contrato'?'selected':''}>Contrato</option><option value="manual" ${d.tipo==='manual'?'selected':''}>Manual de puesto</option></select></div><div><div class="field-lbl">Puesto</div><input class="input" id="dv-puesto" value="${d.puesto||''}" placeholder="Mozo, Cocina..."></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Título</div><input class="input" id="dv-tit" value="${(d.titulo||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Versión</div><input class="input" id="dv-ver" value="${d.version||'v1'}"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Contenido</div><textarea class="input" id="dv-cont" style="min-height:120px">${d.contenido||''}</textarea></div>
+    <div class="sheet-section"><div class="field-lbl">Estado</div><div class="chips" id="dv-act"></div></div>
+    <div class="sheet-section"><button class="btn primary" id="dv-save" style="width:100%">${id?'Guardar':'Crear documento'}</button></div>`;
+  let activo=d.activo!==false;
+  const drawAct=()=>{$('#dv-act').innerHTML=`<button class="chip ${activo?'active':''}" data-a="1">✓ Versión activa</button><button class="chip ${!activo?'active':''}" data-a="0">Histórica</button>`;$$('#dv-act .chip').forEach(b=>b.onclick=()=>{activo=b.dataset.a==='1';drawAct()})};drawAct();
+  openSheet();
+  $('#dv-save').onclick=async()=>{const tit=$('#dv-tit').value;if(!tit){toast('Falta título','warn');return}
+    const row={marca_id:MARCA,local_id:LOCAL,tipo:$('#dv-tipo').value,puesto:$('#dv-puesto').value||'General',titulo:tit,version:$('#dv-ver').value||'v1',contenido:$('#dv-cont').value||null,activo};
+    // si se marca activa, desactivar otras versiones del mismo título+puesto
+    if(activo){await sb.from('rrhh_doc_versiones').update({activo:false}).eq('local_id',LOCAL).eq('puesto',row.puesto).eq('titulo',tit).neq('id',id||'00000000-0000-0000-0000-000000000000');}
+    const{error}=id?await sb.from('rrhh_doc_versiones').update(row).eq('id',id):await sb.from('rrhh_doc_versiones').insert(row);
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadDocsV();render();toast('Servido · documento guardado','ok')};
 }
 const TALKTIPO={reconocimiento:'⭐ Reconocimiento',feedback:'💬 Feedback',correctiva:'⚠️ Correctiva',seguimiento:'🔁 Seguimiento'};
 function estrellas(n){n=Number(n)||0;return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
