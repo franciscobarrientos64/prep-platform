@@ -30,6 +30,10 @@
       "destination": "/estrategia.html"
     },
     {
+      "source": "/prediccion",
+      "destination": "/prediccion.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },

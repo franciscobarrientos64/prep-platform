@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Predicción · Prep</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="/offline.js"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--mut:#6b7280;--green:#10b981;--gray-soft:#dfe3e8;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+.header{background:var(--bg);border-bottom:2px solid #000;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.brand-logo{position:relative;display:block;width:96px;height:30px;flex-shrink:0}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.wrap{max-width:1080px;margin:0 auto;padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border:2px solid #000;border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px}
+.kpi .v{font-family:var(--font-display);font-size:24px;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.card{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:16px}
+.card h3{font-family:var(--font-display);font-size:17px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .sub{font-family:var(--font-mono);font-size:11px;color:var(--mut);margin-bottom:14px}
+.fc{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+@media(max-width:720px){.fc{grid-template-columns:repeat(2,1fr)}}
+.day{border:2px solid #000;border-radius:12px;padding:10px;text-align:center;background:var(--bg)}
+.day.hoy{background:var(--primary);color:#fff}
+.day .dn{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.7}
+.day .dv{font-family:var(--font-display);font-size:17px;margin:4px 0}
+.day .dc{font-size:11px;opacity:.7}
+.bar{height:8px;background:var(--gray-soft);border-radius:99px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--tertiary)}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-soft);font-size:14px}
+.row:last-child{border:none}.row .q{font-family:var(--font-display);color:var(--primary);min-width:48px}
+.hbar{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:10px}
+.hbar .h{flex:1;background:var(--primary);border:1px solid #000;border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.hbar .h span{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:8px;opacity:.6}
+.tag{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1.5px solid #000}
+.tag.up{background:var(--green);color:#fff}.tag.down{background:var(--secondary);color:#fff}.tag.flat{background:var(--gray-soft)}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);color:var(--mut)}
+.note{font-family:var(--font-mono);font-size:11px;color:var(--mut);line-height:1.6;padding:8px 0}
+.seg{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.seg button{padding:7px 14px;border:2px solid #000;border-radius:999px;background:var(--surface);font-weight:600;font-size:12px;cursor:pointer}.seg button.active{background:var(--primary);color:#fff}
+</style>
+</head>
+<body>
+<header class="header"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli" id="cli">Casa Italia</div><div class="mod">Predicción · estadística</div></div></header>
+<main class="wrap" id="screen"><div class="empty">Calculando…</div></main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const state={peds:[],items:[]};
+
+async function load(){
+  const desde=new Date();desde.setDate(desde.getDate()-90);const d=desde.toISOString().slice(0,10);
+  const [{data:peds},{data:items}]=await Promise.all([
+    sb.from('ca_pedidos').select('id,total,comensales,estado,abierta_at,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('abierta_at',d+'T00:00:00').limit(5000),
+    sb.from('ca_pedido_items').select('nombre,qty,created_at,es_cortesia').gte('created_at',d+'T00:00:00').limit(20000)
+  ]);
+  state.peds=peds||[];state.items=items||[];
+  render();
+}
+// agrupar ventas por día calendario
+function porDia(){
+  const m={};
+  state.peds.forEach(p=>{const f=(p.cerrada_at||p.abierta_at||'').slice(0,10);if(!f)return;if(!m[f])m[f]={ventas:0,cubiertos:0,tickets:0};m[f].ventas+=Number(p.total||0);m[f].cubiertos+=Number(p.comensales||0);m[f].tickets++;});
+  return m;
+}
+function statsWeekday(dias){ // promedio ventas/cubiertos por día de semana
+  const acc=Array.from({length:7},()=>({v:[],c:[]}));
+  Object.entries(dias).forEach(([f,o])=>{const wd=new Date(f+'T12:00:00').getDay();acc[wd].v.push(o.ventas);acc[wd].c.push(o.cubiertos);});
+  const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+  return acc.map(o=>({ventas:avg(o.v),cubiertos:avg(o.c),n:o.v.length}));
+}
+function trend(dias){ // factor de tendencia: últimos 7 días vs 7 anteriores
+  const fechas=Object.keys(dias).sort();if(fechas.length<8)return 1;
+  const last=fechas.slice(-7),prev=fechas.slice(-14,-7);
+  const sum=arr=>arr.reduce((s,f)=>s+(dias[f]?dias[f].ventas:0),0);
+  const a=sum(prev)/Math.max(1,prev.length),b=sum(last)/Math.max(1,last.length);
+  if(!a)return 1;return Math.max(0.6,Math.min(1.5,b/a));
+}
+
+function render(){
+  if(!state.peds.length){$('#screen').innerHTML='<div class="empty">Aún no hay suficientes ventas cerradas para predecir.<br>Vuelve cuando tengas historial.</div>';return;}
+  const dias=porDia();const wd=statsWeekday(dias);const tf=trend(dias);
+  const nDias=Object.keys(dias).length;
+  const totVentas=Object.values(dias).reduce((s,o)=>s+o.ventas,0);
+  const avgDia=totVentas/nDias;
+  // pronóstico próximos 7 días
+  const hoy=new Date();const fc=[];let semana=0;
+  for(let i=1;i<=7;i++){const dt=new Date(hoy);dt.setDate(hoy.getDate()+i);const w=dt.getDay();const base=wd[w].ventas*tf;semana+=base;fc.push({fecha:dt,wd:w,ventas:base,cubiertos:wd[w].cubiertos*tf});}
+  const maxFc=Math.max(...fc.map(x=>x.ventas),1);
+  // anomalías: días fuera de ±2σ
+  const vals=Object.values(dias).map(o=>o.ventas);const mean=vals.reduce((s,x)=>s+x,0)/vals.length;
+  const sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/vals.length);
+  const anom=Object.entries(dias).filter(([f,o])=>sd>0&&Math.abs(o.ventas-mean)>2*sd).sort((a,b)=>b[1].ventas-a[1].ventas);
+  // mix de platos por día de semana (para "qué preparar mañana")
+  const manana=new Date(hoy);manana.setDate(hoy.getDate()+1);const wdMan=manana.getDay();
+  const mix={};state.items.forEach(it=>{if(it.es_cortesia)return;const w=new Date((it.created_at||'')).getDay();if(w!==wdMan)return;mix[it.nombre]=(mix[it.nombre]||0)+Number(it.qty||1);});
+  const diasMan=new Set(state.items.filter(it=>new Date(it.created_at||'').getDay()===wdMan).map(it=>(it.created_at||'').slice(0,10))).size||1;
+  const topMix=Object.entries(mix).map(([n,q])=>[n,q/diasMan]).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  // hora pico
+  const horas=Array(24).fill(0);state.peds.forEach(p=>{const h=new Date(p.abierta_at||p.cerrada_at).getHours();if(h>=0)horas[h]++;});
+  const hMax=Math.max(...horas,1);const hIni=10,hFin=23;
+  const tfTag=tf>1.05?'<span class="tag up">↑ '+Math.round((tf-1)*100)+'% vs semana previa</span>':tf<0.95?'<span class="tag down">↓ '+Math.round((1-tf)*100)+'% vs semana previa</span>':'<span class="tag flat">estable</span>';
+
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="v">${money(semana)}</div><div class="l">Ventas previstas · próx. 7 días</div></div>
+      <div class="kpi"><div class="v">${money(avgDia)}</div><div class="l">Promedio diario (${nDias}d hist.)</div></div>
+      <div class="kpi"><div class="v">${Math.round(fc.reduce((s,x)=>s+x.cubiertos,0))}</div><div class="l">Cubiertos previstos · semana</div></div>
+      <div class="kpi"><div class="v" style="font-size:16px">${tfTag}</div><div class="l">Tendencia</div></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="material-symbols-outlined" style="color:var(--primary)">insights</span>Pronóstico de ventas · próximos 7 días</h3>
+      <div class="sub">Promedio por día de semana ajustado por tendencia reciente</div>
+      <div class="fc">${fc.map(x=>`<div class="day"><div class="dn">${DIAS[x.wd]} ${x.fecha.getDate()}/${x.fecha.getMonth()+1}</div><div class="dv">${money(x.ventas)}</div><div class="dc">${Math.round(x.cubiertos)} cub.</div><div class="bar"><i style="width:${Math.round(x.ventas/maxFc*100)}%"></i></div></div>`).join('')}</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="material-symbols-outlined" style="color:var(--secondary)">restaurant</span>Qué preparar para mañana (${DIAS[wdMan]})</h3>
+      <div class="sub">Demanda promedio de cada plato los ${DIAS[wdMan]} (mise en place sugerido)</div>
+      ${topMix.length?topMix.map(([n,q])=>`<div class="row"><span class="q">${Math.ceil(q)}×</span><span style="flex:1">${n}</span><span style="font-family:var(--font-mono);font-size:12px;opacity:.6">prom/${DIAS[wdMan]}</span></div>`).join(''):'<div class="note">Sin datos de platos para ese día aún.</div>'}
+    </div>
+
+    <div class="card">
+      <h3><span class="material-symbols-outlined" style="color:var(--tertiary)">schedule</span>Horas pico</h3>
+      <div class="sub">Distribución de pedidos por hora (histórico) — útil para programar turnos</div>
+      <div class="hbar">${horas.slice(hIni,hFin+1).map((c,i)=>`<div class="h" style="height:${Math.round(c/hMax*100)}%" title="${hIni+i}:00 · ${c} pedidos"><span>${hIni+i}</span></div>`).join('')}</div>
+      <div class="note" style="margin-top:22px">Pico: ${(()=>{let mi=0;horas.forEach((c,h)=>{if(c>horas[mi])mi=h});return mi+':00 h';})()}</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="material-symbols-outlined">warning</span>Días atípicos detectados</h3>
+      <div class="sub">Fuera de ±2σ del promedio — picos o caídas que vale la pena entender</div>
+      ${anom.length?anom.map(([f,o])=>`<div class="row"><span style="flex:1">${DIAS[new Date(f+'T12:00:00').getDay()]} ${f}</span><strong>${money(o.ventas)}</strong><span class="tag ${o.ventas>mean?'up':'down'}">${o.ventas>mean?'pico':'caída'}</span></div>`).join(''):'<div class="note">Sin anomalías: las ventas se mantienen dentro de lo esperado.</div>'}
+    </div>
+    <div class="note" style="text-align:center">Modelo estadístico sobre tus propios datos (sin costo de IA externa): promedios por día de semana, factor de tendencia y detección de outliers. Mientras más historial, más preciso.</div>`;
+}
+load();
+</script>
+</body>
+</html>
