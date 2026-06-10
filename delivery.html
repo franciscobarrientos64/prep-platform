@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
+<script src="/prep-sync.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
 <script src="/client-name.js"></script>
@@ -105,9 +106,9 @@ function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classL
 function setHead(mk,t,m){$('#sheet-mark').textContent=mk;$('#sheet-title').textContent=t;$('#sheet-meta').textContent=m||''}
 function waLink(tel,msg){const t=(tel||'').replace(/\D/g,'');return 'https://wa.me/'+(t.length<=9?'51'+t:t)+'?text='+encodeURIComponent(msg)}
 
-async function loadPedidos(){const{data}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(200);state.pedidos=data||[]}
-async function loadReps(){const{data}=await sb.from('dl_repartidores').select('*').eq('local_id',LOCAL).order('nombre');state.reps=data||[]}
-async function loadZonas(){const{data}=await sb.from('dl_zonas').select('*').eq('local_id',LOCAL).order('nombre');state.zonas=data||[]}
+async function loadPedidos(){try{const{data,error}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(200);if(error)throw error;state.pedidos=data||[];PrepSync.cacheSet('dl_pedidos',state.pedidos)}catch(e){state.pedidos=PrepSync.cacheGet('dl_pedidos')||state.pedidos||[]}}
+async function loadReps(){try{const{data,error}=await sb.from('dl_repartidores').select('*').eq('local_id',LOCAL).order('nombre');if(error)throw error;state.reps=data||[];PrepSync.cacheSet('dl_reps',state.reps)}catch(e){state.reps=PrepSync.cacheGet('dl_reps')||state.reps||[]}}
+async function loadZonas(){try{const{data,error}=await sb.from('dl_zonas').select('*').eq('local_id',LOCAL).order('nombre');if(error)throw error;state.zonas=data||[];PrepSync.cacheSet('dl_zonas',state.zonas)}catch(e){state.zonas=PrepSync.cacheGet('dl_zonas')||state.zonas||[]}}
 async function loadAll(){await Promise.all([loadPedidos(),loadReps(),loadZonas()]);render();subscribe();$('#boot').classList.add('gone')}
 
 const esHoy=p=>(p.created_at||'').slice(0,10)===hoyISO();
@@ -199,9 +200,10 @@ function abrirPedido(p){const e=estData(p.estado);const sig=FLUJO[p.estado];
 }
 async function asignarRep(p,rid){const{error}=await sb.from('dl_pedidos').update({repartidor_id:rid}).eq('id',p.id);if(error){toast('Atrás: '+error.message,'err');return}await sb.from('dl_repartidores').update({estado:'en_ruta'}).eq('id',rid);await Promise.all([loadPedidos(),loadReps()]);abrirPedido(state.pedidos.find(x=>x.id===p.id));render();toast('Va · repartidor asignado','ok')}
 async function avanzar(p){const sig=FLUJO[p.estado];if(!sig)return;cambiarEstado(p,sig)}
-async function cambiarEstado(p,est){const patch={estado:est};if(est==='entregado'){patch.entregado_at=nowISO();if(p.repartidor_id)await sb.from('dl_repartidores').update({estado:'disponible'}).eq('id',p.repartidor_id)}
-  const{error}=await sb.from('dl_pedidos').update(patch).eq('id',p.id);if(error){toast('Atrás: '+error.message,'err');return}
-  await Promise.all([loadPedidos(),loadReps()]);closeSheet();render();toast('Servido · '+estData(est)[1],'ok')}
+async function cambiarEstado(p,est){const patch={estado:est};if(est==='entregado'){patch.entregado_at=nowISO();if(p.repartidor_id)await PrepSync.write('dl_repartidores','update',{values:{estado:'disponible'},match:{id:p.repartidor_id}})}
+  const local=state.pedidos.find(x=>x.id===p.id);if(local)Object.assign(local,patch);PrepSync.cacheSet('dl_pedidos',state.pedidos);
+  const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id:p.id}});if(error){toast('Atrás: '+error.message,'err');return}
+  if(PrepSync.online())await Promise.all([loadPedidos(),loadReps()]);closeSheet();render();toast((queued?'Sin conexión · ':'Servido · ')+estData(est)[1],queued?'warn':'ok')}
 
 function abrirNuevo(){
   let c={nombre:'',telefono:'',direccion:'',referencia:'',canal:'propio',detalle:'',subtotal:'',zona:'',metodo_pago:'efectivo'};
