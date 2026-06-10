@@ -358,7 +358,11 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - **directorio.html** (`/directorio`) — Reportes ejecutivos consolidados (ventas, food cost, labor%, utilidad, top platos, operación, P&L vs presupuesto) por hoy/7d/mes.
 - **engagement.html** (`/engagement`) — CRM 360 + Loyalty (niveles+puntos, eng_puntos) + Campañas (audiencias + WhatsApp, eng_campanas).
 - **Multi-sede:** `client-name.js` inyecta un selector de sede en el header de todos los módulos cuando la marca tiene 2+ locales (persiste en `prep_ctx`, recarga). Directorio ya consolida por sede (acotado por marca vía RLS).
-- **Pasarelas de pago (#7, scaffold dual):** soporta **Culqi e Izipay simultáneamente** por local. `config_local.{culqi_activa,culqi_public_key,izipay_activa,izipay_public_key,izipay_shop_id}` editable en `/ajustes`; tabla `ca_pagos_online`; Edge Function **`cobro-tarjeta`** (verify_jwt) enruta por `pasarela`: Culqi = cobro síncrono token→charge (`CULQI_SECRET_KEY`), Izipay = Lyra/PayZen CreatePayment→formToken (`IZIPAY_PASSWORD` + shopId de config). **Pendiente activación:** cargar llaves sandbox (públicas en /ajustes, secretas como env del edge function) + enlazar el botón/tokenización en el POS (pos-v2; Culqi síncrono, Izipay completa con el widget KR + webhook).
+- **Pasarelas de pago (#7, scaffold multi):** soporta **Niubiz, Culqi e Izipay simultáneamente** por local (Casa Italia usa **Niubiz**). `config_local.{niubiz_activa,niubiz_merchant_id,niubiz_modo, culqi_activa,culqi_public_key, izipay_activa,izipay_public_key,izipay_shop_id}` editable en `/ajustes`; tabla `ca_pagos_online`; Edge Function **`cobro-tarjeta`** (verify_jwt) enruta por `pasarela`:
+  - **Niubiz** (multi-paso): `{accion:'session'}` crea sessionKey (front abre checkout) → `{accion:'authorize'}` con el transactionToken autoriza. Secrets `NIUBIZ_USER`/`NIUBIZ_PASSWORD`; merchantId+modo (test/prod) en config.
+  - **Culqi**: token→charge síncrono (`CULQI_SECRET_KEY`).
+  - **Izipay**: Lyra/PayZen CreatePayment→formToken (`IZIPAY_PASSWORD` + shopId).
+  - **Pendiente activación:** cargar llaves sandbox (públicas/merchantId en /ajustes, secretas como env del edge function) + enlazar la tokenización/checkout en el POS (pos-v2).
 - **Edge Functions Supabase:** `public-api` (API pública por key) y `cobro-tarjeta` (cobro con tarjeta). Se despliegan vía MCP `deploy_edge_function`.
 
 ### Dominios y acceso (al 2026-06-08)
