@@ -2078,6 +2078,9 @@ function abrirMover(ped, mesaActual) {
   $$('#sheet-body button[data-target]').forEach(b => b.onclick = () => moverMesa(ped.id, b.dataset.target));
 }
 
+/* ========= MULTI-MONEDA (referencia USD) ========= */
+function fxRate(){ const v=parseFloat(localStorage.getItem('prep_fx_usd')); return (v&&v>0)?v:3.75; }
+
 /* ========= AUDIT LOG (CA-12) ========= */
 function logAudit(accion, detalle, pedidoId, monto) {
   try {
@@ -3598,6 +3601,7 @@ function renderCobroScreen() {
           <div class="t"><span class="lbl">Servicio 10%</span><span class="val">${money(T.servicio_monto)}</span></div>
           ${T.propina>0?`<div class="t"><span class="lbl">Propina</span><span class="val">${money(T.propina)}</span></div>`:''}
           <div class="t big"><span class="lbl">Total</span><span class="val">${money(T.total)}</span></div>
+          <div class="t" style="opacity:.75;font-size:13px"><span class="lbl">≈ USD <button id="fx-edit" style="border:1px solid #999;border-radius:6px;background:none;font-size:11px;padding:0 5px;cursor:pointer;font-family:var(--font-mono)">T.C. ${fxRate().toFixed(2)}</button></span><span class="val">$ ${(T.total/fxRate()).toFixed(2)}</span></div>
           <div class="t cubierto"><span class="lbl">Pagado</span><span class="val">${money(T.pagado)}</span></div>
           <div class="t pendiente"><span class="lbl">Pendiente</span><span class="val">${money(T.pendiente)}</span></div>
         </div>
@@ -3655,6 +3659,7 @@ function renderCobroScreen() {
   if ($('#gift-codigo')) $('#gift-codigo').oninput = (e) => { state.cobro.gift_input.codigo = e.target.value.toUpperCase(); };
   if ($('#gift-validar')) $('#gift-validar').onclick = () => validarGiftCard();
   $$('.split-chip').forEach(b => b.onclick = () => { state.cobro.split_n = +b.dataset.n; state.cobro.monto_input = ''; render(); });
+  if ($('#fx-edit')) $('#fx-edit').onclick = () => { const v = prompt('Tipo de cambio USD → PEN (cuántos soles por dólar):', fxRate()); if (v && parseFloat(v) > 0) { localStorage.setItem('prep_fx_usd', parseFloat(v)); render(); } };
   $$('.propina-chip[data-pct]').forEach(b => b.onclick = () => { state.cobro.propina_pct = +b.dataset.pct; state.cobro.propina_custom = null; render(); });
   if ($('#propina-custom-btn')) $('#propina-custom-btn').onclick = () => {
     const v = prompt('Propina personalizada (S/)', state.cobro.propina_custom || '0');
