@@ -125,8 +125,9 @@ async function loadVentas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await
 async function loadPostulantes(){const{data}=await sb.from('rrhh_postulantes').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.postulantes=data||[]}
 async function loadTalks(){const{data}=await sb.from('rrhh_the_talk').select('*').order('fecha',{ascending:false}).limit(100);state.talks=data||[]}
 async function loadEvals(){const{data}=await sb.from('rrhh_evaluaciones').select('*').order('fecha',{ascending:false}).limit(100);state.evals=data||[]}
+async function loadSwaps(){const{data}=await sb.from('rrhh_swaps').select('*').eq('local_id',LOCAL).neq('estado','rechazado').order('created_at',{ascending:false});state.swaps=data||[]}
 async function loadPropinas(){const ini=hoyISO().slice(0,8)+'01';const{data}=await sb.from('ca_propinas').select('*').gte('created_at',ini+'T00:00:00');state.propinas=data||[]}
-async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes(),loadTalks(),loadEvals()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadEmp(),loadRoles(),loadAsis(),loadDocs(),loadProg(),loadPermisos(),loadVentas(),loadPropinas(),loadPostulantes(),loadTalks(),loadEvals(),loadSwaps()]);render();subscribe();$('#boot').classList.add('gone')}
 function empById(id){return state.emp.find(e=>e.id===id||String(e.id)===String(id))}
 function nomEmp(id){const e=empById(id);return e?((e.nombre||'')+' '+(e.apellidos||'')).trim():'—'}
 
@@ -377,15 +378,38 @@ function renderTurnos(){
   $('#screen').innerHTML=`
     <div class="toolbar"><button class="mini-btn" id="sem-prev">‹</button><span class="pill">${state.semana.slice(5)} – ${finSem.slice(5)}</span><button class="mini-btn" id="sem-next">›</button><button class="mini-btn ghost" id="sem-hoy">Hoy</button></div>
     <div class="kpis"><div class="kpi"><div class="v">${state.prog.length}</div><div class="l">Turnos asignados</div></div><div class="kpi"><div class="v">${horasSem.toFixed(0)}h</div><div class="l">Horas semana</div></div><div class="kpi"><div class="v">${money(costo)}</div><div class="l">Costo laboral est.</div></div></div>
+    ${(state.swaps&&state.swaps.length)?`<div style="background:var(--amber-soft);border:2px solid var(--outline);border-radius:12px;padding:10px 12px;margin-bottom:12px"><div style="font-weight:700;font-size:13px;margin-bottom:6px">⇄ Cambios de turno</div>${state.swaps.map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;flex-wrap:wrap"><span style="flex:1">${s.solicitante} · ${diaSemana(s.fecha)} ${s.turno||''}${s.cubre?(' → cubre '+s.cubre):''} <span style="opacity:.6">(${s.estado})</span></span>${s.estado==='solicitado'?`<button class="mini-btn" data-cubrir="${s.id}">Cubrir</button>`:''}${s.estado==='cubierto'?`<button class="mini-btn primary" data-okswap="${s.id}">Aprobar</button>`:''}<button class="mini-btn ghost" data-noswap="${s.id}">✕</button></div>`).join('')}</div>`:''}
     ${dias.map(f=>{const ps=progDia(f);const esHoy=f===hoyISO();
       return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div class="grp-t" style="margin:0;text-transform:capitalize">${diaSemana(f)} <span style="font-family:var(--font-mono);font-size:11px;opacity:.55">${f.slice(8)}/${f.slice(5,7)}${esHoy?' · hoy':''}</span></div><button class="mini-btn primary" data-add="${f}">+ turno</button></div>
-        ${ps.map(p=>{const e=empById(p.empleado_id);const v=e?violaRestriccion(e,p.fecha,p.turno):[];return `<div class="arow" data-pid="${p.id}" style="${v.length?'border-color:var(--secondary)':''}"><div class="av" style="width:36px;height:36px;font-size:13px">${e?iniciales(e):'?'}</div><div><div style="font-weight:700;font-size:14px">${e?(e.nombre+' '+(e.apellidos||'')):'—'}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.7">${p.turno||''} · ${p.hora_ini}-${p.hora_fin} · ${horasTurno(p)}h${v.length?' · ⚠ '+v.join(', '):''}</div></div><button class="mini-btn" data-del="${p.id}">✕</button></div>`}).join('')||'<div style="font-family:var(--font-mono);font-size:11px;opacity:.45;padding:4px 0">Sin turnos</div>'}
+        ${ps.map(p=>{const e=empById(p.empleado_id);const v=e?violaRestriccion(e,p.fecha,p.turno):[];return `<div class="arow" data-pid="${p.id}" style="${v.length?'border-color:var(--secondary)':''}"><div class="av" style="width:36px;height:36px;font-size:13px">${e?iniciales(e):'?'}</div><div><div style="font-weight:700;font-size:14px">${e?(e.nombre+' '+(e.apellidos||'')):'—'}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.7">${p.turno||''} · ${p.hora_ini}-${p.hora_fin} · ${horasTurno(p)}h${v.length?' · ⚠ '+v.join(', '):''}</div></div><button class="mini-btn" data-swap="${p.id}" title="Pedir cambio">⇄</button><button class="mini-btn" data-del="${p.id}">✕</button></div>`}).join('')||'<div style="font-family:var(--font-mono);font-size:11px;opacity:.45;padding:4px 0">Sin turnos</div>'}
       </div>`}).join('')}`;
   $('#sem-prev').onclick=async()=>{state.semana=addDias(state.semana,-7);await loadProg();render()};
   $('#sem-next').onclick=async()=>{state.semana=addDias(state.semana,7);await loadProg();render()};
   $('#sem-hoy').onclick=async()=>{state.semana=lunesDe(new Date());await loadProg();render()};
   $$('#screen [data-add]').forEach(b=>b.onclick=()=>abrirTurno(b.dataset.add));
   $$('#screen [data-del]').forEach(b=>b.onclick=()=>eliminarTurno(b.dataset.del));
+  $$('#screen [data-swap]').forEach(b=>b.onclick=()=>pedirSwap(b.dataset.swap));
+  $$('#screen [data-cubrir]').forEach(b=>b.onclick=()=>cubrirSwap(b.dataset.cubrir));
+  $$('#screen [data-okswap]').forEach(b=>b.onclick=()=>resolverSwap(b.dataset.okswap,'aprobado'));
+  $$('#screen [data-noswap]').forEach(b=>b.onclick=()=>resolverSwap(b.dataset.noswap,'rechazado'));
+}
+async function pedirSwap(progId){
+  const p=state.prog.find(x=>x.id===progId);if(!p)return;const e=empById(p.empleado_id);
+  const motivo=prompt('Motivo del cambio de turno ('+(e?e.nombre:'')+' · '+diaSemana(p.fecha)+' '+(p.turno||'')+'):');if(motivo===null)return;
+  const{error}=await sb.from('rrhh_swaps').insert({marca_id:MARCA,local_id:LOCAL,prog_id:progId,fecha:p.fecha,turno:p.turno,solicitante_id:p.empleado_id,solicitante:e?(e.nombre+' '+(e.apellidos||'')).trim():'—',motivo:motivo||null,estado:'solicitado'});
+  if(error){toast('Atrás: '+error.message,'err');return}await loadSwaps();render();toast('Va · cambio solicitado','ok');
+}
+async function cubrirSwap(id){
+  const act=activos();const nom=prompt('¿Quién cubre el turno? Escribe el nombre:\n'+act.map(e=>e.nombre+' '+(e.apellidos||'')).join(', '));if(!nom)return;
+  const e=act.find(x=>(x.nombre+' '+(x.apellidos||'')).toLowerCase().includes(nom.toLowerCase()));
+  const{error}=await sb.from('rrhh_swaps').update({cubre_id:e?e.id:null,cubre:e?(e.nombre+' '+(e.apellidos||'')).trim():nom,estado:'cubierto'}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}await loadSwaps();render();toast('Va · alguien cubre, falta aprobación','ok');
+}
+async function resolverSwap(id,estado){
+  const s=state.swaps.find(x=>x.id===id);
+  if(estado==='aprobado'&&s&&s.cubre_id&&s.prog_id){await sb.from('rrhh_programacion').update({empleado_id:s.cubre_id}).eq('id',s.prog_id);await loadProg();}
+  const{error}=await sb.from('rrhh_swaps').update({estado}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}await loadSwaps();render();toast(estado==='aprobado'?'🎉 Cambio aprobado y aplicado':'Cambio rechazado',estado==='aprobado'?'ok':'warn');
 }
 function abrirTurno(fecha){
   let empId='',turno='noche';const tt=turnoData(turno);let ini=tt[1],fin=tt[2];
