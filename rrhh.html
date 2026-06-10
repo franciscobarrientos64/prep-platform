@@ -362,35 +362,101 @@ function renderAsistencia(){
     ${act.map(e=>{const st=statusAsis(e.id);const a=st.a;
       return `<div class="arow"><div class="av" style="width:40px;height:40px;font-size:14px;${e.foto_url?`background-image:url(${e.foto_url})`:''}">${e.foto_url?'':iniciales(e)}</div>
         <div><div style="font-weight:700;font-size:14px">${e.nombre} ${e.apellidos||''}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.7">${e.rol||''} · ${a?('entró '+hhmm(a.hora_entrada)+(a.hora_salida?(' · salió '+hhmm(a.hora_salida)+' · '+Number(a.horas_trabajadas||0).toFixed(1)+'h'):'')):'sin marcar'}</div></div>
-        <div>${st.k==='sin'?`<button class="mini-btn primary" data-in="${e.id}">Entrada</button>`:st.k==='trab'?`<button class="mini-btn danger" data-out="${e.id}">Salida</button>`:`<span class="badge salio">✓ ${Number(a.horas_trabajadas||0).toFixed(1)}h</span>`}</div></div>`}).join('')}`;
-  $$('#screen [data-in]').forEach(b=>b.onclick=()=>marcarEntrada(b.dataset.in));
-  $$('#screen [data-out]').forEach(b=>b.onclick=()=>marcarSalida(b.dataset.out));
+        <div style="display:flex;gap:6px;align-items:center">${a&&a.foto_entrada_url?`<button class="mini-btn ghost" data-foto="${a.foto_entrada_url}" title="Ver foto de entrada">📸</button>`:''}${a&&a.fuera_de_geofence?`<span class="badge" style="background:var(--tertiary)" title="Marcó a ${a.distancia_m_entrada||'?'}m del local">⚠ ${a.distancia_m_entrada||''}m</span>`:''}${st.k==='sin'?`<button class="mini-btn primary" data-in="${e.id}">Entrada</button>`:st.k==='trab'?`<button class="mini-btn danger" data-out="${e.id}">Salida</button>`:`<span class="badge salio">✓ ${Number(a.horas_trabajadas||0).toFixed(1)}h</span>`}</div></div>`}).join('')}`;
+  $$('#screen [data-in]').forEach(b=>b.onclick=()=>marcarAsistencia(b.dataset.in,'entrada'));
+  $$('#screen [data-out]').forEach(b=>b.onclick=()=>marcarAsistencia(b.dataset.out,'salida'));
+  $$('#screen [data-foto]').forEach(b=>b.onclick=()=>verFotoAsis(b.dataset.foto));
 }
-async function marcarEntrada(id){
-  const{error}=await sb.from('rrhh_asistencia').insert({empleado_id:id,local_id:LOCAL,fecha:hoyISO(),hora_entrada:nowISO(),tipo:'normal'});
-  if(error){toast('Atrás: '+error.message,'err');return}await loadAsis();render();toast('Va · entrada marcada','ok');
+/* ====== ASISTENCIA BIOMÉTRICA (selfie + geofence) ====== */
+async function getGeofence(){ if(state._gf!==undefined)return state._gf; const{data}=await sb.from('rrhh_geofence').select('*').eq('local_id',LOCAL).maybeSingle(); state._gf=data||null; return state._gf; }
+function distM(la1,lo1,la2,lo2){const R=6371000,tr=x=>x*Math.PI/180;const dLa=tr(la2-la1),dLo=tr(lo2-lo1);const s=Math.sin(dLa/2)**2+Math.cos(tr(la1))*Math.cos(tr(la2))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+function getPos(){return new Promise(res=>{if(!navigator.geolocation)return res(null);navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lng:p.coords.longitude}),()=>res(null),{enableHighAccuracy:true,timeout:8000});});}
+function capturarSelfie(titulo){
+  return new Promise(async resolve=>{
+    const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px';
+    ov.innerHTML=`<div style="color:#fff;font-family:var(--font-mono);font-size:13px;text-align:center;max-width:340px">${titulo}</div>
+      <video id="bvid" autoplay playsinline muted style="width:min(86vw,340px);aspect-ratio:3/4;object-fit:cover;border:3px solid #fff;border-radius:18px;background:#000;transform:scaleX(-1)"></video>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button id="bsnap" class="btn primary"><span class="material-symbols-outlined">photo_camera</span>Capturar</button><button id="bskip" class="btn ghost" style="background:#fff">Sin foto</button><button id="bcancel" class="btn ghost" style="background:#fff">Cancelar</button></div>`;
+    document.body.appendChild(ov);
+    let stream=null;
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}}); ov.querySelector('#bvid').srcObject=stream; }catch(e){}
+    const cleanup=()=>{if(stream)stream.getTracks().forEach(t=>t.stop());ov.remove();};
+    ov.querySelector('#bcancel').onclick=()=>{cleanup();resolve({cancel:true});};
+    ov.querySelector('#bskip').onclick=()=>{cleanup();resolve({blob:null});};
+    ov.querySelector('#bsnap').onclick=()=>{const v=ov.querySelector('#bvid');if(!v.videoWidth){cleanup();resolve({blob:null});return;}
+      const cv=document.createElement('canvas');cv.width=v.videoWidth;cv.height=v.videoHeight;const x=cv.getContext('2d');x.translate(cv.width,0);x.scale(-1,1);x.drawImage(v,0,0);
+      cv.toBlob(b=>{cleanup();resolve({blob:b});},'image/jpeg',0.8);};
+  });
 }
-async function marcarSalida(id){
-  const a=asisHoy(id);if(!a)return;const horas=Math.max(0,(Date.now()-new Date(a.hora_entrada).getTime())/3600000);
-  const{error}=await sb.from('rrhh_asistencia').update({hora_salida:nowISO(),horas_trabajadas:Number(horas.toFixed(2))}).eq('id',a.id);
-  if(error){toast('Atrás: '+error.message,'err');return}await loadAsis();render();toast('Servido · salida ('+horas.toFixed(1)+'h)','ok');
+async function marcarAsistencia(id,tipo){
+  const emp=empById(id); const titulo=(tipo==='entrada'?'Marcar ENTRADA':'Marcar SALIDA')+' · '+(emp?(emp.nombre+' '+(emp.apellidos||'')):'')+' — mira a la cámara para verificar tu identidad';
+  const cap=await capturarSelfie(titulo); if(cap.cancel)return;
+  const pos=await getPos(); const gf=await getGeofence(); let fuera=false,dist=null;
+  if(pos&&gf&&gf.activa&&gf.lat){ dist=Math.round(distM(pos.lat,pos.lng,gf.lat,gf.lng)); fuera=dist>(gf.radio_m||100); }
+  if(fuera&&gf&&gf.estricta){ toast('Atrás · estás a '+dist+'m del local (fuera del rango permitido)','err'); return; }
+  let foto=null;
+  if(cap.blob){ const path=LOCAL+'/'+id+'/'+tipo+'_'+Date.now()+'.jpg'; const up=await sb.storage.from('rrhh-files').upload(path,cap.blob,{contentType:'image/jpeg',upsert:true}); if(!up.error)foto=path; }
+  if(tipo==='entrada'){
+    const{error}=await sb.from('rrhh_asistencia').insert({empleado_id:id,local_id:LOCAL,fecha:hoyISO(),hora_entrada:nowISO(),tipo:'normal',foto_entrada_url:foto,metodo_verif:foto?'foto':'manual',lat_entrada:pos?pos.lat:null,lng_entrada:pos?pos.lng:null,fuera_de_geofence:fuera,distancia_m_entrada:dist});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    toast('Va · entrada'+(foto?' verificada 📸':'')+(fuera?(' · ⚠ a '+dist+'m'):''),'ok');
+  }else{
+    const a=asisHoy(id);if(!a)return;const horas=Math.max(0,(Date.now()-new Date(a.hora_entrada).getTime())/3600000);
+    const{error}=await sb.from('rrhh_asistencia').update({hora_salida:nowISO(),horas_trabajadas:Number(horas.toFixed(2)),foto_salida_url:foto,lat_salida:pos?pos.lat:null,lng_salida:pos?pos.lng:null}).eq('id',a.id);
+    if(error){toast('Atrás: '+error.message,'err');return}
+    toast('Servido · salida ('+horas.toFixed(1)+'h)'+(foto?' 📸':''),'ok');
+  }
+  await loadAsis();render();
 }
+async function verFotoAsis(path){ const{data}=await sb.storage.from('rrhh-files').createSignedUrl(path,120); if(data&&data.signedUrl)window.open(data.signedUrl,'_blank'); else toast('No se pudo abrir la foto','err'); }
 
+/* ====== PLANILLA PERÚ: ONP/AFP + renta 5ta + EsSalud ====== */
+const UIT=5350; // UIT 2025
+function descPension(e){
+  const bruto=Number(e.sueldo||0);
+  if((e.sistema_pension||'onp')==='afp'){
+    const com=Number(e.afp_comision_pct!=null?e.afp_comision_pct:1.00)/100;
+    const prima=Number(e.afp_prima_pct!=null?e.afp_prima_pct:1.35)/100;
+    const tasa=0.10+com+prima;
+    return {tipo:'AFP'+(e.afp_nombre?(' · '+e.afp_nombre):''), tasa, monto:+(bruto*tasa).toFixed(2), det:`10% aporte + ${(com*100).toFixed(2)}% com + ${(prima*100).toFixed(2)}% prima`};
+  }
+  return {tipo:'ONP', tasa:0.13, monto:+(bruto*0.13).toFixed(2), det:'13% aporte'};
+}
+function renta5ta(e){ // estimado mensual (renta de 5ta categoría)
+  const anual=Number(e.sueldo||0)*14; // 12 sueldos + 2 gratificaciones
+  let base=anual-7*UIT; if(base<=0)return 0;
+  const tramos=[[5*UIT,0.08],[15*UIT,0.14],[15*UIT,0.17],[10*UIT,0.20],[Infinity,0.30]];
+  let rem=base,tax=0; for(const[lim,r]of tramos){const x=Math.min(rem,lim);tax+=x*r;rem-=x;if(rem<=0)break;}
+  return +(tax/12).toFixed(2);
+}
+function essalud(e){return +(Number(e.sueldo||0)*0.09).toFixed(2);} // costo empleador (no se descuenta)
+function netoEmp(e){return +(Number(e.sueldo||0)-descPension(e).monto-renta5ta(e)).toFixed(2);}
 function renderPlanilla(){
-  const act=activos();const areas=[...new Set(act.map(e=>normArea(e.area)))];
-  const total=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
-  let rows='';areas.forEach(ar=>{const es=act.filter(e=>normArea(e.area)===ar);const sub=es.reduce((s,e)=>s+Number(e.sueldo||0),0);
-    rows+=es.map(e=>`<tr><td>${e.nombre} ${e.apellidos||''}</td><td style="opacity:.6">${ar}</td><td>${e.tipo_contrato||'—'}</td><td>${money(e.sueldo)}</td></tr>`).join('');
-    rows+=`<tr class="tot"><td colspan="3">Subtotal ${ar}</td><td>${money(sub)}</td></tr>`;});
-  const dia=new Date().getDate();const planillaMTD=total/30*dia;const ventasMes=Number(state.ventasMes||0);
+  const act=activos();
+  const tBruto=act.reduce((s,e)=>s+Number(e.sueldo||0),0);
+  const tPension=act.reduce((s,e)=>s+descPension(e).monto,0);
+  const tRenta=act.reduce((s,e)=>s+renta5ta(e),0);
+  const tNeto=act.reduce((s,e)=>s+netoEmp(e),0);
+  const tEssalud=act.reduce((s,e)=>s+essalud(e),0);
+  const costoEmpresa=tBruto+tEssalud;
+  let rows=act.map(e=>{const p=descPension(e);const r=renta5ta(e);
+    return `<tr><td>${e.nombre} ${e.apellidos||''}<div style="font-family:var(--font-mono);font-size:10px;opacity:.5">${normArea(e.area)} · ${e.tipo_contrato||'—'}</div></td>
+      <td>${money(e.sueldo)}</td>
+      <td><span title="${p.det}">${p.tipo}</span><br><span style="color:var(--secondary)">−${money(p.monto)}</span></td>
+      <td>${r>0?'<span style="color:var(--secondary)">−'+money(r)+'</span>':'<span style="opacity:.4">—</span>'}</td>
+      <td><strong>${money(netoEmp(e))}</strong></td>
+      <td style="opacity:.7">+${money(essalud(e))}</td></tr>`;}).join('');
+  const dia=new Date().getDate();const planillaMTD=costoEmpresa/30*dia;const ventasMes=Number(state.ventasMes||0);
   const laborPct=ventasMes>0?(planillaMTD/ventasMes*100):0;const alto=laborPct>30;
   $('#screen').innerHTML=`
-    <div class="kpis"><div class="kpi"><div class="v">${money(total)}</div><div class="l">Planilla mensual</div></div>
-      <div class="kpi"><div class="v">${act.length}</div><div class="l">Colaboradores</div></div>
-      <div class="kpi ${alto?'':'good'}" style="${alto?'border-color:var(--secondary)':''}"><div class="v" style="${alto?'color:var(--secondary)':''}">${laborPct?laborPct.toFixed(1)+'%':'—'}</div><div class="l">Labor cost ${alto?'⚠ >30%':'(mes)'}</div></div></div>
-    ${ventasMes>0?`<div style="background:${alto?'var(--red-soft)':'var(--green-soft)'};border:2px solid var(--outline);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px">Costo laboral al día de hoy: <strong>${money(planillaMTD)}</strong> sobre ventas del mes <strong>${money(ventasMes)}</strong> = <strong style="color:${alto?'var(--secondary)':'var(--green)'}">${laborPct.toFixed(1)}%</strong>. ${alto?'Por encima del 30% recomendado — revisa turnos/horas.':'Dentro del rango saludable (≤30%).'}</div>`:''}
-    <div class="pl"><table><tr><th>Colaborador</th><th>Área</th><th>Contrato</th><th>Sueldo</th></tr>${rows}<tr class="tot"><td colspan="3">TOTAL PLANILLA</td><td>${money(total)}</td></tr></table></div>
-    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:10px">Esta planilla alimenta el grupo "Personal" del módulo Finanzas.</div>`;
+    <div class="kpis"><div class="kpi"><div class="v">${money(tBruto)}</div><div class="l">Bruto mensual</div></div>
+      <div class="kpi"><div class="v" style="color:var(--secondary)">${money(tPension+tRenta)}</div><div class="l">Descuentos (pensión+renta)</div></div>
+      <div class="kpi good"><div class="v">${money(tNeto)}</div><div class="l">Neto a pagar</div></div>
+      <div class="kpi"><div class="v">${money(costoEmpresa)}</div><div class="l">Costo empresa (+EsSalud 9%)</div></div></div>
+    ${ventasMes>0?`<div style="background:${alto?'var(--red-soft)':'var(--green-soft)'};border:2px solid var(--outline);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px">Costo laboral (con EsSalud) al día de hoy: <strong>${money(planillaMTD)}</strong> sobre ventas del mes <strong>${money(ventasMes)}</strong> = <strong style="color:${alto?'var(--secondary)':'var(--green)'}">${laborPct.toFixed(1)}%</strong>. ${alto?'Por encima del 30% recomendado.':'Dentro del rango saludable (≤30%).'}</div>`:''}
+    <div class="pl"><table><tr><th>Colaborador</th><th>Bruto</th><th>Pensión</th><th>Renta 5ta</th><th>Neto</th><th>EsSalud</th></tr>${rows}
+      <tr class="tot"><td>TOTAL</td><td>${money(tBruto)}</td><td style="color:var(--secondary)">−${money(tPension)}</td><td style="color:var(--secondary)">−${money(tRenta)}</td><td>${money(tNeto)}</td><td>+${money(tEssalud)}</td></tr></table></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:10px;line-height:1.6">ONP 13% · AFP = 10% aporte + comisión + prima (configurables por colaborador en su ficha). Renta 5ta estimada (bruto×14 − 7 UIT, UIT S/${UIT}). EsSalud 9% lo asume el empleador. Alimenta el grupo "Personal" de Finanzas.</div>`;
 }
 
 /* ====== TURNOS / PROGRAMACIÓN ====== */
@@ -502,6 +568,13 @@ function abrirEditor(e){
       <div class="sheet-section grid2"><div><div class="field-lbl">DNI</div><input class="input" id="e-dni" value="${c.dni||''}"></div><div><div class="field-lbl">Teléfono</div><input class="input" id="e-tel" value="${c.telefono||''}"></div></div>
       <div class="sheet-section"><div class="field-lbl">Email</div><input class="input" id="e-email" value="${c.email||''}"></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Banco</div><input class="input" id="e-banco" value="${c.banco||''}"></div><div><div class="field-lbl">Cuenta</div><input class="input" id="e-cuenta" value="${c.cuenta||''}"></div></div>
+      <div class="sheet-section"><div class="field-lbl">Sistema de pensión</div>
+        <div class="chips" id="e-pension">${[['onp','ONP'],['afp','AFP']].map(([k,l])=>`<button class="chip ${ (c.sistema_pension||'onp')===k?'active':''}" data-p="${k}">${l}</button>`).join('')}</div>
+        <div id="e-afp-box" style="${(c.sistema_pension||'onp')==='afp'?'':'display:none'};margin-top:8px">
+          <div class="grid2"><div><div class="field-lbl">AFP</div><select class="select" id="e-afp">${['','Integra','Prima','Profuturo','Habitat'].map(a=>`<option ${ (c.afp_nombre||'')===a?'selected':''}>${a||'—'}</option>`).join('')}</select></div>
+          <div><div class="field-lbl">Comisión %</div><input class="input" id="e-afpcom" type="number" step="0.01" value="${c.afp_comision_pct!=null?c.afp_comision_pct:1.00}"></div></div>
+          <div style="margin-top:8px"><div class="field-lbl">Prima seguro %</div><input class="input" id="e-afpprima" type="number" step="0.01" value="${c.afp_prima_pct!=null?c.afp_prima_pct:1.35}"></div>
+        </div></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Emergencia (nombre)</div><input class="input" id="e-emn" value="${c.contacto_emergencia_nombre||''}"></div><div><div class="field-lbl">Emergencia (tel)</div><input class="input" id="e-emt" value="${c.contacto_emergencia_telefono||''}"></div></div>
       <div class="sheet-section"><div class="field-lbl">Días que NO puede trabajar</div><div class="chips" id="e-diasno">${DIAS.map(d=>`<button class="chip ${c.restricciones.dias_no.includes(d)?'active':''}" data-d="${d}" style="text-transform:capitalize">${d}</button>`).join('')}</div></div>
       <div class="sheet-section"><div class="field-lbl">Turnos permitidos (vacío = cualquiera)</div><div class="chips" id="e-turnos">${TURNOS.map(t=>`<button class="chip ${c.restricciones.turnos.includes(t[0])?'active':''}" data-t="${t[0]}">${t[0]}</button>`).join('')}</div></div>
@@ -509,6 +582,7 @@ function abrirEditor(e){
       <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="e-cancel">Atrás</button><button class="btn primary" id="e-save"><span class="material-symbols-outlined">save</span>Guardar</button></div></div>`;
     $('#e-rol').onchange=ev=>{c.rol=ev.target.value;const ar=ev.target.selectedOptions[0].dataset.area;if(ar){c.area=normArea(ar);$('#e-area').value=normArea(ar)}const r=state.roles.find(x=>x.nombre===c.rol);if(r&&!$('#e-sueldo').value){$('#e-sueldo').value=r.sueldo_referencia_min;c.sueldo=r.sueldo_referencia_min}};
     $$('#e-estado .chip').forEach(b=>b.onclick=()=>{c.estado=b.dataset.s;draw()});
+    $$('#e-pension .chip').forEach(b=>b.onclick=()=>{c.sistema_pension=b.dataset.p;draw()});
     $$('#e-diasno .chip').forEach(b=>b.onclick=()=>{const a=c.restricciones.dias_no,i=a.indexOf(b.dataset.d);i>=0?a.splice(i,1):a.push(b.dataset.d);b.classList.toggle('active')});
     $$('#e-turnos .chip').forEach(b=>b.onclick=()=>{const a=c.restricciones.turnos,i=a.indexOf(b.dataset.t);i>=0?a.splice(i,1):a.push(b.dataset.t);b.classList.toggle('active')});
     $('#e-cancel').onclick=()=>ed?abrirFicha(e):closeSheet();
@@ -517,7 +591,8 @@ function abrirEditor(e){
 }
 async function guardarEmp(id,c){
   const g=k=>{const el=$('#'+k);return el?el.value:''};
-  const payload={marca_id:MARCA,local_id:LOCAL,nombre:g('e-nom'),apellidos:g('e-ape'),rol:g('e-rol'),area:g('e-area'),sueldo:Number(g('e-sueldo'))||0,tipo_contrato:g('e-contrato'),fecha_ingreso:g('e-ingreso')||null,dni:g('e-dni'),telefono:g('e-tel'),email:g('e-email'),banco:g('e-banco'),cuenta:g('e-cuenta'),contacto_emergencia_nombre:g('e-emn'),contacto_emergencia_telefono:g('e-emt'),estado:c.estado,restricciones:c.restricciones||{},updated_at:nowISO()};
+  const pension=c.sistema_pension||'onp';
+  const payload={marca_id:MARCA,local_id:LOCAL,nombre:g('e-nom'),apellidos:g('e-ape'),rol:g('e-rol'),area:g('e-area'),sueldo:Number(g('e-sueldo'))||0,tipo_contrato:g('e-contrato'),fecha_ingreso:g('e-ingreso')||null,dni:g('e-dni'),telefono:g('e-tel'),email:g('e-email'),banco:g('e-banco'),cuenta:g('e-cuenta'),contacto_emergencia_nombre:g('e-emn'),contacto_emergencia_telefono:g('e-emt'),estado:c.estado,restricciones:c.restricciones||{},sistema_pension:pension,afp_nombre:pension==='afp'?(g('e-afp')||null):null,afp_comision_pct:pension==='afp'?(Number(g('e-afpcom'))||0):null,afp_prima_pct:pension==='afp'?(Number(g('e-afpprima'))||0):null,updated_at:nowISO()};
   if(!payload.nombre){toast('Falta el nombre','warn');return}
   let error;
   if(id){({error}=await sb.from('rrhh_empleados').update(payload).eq('id',id))}
