@@ -69,7 +69,7 @@ const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL|
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const state={recetas:[],cart:{},sec:null,lang:'es',cur:'PEN'};
 const LANGS=[['es','ES'],['en','EN'],['pt','PT']];
-const FX_USD=3.75;
+let FX_USD=3.75;
 function tr(r,f){if(state.lang!=='es'&&r.traducciones&&r.traducciones[state.lang]&&r.traducciones[state.lang][f])return r.traducciones[state.lang][f];return r[f]||''}
 function pmoney(n){return state.cur==='USD'?('$ '+(Number(n||0)/FX_USD).toFixed(2)):money(n)}
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -80,6 +80,7 @@ function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classL
 async function load(){
   if(MESA)$('#mesa').textContent='Mesa '+MESA.replace(/^t_/,'').toUpperCase();
   try{const{data:mk}=await sb.from('inv_marcas').select('nombre').eq('id',MARCA).maybeSingle();if(mk&&mk.nombre){document.querySelector('.hero h1').textContent=mk.nombre;document.title='Carta · '+mk.nombre;}}catch(e){}
+  try{const{data:cf}=await sb.from('config_publica').select('tipo_cambio_usd').eq('local_id',LOCAL).maybeSingle();if(cf&&cf.tipo_cambio_usd>0)FX_USD=Number(cf.tipo_cambio_usd);}catch(e){}
   const{data}=await sb.from('carta_publica').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu');
   state.recetas=(data||[]).filter(r=>Number(r.precio_venta||0)>0);
   render();$('#boot').classList.add('gone');

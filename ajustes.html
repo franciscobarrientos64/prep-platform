@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Ajustes · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="/offline.js"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink)}
+.header{background:var(--bg);border-bottom:2px solid #000;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand-logo{position:relative;display:block;width:96px;height:30px;flex-shrink:0}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.wrap{max-width:680px;margin:0 auto;padding:18px}
+.card{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:18px;margin-bottom:14px}
+.card h3{font-family:var(--font-display);font-size:18px;margin-bottom:14px}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin:12px 0 6px;display:block}
+.input{padding:10px 12px;border:2px solid #000;border-radius:10px;background:var(--bg);font-size:14px;width:100%;font-family:var(--font-body)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:8px 13px;border:2px solid #000;border-radius:999px;background:var(--surface);font-weight:700;font-size:12px;cursor:pointer}.chip.active{background:var(--primary);color:#fff}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:2px solid #000;border-radius:14px;font-weight:700;background:var(--primary);color:#fff;cursor:pointer}
+.toast{position:fixed;top:16px;right:16px;z-index:200;background:#000;color:#fff;border:2px solid var(--primary);border-radius:12px;padding:11px 16px;font-weight:600}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300}.boot.gone{opacity:0;pointer-events:none;transition:opacity .3s}.boot .l{width:200px;height:60px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<header class="header"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Ajustes del local</div></div></header>
+<main class="wrap" id="screen"></main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+let cfg={};
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2000)}
+async function load(){
+  const{data}=await sb.from('config_local').select('*').eq('local_id',LOCAL).maybeSingle();
+  cfg=data||{local_id:LOCAL,moneda_default:'PEN',igv_pct:18,servicio_pct_default:10,tipo_cambio_usd:3.75,servicio_sugerido:true,servicio_obligatorio:false};
+  render();$('#boot').classList.add('gone');
+}
+function render(){
+  $('#screen').innerHTML=`
+    <div class="card"><h3>🏢 Datos del negocio</h3>
+      <span class="field-lbl">Nombre comercial</span><input class="input" id="f-nom" value="${(cfg.nombre_comercial||'').replace(/"/g,'&quot;')}">
+      <div class="grid2"><div><span class="field-lbl">Razón social</span><input class="input" id="f-razon" value="${(cfg.razon_social||'').replace(/"/g,'&quot;')}"></div><div><span class="field-lbl">RUC</span><input class="input" id="f-ruc" value="${cfg.ruc||''}"></div></div>
+      <span class="field-lbl">Dirección</span><input class="input" id="f-dir" value="${(cfg.direccion||'').replace(/"/g,'&quot;')}">
+      <div class="grid2"><div><span class="field-lbl">Teléfono</span><input class="input" id="f-tel" value="${cfg.telefono||''}"></div><div><span class="field-lbl">Zona horaria</span><input class="input" id="f-tz" value="${cfg.zona_horaria||'America/Lima'}"></div></div>
+    </div>
+    <div class="card"><h3>💵 Cobro e impuestos</h3>
+      <div class="grid2"><div><span class="field-lbl">IGV %</span><input class="input" id="f-igv" type="number" value="${cfg.igv_pct!=null?cfg.igv_pct:18}"></div><div><span class="field-lbl">Servicio % sugerido</span><input class="input" id="f-serv" type="number" value="${cfg.servicio_pct_default!=null?cfg.servicio_pct_default:10}"></div></div>
+      <span class="field-lbl">Servicio</span><div class="chips" id="f-servmode">
+        <button class="chip ${cfg.servicio_obligatorio?'':(cfg.servicio_sugerido!==false?'active':'')}" data-sm="sugerido">Sugerido</button>
+        <button class="chip ${cfg.servicio_obligatorio?'active':''}" data-sm="obligatorio">Obligatorio</button>
+        <button class="chip ${(cfg.servicio_sugerido===false&&!cfg.servicio_obligatorio)?'active':''}" data-sm="ninguno">Sin servicio</button></div>
+      <div class="grid2"><div><span class="field-lbl">Moneda</span><input class="input" id="f-mon" value="${cfg.moneda_default||'PEN'}"></div><div><span class="field-lbl">Tipo de cambio USD→${cfg.moneda_default||'PEN'}</span><input class="input" id="f-fx" type="number" step="0.01" value="${cfg.tipo_cambio_usd!=null?cfg.tipo_cambio_usd:3.75}"></div></div>
+    </div>
+    <div class="card"><h3>🧾 Comprobante</h3>
+      <span class="field-lbl">Pie de ticket</span><input class="input" id="f-foot" value="${(cfg.ticket_footer||'').replace(/"/g,'&quot;')}" placeholder="¡Gracias por tu visita!"></div>
+    <button class="btn" id="save"><span class="material-symbols-outlined">save</span>Guardar ajustes</button>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:12px">El tipo de cambio se usa en la carta QR. IGV y servicio alimentan el cobro en POS.</div>`;
+  let sm=cfg.servicio_obligatorio?'obligatorio':(cfg.servicio_sugerido===false?'ninguno':'sugerido');
+  $$('#f-servmode .chip').forEach(b=>b.onclick=()=>{sm=b.dataset.sm;$$('#f-servmode .chip').forEach(x=>x.classList.toggle('active',x.dataset.sm===sm))});
+  $('#save').onclick=async()=>{
+    const row={local_id:LOCAL,nombre_comercial:$('#f-nom').value||null,razon_social:$('#f-razon').value||null,ruc:$('#f-ruc').value||null,direccion:$('#f-dir').value||null,telefono:$('#f-tel').value||null,zona_horaria:$('#f-tz').value||null,igv_pct:Number($('#f-igv').value)||0,servicio_pct_default:Number($('#f-serv').value)||0,servicio_sugerido:sm==='sugerido',servicio_obligatorio:sm==='obligatorio',moneda_default:$('#f-mon').value||'PEN',tipo_cambio_usd:Number($('#f-fx').value)||0,ticket_footer:$('#f-foot').value||null,updated_at:new Date().toISOString()};
+    const{error}=await sb.from('config_local').upsert(row,{onConflict:'local_id'});
+    if(error){toast('Error: '+error.message);return}cfg=Object.assign(cfg,row);toast('Ajustes guardados ✓');
+  };
+}
+load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div style="padding:40px;text-align:center;opacity:.6">Error al cargar</div>'});
+</script>
+</body>
+</html>

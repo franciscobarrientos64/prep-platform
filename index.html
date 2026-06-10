@@ -181,8 +181,10 @@ function renderUserSwitcher(){
   let html=`<div class="who">${u?u.nombre:'Invitado'}</div><div class="role">${u?(ROLLBL[u.rol_sistema]||u.rol_sistema)+(u.marca_id?(' · '+u.marca_id):'')+(access.authed?'':' · demo'):'sin sesión'}</div>`;
   if(access.authed){
     let adm='';
-    if(u&&u.rol_sistema==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div><hr>`;
-    else if(u&&['admin_marca','gerente'].includes(u.rol_sistema))adm=`<div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios y permisos</div><hr>`;
+    if(u&&u.rol_sistema==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div>`;
+    else if(u&&['admin_marca','gerente'].includes(u.rol_sistema))adm=`<div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios y permisos</div>`;
+    if(u&&['superadmin','admin_marca','gerente'].includes(u.rol_sistema))adm+=`<div class="mi" data-act="ajustes"><span class="material-symbols-outlined">settings</span> Ajustes del local</div>`;
+    if(adm)adm+='<hr>';
     html+=adm+`<div class="mi" data-act="pass"><span class="material-symbols-outlined">key</span> Cambiar contraseña</div><hr><div class="mi" data-act="logout"><span class="material-symbols-outlined">logout</span> Cerrar sesión</div>`;
   }else{
     html+=`<div class="lbl">Ver como (demo)</div><select id="acct-ver">${access.usuarios.map(x=>`<option value="${x.id}" ${u&&u.id===x.id?'selected':''}>${x.nombre} · ${ROLLBL[x.rol_sistema]||x.rol_sistema}</option>`).join('')}</select><hr><div class="mi" data-act="login"><span class="material-symbols-outlined">login</span> Iniciar sesión</div>`;
@@ -198,7 +200,8 @@ function renderUserSwitcher(){
     else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');location.reload()});
     else if(a==='login')location.href='/login';
     else if(a==='portal')location.href='/portal';
-    else if(a==='usuarios')location.href='/admin';});
+    else if(a==='usuarios')location.href='/admin';
+    else if(a==='ajustes')location.href='/ajustes';});
 }
 function renderMods(){
   const u=access.user;const sa=u&&u.rol_sistema==='superadmin';const adm=sa||(u&&['admin_marca','gerente'].includes(u.rol_sistema));
