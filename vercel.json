@@ -34,6 +34,10 @@
       "destination": "/prediccion.html"
     },
     {
+      "source": "/api",
+      "destination": "/apikeys.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },
