@@ -26,6 +26,10 @@
       "destination": "/portal.html"
     },
     {
+      "source": "/estrategia",
+      "destination": "/estrategia.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },

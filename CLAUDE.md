@@ -372,6 +372,7 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - **prep.html** (/prep) — Consola de módulos: activar/desactivar por cliente y **por feature** con dependencias.
 - **admin.html** (/admin) — Usuarios & permisos (roles con niveles ver/operar/aprobar/admin).
 - **prep-negocio.html** (/prep-negocio) — Negocio: suscripciones (plan/estado/precio), MRR/ARR, morosos, pagos, facturación.
+- **estrategia.html** (/estrategia) — Estrategia (solo lectura/planeamiento): tabs Hardware (plan del negocio paralelo de fierro), Comercialización (GTM, planes, canales, métricas), Financiamiento (opciones de capital + checklist), Competidores (nacionales e internacionales). Enlaza al benchmark `/analisis`.
 - Tablas: prep_usuarios, prep_roles, prep_marca_modulos, prep_marca_features, prep_suscripciones, prep_pagos.
 
 ### Seguridad / RLS (estado al 2026-06-08)
