@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5af9">
+<title>Mi tarjeta · Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/tenant.js"></script>
+<style>
+:root{--primary:#1e5af9;--tertiary:#ffcc00;--ink:#171c20;--bg:#fcf9f8;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:linear-gradient(160deg,#0c1430,#1e5af9);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.card{width:100%;max-width:380px;background:var(--bg);border:3px solid #000;border-radius:24px;box-shadow:10px 10px 0 #000;overflow:hidden}
+.top{background:var(--ink);color:var(--bg);padding:22px;text-align:center;position:relative}
+.logo{width:120px;height:38px;margin:0 auto 6px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff}
+.marca{font-family:var(--font-display);font-size:22px}
+.tier{display:inline-block;margin-top:8px;padding:4px 14px;border:2px solid #000;border-radius:999px;font-family:var(--font-mono);font-weight:700;font-size:12px;text-transform:uppercase}
+.body{padding:22px;text-align:center}
+.hello{font-family:var(--font-mono);font-size:12px;opacity:.6;text-transform:uppercase;letter-spacing:.08em}
+.nombre{font-family:var(--font-display);font-size:26px;margin:4px 0 18px}
+.pts{font-family:var(--font-display);font-size:60px;line-height:1;color:var(--primary)}
+.ptslbl{font-family:var(--font-mono);font-size:12px;opacity:.6;text-transform:uppercase}
+.stats{display:flex;gap:10px;margin-top:18px}
+.stat{flex:1;border:2px solid #000;border-radius:14px;padding:10px}
+.stat .v{font-family:var(--font-display);font-size:22px}.stat .l{font-family:var(--font-mono);font-size:9px;opacity:.6;text-transform:uppercase}
+.foot{font-family:var(--font-mono);font-size:10px;opacity:.5;padding:0 22px 18px;text-align:center}
+.err{color:#fff;text-align:center;font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+<div id="root" class="err">Cargando tu tarjeta…</div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const t=new URLSearchParams(location.search).get('t');
+function tier(p){p=Number(p||0);if(p>=300)return['💎 Diamante','#b9f2ff'];if(p>=150)return['🥇 Oro','#ffd700'];if(p>=50)return['🥈 Plata','#e5e7eb'];return['🌟 Nuevo','#fff']}
+async function load(){
+  if(!t){document.getElementById('root').innerHTML='Tarjeta no válida (falta el código).';return}
+  const{data,error}=await sb.rpc('get_tarjeta',{t});
+  const c=Array.isArray(data)?data[0]:data;
+  if(error||!c){document.getElementById('root').innerHTML='Tarjeta no encontrada.';return}
+  const tr=tier(c.puntos);
+  document.getElementById('root').outerHTML=`
+    <div class="card">
+      <div class="top"><div class="logo"></div><div class="marca">${c.marca_emoji||''} ${c.marca||'Restaurante'}</div><div class="tier" style="background:${tr[1]}">${tr[0]}</div></div>
+      <div class="body">
+        <div class="hello">Tarjeta de fidelidad de</div>
+        <div class="nombre">${c.nombre||'Cliente'}</div>
+        <div class="pts">${Number(c.puntos||0).toLocaleString('es-PE')}</div>
+        <div class="ptslbl">puntos acumulados</div>
+        <div class="stats"><div class="stat"><div class="v">${Number(c.total_visitas||0)}</div><div class="l">Visitas</div></div><div class="stat"><div class="v">${c.segmento||'—'}</div><div class="l">Segmento</div></div></div>
+      </div>
+      <div class="foot">Muestra esta tarjeta en tu próxima visita · Powered by Prep</div>
+    </div>`;
+}
+load();
+</script>
+</body>
+</html>

@@ -341,11 +341,13 @@ function abrirFicha(c){
       <div class="info-row" style="align-items:center"><span>Acepta recibir promociones</span><button class="btn ${c.acepta_marketing?'wa':'ghost'}" id="f-consent" style="width:auto;min-height:0;padding:8px 14px">${c.acepta_marketing?'✓ Consiente'+(c.consentimiento_at?(' · '+String(c.consentimiento_at).slice(0,10)):''):'Sin consentimiento'}</button></div>
       <div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:4px">Solo se incluye en campañas si dio su consentimiento.</div></div>
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="f-bono"><span class="material-symbols-outlined">add_circle</span>Otorgar puntos</button><button class="btn ghost" id="f-canje"><span class="material-symbols-outlined">redeem</span>Canjear</button></div></div>
-    <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de Casa Italia 🇮🇹')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>`;
+    <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de Casa Italia 🇮🇹')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>
+    ${c.loyalty_token?`<div class="sheet-section"><button class="btn ghost" id="f-tarjeta" style="width:100%"><span class="material-symbols-outlined">card_membership</span>Ver / compartir tarjeta de fidelidad</button></div>`:''}`;
   openSheet();
   $('#f-consent').onclick=async()=>{const nv=!c.acepta_marketing;const{error}=await sb.from('ms_clientes').update({acepta_marketing:nv,consentimiento_at:nv?new Date().toISOString():null}).eq('id',c.id);if(error){toast('Atrás','err');return}c.acepta_marketing=nv;c.consentimiento_at=nv?new Date().toISOString():null;await loadClientes();abrirFicha(state.clientes.find(x=>x.id===c.id)||c);toast(nv?'Va · consentimiento registrado':'Consentimiento retirado',nv?'ok':'warn')};
   $('#f-bono').onclick=()=>ajustarPuntos(c,1);
   $('#f-canje').onclick=()=>ajustarPuntos(c,-1);
+  if($('#f-tarjeta'))$('#f-tarjeta').onclick=()=>{const url=location.origin+'/tarjeta?t='+c.loyalty_token;if(navigator.share){navigator.share({title:'Tu tarjeta de fidelidad',url}).catch(()=>{})}else{window.open(url,'_blank')}};
 }
 async function ajustarPuntos(c,signo){
   const v=prompt(signo>0?'¿Cuántos puntos otorgar?':'¿Cuántos puntos canjear?');if(!v)return;const p=Math.abs(Number(v));if(!(p>0)){toast('Cantidad inválida','warn');return}
