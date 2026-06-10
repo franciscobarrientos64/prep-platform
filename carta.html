@@ -67,9 +67,11 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const qs=new URLSearchParams(location.search);
 const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'l11'),MESA=qs.get('mesa')||'';
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const state={recetas:[],cart:{},sec:null,lang:'es'};
+const state={recetas:[],cart:{},sec:null,lang:'es',cur:'PEN'};
 const LANGS=[['es','ES'],['en','EN'],['pt','PT']];
+const FX_USD=3.75;
 function tr(r,f){if(state.lang!=='es'&&r.traducciones&&r.traducciones[state.lang]&&r.traducciones[state.lang][f])return r.traducciones[state.lang][f];return r[f]||''}
+function pmoney(n){return state.cur==='USD'?('$ '+(Number(n||0)/FX_USD).toFixed(2)):money(n)}
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2600)}
 function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
@@ -87,9 +89,10 @@ function render(){
   const secs=secciones();if(!state.sec)state.sec=secs[0];
   const hasTrad=state.recetas.some(r=>r.traducciones&&Object.keys(r.traducciones).length);
   let lb=document.getElementById('langbar');
-  if(hasTrad){if(!lb){lb=document.createElement('div');lb.id='langbar';lb.style.cssText='display:flex;gap:6px;justify-content:center;padding:8px;background:var(--ink)';document.querySelector('.hero').after(lb);}
-    lb.innerHTML=LANGS.map(([k,l])=>`<button data-lang="${k}" style="padding:5px 12px;border:2px solid #000;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;background:${state.lang===k?'var(--primary)':'#fff'};color:${state.lang===k?'#fff':'#000'}">${l}</button>`).join('');
-    lb.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{state.lang=b.dataset.lang;render()});}
+  if(!lb){lb=document.createElement('div');lb.id='langbar';lb.style.cssText='display:flex;gap:6px;justify-content:center;padding:8px;background:var(--ink);flex-wrap:wrap';document.querySelector('.hero').after(lb);}
+  lb.innerHTML=(hasTrad?LANGS.map(([k,l])=>`<button data-lang="${k}" style="padding:5px 12px;border:2px solid #000;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;background:${state.lang===k?'var(--primary)':'#fff'};color:${state.lang===k?'#fff':'#000'}">${l}</button>`).join('')+'<span style="width:1px;background:#444;margin:2px 4px"></span>':'')+[['PEN','S/'],['USD','$']].map(([k,l])=>`<button data-cur="${k}" style="padding:5px 12px;border:2px solid #000;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;background:${state.cur===k?'var(--tertiary)':'#fff'};color:#000">${l}</button>`).join('');
+  lb.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{state.lang=b.dataset.lang;render()});
+  lb.querySelectorAll('[data-cur]').forEach(b=>b.onclick=()=>{state.cur=b.dataset.cur;render()});
   $('#nav').innerHTML=secs.map(s=>`<button class="${state.sec===s?'active':''}" data-s="${s}">${s}</button>`).join('');
   $$('#nav button').forEach(b=>b.onclick=()=>{state.sec=b.dataset.s;render();document.querySelector('#screen').scrollIntoView({behavior:'smooth',block:'start'})});
   $('#screen').innerHTML=secs.map(sec=>{const rs=state.recetas.filter(r=>(r.categoria_menu||'Otros')===sec);
@@ -99,7 +102,7 @@ function render(){
 function dish(r){const q=state.cart[r.id]?.qty||0;
   return `<div class="dish" data-id="${r.id}"><div class="ph" style="${r.foto_url?`background-image:url(${r.foto_url})`:''}">${r.foto_url?'':(r.emoji||'🍽️')}</div>
     <div class="b"><h3>${tr(r,'nombre')}</h3>${tr(r,'descripcion')?`<div class="ds">${tr(r,'descripcion')}</div>`:''}${(r.alergenos&&r.alergenos.length)?`<div class="alg">⚠ ${r.alergenos.join(', ')}</div>`:''}
-      <div class="ft"><span class="pr">${money(r.precio_venta)}</span>${q>0?`<div class="qtyc"><button data-m="${r.id}">−</button><span class="n">${q}</span><button data-p="${r.id}">+</button></div>`:`<div class="add" data-p="${r.id}"><span class="material-symbols-outlined">add</span></div>`}</div></div></div>`;
+      <div class="ft"><span class="pr">${pmoney(r.precio_venta)}</span>${q>0?`<div class="qtyc"><button data-m="${r.id}">−</button><span class="n">${q}</span><button data-p="${r.id}">+</button></div>`:`<div class="add" data-p="${r.id}"><span class="material-symbols-outlined">add</span></div>`}</div></div></div>`;
 }
 function bindDishes(){
   $$('#screen [data-p]').forEach(b=>b.onclick=()=>chg(b.dataset.p,1));
@@ -108,13 +111,13 @@ function bindDishes(){
 function chg(id,d){const r=state.recetas.find(x=>x.id===id);if(!r)return;const cur=state.cart[id]?.qty||0;const q=Math.max(0,cur+d);if(q===0)delete state.cart[id];else state.cart[id]={qty:q,r};render()}
 function cartItems(){return Object.values(state.cart)}
 function cartTotal(){return cartItems().reduce((a,it)=>a+it.qty*Number(it.r.precio_venta||0),0)}
-function updateCart(){const n=cartItems().reduce((a,it)=>a+it.qty,0);$('#cart-n').textContent=n;$('#cart-t').textContent=money(cartTotal());$('#cart-btn').disabled=n===0}
+function updateCart(){const n=cartItems().reduce((a,it)=>a+it.qty,0);$('#cart-n').textContent=n;$('#cart-t').textContent=pmoney(cartTotal());$('#cart-btn').disabled=n===0}
 
 $('#cart-btn').onclick=()=>{if(!cartItems().length)return;abrirCarrito()};
 function abrirCarrito(){
   $('#sheet-title').textContent='Tu pedido'+(MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):'');
-  $('#sheet-body').innerHTML=`${cartItems().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${it.r.nombre}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${money(it.qty*it.r.precio_venta)}</span></div>`).join('')}
-    <div class="tot"><span>Total</span><span>${money(cartTotal())}</span></div>
+  $('#sheet-body').innerHTML=`${cartItems().map(it=>`<div class="ci"><span class="nm">${it.r.emoji||''} ${it.r.nombre}</span><div class="qtyc"><button data-m="${it.r.id}">−</button><span class="n">${it.qty}</span><button data-p="${it.r.id}">+</button></div><span style="font-family:var(--font-mono);min-width:74px;text-align:right">${pmoney(it.qty*it.r.precio_venta)}</span></div>`).join('')}
+    <div class="tot"><span>Total</span><span>${pmoney(cartTotal())}</span></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:6px">El pedido llega directo a cocina. ${MESA?'Lo llevamos a tu mesa.':'Acércate a caja o indícanos tu mesa.'}</div>
     <button class="btn2 primary" id="c-send"><span class="material-symbols-outlined">send</span>Enviar pedido a cocina</button>
     <button class="btn2 ghost" id="c-bill"><span class="material-symbols-outlined">request_quote</span>Pedir la cuenta</button>`;
