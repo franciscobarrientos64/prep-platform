@@ -68,12 +68,19 @@ function render(){
     </div>
     <div class="card"><h3>🧾 Comprobante</h3>
       <span class="field-lbl">Pie de ticket</span><input class="input" id="f-foot" value="${(cfg.ticket_footer||'').replace(/"/g,'&quot;')}" placeholder="¡Gracias por tu visita!"></div>
+    <div class="card"><h3>💳 Pasarela de pago</h3>
+      <div class="grid2"><div><span class="field-lbl">Pasarela</span><select class="input" id="f-pas">${['ninguna','culqi','izipay','mercadopago'].map(p=>`<option ${ (cfg.pasarela_tipo||'ninguna')===p?'selected':''}>${p}</option>`).join('')}</select></div>
+        <div><span class="field-lbl">Estado</span><div class="chips" id="f-pasact"><button class="chip ${cfg.pasarela_activa?'active':''}" data-a="1">Activa</button><button class="chip ${cfg.pasarela_activa?'':'active'}" data-a="0">Inactiva</button></div></div></div>
+      <span class="field-lbl">Llave pública</span><input class="input" id="f-paspk" value="${(cfg.pasarela_public_key||'').replace(/"/g,'&quot;')}" placeholder="pk_test_... (tokeniza la tarjeta en el POS)">
+      <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:8px;line-height:1.5">La llave <strong>secreta</strong> se configura como variable de entorno del Edge Function <code>cobro-tarjeta</code> (p. ej. CULQI_SECRET_KEY) — nunca en el front. Empieza con llaves de prueba (sandbox).</div></div>
     <button class="btn" id="save"><span class="material-symbols-outlined">save</span>Guardar ajustes</button>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:12px">El tipo de cambio se usa en la carta QR. IGV y servicio alimentan el cobro en POS.</div>`;
   let sm=cfg.servicio_obligatorio?'obligatorio':(cfg.servicio_sugerido===false?'ninguno':'sugerido');
   $$('#f-servmode .chip').forEach(b=>b.onclick=()=>{sm=b.dataset.sm;$$('#f-servmode .chip').forEach(x=>x.classList.toggle('active',x.dataset.sm===sm))});
+  let pasAct=!!cfg.pasarela_activa;
+  $$('#f-pasact .chip').forEach(b=>b.onclick=()=>{pasAct=b.dataset.a==='1';$$('#f-pasact .chip').forEach(x=>x.classList.toggle('active',x.dataset.a===(pasAct?'1':'0')))});
   $('#save').onclick=async()=>{
-    const row={local_id:LOCAL,nombre_comercial:$('#f-nom').value||null,razon_social:$('#f-razon').value||null,ruc:$('#f-ruc').value||null,direccion:$('#f-dir').value||null,telefono:$('#f-tel').value||null,zona_horaria:$('#f-tz').value||null,igv_pct:Number($('#f-igv').value)||0,servicio_pct_default:Number($('#f-serv').value)||0,servicio_sugerido:sm==='sugerido',servicio_obligatorio:sm==='obligatorio',moneda_default:$('#f-mon').value||'PEN',tipo_cambio_usd:Number($('#f-fx').value)||0,ticket_footer:$('#f-foot').value||null,updated_at:new Date().toISOString()};
+    const row={local_id:LOCAL,nombre_comercial:$('#f-nom').value||null,razon_social:$('#f-razon').value||null,ruc:$('#f-ruc').value||null,direccion:$('#f-dir').value||null,telefono:$('#f-tel').value||null,zona_horaria:$('#f-tz').value||null,igv_pct:Number($('#f-igv').value)||0,servicio_pct_default:Number($('#f-serv').value)||0,servicio_sugerido:sm==='sugerido',servicio_obligatorio:sm==='obligatorio',moneda_default:$('#f-mon').value||'PEN',tipo_cambio_usd:Number($('#f-fx').value)||0,ticket_footer:$('#f-foot').value||null,pasarela_tipo:$('#f-pas').value,pasarela_public_key:$('#f-paspk').value||null,pasarela_activa:pasAct,updated_at:new Date().toISOString()};
     const{error}=await sb.from('config_local').upsert(row,{onConflict:'local_id'});
     if(error){toast('Error: '+error.message);return}cfg=Object.assign(cfg,row);toast('Ajustes guardados ✓');
   };
