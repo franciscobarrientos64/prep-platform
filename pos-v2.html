@@ -1738,6 +1738,7 @@ function renderHeader() {
       ? `<button class="btn-ico ghost" id="btn-discard-edit"><span class="material-symbols-outlined">undo</span><span>Descartar</span></button>
          <button class="btn-ico primary" id="btn-save-edit"><span class="material-symbols-outlined">save</span><span>Guardar plano</span></button>`
       : `<button class="btn-ico" id="btn-giftcards"><span class="material-symbols-outlined">card_giftcard</span><span>Gift cards</span></button>
+         <button class="btn-ico ghost" id="btn-audit" title="Auditoría (CA-12)"><span class="material-symbols-outlined">history</span></button>
          <button class="btn-ico" id="btn-edit-floor"><span class="material-symbols-outlined">edit</span><span>Editar plano</span></button>
          <button class="btn-ico dark" id="mozo-select"><span class="material-symbols-outlined">person</span><span id="mozo-label">${
            (() => { const m = state.empleados.find(e => e.id === state.mozoId); return m ? fmtMozo(m) : 'Elegir mozo'; })()
@@ -1752,6 +1753,7 @@ function renderHeader() {
     $('#btn-edit-floor').onclick = enterEditMode;
     $('#mozo-select').onclick = abrirPickerMozo;
     $('#btn-giftcards').onclick = () => abrirGestorGiftCards('vender');
+    if ($('#btn-audit')) $('#btn-audit').onclick = () => window.open('/audit', 'prep_audit');
   }
 }
 
@@ -3921,6 +3923,12 @@ async function confirmarCobro() {
     if (cortesiasInsert.length) {
       const r = await sb.from('ca_cortesias').insert(cortesiasInsert);
       if (r.error) throw new Error('Cortesías: ' + r.error.message);
+      // CA-12: auditar cada cortesía (solicitante + gerente aprobador)
+      const nombreEmp = id => { const e = state.empleados.find(x => x.id === id); return e ? (e.nombre + ' ' + (e.apellidos || '')).trim() : '—'; };
+      cortesiasInsert.forEach(c => {
+        const det = (c.tipo === 'item' ? 'ítem' : 'pedido completo') + ' · ' + (c.motivo || 'sin motivo') + ' · aprob: ' + nombreEmp(c.aprobada_por);
+        logAudit('cortesia', det, ped.id, c.monto);
+      });
     }
     // 4. ca_propinas
     if (T.propina > 0) {

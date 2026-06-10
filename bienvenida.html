@@ -947,6 +947,7 @@ function abrirEditorComensal(c) {
     alergias: [...(c?.alergias||[])], tags: [...(c?.tags||[])], notas: c?.notas_internas||'',
     bebida_preferida: c?.bebida_preferida||'', zona_preferida: c?.zona_preferida||'',
     empresa: c?.empresa||'', instagram: c?.instagram||'', como_nos_conocio: c?.como_nos_conocio||'',
+    acepta_marketing: c?.acepta_marketing||false,
   };
   setSheetHead('👤', edit?'Editar comensal':'Nuevo comensal', edit?nombreCliente(c):'Registro');
   const render2 = () => {
@@ -979,6 +980,10 @@ function abrirEditorComensal(c) {
       </div>
       <div class="sheet-section"><div class="field-lbl">¿Cómo nos conoció?</div><input class="input" id="c-conocio" value="${form.como_nos_conocio}" placeholder="Instagram, recomendación, Google…"></div>
       <div class="sheet-section"><div class="field-lbl">Notas internas</div><textarea class="input" id="c-notas" rows="2" placeholder="Prefiere mesa de ventana…">${form.notas}</textarea></div>
+      <div class="sheet-section"><label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;border:2px solid #000;border-radius:12px;padding:12px;background:${form.acepta_marketing?'var(--primary-soft,#d6e2ff)':'#fff'}">
+        <input type="checkbox" id="c-consent" ${form.acepta_marketing?'checked':''} style="width:20px;height:20px;margin-top:1px;flex-shrink:0">
+        <span style="font-size:13px;line-height:1.4">Acepta recibir <strong>promociones y novedades</strong> por WhatsApp/email.<br><span style="opacity:.6;font-size:11px">Consentimiento informado · Ley N.º 29733 de Protección de Datos Personales. Revocable cuando quiera.</span></span>
+      </label></div>
       <div class="sheet-section"><div class="grid2">
         <button class="btn ghost" id="c-cancel">Atrás</button>
         <button class="btn primary" id="c-save"><span class="material-symbols-outlined">check</span>${edit?'Guardar':'Registrar'}</button>
@@ -1007,6 +1012,11 @@ async function guardarComensal(c, form) {
     instagram: ($('#c-ig').value||'').trim()||null, como_nos_conocio: ($('#c-conocio').value||'').trim()||null,
     notas_internas: ($('#c-notas').value||'').trim()||null,
   };
+  // Ley 29733: registrar consentimiento con su fecha (timestamp solo al otorgarlo)
+  const consiente = !!($('#c-consent') && $('#c-consent').checked);
+  payload.acepta_marketing = consiente;
+  if (consiente) payload.consentimiento_at = (c?.acepta_marketing && c?.consentimiento_at) ? c.consentimiento_at : new Date().toISOString();
+  else payload.consentimiento_at = null;
   let res;
   if (c) res = await sb.from('ms_clientes').update(payload).eq('id', c.id);
   else res = await sb.from('ms_clientes').insert({ ...payload, origen:'manual' });
@@ -1514,7 +1524,7 @@ function renderWidget() {
   $('#app-header').style.display = 'none';
   $('#tabs').style.display = 'none';
   document.body.style.alignItems = 'center';
-  const form = { fecha: hoyISO(), hora: '20:00', comensales: 2, nombre:'', telefono:'', ocasion:'', notas:'' };
+  const form = { fecha: hoyISO(), hora: '20:00', comensales: 2, nombre:'', telefono:'', ocasion:'', notas:'', acepta_marketing:false };
   const slots = slotsDisponibles();
   const full = new Set(['13:30','20:00']); // mock no disponible
   const screen = $('#screen');
@@ -1542,6 +1552,10 @@ function renderWidget() {
           </div>
           <div class="sheet-section"><div class="field-lbl">Ocasión (opcional)</div>
             <div class="chips" id="wg-oca">${OCASIONES.map(o=>`<button class="chip ${form.ocasion===o?'active':''}" data-o="${o}">${o}</button>`).join('')}</div></div>
+          <div class="sheet-section"><label style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;line-height:1.4">
+            <input type="checkbox" id="wg-consent" ${form.acepta_marketing?'checked':''} style="width:18px;height:18px;margin-top:1px;flex-shrink:0">
+            <span>Quiero recibir promociones y novedades por WhatsApp. <span style="opacity:.5">Opcional · Ley 29733, revocable cuando quieras.</span></span>
+          </label></div>
           <div class="sheet-section"><button class="btn primary" id="wg-confirm" style="font-size:16px">CONFIRMAR RESERVA →</button></div>
           <div style="text-align:center;font-family:var(--font-mono);font-size:10px;opacity:.5;padding-top:6px">⚡ prep! · reservas sin comisión</div>
         </div>
@@ -1552,6 +1566,7 @@ function renderWidget() {
     $$('#wg-oca .chip').forEach(b => b.onclick = () => { form.ocasion = form.ocasion===b.dataset.o?'':b.dataset.o; draw(); });
     $('#wg-nombre').oninput = e => form.nombre = e.target.value;
     $('#wg-tel').oninput = e => form.telefono = e.target.value;
+    $('#wg-consent').onchange = e => form.acepta_marketing = e.target.checked;
     $('#wg-confirm').onclick = () => confirmarWidget(form);
   };
   draw();
@@ -1562,11 +1577,17 @@ async function confirmarWidget(form) {
   // cliente por teléfono (crea si no existe)
   let cliente = null;
   const { data: ex } = await sb.from('ms_clientes').select('*').eq('marca_id', MARCA).eq('telefono', form.telefono.trim()).limit(1);
-  if (ex && ex[0]) cliente = ex[0];
-  else {
+  if (ex && ex[0]) {
+    cliente = ex[0];
+    // Ley 29733: si marca el opt-in y aún no consentía, lo registramos (nunca lo revocamos desde aquí)
+    if (form.acepta_marketing && !cliente.acepta_marketing) {
+      await sb.from('ms_clientes').update({ acepta_marketing:true, consentimiento_at: nowISO() }).eq('id', cliente.id);
+    }
+  } else {
     const partes = form.nombre.trim().split(' ');
     const { data, error } = await sb.from('ms_clientes').insert({
       marca_id: MARCA, nombre: partes.shift(), apellidos: partes.join(' ')||null, telefono: form.telefono.trim(), origen:'widget',
+      acepta_marketing: !!form.acepta_marketing, consentimiento_at: form.acepta_marketing ? nowISO() : null,
     }).select().single();
     if (error) return toast('Atrás: '+error.message,'err');
     cliente = data;
