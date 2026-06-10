@@ -70,6 +70,7 @@ function toast(m){const e=document.createElement('div');e.className='toast';e.te
 function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
 function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classList.remove('open')}
 async function load(){
+  try{const{data:mk}=await sb.from('inv_marcas').select('nombre').eq('id',MARCA).maybeSingle();if(mk&&mk.nombre){document.querySelector('.hero h1').textContent=mk.nombre;document.title='Pedir · '+mk.nombre;}}catch(e){}
   const[r,z]=await Promise.all([sb.from('carta_publica').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu'),sb.from('dl_zonas').select('*').eq('local_id',LOCAL).eq('activo',true).order('nombre')]);
   state.recetas=(r.data||[]).filter(x=>Number(x.precio_venta||0)>0);state.zonas=z.data||[];
   render();$('#boot').classList.add('gone');

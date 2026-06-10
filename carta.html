@@ -77,6 +77,7 @@ function closeSheet(){$('#backdrop').classList.remove('open');$('#sheet').classL
 
 async function load(){
   if(MESA)$('#mesa').textContent='Mesa '+MESA.replace(/^t_/,'').toUpperCase();
+  try{const{data:mk}=await sb.from('inv_marcas').select('nombre').eq('id',MARCA).maybeSingle();if(mk&&mk.nombre){document.querySelector('.hero h1').textContent=mk.nombre;document.title='Carta · '+mk.nombre;}}catch(e){}
   const{data}=await sb.from('carta_publica').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu');
   state.recetas=(data||[]).filter(r=>Number(r.precio_venta||0)>0);
   render();$('#boot').classList.add('gone');
