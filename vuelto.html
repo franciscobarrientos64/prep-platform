@@ -98,6 +98,7 @@ const state={gastos:[],view:'gastos',fecha:hoyISO(),channel:null};
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+async function abrirArchivoFirmado(url,bucket){if(!url)return;try{const mk='/'+bucket+'/';const i=url.indexOf(mk);const path=i>=0?url.slice(i+mk.length):url;const{data,error}=await sb.storage.from(bucket).createSignedUrl(decodeURIComponent(path),3600);if(error||!data){toast('No se pudo abrir el recibo','err');return}window.open(data.signedUrl,'_blank')}catch(e){toast('No se pudo abrir el recibo','err')}}
 function nowISO(){return new Date().toISOString()}
 function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;const i=t==='ok'?'check_circle':t==='err'?'error':t==='warn'?'warning':'info';e.innerHTML='<span class="material-symbols-outlined">'+i+'</span><span>'+m+'</span>';$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='opacity .3s,transform .3s';e.style.opacity='0';e.style.transform='translateX(120%)';setTimeout(()=>e.remove(),300)},2800)}
 function openSheet(){$('#backdrop').classList.add('open');$('#sheet').classList.add('open')}
@@ -159,7 +160,7 @@ function renderGastos(){
     </div>
     ${state.gastos.map(gastoCard).join('')||'<div class="empty">Sin gastos registrados</div>'}`;
   $$('#screen .row-card [data-act]').forEach(b=>b.onclick=()=>{const id=b.closest('.row-card').dataset.id;const g=state.gastos.find(x=>x.id===id);const a=b.dataset.act;
-    if(a==='aprobar')aprobarGasto(g);else if(a==='rechazar')rechazarGasto(g);else if(a==='ver'&&g.comprobante_url)window.open(g.comprobante_url,'_blank')});
+    if(a==='aprobar')aprobarGasto(g);else if(a==='rechazar')rechazarGasto(g);else if(a==='ver'&&g.comprobante_url)abrirArchivoFirmado(g.comprobante_url,'vuelto-files')});
 }
 function gastoCard(g){
   return `<div class="row-card" data-id="${g.id}">
@@ -236,6 +237,7 @@ async function guardarGasto({monto,cat,desc,metodo,resp,file}){
   let url=null,nombre=null;
   if(file){toast('Subiendo recibo…');const ext=(file.name.split('.').pop()||'bin').toLowerCase();const path=LOCAL+'/'+Date.now()+'.'+ext;
     const up=await sb.storage.from('vuelto-files').upload(path,file,{upsert:true,contentType:file.type||undefined});
+    // (bucket privado) la URL guardada se firma al abrir
     if(up.error){toast('Atrás: '+up.error.message,'err');return}url=sb.storage.from('vuelto-files').getPublicUrl(path).data.publicUrl;nombre=file.name;}
   const{error}=await sb.from('vu_gastos').insert({marca_id:MARCA,local_id:LOCAL,fecha:hoyISO(),monto,categoria:cat,descripcion:desc||null,metodo,responsable:resp||null,estado:'registrado',comprobante_url:url,comprobante_nombre:nombre});
   if(error){toast('Atrás: '+error.message,'err');return}

@@ -702,6 +702,13 @@ async function loadHist(){const{data}=await sb.from('inv_precios_hist').select('
 function histDe(pid){return state.hist.filter(h=>h.producto_id===pid).sort((a,b)=>(a.fecha<b.fecha?-1:1))}
 function cambioPrecio(pid){const h=histDe(pid);if(h.length<1)return null;const actual=Number(prod(pid)?.costo||0);const prev=h.length>=2?Number(h[h.length-2].costo):Number(h[0].costo);if(!prev||prev===actual)return null;return{prev,actual,pct:(actual-prev)/prev*100,desde:h[h.length-1].fecha}}
 function platosConInsumo(pid){return state.recetas.filter(r=>Array.isArray(r.ingredientes)&&r.ingredientes.some(i=>i.pid===pid))}
+async function abrirArchivoFirmado(url,bucket){
+  if(!url)return;
+  try{const mk='/'+bucket+'/';const i=url.indexOf(mk);const path=i>=0?url.slice(i+mk.length):url;
+    const{data,error}=await sb.storage.from(bucket).createSignedUrl(decodeURIComponent(path),3600);
+    if(error||!data){toast('No se pudo abrir el comprobante','err');return}window.open(data.signedUrl,'_blank');
+  }catch(e){toast('No se pudo abrir el comprobante','err')}
+}
 function ultimaEntrada(pid){const es=state.movs.filter(m=>m.producto_id===pid&&m.tipo==='entrada'&&m.fecha).map(m=>m.fecha).sort();return es.length?es[es.length-1]:null}
 function vencimientoPid(pid){const p=prod(pid);if(!p||!p.dias_caducidad)return null;const ue=ultimaEntrada(pid);if(!ue)return null;const d=new Date(ue+'T00:00:00');d.setDate(d.getDate()+Number(p.dias_caducidad));return d.toISOString().slice(0,10)}
 function diasParaVencer(pid){const v=vencimientoPid(pid);if(!v)return null;return Math.round((new Date(v+'T00:00:00')-new Date(hoyISO()+'T00:00:00'))/86400000)}
@@ -789,7 +796,7 @@ function verOrden(o){
       ${(o.items||[]).map(it=>`<tr><td>${it.nombre}</td><td>${num(it.cantidad)}</td><td>${money(it.costo_unit)}</td><td>${money(it.cantidad*it.costo_unit)}</td></tr>`).join('')}</table></div>
     <div class="sheet-section"><div class="field-lbl">Comprobante y pago</div>
       <div class="info-row"><span>Estado de pago</span><strong style="color:${o.pago_estado==='pagado'?'var(--green)':'var(--secondary)'}">${(o.pago_estado||'pendiente')}${o.pago_monto?(' · '+money(o.pago_monto)):''}${o.pago_metodo?(' · '+o.pago_metodo):''}${o.pago_fecha?(' · '+o.pago_fecha):''}</strong></div>
-      ${o.comprobante_url?`<div class="info-row"><span>Comprobante</span><a href="${o.comprobante_url}" target="_blank" rel="noopener">📎 ${o.comprobante_nombre||'ver archivo'} ↗</a></div>`:'<div class="info-row"><span>Comprobante</span><span style="opacity:.5">sin adjuntar</span></div>'}
+      ${o.comprobante_url?`<div class="info-row"><span>Comprobante</span><a href="#" id="ov-vercomp" data-file="${o.comprobante_url}">📎 ${o.comprobante_nombre||'ver archivo'} ↗</a></div>`:'<div class="info-row"><span>Comprobante</span><span style="opacity:.5">sin adjuntar</span></div>'}
       <div class="grid2" style="margin-top:10px">
         <label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">upload_file</span>Adjuntar (PDF/foto)<input type="file" id="ov-file" accept="image/*,application/pdf" style="display:none"></label>
         <button class="btn ${o.pago_estado==='pagado'?'':'primary'}" id="ov-pago"><span class="material-symbols-outlined">${o.pago_estado==='pagado'?'check_circle':'payments'}</span>${o.pago_estado==='pagado'?'Pago registrado':'Registrar pago'}</button>
@@ -804,6 +811,7 @@ function verOrden(o){
       </div></div>
     <div class="sheet-section">${o.estado==='borrador'?'<button class="btn" id="ov-act">Marcar enviada al proveedor</button>':o.estado==='enviada'?'<button class="btn warn" id="ov-act">Aprobar orden</button>':o.estado==='aprobada'?'<button class="btn primary" id="ov-act">Recibir (ingresar a stock)</button>':'<div class="row-meta">Orden '+o.estado+'</div>'}</div>`;
   openSheet();
+  if($('#ov-vercomp'))$('#ov-vercomp').onclick=e=>{e.preventDefault();abrirArchivoFirmado($('#ov-vercomp').dataset.file,'compras-files')};
   $('#ov-pdf').onclick=()=>imprimirOrden(o);
   $('#ov-mail').onclick=()=>enviarOrden(o,'email');
   $('#ov-wa').onclick=()=>enviarOrden(o,'whatsapp');
