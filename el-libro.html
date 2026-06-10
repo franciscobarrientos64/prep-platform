@@ -116,15 +116,16 @@ async function loadRecetario(){
     state.prodMap={};(p.data||[]).forEach(x=>state.prodMap[x.id]=x);
   }catch(e){state.recetario=state.recetario||[];state.prodMap=state.prodMap||{}}
 }
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadRecetario()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadExamenes(){const[e,r]=await Promise.all([sb.from('rrhh_examenes').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at',{ascending:false}),sb.from('rrhh_examen_resultados').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(50)]);state.examenes=e.data||[];state.examResult=r.data||[]}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadRecetario(),loadExamenes()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
-  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='checklists')renderChecklists();else renderBitacora();
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
+  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='checklists')renderChecklists();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -175,6 +176,45 @@ function renderRecetario(){
         </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
   $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
   $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
+}
+function renderExamenes(){
+  const exs=state.examenes||[],res=state.examResult||[];
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
+    (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.map(r=>Math.round(r.puntaje/r.total*100))):null;
+      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${preg.length} preguntas${e.descripcion?(' · '+e.descripcion):''}${mejor!=null?(' · mejor '+mejor+'%'):''}</div></div><button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button></div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
+    (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`+res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);const pct=Math.round(r.puntaje/r.total*100);return `<div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed var(--gray-soft);font-size:13px"><span>${r.persona||'—'} · ${ex?ex.titulo:'examen'}</span><strong style="color:${pct>=70?'var(--green)':'var(--secondary)'}">${pct}%</strong></div>`}).join(''):'');
+  $$('#screen [data-take]').forEach(b=>b.onclick=()=>tomarExamen(state.examenes.find(e=>e.id===b.dataset.take)));
+}
+function tomarExamen(ex){
+  if(!ex)return;const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];const resp={};
+  const persona=prompt('Tu nombre (para registrar el resultado):');if(persona===null)return;
+  setHead('📝',ex.titulo,preg.length+' preguntas');
+  const draw=()=>{$('#sheet-body').innerHTML=preg.map((p,i)=>`<div class="sheet-section"><div style="font-weight:700;margin-bottom:8px">${i+1}. ${p.q}</div>${(p.opciones||[]).map((o,j)=>`<button class="btn ${resp[i]===j?'primary':'ghost'}" data-q="${i}" data-o="${j}" style="justify-content:flex-start;margin-bottom:6px">${o}</button>`).join('')}</div>`).join('')+
+    `<div class="sheet-section"><button class="btn primary" id="ex-submit" style="width:100%">Entregar examen</button></div>`;
+    $$('#sheet-body [data-q]').forEach(b=>b.onclick=()=>{resp[Number(b.dataset.q)]=Number(b.dataset.o);draw()});
+    $('#ex-submit').onclick=async()=>{let ok=0;preg.forEach((p,i)=>{if(resp[i]===p.correcta)ok++});
+      const{error}=await sb.from('rrhh_examen_resultados').insert({examen_id:ex.id,local_id:LOCAL,persona:persona||'Anónimo',puntaje:ok,total:preg.length});
+      if(error){toast('Atrás: '+error.message,'err');return}
+      closeSheet();await loadExamenes();render();const pct=Math.round(ok/preg.length*100);toast((pct>=70?'🎉 Aprobado · ':'Resultado · ')+ok+'/'+preg.length+' ('+pct+'%)',pct>=70?'ok':'warn')};
+  };draw();openSheet();
+}
+function crearExamen(){
+  setHead('📝','Nuevo examen','Una pregunta por línea');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="ex-tit" placeholder="HACCP básico"></div>
+    <div class="sheet-section"><div class="field-lbl">Descripción</div><input class="input" id="ex-desc"></div>
+    <div class="sheet-section"><div class="field-lbl">Preguntas</div><textarea class="input" id="ex-preg" style="min-height:160px" placeholder="Formato: pregunta | opción1 | opción2* | opción3
+(marca la correcta con * al final)
+
+Ej:
+¿Temp. de refrigeración? | 0-5°C* | 10°C | 20°C"></textarea></div>
+    <div class="sheet-section"><button class="btn primary" id="ex-save" style="width:100%">Crear examen</button></div>`;
+  openSheet();
+  $('#ex-save').onclick=async()=>{const tit=$('#ex-tit').value;if(!tit){toast('Falta título','warn');return}
+    const preg=$('#ex-preg').value.split('\n').map(l=>l.trim()).filter(l=>l.includes('|')).map(l=>{const parts=l.split('|').map(s=>s.trim());const q=parts.shift();let correcta=0;const opciones=parts.map((o,i)=>{if(o.endsWith('*')){correcta=i;return o.slice(0,-1).trim()}return o});return{q,opciones,correcta}}).filter(p=>p.q&&p.opciones.length>=2);
+    if(!preg.length){toast('Agrega al menos una pregunta con opciones','warn');return}
+    const{error}=await sb.from('rrhh_examenes').insert({marca_id:MARCA,local_id:LOCAL,titulo:tit,descripcion:$('#ex-desc').value||null,preguntas:preg,activo:true});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadExamenes();render();toast('Servido · examen creado','ok')};
 }
 function renderTablon(){
   const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
@@ -263,7 +303,7 @@ function abrirBitacora(){
   openSheet();
 }
 
-function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else{editarPost(null)}}
+function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else if(state.view==='examenes'){crearExamen()}else{editarPost(null)}}
 function abrirChecklistNuevo(){
   setHead('✅','Nuevo checklist','El Libro');let items=[''];
   const draw=()=>{$('#sheet-body').innerHTML=`
