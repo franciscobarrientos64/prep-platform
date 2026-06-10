@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Pase · Casa Italia · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="/offline.js"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--green:#10b981;--gray-soft:#dfe3e8;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink)}
+.header{background:var(--bg);border-bottom:2px solid #000;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.brand-logo{position:relative;display:block;width:100px;height:32px;flex-shrink:0}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.pill.live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid #000;border-radius:999px;background:var(--primary);color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700}.pill.live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--tertiary);animation:pulse 1.4s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:16px}
+.kpi .v{font-family:var(--font-display);font-size:30px;line-height:1;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-top:6px}
+.kpi .ico{float:right;opacity:.25;font-size:24px}.kpi.alert .v{color:var(--secondary)}.kpi.good .v{color:var(--green)}
+.panel{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:14px}
+.panel h3{font-family:var(--font-display);font-size:17px;margin-bottom:12px}
+.chart{display:flex;align-items:flex-end;gap:8px;height:140px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.chart .bar{width:100%;background:var(--primary);border:2px solid #000;border-radius:6px 6px 0 0;min-height:3px}.chart .col.hoy .bar{background:var(--tertiary)}
+.chart .cap{font-family:var(--font-mono);font-size:9px;opacity:.6}.chart .val{font-family:var(--font-mono);font-size:9px;font-weight:600}
+.alert-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--gray-soft);font-size:13px}.alert-row:last-child{border:none}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:200px;height:60px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+a.tile{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid #000;border-radius:999px;padding:7px 13px;background:var(--surface);box-shadow:2px 2px 0 #000}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+<header class="header"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Pase · Dashboard</div></div><span class="pill live" id="liveat">EN VIVO</span></header>
+<main class="wrap" id="screen"></main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const $=s=>document.querySelector(s);
+const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const num=n=>Number(n||0).toLocaleString('en-US');
+function hoyISO(){const d=new Date();return d.toISOString().slice(0,10)}
+function addD(iso,n){const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+async function load(){
+  const ini7=addD(hoyISO(),-6);
+  const[cerr,abi,emp,dl]=await Promise.all([
+    sb.from('ca_pedidos').select('total,comensales,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('cerrada_at',ini7+'T00:00:00'),
+    sb.from('ca_pedidos').select('id,comensales,mesa_id,total').eq('local_id',LOCAL).eq('estado','abierta'),
+    sb.from('rrhh_empleados').select('sueldo,estado').eq('local_id',LOCAL).eq('estado','activo'),
+    sb.from('dl_pedidos').select('total,estado,created_at').eq('local_id',LOCAL).gte('created_at',hoyISO()+'T00:00:00')
+  ]);
+  const cerrAll=cerr.data||[];const hoy=cerrAll.filter(p=>(p.cerrada_at||'').slice(0,10)===hoyISO());
+  const ventasHoy=hoy.reduce((a,p)=>a+Number(p.total||0),0)+ (dl.data||[]).filter(d=>d.estado==='entregado').reduce((a,d)=>a+Number(d.total||0),0);
+  const cubiertos=hoy.reduce((a,p)=>a+Number(p.comensales||0),0);
+  const nped=hoy.length;const ticket=nped?ventasHoy/nped:0;
+  const mesasAct=(abi.data||[]).length;const enMesa=(abi.data||[]).reduce((a,p)=>a+Number(p.comensales||0),0);
+  const planillaMes=(emp.data||[]).reduce((a,e)=>a+Number(e.sueldo||0),0);const laborDia=planillaMes/30;
+  const laborPct=ventasHoy>0?laborDia/ventasHoy*100:0;
+  // 7 días
+  const dias={};for(let i=6;i>=0;i--)dias[addD(hoyISO(),-i)]=0;cerrAll.forEach(p=>{const d=(p.cerrada_at||'').slice(0,10);if(d in dias)dias[d]+=Number(p.total||0)});
+  const max=Math.max(1,...Object.values(dias));
+  const alerts=[];
+  if(laborPct>30)alerts.push(['warning','var(--secondary)','Costo laboral en '+laborPct.toFixed(0)+'% de las ventas de hoy (>30%)']);
+  if(mesasAct>0)alerts.push(['restaurant','var(--primary)',mesasAct+' mesa(s) activas con '+enMesa+' comensal(es) en salón']);
+  if(ventasHoy===0)alerts.push(['info','var(--ink)','Aún sin ventas cerradas hoy']);
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi good"><span class="ico material-symbols-outlined">payments</span><div class="v">${money(ventasHoy)}</div><div class="l">Ventas hoy</div></div>
+      <div class="kpi"><span class="ico material-symbols-outlined">group</span><div class="v">${num(cubiertos)}</div><div class="l">Cubiertos hoy</div></div>
+      <div class="kpi"><span class="ico material-symbols-outlined">receipt</span><div class="v">${money(ticket)}</div><div class="l">Ticket promedio</div></div>
+      <div class="kpi"><span class="ico material-symbols-outlined">table_restaurant</span><div class="v">${mesasAct}</div><div class="l">Mesas activas</div></div>
+      <div class="kpi ${laborPct>30?'alert':''}"><span class="ico material-symbols-outlined">badge</span><div class="v">${laborPct?laborPct.toFixed(0)+'%':'—'}</div><div class="l">Costo laboral</div></div>
+    </div>
+    <div class="panel"><h3>Ventas · últimos 7 días</h3><div class="chart">${Object.entries(dias).map(([d,v])=>`<div class="col ${d===hoyISO()?'hoy':''}"><div class="val">${v?money(v):''}</div><div class="bar" style="height:${Math.round(v/max*100)}%"></div><div class="cap">${d.slice(8)}/${d.slice(5,7)}</div></div>`).join('')}</div></div>
+    <div class="panel"><h3>⚠ Alertas y estado</h3>${alerts.map(a=>`<div class="alert-row"><span class="material-symbols-outlined" style="color:${a[1]}">${a[0]}</span><span>${a[2]}</span></div>`).join('')||'<div class="alert-row">Todo en orden ✅</div>'}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="tile" href="/directorio"><span class="material-symbols-outlined" style="font-size:15px">monitoring</span>Reportes completos</a><a class="tile" href="/pos"><span class="material-symbols-outlined" style="font-size:15px">point_of_sale</span>POS</a><a class="tile" href="/kds"><span class="material-symbols-outlined" style="font-size:15px">soup_kitchen</span>Línea</a></div>`;
+  $('#boot').classList.add('gone');
+}
+sb.channel('pase_'+LOCAL).on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},()=>load()).subscribe();
+load();setInterval(load,60000);
+</script>
+</body>
+</html>
