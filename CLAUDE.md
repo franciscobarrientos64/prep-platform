@@ -552,3 +552,46 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - EN-02 [F2] Dark kitchen multi-marca
 - EN-03 [F3] Analytics predictivo
 - EN-04 [F2] Campañas segmentadas
+
+## 14. ALFRED — Sistema de Project Management
+
+Alfred es el sistema interno de gestión de proyectos de Francisco. Vive en la MISMA base de datos Supabase (proyecto `jmkvphayyhwzootlybde`).
+
+### Proyecto Prep! en Alfred:
+- project_id: `1558b18d-cf1f-4f3a-a36a-5b2e05004aab`
+- code: `prep`
+- status: `active`
+
+### Tablas de Alfred:
+| Tabla | Qué almacena |
+|-------|-------------|
+| `projects` | Proyectos (Prep! es uno de ellos) |
+| `tasks` | Tareas y milestones (is_milestone=true). Campos: title, status, priority, section, parent_task_id, assignee, due_date, estimated_hours |
+| `task_comments` | Comentarios en tareas |
+| `task_labels` | Etiquetas de tareas |
+| `decisions` | Decisiones de arquitectura/producto con contexto y fase (phase_number) |
+| `work_sessions` | Sesiones de trabajo registradas |
+| `sessions_log` | Log de sesiones |
+| `project_costs` | Costos del proyecto |
+| `prep_marca_features` | Features por marca/módulo |
+| `non_working_days` | Días no laborables |
+
+### Cuándo usar Alfred:
+- **Registrar una decisión importante:** INSERT en `decisions` con project_id, decision, context, phase_number
+- **Marcar un feature como completado:** UPDATE en `tasks` SET status='done', completed_at=now()
+- **Registrar sesión de trabajo:** INSERT en `sessions_log`
+- **Ver qué falta:** SELECT de tasks WHERE project_id='1558b18d...' AND status != 'done'
+
+### Cómo acceder desde Code:
+Desde Code (en la máquina de Francisco), puedes hacer queries a Supabase via curl o usando el CLI de Supabase. Ejemplo:
+```bash
+# Query directa via REST API
+curl -s "https://jmkvphayyhwzootlybde.supabase.co/rest/v1/tasks?project_id=eq.1558b18d-cf1f-4f3a-a36a-5b2e05004aab&status=neq.done&select=title,status,priority,section" \
+  -H "apikey: sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M" \
+  -H "Authorization: Bearer sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M"
+```
+
+### Al terminar una sesión de trabajo:
+1. Actualizar tasks completados en Alfred
+2. Registrar decisiones importantes tomadas
+3. Actualizar CLAUDE.md sección 12 (estado del proyecto)
