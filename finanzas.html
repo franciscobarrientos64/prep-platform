@@ -86,6 +86,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <header class="header">
   <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Finanzas</div></div></div>
   <div class="header-info" id="hinfo"></div>
+  <button class="btn-ico" id="h-exp"><span class="material-symbols-outlined">download</span><span>Contador</span></button>
   <button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span>Partida</span></button>
 </header>
 <nav class="tabs" id="tabs"></nav>
@@ -145,7 +146,26 @@ function render(){
   $('#mes').onchange=async e=>{state.mes=e.target.value;await loadMes();render()};
   $('#tabs').innerHTML=[['presupuesto','Presupuesto vs real','table_chart'],['plantilla','Plantilla de partidas','edit_note']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $('#h-exp').onclick=exportContador;
   if(state.view==='presupuesto')renderPresupuesto(grupos);else renderPlantilla(grupos);
+}
+function dlCSV(nombre,rows){const csv='﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=nombre;document.body.appendChild(a);a.click();a.remove()}
+async function exportContador(){
+  const{start,end}=mesBounds(state.mes);
+  const[ventas,compras]=await Promise.all([
+    sb.from('ca_pedidos').select('ticket_num,total,subtotal,igv,cerrada_at,origen').eq('local_id',LOCAL).eq('estado','cerrada').gte('cerrada_at',start).lt('cerrada_at',end).order('cerrada_at'),
+    sb.from('inv_movimientos').select('fecha,producto_id,cantidad,unidad,costo_unitario,valor_total,referencia').eq('local_id',LOCAL).eq('tipo','entrada').gte('fecha',start.slice(0,10)).lt('fecha',end.slice(0,10)).order('fecha')
+  ]);
+  const v=ventas.data||[],c=compras.data||[];
+  const ventasRows=[['LIBRO DE VENTAS · '+state.mes],['Fecha','Ticket','Origen','Base','IGV','Total'],
+    ...v.map(p=>[(p.cerrada_at||'').slice(0,10),p.ticket_num,p.origen||'',Number(p.subtotal||0).toFixed(2),Number(p.igv||0).toFixed(2),Number(p.total||0).toFixed(2)]),
+    ['','','TOTAL','',Number(v.reduce((a,p)=>a+Number(p.igv||0),0)).toFixed(2),Number(v.reduce((a,p)=>a+Number(p.total||0),0)).toFixed(2)]];
+  const comprasRows=[['LIBRO DE COMPRAS · '+state.mes],['Fecha','Producto','Cantidad','Unidad','Costo unit.','Total','Referencia'],
+    ...c.map(m=>[m.fecha,m.producto_id,Number(m.cantidad||0),m.unidad||'',Number(m.costo_unitario||0).toFixed(2),Number(m.valor_total||0).toFixed(2),m.referencia||'']),
+    ['','','','','TOTAL',Number(c.reduce((a,m)=>a+Number(m.valor_total||0),0)).toFixed(2),'']];
+  dlCSV('prep-libro-ventas-'+state.mes+'.csv',ventasRows);
+  setTimeout(()=>dlCSV('prep-libro-compras-'+state.mes+'.csv',comprasRows),300);
+  toast('Servido · libros de ventas y compras exportados','ok');
 }
 
 function renderPresupuesto(grupos){
