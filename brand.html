@@ -78,7 +78,7 @@ footer{margin-top:60px;border-top:2px solid var(--outline);padding-top:20px;font
 <body>
 
 <div class="hero">
-  <div class="logo"><span class="b">prep</span><span class="x">!</span></div>
+  <div class="logo-img" style="width:260px;height:84px;margin:0 auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff;position:relative"></div>
   <p>Brand Book · Sistema de diseño</p>
   <div class="tag">Neo-brutalismo cálido</div>
 </div>
@@ -99,15 +99,16 @@ footer{margin-top:60px;border-top:2px solid var(--outline);padding-top:20px;font
 <section id="logo">
   <div class="kicker">02 · Logotipo</div>
   <h2>El logo</h2>
-  <p class="lead">El wordmark es <b>prep!</b> en minúsculas, fuente Bagel Fat One. La <b>“!”</b> siempre va en amarillo o rojo según el fondo — es el acento de energía de la marca.</p>
+  <p class="lead">El wordmark es <b>prep!</b> en minúsculas, fuente <b>Stellost Slanted Regular</b> (itálica/inclinada). El archivo maestro es <span class="mono">/logo.png</span>; en la app se recolorea por máscara CSS para adaptarse a cada fondo. La <b>“!”</b> es el acento de energía de la marca.</p>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card" style="text-align:center;background:var(--bg)"><div style="font-family:var(--font-display);font-size:54px"><span style="color:var(--primary)">prep</span><span style="color:var(--secondary)">!</span></div><div class="muted mono" style="font-size:11px;margin-top:8px">Sobre crema · ! roja</div></div>
-    <div class="card" style="text-align:center;background:var(--primary)"><div style="font-family:var(--font-display);font-size:54px;color:#fff">prep<span style="color:var(--tertiary)">!</span></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre cobalto · ! amarilla</div></div>
-    <div class="card" style="text-align:center;background:var(--ink)"><div style="font-family:var(--font-display);font-size:54px;color:var(--bg)">prep<span style="color:var(--tertiary)">!</span></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre tinta · ! amarilla</div></div>
+    <div class="card" style="text-align:center;background:var(--bg)"><div style="width:150px;height:48px;margin:6px auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)"></div><div class="muted mono" style="font-size:11px;margin-top:8px">Sobre crema · logo en tinta</div></div>
+    <div class="card" style="text-align:center;background:var(--primary)"><div style="width:150px;height:48px;margin:6px auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff"></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre cobalto · logo blanco</div></div>
+    <div class="card" style="text-align:center;background:var(--ink)"><div style="width:150px;height:48px;margin:6px auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--bg)"></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre tinta · logo crema</div></div>
   </div>
-  <div class="grid g2" style="margin-top:6px">
-    <div class="do"><b>Sí</b><p style="margin-top:4px">Mantener la “!” en color de acento. Respetar el aire alrededor. Usar el negro de contorno en versiones sobre claro.</p></div>
-    <div class="dont"><b>No</b><p style="margin-top:4px">No estirar, rotar ni cambiar la fuente. No usar degradados en el wordmark. No poner la “!” del mismo color que “prep”.</p></div>
+  <p class="muted mono" style="font-size:11px;margin-top:10px">Fuente del wordmark: <b>Stellost Slanted Regular</b>. Bagel Fat One se usa para títulos y números de la interfaz, <b>no</b> para el logo.</p>
+  <div class="grid g2" style="margin-top:10px">
+    <div class="do"><b>Sí</b><p style="margin-top:4px">Usar el archivo oficial <span class="mono">/logo.png</span>. Respetar el aire alrededor. Recolorear sólido (tinta, blanco o crema) según el fondo.</p></div>
+    <div class="dont"><b>No</b><p style="margin-top:4px">No re-tipear el logo en otra fuente. No estirar, rotar ni aplicar degradados. No bajar el contraste con el fondo.</p></div>
   </div>
 </section>
 
@@ -136,7 +137,8 @@ footer{margin-top:60px;border-top:2px solid var(--outline);padding-top:20px;font
 <section id="type">
   <div class="kicker">04 · Tipografía</div>
   <h2>Fuentes</h2>
-  <div class="typ"><div class="lbl">Display · Bagel Fat One</div><div style="font-family:var(--font-display);font-size:40px">Mise en place</div><p class="muted mono" style="font-size:11px;margin-top:6px">Títulos, logo, números grandes. Solo en piezas cortas.</p></div>
+  <div class="typ"><div class="lbl">Logo · Stellost Slanted Regular</div><div style="font-style:italic;font-weight:700;font-size:40px;letter-spacing:-.01em">prep!</div><p class="muted mono" style="font-size:11px;margin-top:6px">Exclusiva del wordmark (archivo <span class="mono">/logo.png</span>). No se usa en la interfaz.</p></div>
+  <div class="typ"><div class="lbl">Display · Bagel Fat One</div><div style="font-family:var(--font-display);font-size:40px">Mise en place</div><p class="muted mono" style="font-size:11px;margin-top:6px">Títulos, números grandes y encabezados de la UI. Solo en piezas cortas.</p></div>
   <div class="typ"><div class="lbl">Body · IBM Plex Sans</div><div style="font-size:22px;font-weight:700">El equipo trabaja mejor cada turno.</div><div style="font-size:15px;margin-top:6px">Texto de interfaz, párrafos, botones. Pesos 400/500/600/700.</div></div>
   <div class="typ"><div class="lbl">Mono · IBM Plex Mono</div><div style="font-family:var(--font-mono);font-size:16px">S/ 374,810 · 4,419 ventas · 18:42</div><p class="muted mono" style="font-size:11px;margin-top:6px">Datos, montos, horas, etiquetas técnicas y códigos.</p></div>
 </section>
