@@ -61,6 +61,21 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .mod-card .tag{position:absolute;top:10px;right:10px;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1.5px solid var(--outline)}
 .mod-card .tag.activo{background:var(--green);color:#fff}
 .mod-card .tag.pronto{background:var(--gray-soft)}
+.mod-card .tag.locked{background:var(--ink);color:#fff;display:inline-flex;align-items:center;gap:3px}
+.mod-card.lock{opacity:.92;cursor:pointer;border-style:solid;background:repeating-linear-gradient(135deg,var(--surface),var(--surface) 12px,#f4f1f0 12px,#f4f1f0 24px)}
+.mod-card.lock .material-symbols-outlined{color:#9aa3ab}
+.mod-card.lock .nm{color:#6b7280}
+.mod-card.lock:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.feat-bd{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:120;display:none;align-items:center;justify-content:center;padding:20px}
+.feat-bd.open{display:flex}
+.feat-card{background:var(--surface);border:3px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);max-width:440px;width:100%;padding:22px}
+.feat-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.feat-t{font-family:var(--font-display);font-size:22px;line-height:1}
+.feat-s{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin-top:4px}
+.feat-list{list-style:none;padding:0;margin:0 0 14px}
+.feat-list li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px dashed var(--gray-soft);font-size:14px}
+.feat-cta{background:var(--primary-soft);border:2px solid var(--outline);border-radius:12px;padding:12px 14px;font-size:13px}
+.feat-x{margin-top:14px;width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;background:var(--ink);color:#fff;font-weight:600;cursor:pointer;box-shadow:var(--shadow-sm)}
 .mod-card .num{position:absolute;bottom:8px;right:12px;font-family:var(--font-display);font-size:22px;opacity:.1}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .kpi{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px;cursor:pointer;transition:transform .12s,box-shadow .12s}
@@ -152,7 +167,22 @@ const MODULOS=[
   {n:'Mystery Shopper',d:'Evaluación de experiencia + ranking',ico:'visibility',href:'/mystery',ac:'#7c3aed'},
   {n:'Carta QR',d:'Menú digital + pedido en mesa',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
 ];
-const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'directorio','Mystery Shopper':'directorio'};
+const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'prediccion','Mystery Shopper':'mystery'};
+// Features principales por módulo (para el teaser de upsell cuando el módulo no está en el paquete del cliente)
+const MODFEAT={
+  pase:['Cubiertos, ventas y food cost en vivo','Menu engineering (estrellas/perros)','Comparativo entre sedes','Alertas al celular del dueño'],
+  pos:['Toma de pedido por mozo','Course timing y split de cuenta','Cobro multipago (Yape/Plin/tarjeta)','Plano del salón en tiempo real'],
+  linea:['KDS de cocina por estación','Colores por tiempo de preparación','Estados Oído→Va→En fuego→Servido','Sonido al recibir comanda'],
+  bienvenida:['Reservas con widget 0% comisión','Ficha del comensal + historial','Waitlist con WhatsApp','Plano con drag & drop'],
+  mercado:['Comparativo de precios entre proveedores','Inventario por sede con PAR','Mermas y vencimientos (FEFO)','Órdenes de compra con aprobación'],
+  recetas:['Costeo automático y food cost','Escalado de recetas','Ficha técnica imprimible','Ingeniería de menú'],
+  carta:['Carta digital por QR','Pedido en mesa','Multilenguaje','Sin comisión de terceros'],
+  delivery:['Pedidos con KDS dedicado','Marketplace propio 0% comisión','Zonas de cobertura y tarifas','Tracking de estado'],
+  contabilidad:['Registro automático de facturas','Libro de ventas/compras','Presupuesto vs real','Cierre mensual'],
+  vuelto:['Caja chica por voz/foto','Centro de costo','Aprobación de supervisor','Cierre diario'],
+  engagement:['Loyalty con niveles y puntos','CRM 360 del comensal','Campañas por WhatsApp','Reseñas'],
+  prediccion:['Pronóstico de demanda a 7 días','Qué preparar mañana','Horas pico','Detección de días atípicos']
+};
 const access={user:null,mm:[],roles:[],usuarios:[],authed:false,authEmail:null};
 async function loadAccess(){
   const[us,mm,ro]=await Promise.all([sb.from('prep_usuarios').select('*').eq('activo',true).order('rol_sistema'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_roles').select('*')]);
@@ -168,7 +198,9 @@ async function loadAccess(){
 }
 function nivelDeMod(k){const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||'ninguno'}
 function moduloActivo(k){const u=access.user;if(!u||u.rol_sistema==='superadmin')return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
-function canSee(m){const k=MODKEY[m.n];if(!k)return true;return moduloActivo(k)&&nivelDeMod(k)!=='ninguno'}
+// Paquete del cliente activo (por marca en pantalla). null = sin config => todo permitido.
+function enPaquete(k){const rows=access.mm.filter(x=>x.marca_id===MARCA);if(!rows.length)return true;return rows.some(x=>x.modulo===k&&x.activo)}
+function canSee(m){const k=MODKEY[m.n];if(!k)return true;return nivelDeMod(k)!=='ninguno'}
 async function cambiarClave(){
   const np=prompt('Nueva contraseña (mínimo 6 caracteres):');if(np==null)return;
   if(np.length<6){alert('Debe tener al menos 6 caracteres');return}
@@ -206,15 +238,37 @@ function renderUserSwitcher(){
     else if(a==='ajustes')location.href='/ajustes';});
 }
 function renderMods(){
-  const u=access.user;const sa=u&&u.rol_sistema==='superadmin';const adm=sa||(u&&['admin_marca','gerente'].includes(u.rol_sistema));
   const visibles=MODULOS.filter(canSee);
-  let cards=visibles.map((m,i)=>{const on=!!m.href;
+  let cards=visibles.map((m,i)=>{
+    const k=MODKEY[m.n];
+    const built=!!m.href;
+    const incl=enPaquete(k);            // ¿está en el paquete del cliente?
+    let estado;                          // 'activo' | 'locked' | 'pronto'
+    if(!built)estado='pronto';
+    else if(!incl)estado='locked';
+    else estado='activo';
+    const tag=estado==='activo'?'<span class="tag activo">activo</span>'
+      :estado==='locked'?'<span class="tag locked"><span class="material-symbols-outlined" style="font-size:13px">lock</span> no incluido</span>'
+      :'<span class="tag pronto">pronto</span>';
     const inner=`<span class="material-symbols-outlined" style="font-size:30px">${m.ico}</span>
       <span class="nm">${m.n}</span><span class="ds">${m.d}</span>
-      <span class="tag ${on?'activo':'pronto'}">${on?'activo':'pronto'}</span><span class="num">${String(i).padStart(2,'0')}</span>`;
-    return on?`<a class="mod-card on" href="${m.href}" style="--ac:${m.ac||'var(--primary)'}">${inner}</a>`:`<div class="mod-card off">${inner}</div>`;
+      ${tag}<span class="num">${String(i).padStart(2,'0')}</span>`;
+    if(estado==='activo')return `<a class="mod-card on" href="${m.href}" style="--ac:${m.ac||'var(--primary)'}">${inner}</a>`;
+    if(estado==='locked')return `<div class="mod-card lock" data-feat="${k}" data-nm="${m.n.replace(/"/g,'&quot;')}" data-ico="${m.ico}" style="--ac:${m.ac||'var(--primary)'}">${inner}</div>`;
+    return `<div class="mod-card off">${inner}</div>`;
   });
   $('#mods').innerHTML=cards.join('');
+  document.querySelectorAll('#mods .mod-card.lock').forEach(c=>c.onclick=()=>openFeat(c.dataset.feat,c.dataset.nm,c.dataset.ico));
+}
+function openFeat(key,nombre,ico){
+  const feats=MODFEAT[key]||[];
+  const bd=document.getElementById('feat-bd');
+  document.getElementById('feat-body').innerHTML=
+    `<div class="feat-head"><span class="material-symbols-outlined" style="font-size:34px;color:var(--primary)">${ico||'lock'}</span>
+       <div><div class="feat-t">${nombre}</div><div class="feat-s">No incluido en tu plan actual</div></div></div>
+     <ul class="feat-list">${feats.map(f=>`<li><span class="material-symbols-outlined" style="font-size:18px;color:var(--green)">check_circle</span>${f}</li>`).join('')}</ul>
+     <div class="feat-cta">¿Quieres activar <b>${nombre}</b>? Habla con tu ejecutivo Prep! para sumarlo a tu plan.</div>`;
+  bd.classList.add('open');
 }
 
 async function load(){
@@ -292,5 +346,10 @@ async function load(){
 }
 load();
 </script>
+<div class="feat-bd" id="feat-bd" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="feat-card"><div id="feat-body"></div>
+    <button class="feat-x" onclick="document.getElementById('feat-bd').classList.remove('open')">Entendido</button>
+  </div>
+</div>
 </body>
 </html>
