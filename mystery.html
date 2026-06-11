@@ -231,11 +231,11 @@ function heat(rowDefs,cols,valFn){
   return h+`</div></div>`;
 }
 function impactRows(resp){
-  const byC={};resp.forEach(r=>{(byC[r.criterio]=byC[r.criterio]||{peso:+r.peso||1,vals:[]}).vals.push(+r.puntaje||0);});
-  return Object.entries(byC).map(([k,o])=>{const s=avg(o.vals);return{k,peso:o.peso,s,lost:o.peso*(100-s)/100};}).sort((a,b)=>b.lost-a.lost);
+  const byC={};resp.forEach(r=>{(byC[r.criterio]=byC[r.criterio]||[]).push(+r.puntaje||0);});
+  return Object.entries(byC).map(([k,vals])=>({k,s:avg(vals)})).sort((a,b)=>a.s-b.s);
 }
 function impactList(resp){
-  return impactRows(resp).map(r=>{const[bg]=scoreColor(r.s);return `<div class="imp"><div class="nm"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.k)}</span><span class="pw">peso ${r.peso}</span></div><div class="track"><div class="fill" style="width:${r.s}%;background:${bg}"></div></div><div class="v">${r.s.toFixed(0)}</div><div class="lost">−${r.lost.toFixed(1)}</div></div>`;}).join('');
+  return impactRows(resp).map(r=>{const[bg]=scoreColor(r.s);return `<div class="imp"><div class="nm"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.k)}</span></div><div class="track"><div class="fill" style="width:${r.s}%;background:${bg}"></div></div><div class="v">${r.s.toFixed(0)}</div></div>`;}).join('');
 }
 /* filtro de período */
 function setPer(p){PER=p;render();}
@@ -276,7 +276,7 @@ function vResumen(){
   const imp=impactRows(R), t1=imp[0];
   const tEvol=delta>=0?`Tendencia al alza: +${delta.toFixed(1)} pts desde ${mLabel(msAll[0])}`:`Score a la baja: ${delta.toFixed(1)} pts desde ${mLabel(msAll[0])}`;
   const tArea=`${best.a} sostiene; ${worst.a} es la prioridad`;
-  const tImp=t1?`${t1.k} concentra la mayor pérdida: −${t1.lost.toFixed(1)} pts`:'Impacto por criterio';
+  const tImp=t1?`${t1.k} es el criterio más débil: ${t1.s.toFixed(0)}/100`:'Criterios a reforzar';
   return `
   ${periodBar(msAll)}
   <div class="kpis">
@@ -289,9 +289,9 @@ function vResumen(){
     <div class="card">${msAll.length>1?lineChart(serie,msAll,{ymin:40,hl:PER==='all'?null:PER}):'<div class="empty">Una sola fecha.</div>'}</div></div>
   <div class="section"><div class="section-h"><h3>${tArea}</h3><span class="hint">${periodLbl}</span></div>
     <div class="card">${areas.map(x=>barRow(x.a,x.s)).join('')}</div></div>
-  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">peso × brecha · ${periodLbl}</span></div>
+  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">menor puntaje primero · ${periodLbl}</span></div>
     <div class="card">${impactList(R)}</div></div>
-  <div class="section"><div class="section-h"><h3>Brechas por criterio y mes</h3><span class="hint">desliza →</span></div>
+  <div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">desliza →</span></div>
     <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})), msAll.map(m=>({key:m,label:MESN[+m.split('-')[1]]})), (r,c)=>{const vals=Rall.filter(x=>x.criterio===r.key && v2m[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;})}</div></div>`;
 }
 /* ===== CONSOLIDADO (todas las sedes) ===== */
@@ -321,7 +321,11 @@ function vConsolidado(){
   const tRank=(top&&bot)?`${top.l.nombre} lidera (${top.s.toFixed(0)}); ${bot.l.nombre} cierra el grupo (${bot.s.toFixed(0)})`:'Ranking de sedes';
   const tEvol=PER==='all'?`${improving} de ${locs.length} sedes mejoran desde ${mLabel(msAll[0])}`:`Evolución por sede · ${mLabel(PER)} marcado`;
   const tHeat=`${wc.k} es la debilidad transversal de la cadena (${wc.s.toFixed(0)}/100)`;
-  const tImp=imp[1]?`${imp[0].k} y ${imp[1].k} concentran ${(imp[0].lost+imp[1].lost).toFixed(1)} pts recuperables`:'Impacto por criterio';
+  const tImp=imp[1]?`${imp[0].k} y ${imp[1].k} son los criterios más débiles (${imp[0].s.toFixed(0)} y ${imp[1].s.toFixed(0)}/100)`:'Criterios a reforzar';
+  // tabla comparativa general: sede × (score general + áreas)
+  const tcols=sede.map(x=>({key:x.l.id,label:(x.l.nombre||'').split(' ')[0]}));
+  const trows=[{key:'__all',label:'Score general'}].concat(areasOf().map(a=>({key:a,label:a})));
+  const tval=(r,c)=>{if(r.key==='__all'){const vs=V.filter(v=>v.local_id===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}const rr=R.filter(x=>v2l[x.visita_id]===c.key&&x.area===r.key);return rr.length?wAvg(rr):null;};
   return `
   ${periodBar(msAll)}
   <div class="section"><div class="section-h"><h3>${tRank}</h3><span class="hint">${V.length} evaluaciones · ${periodLbl}</span></div>
@@ -329,11 +333,13 @@ function vConsolidado(){
       <div class="rank">#${i+1}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
       <div class="big">${x.s.toFixed(0)}<span style="font-size:15px;opacity:.4">/100</span></div>
       <div class="trend ${x.delta==null?'':x.delta>=0?'up':'down'}">${x.delta==null?(x.n+' visitas'):((x.delta>=0?'▲ +':'▼ ')+x.delta.toFixed(1)+' pts · '+x.n+' vis.')}</div></div>`).join('')}</div></div>
-  <div class="section"><div class="section-h"><h3>${tEvol}</h3><span class="hint">score ponderado mensual</span></div>
+  <div class="section"><div class="section-h"><h3>Puntajes comparativos por sede</h3><span class="hint">general y por área · ${periodLbl}</span></div>
+    <div class="card">${heat(trows,tcols,tval)}<div class="legend">${legend}</div></div></div>
+  <div class="section"><div class="section-h"><h3>${tEvol}</h3><span class="hint">score mensual por sede</span></div>
     <div class="card">${lineChart(series,msAll,{ymin:40,hl:PER==='all'?null:PER})}<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${escapeHtml(s.name)}</span>`).join('')}</div></div></div>
   <div class="section"><div class="section-h"><h3>${tHeat}</h3><span class="hint">criterio × sede · ${periodLbl}</span></div>
     <div class="card">${heat(crit,cols,cellCS)}<div class="legend">${legend}</div></div></div>
-  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">peso × brecha · ${periodLbl}</span></div>
+  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">criterios ordenados por puntaje · ${periodLbl}</span></div>
     <div class="card">${impactList(R)}</div></div>`;
 }
 function wAvg(rs){if(!rs.length)return 0;let n=0,d=0;rs.forEach(r=>{const p=+r.peso||1;n+=(+r.puntaje||0)*p;d+=p;});return d?n/d:0;}
@@ -391,7 +397,7 @@ function renderNueva(){
     h+=`<div class="area-h">${escapeHtml(a)}</div>`;
     DB.criterios.filter(c=>c.area===a).forEach(c=>{
       const cur=NEW.punt[c.id];
-      h+=`<div class="crit"><div class="ct"><span>${escapeHtml(c.criterio)} <span class="pw">×${c.peso}</span></span></div>
+      h+=`<div class="crit"><div class="ct"><span>${escapeHtml(c.criterio)}</span></div>
         <div class="scale" id="sc-${c.id}">${[0,25,50,75,100].map(n=>`<div class="dot ${cur===n?'on':''}" data-n="${n}" onclick="setPunt('${c.id}',${n})">${n}</div>`).join('')}</div>
         <input class="input" style="margin-top:6px;font-size:13px" placeholder="Comentario (opcional)" value="${(NEW.com[c.id]||'').replace(/"/g,'&quot;')}" oninput="NEW.com['${c.id}']=this.value"></div>`;
     });
@@ -429,7 +435,7 @@ function vRanking(){
   const tur={};V.forEach(v=>{const t=v.turno||'—';(tur[t]=tur[t]||[]).push(+v.score_total||0);});
   const turR=Object.entries(tur).map(([k,a])=>({k,s:avg(a),n:a.length})).sort((x,y)=>y.s-x.s);
   let h=`<div class="section"><div class="section-h"><h3>Fortalezas y debilidades</h3><span class="hint">por área</span></div><div class="card">${areas.map(x=>barRow(x.k,x.s)).join('')}</div></div>`;
-  h+=`<div class="section"><div class="section-h"><h3>Impacto por criterio</h3><span class="hint">peso × brecha</span></div><div class="card">${impactList(R)}</div></div>`;
+  h+=`<div class="section"><div class="section-h"><h3>Criterios a reforzar</h3><span class="hint">menor puntaje primero</span></div><div class="card">${impactList(R)}</div></div>`;
   if(empR.length)h+=`<div class="section"><div class="section-h"><h3>Por colaborador</h3></div><div class="card">${empR.map((x,i)=>barRow((i+1)+'. '+x.k+' ('+x.n+')',x.s)).join('')}</div></div>`;
   if(turR.length>1)h+=`<div class="section"><div class="section-h"><h3>Por turno</h3></div><div class="card">${turR.map(x=>barRow(x.k+' ('+x.n+')',x.s)).join('')}</div></div>`;
   return h;
