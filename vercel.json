@@ -50,6 +50,10 @@
       "destination": "/brand.html"
     },
     {
+      "source": "/features",
+      "destination": "/features.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },

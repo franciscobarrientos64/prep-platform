@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de features · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;
+--shadow-sm:4px 4px 0 0 #000;--shadow:8px 8px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{vertical-align:middle}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 90px}
+.hero{background:var(--primary);border-bottom:3px solid var(--outline);color:#fff;padding:60px 20px 50px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:28px 28px}
+.hero .logo{width:230px;height:74px;margin:0 auto;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:#fff;position:relative}
+.hero h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin-top:18px;position:relative}
+.hero p{font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-top:10px;opacity:.9;position:relative}
+.toolbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:2px solid var(--outline);padding:12px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.search{flex:1;min-width:200px;max-width:360px;padding:10px 14px;border:2px solid var(--outline);border-radius:999px;font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm)}
+.chip{padding:7px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-family:var(--font-mono);font-size:12px;font-weight:700;box-shadow:2px 2px 0 0 #000;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);box-shadow:none;transform:translate(2px,2px)}
+.counts{font-family:var(--font-mono);font-size:12px;opacity:.6;text-align:center;margin:18px 0 4px}
+.mod{margin-top:26px;border:2px solid var(--outline);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-sm);overflow:hidden}
+.mod-h{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:2px solid var(--outline);position:relative}
+.mod-h::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:var(--ac)}
+.mod-ic{width:46px;height:46px;border:2px solid var(--outline);border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--ac);color:#fff;flex-shrink:0}
+.mod-ic .material-symbols-outlined{font-size:26px}
+.mod-h .nm{font-family:var(--font-display);font-size:21px;line-height:1}
+.mod-h .tl{font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:3px}
+.mod-h .nn{margin-left:auto;font-family:var(--font-display);font-size:30px;opacity:.12}
+.feats{padding:6px 18px 16px}
+.feat{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.feat:last-child{border:none}
+.feat .id{font-family:var(--font-mono);font-size:10px;font-weight:700;opacity:.45;min-width:46px;padding-top:2px}
+.feat .bd{flex:1;min-width:0}
+.feat .ft{font-weight:700;font-size:14px}
+.feat .fd{font-size:13px;opacity:.72;margin-top:2px}
+.tier{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:999px;border:1.5px solid var(--outline);flex-shrink:0;margin-top:1px}
+.t-mvp{background:var(--green);color:#fff}.t-f2{background:var(--tertiary)}.t-f3{background:var(--primary-soft)}
+.hidden{display:none}
+footer{margin-top:50px;border-top:2px solid var(--outline);padding-top:18px;font-family:var(--font-mono);font-size:12px;opacity:.6;text-align:center}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;font-weight:600;margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{padding:1px 7px;border-radius:999px;border:1.5px solid var(--outline);font-size:9px}
+@media print{.toolbar{position:static}.chip,.search{display:none}.mod{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="logo"></div>
+  <h1>Catálogo de features</h1>
+  <p>Sistema operativo para restaurantes · por módulo</p>
+</div>
+<div class="toolbar">
+  <input class="search" id="q" placeholder="Buscar feature…">
+  <button class="chip on" data-t="all">Todos</button>
+  <button class="chip" data-t="MVP">Base · MVP</button>
+  <button class="chip" data-t="F2">Fase 2</button>
+  <button class="chip" data-t="F3">Fase 3</button>
+</div>
+<div class="wrap">
+  <div class="counts" id="counts"></div>
+  <div class="legend"><span><i class="t-mvp">MVP</i> incluido en la base</span><span><i class="t-f2">F2</i> fase 2</span><span><i class="t-f3">F3</i> fase 3 / avanzado</span></div>
+  <div id="mods"></div>
+  <footer>prep! · catálogo de features · la lista evoluciona con el producto</footer>
+</div>
+<script>
+const MODS=[
+{n:'Pase',sub:'Dashboard ejecutivo',ic:'speed',ac:'#1e5af9',nn:'01',f:[
+ ['PA-01','MVP','Pase en vivo','Cubiertos, ventas, food cost, ticket promedio y labor cost en tiempo real.'],
+ ['PA-02','MVP','Comparativo entre sedes','Las sedes lado a lado para leer la operación de un vistazo.'],
+ ['PA-03','MVP','Ingeniería de menú','Matriz estrellas / caballos de batalla / rompecabezas / perros.'],
+ ['PA-04','MVP','Alertas al celular','Avisos push al dueño cuando un indicador se desvía.'],
+ ['PA-05','MVP','Reportes cross-module','Informes configurables que cruzan datos de todos los módulos.'],
+ ['PA-06','F2','Reportes a medida','Vistas a medida que alimentan al Directorio.'],
+ ['PA-07','F3','Analítica predictiva','Proyección de indicadores clave del negocio.']]},
+{n:'POS',sub:'Caja y toma de pedido',ic:'point_of_sale',ac:'#ff3b30',nn:'02',f:[
+ ['CA-01','MVP','Ingreso de pedidos por mozo','Toma de pedido por silla, mesa o barra.'],
+ ['CA-02','MVP','Course timing','Urgente, marchar y dividir por pasos del servicio.'],
+ ['CA-03','MVP','Split de cuenta','Dividir por ítem o por proporción.'],
+ ['CA-04','MVP','Cuentas abiertas (tabs)','Tabs de barra concurrentes con nombre y asientos agrupados.'],
+ ['CA-05','MVP','Pedido en mesa por QR','Carta digital que crea el pedido y entra a cocina.'],
+ ['CA-06','MVP','Ruteo de impresión','Comandas por estación, impresión real 80mm.'],
+ ['CA-07','MVP','Cortesías con aprobación','Flujo de aprobación de gerente para invitaciones.'],
+ ['CA-08','MVP','Multipago','Efectivo, Yape, Plin, transferencia, tarjetas, Niubiz/Culqi/Izipay.'],
+ ['CA-09','MVP','Facturación SUNAT','Boleta/factura vía PSE/OSE (alta del cliente).'],
+ ['CA-10','MVP','Modificadores priceados','Modificadores complejos por ítem con precio.'],
+ ['CA-11','MVP','Captura de propina','Propina capturada en el cobro.'],
+ ['CA-12','MVP','Audit log universal','Bitácora de abrir/cancelar, cortesías, cobros (por tenant).'],
+ ['CA-13','MVP','Gift cards','Vender, recargar y cobrar con tarjeta de regalo.'],
+ ['CA-14','MVP','Pantalla al cliente','Customer-facing display en tiempo real.'],
+ ['CA-15','MVP','Ticket suspendido','Pausar y retomar una cuenta.'],
+ ['CA-16','MVP','Plano en tiempo real','Floor plan con colores por estado de mesa.'],
+ ['CA-17','MVP','Mover de mesa','Cambiar invitados de mesa sin perder la cuenta.'],
+ ['CA-18','MVP','Sillas de barra','Visibles y agrupables en un mismo pedido.'],
+ ['CA-19','MVP','Zoom a la mesa','Posiciones de silla, ítems por silla o compartidos.'],
+ ['CA-20','MVP','Menú por familias','Cocina y bar organizados por categorías.'],
+ ['CA-21','MVP','Notas por ítem','Términos de carne e instrucciones a cocina.'],
+ ['CA-22','MVP','Alergias por silla','Captura por posición y extrapolación a compartidos.'],
+ ['CA-23','MVP','Flujo de cobro secuencial','Cobrar → dividir → pre-cuenta → comprobante → método → propina.']]},
+{n:'Línea',sub:'KDS de cocina',ic:'local_fire_department',ac:'#f59e0b',nn:'03',f:[
+ ['LI-01','MVP','KDS principal','El pase del expedidor en pantalla.'],
+ ['LI-02','MVP','KDS de delivery','Pantalla dedicada para pedidos a domicilio.'],
+ ['LI-07','MVP','Priorización por tiempo','Orden por course timing del servicio.'],
+ ['LI-09','F2','Alerta de merma anómala','Aviso cuando un consumo se sale de lo esperado.'],
+ ['LI-10','MVP','Ruteo por estación','Cada comanda a su estación.'],
+ ['LI-11','MVP','Colores por tiempo','Verde <5min, amarillo 5–10min, rojo >10min.'],
+ ['LI-12','MVP','Touch de estado','Oído → Va → En fuego → Servido con un toque.'],
+ ['LI-13','MVP','Sonido / vibración','Aviso al recibir una nueva comanda.']]},
+{n:'Bienvenida',sub:'Reservas y anfitrión',ic:'event_available',ac:'#7c3aed',nn:'04',f:[
+ ['MS-01','MVP','Reservas con widget','Widget embebible con 0% de comisión.'],
+ ['MS-02','MVP','Ficha del invitado','Historial completo de visitas y consumo.'],
+ ['MS-03','MVP','VIP, alergias, preferencias','Tags, dietas, ocasiones y notas especiales.'],
+ ['MS-04','MVP','Editor de plano','Floor plan visual editable.'],
+ ['MS-05','MVP','Card hold anti no-show','Garantía con tarjeta contra ausencias.'],
+ ['MS-06','MVP','Waitlist con WhatsApp/SMS','Lista de espera con aviso automático.'],
+ ['MS-07','MVP','Prioridad por salud','Adultos mayores, embarazadas, niños, discapacidad.'],
+ ['MS-08','F2','Pantalla pública de waitlist','La espera visible en una pantalla del local.'],
+ ['MS-09','F2','Waitlist en web','La espera visible en la web pública.'],
+ ['MS-10','MVP','Bot de WhatsApp','Reservas conversacionales por WhatsApp.'],
+ ['MS-11','MVP','Allergen surface','Alergias visibles al mozo en la atención.'],
+ ['MS-12','MVP','Timeline Gantt','Mesas por hora con turn-time.'],
+ ['MS-13','MVP','Drag & drop','Asignar reservas al plano arrastrando.'],
+ ['MS-14','MVP','Prioridades obligatorias','Reglas de prioridad por tipo de invitado.'],
+ ['MS-15','MVP','Registro de invitado','Alta con consentimiento de marketing (Ley 29733).'],
+ ['MS-16','MVP','Confirmación automática','Botón aceptar → confirmación por WhatsApp.']]},
+{n:'Mercado',sub:'Compras e inventario',ic:'inventory_2',ac:'#0ea5e9',nn:'05',f:[
+ ['ME-01','MVP','Comparativo de compras','Precios entre proveedores y webs, con el más barato marcado.'],
+ ['ME-02','MVP','Histórico de precios','Tracking de la evolución de cada insumo.'],
+ ['ME-03','MVP','Alerta de variación','Aviso cuando un precio sube fuera de rango.'],
+ ['ME-04','MVP','Impacto en food cost','Alerta del efecto de un precio sobre el costo del plato.'],
+ ['ME-05','MVP','OCR de facturas','Captura de facturas de proveedor por foto.'],
+ ['ME-06','F2','Vendor scoring','Calificación de proveedores por precio, cumplimiento y calidad.'],
+ ['ME-07','MVP','Inventario por sede','Stock por almacén, con PAR y stock exacto.'],
+ ['ME-08','MVP','Mermas con motivo','Registro de mermas categorizado.'],
+ ['ME-09','MVP','Vencimientos (FEFO)','Alertas por fecha de vencimiento.'],
+ ['ME-10','MVP','Facturas a Contabilidad','Registro automático para el libro de compras.'],
+ ['ME-11','F2','Inventario predictivo','Sugerencia de reposición según consumo.'],
+ ['ME-12','MVP','Conteo físico ciego','Conteo a ciegas con doble aprobación y anomalías.'],
+ ['ME-13','MVP','Órdenes de compra','Armado de pedido para completar PAR, con aprobación.'],
+ ['ME-14','MVP','FIFO por lotes','Trazabilidad por lote.'],
+ ['ME-15','MVP','Multi-sede y transferencias','Mover stock entre locales.']]},
+{n:'Recetas',sub:'Costeo y food cost',ic:'restaurant_menu',ac:'#10b981',nn:'06',f:[
+ ['RC-01','MVP','Recetas con gramajes','Ingredientes y cantidades por plato.'],
+ ['RC-02','MVP','Costeo automático','Costo del plato en tiempo real.'],
+ ['RC-03','MVP','Food cost permanente','Food cost actualizado al cambiar precios.'],
+ ['RC-04','MVP','Escalado de recetas','De 1 a N porciones automáticamente.'],
+ ['RC-05','MVP','Alertas de vencimiento','Avisos ligados a los insumos de la receta.'],
+ ['RC-06','MVP','Ingeniería de menú','Matriz de rentabilidad y popularidad.'],
+ ['RC-07','MVP','Ficha técnica imprimible','La receta lista para cocina.'],
+ ['RC-08','MVP','Alérgenos por receta','Alérgenos declarados a nivel de plato.'],
+ ['RC-09','F2','Sub-recetas reutilizables','Preparaciones base usadas en varios platos.']]},
+{n:'RRHH',sub:'Personal y planilla',ic:'badge',ac:'#e11d48',nn:'07',f:[
+ ['RH-01','MVP','Convocatorias','Ofertas de trabajo y reclutamiento.'],
+ ['RH-02','MVP','Contratos digitales','Generación y firma de contratos.'],
+ ['RH-03','MVP','Manuales del puesto','Versionados por posición.'],
+ ['RH-04','MVP','Ficha completa','CV, historial y conversaciones (The Talk).'],
+ ['RH-05','MVP','Intranet operativa','Integrada con El Libro.'],
+ ['RH-06','MVP','Asistencia con geofence','Selfie + geolocalización, foto a bucket privado.'],
+ ['RH-07','MVP','Permisos y vacaciones','Solicitudes y aprobación digital.'],
+ ['RH-08','MVP','Planilla en un clic','ONP/AFP, renta 5ta, EsSalud, neto y costo empresa.'],
+ ['RH-09','MVP','Carrera de servicio','Plan de crecimiento y mejora continua.'],
+ ['RH-10','MVP','Dashboard por trabajador','Estado y métricas de cada colaborador.'],
+ ['RH-11','MVP','Programación de turnos','Horarios con detección de conflictos.'],
+ ['RH-12','MVP','Labor cost en vivo','Costo laboral sobre ventas en tiempo real.'],
+ ['RH-13','MVP','Shift swap','Cambio de turnos en línea.'],
+ ['RH-14','MVP','Tip pooling','Reparto automático de propinas.']]},
+{n:'Delivery',sub:'Pedidos a domicilio',ic:'two_wheeler',ac:'#d97706',nn:'08',f:[
+ ['DE-01','MVP','Delivery con KDS','Pedidos con pantalla dedicada de cocina.'],
+ ['DE-02','MVP','Marketplace propio','Tienda con 0% de comisión.'],
+ ['DE-03','MVP','Online ordering','Pedido directo sin Rappi/PedidosYa.'],
+ ['DE-04','F2','Dark kitchen multi-marca','Varias marcas desde una misma cocina.'],
+ ['DE-05','F2','Catering y eventos','Pedidos grandes y por encargo.'],
+ ['DE-06','F2','Tracking de estado','Seguimiento del pedido en tiempo real.'],
+ ['DE-07','F2','Zonas con tarifas','Cobertura con tarifa y tiempo por zona.']]},
+{n:'Contabilidad',sub:'Finanzas y tributario',ic:'account_balance',ac:'#0891b2',nn:'09',f:[
+ ['TR-01','MVP','Facturas desde Mercado','Registro automático de compras.'],
+ ['TR-02','MVP','Integración contable','Exporta a tu software contable.'],
+ ['TR-03','F2','Pre-liquidación PDT 621','Borrador de impuestos del mes.'],
+ ['TR-04','F2','Contador Prep!','Servicio contable opcional.'],
+ ['TR-05','MVP','Libros pre-armados','Ventas y compras listos.'],
+ ['TR-06','MVP','Cierre mensual','Cierre automatizado.'],
+ ['FN-01','MVP','Presupuesto vs real','Partidas, recurrentes, variación y alertas por umbral.']]},
+{n:'Vuelto',sub:'Caja chica',ic:'savings',ac:'#65a30d',nn:'10',f:[
+ ['VU-01','MVP','OCR de recibos','Captura de gastos por foto, con IA.'],
+ ['VU-02','MVP','Centro de costo','Clasificación automática del gasto.'],
+ ['VU-03','MVP','Cierre diario','Cuadre automático de caja chica.'],
+ ['VU-04','MVP','Límites por empleado','Topes con alertas.'],
+ ['VU-05','MVP','Aprobación de supervisor','Workflow de aprobación de gastos.']]},
+{n:'El Libro',sub:'Intranet y formación',ic:'auto_stories',ac:'#9333ea',nn:'11',f:[
+ ['LB-01','MVP','Manuales con versiones','Procedimientos y SOPs versionados.'],
+ ['LB-02','MVP','HACCP digital','Checklists y registros de inocuidad.'],
+ ['LB-03','MVP','Recetario consultivo','Recetas para consulta de cocina.'],
+ ['LB-04','F2','Marketplace de plantillas','Plantillas listas para usar.'],
+ ['LB-05','MVP','Onboarding por rol','Inducción según la posición.'],
+ ['LB-06','MVP','Tablón + mensaje del día','Comunicados con confirmación de lectura.'],
+ ['LB-07','MVP','Panel de equipo','Todos los miembros con su puesto.'],
+ ['LB-08','MVP','Exámenes y panel de notas','Rendir y ver puntajes por colaborador.'],
+ ['LB-09','MVP','Calendario de eventos','Capacitaciones, observaciones y reuniones + asistencia.'],
+ ['LB-10','MVP','The Talk (1 a 1)','Conversaciones de feedback con compromisos.'],
+ ['LB-11','MVP','Políticas de trabajo','Reglamento interno del restaurante.']]},
+{n:'Directorio',sub:'Reportes y BI',ic:'leaderboard',ac:'#1e5af9',nn:'12',f:[
+ ['DI-01','MVP','KPIs estratégicos','Indicadores que cruzan todos los módulos.'],
+ ['DI-02','MVP','Reportes a medida','Informes configurables.'],
+ ['DI-03','MVP','Dashboards y drill-down','Series de tiempo, comparativos y detalle.'],
+ ['DI-04','MVP','Exports PDF y Excel','Descarga de los reportes.'],
+ ['DI-05','MVP','Reportes programados','Envío por WhatsApp/email.'],
+ ['DI-06','MVP','Alertas de desvío','Aviso cuando un KPI se sale de rango.']]},
+{n:'Engagement',sub:'Loyalty y CRM',ic:'favorite',ac:'#ff3b30',nn:'13',f:[
+ ['EN-04','F2','Campañas segmentadas','Audiencias con consentimiento + WhatsApp/email.'],
+ ['TX-01','F2','Loyalty en WhatsApp','Niveles y puntos por consumo.'],
+ ['TX-02','F2','Menú multilenguaje','La carta en varios idiomas.'],
+ ['TX-03','F3','App nativa','iOS/Android del restaurante.'],
+ ['TX-04','F2','API pública','Integración con sistemas externos por API key.'],
+ ['EN-01','F2','Catering y eventos','Gestión de eventos especiales.'],
+ ['EN-02','F2','Dark kitchen multi-marca','Varias marcas en una cocina.'],
+ ['EN-03','F3','Analítica predictiva','Predicción de comportamiento del invitado.'],
+ ['TX-05','F3','Marketplace de plantillas','Plantillas de campañas y contenido.']]},
+{n:'Mystery Shopper',sub:'Evaluación de experiencia',ic:'visibility',ac:'#7c3aed',nn:'14',f:[
+ ['MY-01','MVP','Evaluación ponderada','Criterios con peso y score por visita.'],
+ ['MY-02','MVP','Resumen ejecutivo','KPIs, mejor criterio, crítico y promedio.'],
+ ['MY-03','MVP','Tendencias por criterio','Evolución mensual con line chart.'],
+ ['MY-04','MVP','Radar de perfil','Perfil por criterio con meses superpuestos.'],
+ ['MY-05','MVP','Detalle por mes','Las visitas del mes juntas (no sueltas).'],
+ ['MY-06','MVP','Auditoría ítem por ítem','Mapa de calor por nivel (color, sin nota).'],
+ ['MY-07','MVP','Comparativo entre sedes','Ranking y heatmap criterio × sede.'],
+ ['MY-08','MVP','Plan de acción','Acciones de mejora con responsable y estado.']]},
+{n:'Predicción',sub:'IA estadística (costo cero)',ic:'insights',ac:'#0891b2',nn:'15',f:[
+ ['PR-01','MVP','Pronóstico de ventas','Ventas y cubiertos a 7 días, sin API externa.'],
+ ['PR-02','MVP','Qué preparar mañana','Mix de platos por día de la semana.'],
+ ['PR-03','MVP','Horas pico','Demanda por franja horaria.'],
+ ['PR-04','MVP','Días atípicos','Detección de outliers (±2σ).']]},
+{n:'Plataforma',sub:'Multi-sede, pagos, API, seguridad',ic:'hub',ac:'#171c20',nn:'00',f:[
+ ['PL-01','MVP','Multi-cliente / multi-sede','Cada restaurante con su subdominio y data aislada (RLS).'],
+ ['PL-02','MVP','Selector de restaurante y sede','Saltar entre marcas y locales sin re-login (SSO).'],
+ ['PL-03','MVP','Paquetes por cliente','Módulos encendidos/apagados por plan, con upsell.'],
+ ['PL-04','MVP','Pasarelas de pago','Niubiz, Culqi e Izipay por local.'],
+ ['PL-05','F2','API pública','Keys con scopes (ventas, productos, inventario).'],
+ ['PL-06','MVP','PWA offline','Instalable, con banner offline y accesibilidad por teclado.'],
+ ['PL-07','MVP','Roles y permisos','Ver / operar / aprobar / admin, por módulo.']]}
+];
+let TIER='all', Q='';
+function tierCls(t){return t==='MVP'?'t-mvp':t==='F2'?'t-f2':'t-f3'}
+function render(){
+  const q=Q.toLowerCase();let shown=0,total=0;
+  document.getElementById('mods').innerHTML=MODS.map(m=>{
+    const feats=m.f.filter(f=>{total++;const okT=TIER==='all'||f[1]===TIER;const okQ=!q||(f[2]+' '+f[3]+' '+m.n).toLowerCase().includes(q);return okT&&okQ;});
+    shown+=feats.length;
+    if(!feats.length)return '';
+    return `<section class="mod" style="--ac:${m.ac}">
+      <div class="mod-h"><div class="mod-ic"><span class="material-symbols-outlined">${m.ic}</span></div>
+        <div><div class="nm">${m.n}</div><div class="tl">${m.sub} · ${feats.length} features</div></div>
+        <div class="nn">${m.nn}</div></div>
+      <div class="feats">${feats.map(f=>`<div class="feat"><div class="id">${f[0]}</div><div class="bd"><div class="ft">${f[2]}</div><div class="fd">${f[3]}</div></div><span class="tier ${tierCls(f[1])}">${f[1]}</span></div>`).join('')}</div>
+    </section>`;
+  }).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);opacity:.5">Sin resultados.</div>';
+  document.getElementById('counts').textContent=`${MODS.length} módulos · ${shown} features${q||TIER!=='all'?' (filtrados)':''}`;
+}
+document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{TIER=b.dataset.t;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));render()});
+render();
+</script>
+</body>
+</html>
