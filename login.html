@@ -53,7 +53,7 @@ const next=new URLSearchParams(location.search).get('next')||'/';
 function msg(t,cls){const m=$('#msg');m.textContent=t;m.className='msg '+(cls||'')}
 (async()=>{const{data:{session}}=await sb.auth.getSession();if(session)location.href=next;})();
 const MARCA=window.PREP_MARCA||null;
-async function loadRoster(){try{if(!MARCA)return;const{data}=await sb.rpc('prep_login_roster',{p_marca:MARCA});if(!data||!data.length)return;
+async function loadRoster(){try{if(!MARCA||!window.PREP_BYSUB)return;const{data}=await sb.rpc('prep_login_roster',{p_marca:MARCA});if(!data||!data.length)return;
   const who=$('#who');who.innerHTML='<option value="">— Selecciona tu nombre —</option>'+data.map(u=>`<option value="${u.email}">${u.nombre}${u.puesto?' · '+u.puesto:''}</option>`).join('');
   $('#who-l').style.display='';who.style.display='';who.onchange=()=>{if(who.value){$('#email').value=who.value;$('#pass').focus();}};}catch(e){}}
 loadRoster();

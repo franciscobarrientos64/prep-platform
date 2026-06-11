@@ -26,4 +26,5 @@
     if(q.get('marca')){ctx.marca=marca;ctx.local=local;try{localStorage.setItem('prep_ctx',JSON.stringify(ctx))}catch(e){}}
   }
   window.PREP_MARCA=marca; window.PREP_LOCAL=local; window.PREP_SUBHOST=sub;
+  window.PREP_BYSUB=!!SUB[sub];   // true solo si la marca vino de un subdominio de cliente
 })();
