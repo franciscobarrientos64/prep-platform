@@ -86,11 +86,14 @@ textarea.input{min-height:80px;resize:vertical}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
 /* ---- secciones + data-viz ---- */
-.section{margin:20px 0 0}
-.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 10px}
-.section-h h3{font-family:var(--font-display);font-size:18px;line-height:1}
-.section-h .hint{font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:right}
+.section{margin:22px 0 0}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px 14px;margin:0 0 10px;flex-wrap:wrap}
+.section-h h3{font-family:var(--font-display);font-size:17px;line-height:1.15;flex:1;min-width:200px}
+.section-h .hint{font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:right;flex-shrink:0}
 .up{color:var(--green)}.down{color:var(--secondary)}
+.perbar{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;-webkit-overflow-scrolling:touch}
+.pchip{flex-shrink:0;padding:6px 13px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-family:var(--font-mono);font-size:11px;font-weight:700;box-shadow:2px 2px 0 0 var(--outline);cursor:pointer}
+.pchip.on{background:var(--primary);color:#fff;transform:translate(2px,2px);box-shadow:none}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;font-weight:600;margin-top:12px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:14px;height:14px;border:2px solid var(--outline);border-radius:4px}
@@ -147,7 +150,6 @@ textarea.input{min-height:80px;resize:vertical}
 <nav class="tabs">
   <button class="tab" data-tab="consolidado" id="tabCons" style="display:none" onclick="setTab('consolidado')"><span class="material-symbols-outlined">stacked_bar_chart</span>Todas las sedes</button>
   <button class="tab active" data-tab="resumen" onclick="setTab('resumen')"><span class="material-symbols-outlined">insights</span>Resumen</button>
-  <button class="tab" data-tab="evals" onclick="setTab('evals')"><span class="material-symbols-outlined">fact_check</span>Evaluaciones</button>
   <button class="tab" data-tab="ranking" onclick="setTab('ranking')"><span class="material-symbols-outlined">leaderboard</span>Ranking</button>
   <button class="tab" data-tab="acciones" onclick="setTab('acciones')"><span class="material-symbols-outlined">checklist</span>Plan de acción</button>
 </nav>
@@ -167,7 +169,7 @@ const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const MARCA=window.PREP_MARCA||'m7', LOCAL=window.PREP_LOCAL||'l12';
 let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[]};
-let TAB='resumen', booted=false;
+let TAB='resumen', booted=false, PER='all';
 const SEDE_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9'];
 
 function toast(m,t='ok'){const c=document.getElementById('toasts');const e=document.createElement('div');e.className='toast '+t;e.innerHTML='<span class="material-symbols-outlined">'+(t==='err'?'error':t==='warn'?'warning':'check_circle')+'</span>'+m;c.appendChild(e);setTimeout(()=>e.remove(),3200);}
@@ -208,15 +210,16 @@ const MESN=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov'
 function months(vs){return [...new Set(vs.map(v=>(v.fecha||'').slice(0,7)).filter(Boolean))].sort();}
 function mLabel(m){if(!m)return'';const[y,mo]=m.split('-');return MESN[+mo]+" '"+y.slice(2);}
 function scoreColor(s){if(s>=85)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];if(s>=50)return['#f59e0b','#3a2400'];return['#ff3b30','#fff'];}
-function lineChart(series,ms,{ymin=0,ymax=100,h=190}={}){
+function lineChart(series,ms,{ymin=0,ymax=100,h=190,hl=null}={}){
   const W=620,H=h,padL=28,padR=12,padT=14,padB=20,iw=W-padL-padR,ih=H-padT-padB,n=ms.length;
   const x=i=>n<=1?padL+iw/2:padL+iw*i/(n-1), y=v=>padT+ih*(1-(Math.max(ymin,Math.min(ymax,v))-ymin)/(ymax-ymin));
   let g='';
   for(let t=Math.ceil(ymin/20)*20;t<=ymax;t+=20){g+=`<line class="grid" x1="${padL}" y1="${y(t)}" x2="${W-padR}" y2="${y(t)}"/><text class="axis" x="${padL-5}" y="${y(t)+3}" text-anchor="end">${t}</text>`;}
-  ms.forEach((m,i)=>{g+=`<text class="axis" x="${x(i)}" y="${H-5}" text-anchor="middle">${MESN[+m.split('-')[1]]}</text>`;});
+  if(hl&&ms.includes(hl)){const hx=x(ms.indexOf(hl));g+=`<line x1="${hx.toFixed(1)}" y1="${padT}" x2="${hx.toFixed(1)}" y2="${padT+ih}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 3" opacity=".5"/>`;}
+  ms.forEach((m,i)=>{g+=`<text class="axis" x="${x(i)}" y="${H-5}" text-anchor="middle" ${m===hl?'style="font-weight:700;opacity:.9"':''}>${MESN[+m.split('-')[1]]}</text>`;});
   series.forEach(s=>{const pts=ms.map((m,i)=>s.map[m]==null?null:`${x(i).toFixed(1)},${y(s.map[m]).toFixed(1)}`).filter(Boolean).join(' ');
     g+=`<polyline points="${pts}" style="stroke:${s.color}"/>`;
-    ms.forEach((m,i)=>{if(s.map[m]!=null)g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(s.map[m]).toFixed(1)}" r="3.5" style="fill:${s.color}"/>`;});});
+    ms.forEach((m,i)=>{if(s.map[m]!=null)g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(s.map[m]).toFixed(1)}" r="${m===hl?5.5:3.5}" style="fill:${s.color}"/>`;});});
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Evolución del score">${g}</svg>`;
 }
 function heat(rowDefs,cols,valFn){
@@ -227,11 +230,17 @@ function heat(rowDefs,cols,valFn){
     cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">·</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${v.toFixed(0)}</div>`;});});
   return h+`</div></div>`;
 }
-function impactList(resp){
+function impactRows(resp){
   const byC={};resp.forEach(r=>{(byC[r.criterio]=byC[r.criterio]||{peso:+r.peso||1,vals:[]}).vals.push(+r.puntaje||0);});
-  const rows=Object.entries(byC).map(([k,o])=>{const s=avg(o.vals);return{k,peso:o.peso,s,lost:o.peso*(100-s)/100};}).sort((a,b)=>b.lost-a.lost);
-  return rows.map(r=>{const[bg]=scoreColor(r.s);return `<div class="imp"><div class="nm"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.k)}</span><span class="pw">peso ${r.peso}</span></div><div class="track"><div class="fill" style="width:${r.s}%;background:${bg}"></div></div><div class="v">${r.s.toFixed(0)}</div><div class="lost">−${r.lost.toFixed(1)}</div></div>`;}).join('');
+  return Object.entries(byC).map(([k,o])=>{const s=avg(o.vals);return{k,peso:o.peso,s,lost:o.peso*(100-s)/100};}).sort((a,b)=>b.lost-a.lost);
 }
+function impactList(resp){
+  return impactRows(resp).map(r=>{const[bg]=scoreColor(r.s);return `<div class="imp"><div class="nm"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.k)}</span><span class="pw">peso ${r.peso}</span></div><div class="track"><div class="fill" style="width:${r.s}%;background:${bg}"></div></div><div class="v">${r.s.toFixed(0)}</div><div class="lost">−${r.lost.toFixed(1)}</div></div>`;}).join('');
+}
+/* filtro de período */
+function setPer(p){PER=p;render();}
+function periodBar(ms){return `<div class="perbar"><button class="pchip ${PER==='all'?'on':''}" onclick="setPer('all')">Todos</button>`+ms.map(m=>`<button class="pchip ${PER===m?'on':''}" onclick="setPer('${m}')">${mLabel(m)}</button>`).join('')+`</div>`;}
+function perVis(vs){return PER==='all'?vs:vs.filter(v=>(v.fecha||'').slice(0,7)===PER);}
 
 function areasOf(){const a=[];DB.criterios.forEach(c=>{if(!a.includes(c.area))a.push(c.area)});return a;}
 function avg(arr){return arr.length?arr.reduce((s,x)=>s+x,0)/arr.length:0;}
@@ -241,67 +250,90 @@ function render(){
   const v=document.getElementById('view');
   if(TAB==='consolidado')v.innerHTML=vConsolidado();
   else if(TAB==='resumen')v.innerHTML=vResumen();
-  else if(TAB==='evals')v.innerHTML=vEvals();
   else if(TAB==='ranking')v.innerHTML=vRanking();
   else if(TAB==='acciones')v.innerHTML=vAcciones();
+  else v.innerHTML=DB.locales.length>1?vConsolidado():vResumen();
 }
 function setTab(t){TAB=t;render();}
 
 /* ===== RESUMEN ===== */
 function vResumen(){
-  const V=DB.visitas, R=DB.respuestas;
-  if(!V.length)return '<div class="empty">Aún no hay evaluaciones para esta sede.<br>Toca «Nueva evaluación» para registrar la primera visita.</div>';
+  const Vall=DB.visitas, Rall=DB.respuestas;
+  if(!Vall.length)return '<div class="empty">Aún no hay evaluaciones para esta sede.<br>Toca «Nueva evaluación» para registrar la primera visita.</div>';
+  const msAll=months(Vall);
+  const V=perVis(Vall); const idsP=new Set(V.map(v=>v.id)); const R=Rall.filter(r=>idsP.has(r.visita_id));
+  const periodLbl=PER==='all'?'todos los meses':mLabel(PER);
   const prom=avg(V.map(x=>+x.score_total||0));
   const areas=areasOf().map(a=>({a,s:wAvg(R.filter(r=>r.area===a))})).sort((x,y)=>y.s-x.s);
   const best=areas[0]||{a:'—',s:0}, worst=areas[areas.length-1]||{a:'—',s:0};
-  const ms=months(V);
-  const byMonth={};V.forEach(x=>{const m=(x.fecha||'').slice(0,7);if(m)(byMonth[m]=byMonth[m]||[]).push(+x.score_total||0);});
-  const serie=[{name:'Score',color:'#1e5af9',map:Object.fromEntries(ms.map(m=>[m,avg(byMonth[m])]))}];
-  const delta=ms.length>1?avg(byMonth[ms[ms.length-1]])-avg(byMonth[ms[0]]):0;
-  const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
+  const byMonth={};Vall.forEach(x=>{const m=(x.fecha||'').slice(0,7);if(m)(byMonth[m]=byMonth[m]||[]).push(+x.score_total||0);});
+  const serie=[{name:'Score',color:'#1e5af9',map:Object.fromEntries(msAll.map(m=>[m,avg(byMonth[m])]))}];
+  const delta=msAll.length>1?avg(byMonth[msAll[msAll.length-1]])-avg(byMonth[msAll[0]]):0;
+  let kVal,kSub,kLbl;
+  if(PER==='all'){kLbl='Tendencia 7m';kVal=(delta>=0?'+':'')+delta.toFixed(1);kSub=`${mLabel(msAll[0])} → ${mLabel(msAll[msAll.length-1])}`;}
+  else{const idx=msAll.indexOf(PER);const prev=idx>0?avg(byMonth[msAll[idx-1]]):null;const d=prev==null?null:prom-prev;kLbl='Δ vs mes previo';kVal=d==null?'—':(d>=0?'+':'')+d.toFixed(1);kSub=prev==null?'primer mes':'vs '+mLabel(msAll[idx-1]);}
+  const v2m={};Vall.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
+  const imp=impactRows(R), t1=imp[0];
+  const tEvol=delta>=0?`Tendencia al alza: +${delta.toFixed(1)} pts desde ${mLabel(msAll[0])}`:`Score a la baja: ${delta.toFixed(1)} pts desde ${mLabel(msAll[0])}`;
+  const tArea=`${best.a} sostiene; ${worst.a} es la prioridad`;
+  const tImp=t1?`${t1.k} concentra la mayor pérdida: −${t1.lost.toFixed(1)} pts`:'Impacto por criterio';
   return `
+  ${periodBar(msAll)}
   <div class="kpis">
-    <div class="kpi reveal"><div class="lbl">Score ponderado</div><div class="val">${prom.toFixed(0)}<span style="font-size:16px;opacity:.5">/100</span></div><div class="sub">${V.length} evaluaciones · ${ms.length} meses</div></div>
-    <div class="kpi reveal"><div class="lbl">Tendencia</div><div class="val ${delta>=0?'up':'down'}">${delta>=0?'+':''}${delta.toFixed(1)}</div><div class="sub">${mLabel(ms[0])} → ${mLabel(ms[ms.length-1])}</div></div>
+    <div class="kpi reveal"><div class="lbl">Score ponderado</div><div class="val">${prom.toFixed(0)}<span style="font-size:16px;opacity:.5">/100</span></div><div class="sub">${V.length} evaluaciones · ${periodLbl}</div></div>
+    <div class="kpi reveal"><div class="lbl">${kLbl}</div><div class="val ${(''+kVal).startsWith('-')?'down':'up'}">${kVal}</div><div class="sub">${kSub}</div></div>
     <div class="kpi reveal"><div class="lbl">Mejor área</div><div class="val" style="font-size:21px">${best.s.toFixed(0)}</div><div class="sub">${escapeHtml(best.a)}</div></div>
     <div class="kpi reveal"><div class="lbl">A reforzar</div><div class="val down" style="font-size:21px">${worst.s.toFixed(0)}</div><div class="sub">${escapeHtml(worst.a)}</div></div>
   </div>
-  <div class="section"><div class="section-h"><h3>Evolución del score</h3><span class="hint">promedio mensual ponderado</span></div>
-    <div class="card">${ms.length>1?lineChart(serie,ms,{ymin:40}):'<div class="empty">Una sola fecha aún.</div>'}</div></div>
-  <div class="section"><div class="section-h"><h3>Desempeño por área</h3></div>
+  <div class="section"><div class="section-h"><h3>${tEvol}</h3><span class="hint">promedio mensual${PER!=='all'?' · '+mLabel(PER)+' marcado':''}</span></div>
+    <div class="card">${msAll.length>1?lineChart(serie,msAll,{ymin:40,hl:PER==='all'?null:PER}):'<div class="empty">Una sola fecha.</div>'}</div></div>
+  <div class="section"><div class="section-h"><h3>${tArea}</h3><span class="hint">${periodLbl}</span></div>
     <div class="card">${areas.map(x=>barRow(x.a,x.s)).join('')}</div></div>
-  <div class="section"><div class="section-h"><h3>Impacto por criterio</h3><span class="hint">peso × brecha = pts a recuperar</span></div>
+  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">peso × brecha · ${periodLbl}</span></div>
     <div class="card">${impactList(R)}</div></div>
-  <div class="section"><div class="section-h"><h3>Mapa de calor · criterio × mes</h3><span class="hint">desliza →</span></div>
-    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})), ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})), (r,c)=>{const vals=R.filter(x=>x.criterio===r.key && v2m[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;})}</div></div>`;
+  <div class="section"><div class="section-h"><h3>Brechas por criterio y mes</h3><span class="hint">desliza →</span></div>
+    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})), msAll.map(m=>({key:m,label:MESN[+m.split('-')[1]]})), (r,c)=>{const vals=Rall.filter(x=>x.criterio===r.key && v2m[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;})}</div></div>`;
 }
 /* ===== CONSOLIDADO (todas las sedes) ===== */
 function vConsolidado(){
-  const V=DB.allVisitas, R=DB.allResp, locs=DB.locales;
-  if(!V.length)return '<div class="empty">Sin datos consolidados.</div>';
-  const ms=months(V);
-  const v2l={},v2m={};V.forEach(v=>{v2l[v.id]=v.local_id;v2m[v.id]=(v.fecha||'').slice(0,7);});
+  const Vall=DB.allVisitas, Rall=DB.allResp, locs=DB.locales;
+  if(!Vall.length)return '<div class="empty">Sin datos consolidados.</div>';
+  const msAll=months(Vall);
+  const v2l={},v2m={};Vall.forEach(v=>{v2l[v.id]=v.local_id;v2m[v.id]=(v.fecha||'').slice(0,7);});
+  const V=perVis(Vall); const idsP=new Set(V.map(v=>v.id)); const R=Rall.filter(r=>idsP.has(r.visita_id));
+  const periodLbl=PER==='all'?'todos los meses':mLabel(PER);
   const sede=locs.map((l,i)=>{const vs=V.filter(v=>v.local_id===l.id);
-    const first=avg(vs.filter(v=>v2m[v.id]===ms[0]).map(v=>+v.score_total||0));
-    const last=avg(vs.filter(v=>v2m[v.id]===ms[ms.length-1]).map(v=>+v.score_total||0));
-    return {l,n:vs.length,s:avg(vs.map(v=>+v.score_total||0)),delta:last-first,color:SEDE_COLORS[i%SEDE_COLORS.length]};
+    let delta;
+    if(PER==='all'){const a=avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[0]).map(v=>+v.score_total||0));const b=avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[msAll.length-1]).map(v=>+v.score_total||0));delta=b-a;}
+    else{const idx=msAll.indexOf(PER);const prev=idx>0?avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[idx-1]).map(v=>+v.score_total||0)):null;delta=prev==null?null:avg(vs.map(v=>+v.score_total||0))-prev;}
+    return {l,n:vs.length,s:avg(vs.map(v=>+v.score_total||0)),delta,color:SEDE_COLORS[i%SEDE_COLORS.length]};
   }).sort((a,b)=>b.s-a.s);
-  const series=locs.map((l,i)=>{const map={};ms.forEach(m=>{const vs=V.filter(v=>v.local_id===l.id&&v2m[v.id]===m);if(vs.length)map[m]=avg(vs.map(v=>+v.score_total||0));});return{name:l.nombre,color:SEDE_COLORS[i%SEDE_COLORS.length],map};});
+  const top=sede[0], bot=sede[sede.length-1];
+  const series=locs.map((l,i)=>{const map={};msAll.forEach(m=>{const vs=Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===m);if(vs.length)map[m]=avg(vs.map(v=>+v.score_total||0));});return{name:l.nombre,color:SEDE_COLORS[i%SEDE_COLORS.length],map};});
+  const improving=series.filter(s=>{const a=s.map[msAll[0]],b=s.map[msAll[msAll.length-1]];return a!=null&&b!=null&&b>a;}).length;
   const crit=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
   const cols=locs.map(l=>({key:l.id,label:(l.nombre||'').split(' ')[0]}));
   const cellCS=(r,c)=>{const vals=R.filter(x=>x.criterio===r.key&&v2l[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;};
+  const imp=impactRows(R);
+  const critAvg=DB.criterios.map(c=>({k:c.criterio,s:avg(R.filter(x=>x.criterio===c.criterio).map(x=>+x.puntaje||0))})).sort((a,b)=>a.s-b.s);
+  const wc=critAvg[0]||{k:'—',s:0};
   const legend=[['≥85','#10b981'],['70–84','#ffcc00'],['50–69','#f59e0b'],['<50','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+  const tRank=(top&&bot)?`${top.l.nombre} lidera (${top.s.toFixed(0)}); ${bot.l.nombre} cierra el grupo (${bot.s.toFixed(0)})`:'Ranking de sedes';
+  const tEvol=PER==='all'?`${improving} de ${locs.length} sedes mejoran desde ${mLabel(msAll[0])}`:`Evolución por sede · ${mLabel(PER)} marcado`;
+  const tHeat=`${wc.k} es la debilidad transversal de la cadena (${wc.s.toFixed(0)}/100)`;
+  const tImp=imp[1]?`${imp[0].k} y ${imp[1].k} concentran ${(imp[0].lost+imp[1].lost).toFixed(1)} pts recuperables`:'Impacto por criterio';
   return `
-  <div class="section"><div class="section-h"><h3>Ranking de sedes</h3><span class="hint">${V.length} evaluaciones · ${ms.length} meses</span></div>
+  ${periodBar(msAll)}
+  <div class="section"><div class="section-h"><h3>${tRank}</h3><span class="hint">${V.length} evaluaciones · ${periodLbl}</span></div>
     <div class="sedes">${sede.map((x,i)=>`<div class="sedecard reveal" style="border-top:6px solid ${x.color}">
       <div class="rank">#${i+1}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
       <div class="big">${x.s.toFixed(0)}<span style="font-size:15px;opacity:.4">/100</span></div>
-      <div class="trend ${x.delta>=0?'up':'down'}">${x.delta>=0?'▲ +':'▼ '}${x.delta.toFixed(1)} pts · ${x.n} visitas</div></div>`).join('')}</div></div>
-  <div class="section"><div class="section-h"><h3>Evolución por sede</h3><span class="hint">score ponderado mensual</span></div>
-    <div class="card">${lineChart(series,ms,{ymin:40})}<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${escapeHtml(s.name)}</span>`).join('')}</div></div></div>
-  <div class="section"><div class="section-h"><h3>Mapa de calor · criterio × sede</h3><span class="hint">dónde duele en cada local</span></div>
+      <div class="trend ${x.delta==null?'':x.delta>=0?'up':'down'}">${x.delta==null?(x.n+' visitas'):((x.delta>=0?'▲ +':'▼ ')+x.delta.toFixed(1)+' pts · '+x.n+' vis.')}</div></div>`).join('')}</div></div>
+  <div class="section"><div class="section-h"><h3>${tEvol}</h3><span class="hint">score ponderado mensual</span></div>
+    <div class="card">${lineChart(series,msAll,{ymin:40,hl:PER==='all'?null:PER})}<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${escapeHtml(s.name)}</span>`).join('')}</div></div></div>
+  <div class="section"><div class="section-h"><h3>${tHeat}</h3><span class="hint">criterio × sede · ${periodLbl}</span></div>
     <div class="card">${heat(crit,cols,cellCS)}<div class="legend">${legend}</div></div></div>
-  <div class="section"><div class="section-h"><h3>Impacto por criterio · cadena</h3><span class="hint">peso × brecha = pts a recuperar</span></div>
+  <div class="section"><div class="section-h"><h3>${tImp}</h3><span class="hint">peso × brecha · ${periodLbl}</span></div>
     <div class="card">${impactList(R)}</div></div>`;
 }
 function wAvg(rs){if(!rs.length)return 0;let n=0,d=0;rs.forEach(r=>{const p=+r.peso||1;n+=(+r.puntaje||0)*p;d+=p;});return d?n/d:0;}
