@@ -232,7 +232,7 @@ function renderUserSwitcher(){
   const ver=$('#acct-ver');if(ver)ver.onchange=()=>{localStorage.setItem('prep_uid',ver.value);location.reload()};
   menu.querySelectorAll('[data-act]').forEach(el=>el.onclick=()=>{const a=el.dataset.act;
     if(a==='pass')cambiarClave();
-    else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');location.reload()});
+    else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');try{document.cookie='prep_sso=; domain=.prep.rest; path=/; max-age=0; secure; samesite=lax'}catch(e){};location.reload()});
     else if(a==='login')location.href='/login';
     else if(a==='portal')location.href='/portal';
     else if(a==='usuarios')location.href='/admin';
