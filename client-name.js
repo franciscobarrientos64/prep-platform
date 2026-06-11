@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded',function(){
     var c=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
     // marca -> subdominio (cada restaurante vive en su propia URL)
     var SUBOF={m6:'casa-italia',m7:'symposium',m8:'lcds'};
+    // marca -> logo del restaurante (icono junto al nombre)
+    var LOGOS={m7:'/logos/m7.png',m8:'/logos/m8.png'};
+
+    // Logo del restaurante junto al nombre
+    var lg=LOGOS[marca];
+    if(lg){document.querySelectorAll('.brand-txt').forEach(function(bt){
+      if(bt.parentNode && !bt.parentNode.querySelector('.prep-cli-logo')){
+        var im=document.createElement('img');im.className='prep-cli-logo';im.src=lg;im.alt='';
+        im.style.cssText='width:30px;height:30px;border-radius:50%;border:2px solid var(--outline,#000);object-fit:cover;flex-shrink:0;background:#fff';
+        bt.parentNode.insertBefore(im,bt);
+      }
+    });}
 
     // Nombre del cliente
     c.from('inv_marcas').select('nombre').eq('id',marca).maybeSingle().then(function(r){
