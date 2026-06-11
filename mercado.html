@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fcf9f8">
-<title>Mercado · Casa Italia · Prep!</title>
+<title>Mercado · Prep!</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,7 +202,7 @@ function render(){renderHeader();renderTabs();
 function renderHeader(){
   const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
   $('#app-header').innerHTML=`
-    <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">Módulo Mercado</div></div></div>
+    <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">Módulo Mercado</div></div></div>
     <div class="header-info">
       <span class="pill">${money(valorInventario())} en stock</span>
       <span class="pill ${bajo?'alert':''}">${bajo} bajo par</span>

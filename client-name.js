@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded',function(){
     c.from('inv_marcas').select('nombre').eq('id',marca).maybeSingle().then(function(r){
       var nom=r&&r.data&&r.data.nombre; if(!nom)return;
       document.querySelectorAll('.brand-txt .cli').forEach(function(e){e.textContent=nom;});
+      try{var base=(document.title||'').replace(/^[^·]*·\s*/,'');document.title=nom+(base?' · '+base:' · Prep!');}catch(e){}
     }).catch(function(){});
 
     // Selector de RESTAURANTE (solo si el usuario tiene 2+ marcas asignadas)

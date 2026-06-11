@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fcf9f8">
-<title>El Libro · Casa Italia · Prep!</title>
+<title>El Libro · Prep!</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -88,7 +88,7 @@ textarea.input{min-height:120px;resize:vertical}
 <body>
 <div id="boot" class="boot"><div class="logo"><span class="l"></span></div><div class="spinner"></div><div class="msg">Oído · abriendo el libro</div></div>
 <header class="header">
-  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli">Casa Italia</div><div class="mod">El Libro</div></div></div>
+  <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">El Libro</div></div></div>
   <div class="header-info" id="hinfo"></div>
   <button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span id="h-add-l">Nuevo</span></button>
 </header>
@@ -280,9 +280,22 @@ function renderCalendario(){
      <button class="btn-ico" id="cal-next" style="width:auto"><span class="material-symbols-outlined">chevron_right</span></button></div>
    <div class="calgrid">${['L','M','M','J','V','S','D'].map(d=>`<div class="cdow">${d}</div>`).join('')}${cells}</div>
    <div class="grp-t" style="margin-top:16px">Agenda</div>
-   ${ev.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.hora_ini||'').localeCompare(b.hora_ini||'')).map(e=>`<div style="display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px"><div style="width:10px;align-self:stretch;border-radius:4px;background:${EVCOL[e.tipo]||'#9aa3ab'}"></div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.65">${e.fecha} · ${(e.hora_ini||'').slice(0,5)}–${(e.hora_fin||'').slice(0,5)}${e.responsable?(' · '+e.responsable):''}</div></div><span class="tagx cat">${EVLBL[e.tipo]||''}</span></div>`).join('')||'<div class="empty">Sin eventos este mes.</div>'}`;
+   ${ev.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.hora_ini||'').localeCompare(b.hora_ini||'')).map(e=>{const na=(e.asistentes&&e.asistentes.length)||0;return `<div style="display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px"><div style="width:10px;align-self:stretch;border-radius:4px;background:${EVCOL[e.tipo]||'#9aa3ab'}"></div><div style="flex:1;min-width:0"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.65">${e.fecha} · ${(e.hora_ini||'').slice(0,5)}–${(e.hora_fin||'').slice(0,5)}${e.responsable?(' · '+e.responsable):''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="tagx cat">${EVLBL[e.tipo]||''}</span><button class="btn-ico" data-asis="${e.id}" style="width:auto;padding:5px 10px;font-size:11px"><span class="material-symbols-outlined" style="font-size:14px">how_to_reg</span>${na?(na+' asist.'):'Asistencia'}</button></div></div>`;}).join('')||'<div class="empty">Sin eventos este mes.</div>'}`;
   $('#cal-prev').onclick=()=>{state.calMonth=shiftMonth(ym,-1);renderCalendario()};
   $('#cal-next').onclick=()=>{state.calMonth=shiftMonth(ym,1);renderCalendario()};
+  $$('#screen [data-asis]').forEach(b=>b.onclick=()=>tomarAsistencia(b.dataset.asis));
+}
+function tomarAsistencia(evId){
+  const ev=(state.eventos||[]).find(e=>e.id===evId);if(!ev)return;
+  const team=(state.equipo||[]).map(m=>m.nombre).filter(Boolean);
+  const set=new Set(Array.isArray(ev.asistentes)?ev.asistentes:[]);
+  setHead('✅','Asistencia',(ev.titulo||'')+' · '+ev.fecha);
+  const draw=()=>{$('#sheet-body').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:8px">Marca quién asistió</div>`+
+    (team.length?team.map(n=>`<button class="btn ${set.has(n)?'primary':'ghost'}" data-n="${n.replace(/"/g,'&quot;')}" style="justify-content:flex-start;margin-bottom:6px"><span class="material-symbols-outlined" style="font-size:16px">${set.has(n)?'check_circle':'radio_button_unchecked'}</span>${n}</button>`).join(''):'<div class="empty">Sin miembros en el equipo.</div>')+
+    `<div style="height:8px"></div><button class="btn primary" id="as-save" style="width:100%">Guardar asistencia (${set.size}/${team.length})</button>`;
+    $$('#sheet-body [data-n]').forEach(b=>b.onclick=()=>{const n=b.dataset.n;set.has(n)?set.delete(n):set.add(n);draw();});
+    $('#as-save').onclick=async()=>{const{error}=await sb.from('lb_eventos').update({asistentes:[...set]}).eq('id',evId);if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadEventos();render();toast('Servido · asistencia guardada','ok');};
+  };draw();openSheet();
 }
 function agregarEvento(){
   setHead('📅','Agregar evento','');
@@ -302,40 +315,46 @@ function agregarEvento(){
 /* ===== THE TALK ===== */
 function renderThetalk(){
   const t=state.thetalk||[];
-  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Conversaciones 1 a 1 · feedback y compromisos 🤝</div>`+
-   (t.map(x=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px">
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Conversaciones 1 a 1 · feedback y compromisos · toca una para editar 🤝</div>`+
+   (t.map(x=>`<div class="ttcard" data-tt="${x.id}" style="cursor:pointer;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px">
      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div style="font-weight:700">${x.lider||''} → ${x.colaborador||''}</div><span class="tagx cat">${x.fecha}</span></div>
      ${x.fortalezas?`<div style="margin-top:8px"><span class="tagx" style="background:var(--green-soft,#d1fae5)">Fortalezas</span><div style="font-size:13px;margin-top:3px">${x.fortalezas}</div></div>`:''}
      ${x.mejoras?`<div style="margin-top:8px"><span class="tagx" style="background:var(--amber-soft,#fef3c7)">A mejorar</span><div style="font-size:13px;margin-top:3px">${x.mejoras}</div></div>`:''}
      ${x.compromisos?`<div style="margin-top:8px"><span class="tagx" style="background:var(--primary-soft)">Compromisos</span><div style="font-size:13px;margin-top:3px">${x.compromisos}</div></div>`:''}
-     ${x.proxima?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:8px">📆 Próxima conversación: ${x.proxima}</div>`:''}</div>`).join('')||'<div class="empty">Sin conversaciones. Toca "+ The Talk".</div>');
+     ${x.proxima?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:8px">📆 Próxima conversación: ${x.proxima}</div>`:''}
+     <div style="font-family:var(--font-mono);font-size:10px;opacity:.45;margin-top:8px">✏️ Editar</div></div>`).join('')||'<div class="empty">Sin conversaciones. Toca "+ The Talk".</div>');
+  $$('#screen .ttcard').forEach(c=>c.onclick=()=>talkSheet(state.thetalk.find(x=>x.id===c.dataset.tt)));
 }
-function nuevoTalk(){
-  setHead('🤝','Nuevo The Talk','Conversación 1 a 1');
+function nuevoTalk(){talkSheet(null)}
+function talkSheet(rec){
+  const ed=!!rec, v=s=>(s||'').replace(/"/g,'&quot;');
+  setHead('🤝',ed?'Editar The Talk':'Nuevo The Talk','Conversación 1 a 1');
   $('#sheet-body').innerHTML=`
-   <div class="sheet-section"><div class="field-lbl">Líder</div><input class="input" id="tt-lid" placeholder="Nombre y puesto"></div>
-   <div class="sheet-section"><div class="field-lbl">Colaborador</div><input class="input" id="tt-col" placeholder="Nombre y puesto"></div>
-   <div class="sheet-section"><div class="field-lbl">Fecha</div><input class="input" id="tt-fec" type="date" value="${hoyISO()}"></div>
-   <div class="sheet-section"><div class="field-lbl">Fortalezas</div><textarea class="input" id="tt-for"></textarea></div>
-   <div class="sheet-section"><div class="field-lbl">A mejorar</div><textarea class="input" id="tt-mej"></textarea></div>
-   <div class="sheet-section"><div class="field-lbl">Compromisos</div><textarea class="input" id="tt-com"></textarea></div>
-   <div class="sheet-section"><div class="field-lbl">Próxima conversación</div><input class="input" id="tt-prox" type="date"></div>
-   <div class="sheet-section"><button class="btn primary" id="tt-save" style="width:100%">Guardar</button></div>`;
+   <div class="sheet-section"><div class="field-lbl">Líder</div><input class="input" id="tt-lid" value="${ed?v(rec.lider):''}" placeholder="Nombre y puesto"></div>
+   <div class="sheet-section"><div class="field-lbl">Colaborador</div><input class="input" id="tt-col" value="${ed?v(rec.colaborador):''}" placeholder="Nombre y puesto"></div>
+   <div class="sheet-section"><div class="field-lbl">Fecha</div><input class="input" id="tt-fec" type="date" value="${ed?rec.fecha:hoyISO()}"></div>
+   <div class="sheet-section"><div class="field-lbl">Fortalezas</div><textarea class="input" id="tt-for">${ed&&rec.fortalezas?rec.fortalezas:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">A mejorar</div><textarea class="input" id="tt-mej">${ed&&rec.mejoras?rec.mejoras:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Compromisos</div><textarea class="input" id="tt-com">${ed&&rec.compromisos?rec.compromisos:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Próxima conversación</div><input class="input" id="tt-prox" type="date" value="${ed&&rec.proxima?rec.proxima:''}"></div>
+   <div class="sheet-section"><button class="btn primary" id="tt-save" style="width:100%">${ed?'Guardar cambios':'Guardar'}</button>${ed?'<button class="btn ghost" id="tt-del" style="width:100%;margin-top:8px;color:var(--secondary)">Eliminar</button>':''}</div>`;
   openSheet();
   $('#tt-save').onclick=async()=>{const l=$('#tt-lid').value.trim(),c=$('#tt-col').value.trim();if(!l||!c){toast('Falta líder o colaborador','warn');return}
-    const{error}=await sb.from('lb_thetalk').insert({marca_id:MARCA,local_id:LOCAL,fecha:$('#tt-fec').value,lider:l,colaborador:c,fortalezas:$('#tt-for').value||null,mejoras:$('#tt-mej').value||null,compromisos:$('#tt-com').value||null,proxima:$('#tt-prox').value||null});
-    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadThetalk();render();toast('Servido · The Talk registrado','ok')};
+    const payload={fecha:$('#tt-fec').value,lider:l,colaborador:c,fortalezas:$('#tt-for').value||null,mejoras:$('#tt-mej').value||null,compromisos:$('#tt-com').value||null,proxima:$('#tt-prox').value||null};
+    const{error}=ed?await sb.from('lb_thetalk').update(payload).eq('id',rec.id):await sb.from('lb_thetalk').insert(Object.assign({marca_id:MARCA,local_id:LOCAL},payload));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadThetalk();render();toast(ed?'Va · actualizado':'Servido · The Talk registrado','ok')};
+  if(ed)$('#tt-del').onclick=async()=>{if(!confirm('¿Eliminar esta conversación?'))return;await sb.from('lb_thetalk').delete().eq('id',rec.id);closeSheet();await loadThetalk();render();toast('Eliminado','ok')};
 }
 /* ===== POLÍTICAS ===== */
 const POLITICAS=[
  {t:'Jornada y puntualidad',c:'• Marca tu ingreso y salida (asistencia).\n• Llega 10 min antes de tu turno, uniformado y listo para el briefing.\n• Tres tardanzas en el mes = llamada de atención formal.'},
  {t:'Presentación e higiene personal',c:'• Uniforme completo, limpio y planchado.\n• Cabello recogido, uñas cortas y limpias, sin perfumes intensos.\n• Lavado de manos al ingresar, tras cada pausa y al cambiar de tarea (HACCP).'},
  {t:'Manipulación de alimentos (HACCP)',c:'• Respeta la cadena de frío y las temperaturas de cocción.\n• Rotación FEFO: primero en vencer, primero en salir.\n• Reporta de inmediato cualquier insumo en mal estado.'},
- {t:'Atención al comensal',c:'• Trato cálido, cercano y respetuoso en todo momento.\n• Protocolo LAST ante reclamos: escucha, discúlpate, resuelve, agradece.\n• Nunca discutas con un comensal: escala al supervisor de turno.'},
+ {t:'Atención al invitado',c:'• Trato cálido, cercano y respetuoso en todo momento.\n• Protocolo LAST ante reclamos: escucha, discúlpate, resuelve, agradece.\n• Nunca discutas con un invitado: escala al supervisor de turno.'},
  {t:'Propinas y caja',c:'• Las propinas se reparten según la política acordada del equipo.\n• No se solicita ni se induce propina.\n• Prohibido manejar efectivo de caja sin autorización.'},
  {t:'Conducta y convivencia',c:'• Cero tolerancia a discriminación, acoso o maltrato.\n• Celular guardado durante el turno (salvo urgencias autorizadas).\n• Respeto entre compañeros y con todas las áreas.'},
  {t:'Seguridad',c:'• Conoce salidas, extintores y botiquín.\n• Reporta riesgos (pisos mojados, fallas eléctricas) de inmediato.\n• Sigue el plan de evacuación ante sismo o incendio.'},
- {t:'Confidencialidad',c:'• Recetas, proveedores y datos de comensales son confidenciales.\n• No compartas información del negocio fuera del trabajo.'},
+ {t:'Confidencialidad',c:'• Recetas, proveedores y datos de invitados son confidenciales.\n• No compartas información del negocio fuera del trabajo.'},
  {t:'Faltas y sanciones',c:'• Leves: llamada de atención verbal.\n• Reiteradas o graves: amonestación escrita.\n• Muy graves (robo, agresión, abandono de turno): según reglamento y ley laboral vigente.'}
 ];
 function renderPoliticas(){
