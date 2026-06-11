@@ -167,10 +167,13 @@ $('#run').onclick=async()=>{
     const docByName={}; // no tenemos doc por pedido directo; cliente_id se asigna solo si el comprobante trae doc
     const pend=parsed.peds.filter(p=>!seen.has(p.serie+'|'+p.numdoc));
     log('Ventas nuevas: '+pend.length+(pend.length<parsed.peds.length?(' ('+(parsed.peds.length-pend.length)+' ya estaban)'):''));
+    // ticket_num es único por (local,turno); asignamos un rango propio alto para no chocar con el POS en vivo
+    const {data:mx}=await sb.from('ca_pedidos').select('ticket_num').eq('local_id',LOCAL).order('ticket_num',{ascending:false}).limit(1);
+    let tn=Math.max(900000,(mx&&mx[0]&&mx[0].ticket_num)||0);
     let done=0;
     for(let i=0;i<pend.length;i+=200){
       const chunk=pend.slice(i,i+200).map(p=>({
-        marca_id:MARCA,local_id:LOCAL,estado:'cerrada',origen:'rpe',
+        marca_id:MARCA,local_id:LOCAL,ticket_num:++tn,estado:'cerrada',origen:'rpe',
         abierta_at:p.ts,cerrada_at:p.ts,pagado_at:p.ts,
         subtotal:p.subtotal,total:p.total,propina_monto:p.propina,
         comprobante_serie:p.serie||null,comprobante_numero:p.numdoc||null,
