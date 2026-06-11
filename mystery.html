@@ -209,7 +209,7 @@ async function load(){
 const MESN=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 function months(vs){return [...new Set(vs.map(v=>(v.fecha||'').slice(0,7)).filter(Boolean))].sort();}
 function mLabel(m){if(!m)return'';const[y,mo]=m.split('-');return MESN[+mo]+" '"+y.slice(2);}
-function scoreColor(s){if(s>=85)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];if(s>=50)return['#f59e0b','#3a2400'];return['#ff3b30','#fff'];}
+function scoreColor(s){if(s>=90)return['#1e5af9','#fff'];if(s>=80)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];return['#ff3b30','#fff'];}
 function lineChart(series,ms,{ymin=0,ymax=100,h=190,hl=null}={}){
   const W=620,H=h,padL=28,padR=12,padT=14,padB=20,iw=W-padL-padR,ih=H-padT-padB,n=ms.length;
   const x=i=>n<=1?padL+iw/2:padL+iw*i/(n-1), y=v=>padT+ih*(1-(Math.max(ymin,Math.min(ymax,v))-ymin)/(ymax-ymin));
@@ -317,7 +317,7 @@ function vConsolidado(){
   const imp=impactRows(R);
   const critAvg=DB.criterios.map(c=>({k:c.criterio,s:avg(R.filter(x=>x.criterio===c.criterio).map(x=>+x.puntaje||0))})).sort((a,b)=>a.s-b.s);
   const wc=critAvg[0]||{k:'—',s:0};
-  const legend=[['≥85','#10b981'],['70–84','#ffcc00'],['50–69','#f59e0b'],['<50','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+  const legend=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['<70','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
   const tRank=(top&&bot)?`${top.l.nombre} lidera (${top.s.toFixed(0)}); ${bot.l.nombre} cierra el grupo (${bot.s.toFixed(0)})`:'Ranking de sedes';
   const tEvol=PER==='all'?`${improving} de ${locs.length} sedes mejoran desde ${mLabel(msAll[0])}`:`Evolución por sede · ${mLabel(PER)} marcado`;
   const tHeat=`${wc.k} es la debilidad transversal de la cadena (${wc.s.toFixed(0)}/100)`;
@@ -343,7 +343,7 @@ function vConsolidado(){
     <div class="card">${impactList(R)}</div></div>`;
 }
 function wAvg(rs){if(!rs.length)return 0;let n=0,d=0;rs.forEach(r=>{const p=+r.peso||1;n+=(+r.puntaje||0)*p;d+=p;});return d?n/d:0;}
-function barRow(nm,s){const c=s>=85?'var(--green)':s>=70?'var(--amber)':'var(--secondary)';return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
+function barRow(nm,s){const c=s>=90?'var(--primary)':s>=80?'var(--green)':s>=70?'var(--tertiary)':'var(--secondary)';return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
 
 /* ===== EVALUACIONES ===== */
 function vEvals(){
