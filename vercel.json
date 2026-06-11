@@ -38,6 +38,10 @@
       "destination": "/apikeys.html"
     },
     {
+      "source": "/importar",
+      "destination": "/importar.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },

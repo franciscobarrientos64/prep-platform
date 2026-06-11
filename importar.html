@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Importar · Migración · Prep</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="/offline.js"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--mut:#6b7280;--green:#10b981;--gray-soft:#dfe3e8;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink)}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+.header{background:var(--bg);border-bottom:2px solid #000;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand-logo{position:relative;display:block;width:96px;height:30px;flex-shrink:0}.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.wrap{max-width:900px;margin:0 auto;padding:18px}
+.card{background:var(--surface);border:2px solid #000;border-radius:16px;box-shadow:var(--shadow-sm);padding:18px 20px;margin-bottom:16px}
+.card h3{font-family:var(--font-display);font-size:17px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:2px solid #000;border-radius:999px;font-weight:700;font-size:14px;cursor:pointer;background:var(--surface);box-shadow:var(--shadow-sm)}
+.btn.primary{background:var(--primary);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed}
+.drop{border:2px dashed #000;border-radius:14px;padding:30px;text-align:center;background:var(--bg);cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--bg);border:2px solid #000;border-radius:12px;padding:12px 14px}
+.kpi .v{font-family:var(--font-display);font-size:20px;color:var(--primary)}.kpi .l{font-family:var(--font-mono);font-size:10px;opacity:.65}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.seg label{display:flex;align-items:center;gap:6px;border:2px solid #000;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.log{font-family:var(--font-mono);font-size:12px;background:var(--ink);color:#e8eaf0;border-radius:12px;padding:14px;max-height:240px;overflow:auto;white-space:pre-wrap;line-height:1.5}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--gray-soft)}th{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--mut)}
+.mut{color:var(--mut);font-size:12px;line-height:1.5}
+.bar{height:8px;background:var(--gray-soft);border-radius:99px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--green);width:0;transition:width .2s}
+</style>
+</head>
+<body>
+<header class="header"><a href="/portal" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli" id="cli">Prep</div><div class="mod">Migración · Importar</div></div></header>
+<main class="wrap">
+  <div class="card">
+    <h3><span class="material-symbols-outlined" style="color:var(--primary)">upload_file</span>Importar ventas de Restaurant.pe</h3>
+    <p class="mut" style="margin-bottom:12px">Sube el <strong>Informe de Ventas</strong> (CSV) exportado de Restaurant.pe. Importa el historial de comprobantes a <code>ca_pedidos</code> (alimenta Predicción y Directorio) y crea los clientes con documento en el CRM. Solo importa comprobantes en estado <em>Activa</em>; evita duplicados por serie+número.</p>
+    <div class="drop" id="drop"><span class="material-symbols-outlined" style="font-size:34px;opacity:.5">cloud_upload</span><div style="margin-top:6px;font-weight:600">Arrastra el CSV o haz clic para elegirlo</div><div class="mut" id="fname">InformeVentas_*.csv</div></div>
+    <input type="file" id="file" accept=".csv,text/csv" style="display:none">
+    <div class="seg">
+      <label><input type="checkbox" id="opt-ped" checked> Importar ventas (ca_pedidos)</label>
+      <label><input type="checkbox" id="opt-cli" checked> Crear clientes con documento</label>
+    </div>
+    <div id="preview"></div>
+  </div>
+  <div class="card" id="run-card" style="display:none">
+    <h3><span class="material-symbols-outlined" style="color:var(--green)">play_circle</span>Importar</h3>
+    <button class="btn primary" id="run"><span class="material-symbols-outlined">download_done</span>Importar a Prep</button>
+    <div class="bar" id="bar" style="display:none"><i></i></div>
+    <div class="log" id="log" style="display:none;margin-top:12px"></div>
+  </div>
+</main>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const $=s=>document.querySelector(s);
+let parsed=null;
+
+// Parser CSV quote-aware (maneja comas, comillas y saltos de línea dentro de campos)
+function parseCSV(text){
+  const rows=[];let row=[],val='',q=false;
+  text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){val+='"';i++;} else q=false; } else val+=c; }
+    else { if(c==='"')q=true; else if(c===','){row.push(val);val='';} else if(c==='\n'){row.push(val);rows.push(row);row=[];val='';} else val+=c; }
+  }
+  if(val!==''||row.length){row.push(val);rows.push(row);}
+  return rows.filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));
+}
+const num=v=>{const n=parseFloat(String(v==null?'':v).replace(/[^\d.-]/g,''));return isNaN(n)?0:n;};
+function parseDT(fecha,hora){
+  let m=String(hora||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})\s*(a|p)\.?m/i);
+  if(m){let h=+m[4]%12+(/p/i.test(m[6])?12:0);return new Date(+m[3],+m[2]-1,+m[1],h,+m[5]).toISOString();}
+  let f=String(fecha||'').match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if(f)return new Date(+f[3],+f[2]-1,+f[1],20,0).toISOString();
+  return null;
+}
+function col(headers,...names){for(const n of names){const i=headers.findIndex(h=>h.trim().toLowerCase()===n.toLowerCase());if(i>=0)return i;}return -1;}
+
+$('#drop').onclick=()=>$('#file').click();
+['dragover','dragenter'].forEach(e=>$('#drop').addEventListener(e,ev=>{ev.preventDefault();$('#drop').style.background='var(--primary-soft,#d6e2ff)';}));
+['dragleave','drop'].forEach(e=>$('#drop').addEventListener(e,ev=>{ev.preventDefault();$('#drop').style.background='var(--bg)';}));
+$('#drop').addEventListener('drop',ev=>{const f=ev.dataTransfer.files[0];if(f)leer(f);});
+$('#file').onchange=e=>{const f=e.target.files[0];if(f)leer(f);};
+
+function leer(file){
+  $('#fname').textContent=file.name;
+  const r=new FileReader();
+  r.onload=()=>{ procesar(r.result); };
+  r.readAsText(file,'utf-8');
+}
+function procesar(text){
+  const rows=parseCSV(text);
+  if(rows.length<2){$('#preview').innerHTML='<p class="mut">No se pudo leer el archivo.</p>';return;}
+  const H=rows[0];
+  const idx={fecha:col(H,'Fecha'),hora:col(H,'Hora'),mesa:col(H,'Mesa'),mesero:col(H,'Mesero'),cliente:col(H,'Cliente'),doc:col(H,'DNI/RUC'),tipo:col(H,'Tipo Doc.','Tipo Doc'),serie:col(H,'Serie Doc.','Serie Doc'),numdoc:col(H,'Num Doc.','Num Doc'),pago:col(H,'Forma de pago'),propina:col(H,'Propina'),subtotal:col(H,'Subtotal'),total:col(H,'Total'),estado:col(H,'Estado'),canal:col(H,'Canal de venta')};
+  const peds=[],cli={};let anuladas=0,minF=null,maxF=null,suma=0;
+  for(let i=1;i<rows.length;i++){const r=rows[i];if(!r[idx.total]&&!r[idx.fecha])continue;
+    const estado=(r[idx.estado]||'').trim().toLowerCase();
+    if(estado&&estado!=='activa'){anuladas++;continue;}
+    const ts=parseDT(r[idx.fecha],r[idx.hora]);const total=num(r[idx.total]);
+    const serie=(r[idx.serie]||'').trim(),numdoc=(r[idx.numdoc]||'').trim();
+    const p={ts,total,subtotal:num(r[idx.subtotal])||total,propina:num(r[idx.propina]),serie,numdoc,tipo:(r[idx.tipo]||'').trim(),pago:(r[idx.pago]||'').replace(/\n/g,' ').trim(),mesa:(r[idx.mesa]||'').trim(),mesero:(r[idx.mesero]||'').trim(),canal:(r[idx.canal]||'').trim()};
+    peds.push(p);suma+=total;
+    if(ts){const d=ts.slice(0,10);if(!minF||d<minF)minF=d;if(!maxF||d>maxF)maxF=d;}
+    const nom=(r[idx.cliente]||'').trim(),doc=(r[idx.doc]||'').trim();
+    if(nom&&nom.toUpperCase()!=='PUBLICO GENERAL'&&doc&&doc.replace(/0/g,'')!==''){ cli[doc]={nombre:nom,documento:doc}; }
+  }
+  parsed={peds,cli:Object.values(cli)};
+  $('#preview').innerHTML=`<div class="kpis">
+    <div class="kpi"><div class="v">${peds.length}</div><div class="l">Comprobantes a importar</div></div>
+    <div class="kpi"><div class="v">S/ ${suma.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div class="l">Ventas totales</div></div>
+    <div class="kpi"><div class="v">${parsed.cli.length}</div><div class="l">Clientes con documento</div></div>
+    <div class="kpi"><div class="v" style="font-size:13px">${minF||'?'} → ${maxF||'?'}</div><div class="l">Rango de fechas</div></div>
+    ${anuladas?`<div class="kpi"><div class="v">${anuladas}</div><div class="l">Anuladas (omitidas)</div></div>`:''}
+  </div>
+  <table><tr><th>Fecha/hora</th><th>Doc</th><th>Mesa</th><th>Total</th><th>Pago</th></tr>
+  ${peds.slice(0,6).map(p=>`<tr><td>${p.ts?p.ts.slice(0,16).replace('T',' '):'?'}</td><td>${p.tipo} ${p.serie}-${p.numdoc}</td><td>${p.mesa||'—'}</td><td>S/${p.total}</td><td>${p.pago}</td></tr>`).join('')}</table>
+  <p class="mut" style="margin-top:8px">Mostrando 6 de ${peds.length}. Revisa que el rango y los totales tengan sentido antes de importar.</p>`;
+  $('#run-card').style.display='block';
+}
+
+$('#run').onclick=async()=>{
+  if(!parsed){return;}
+  const doPed=$('#opt-ped').checked,doCli=$('#opt-cli').checked;
+  $('#run').disabled=true;$('#bar').style.display='block';$('#log').style.display='block';$('#log').textContent='';
+  const log=m=>{$('#log').textContent+=m+'\n';$('#log').scrollTop=$('#log').scrollHeight;};
+  const setBar=p=>{$('#bar i').style.width=Math.round(p*100)+'%';};
+
+  // 1) Clientes (dedup por documento contra los existentes)
+  let cliMap={};
+  if(doCli&&parsed.cli.length){
+    log('Clientes: verificando existentes…');
+    const {data:ex}=await sb.from('ms_clientes').select('id,documento').eq('marca_id',MARCA).not('documento','is',null);
+    const has=new Set((ex||[]).map(c=>String(c.documento)));
+    (ex||[]).forEach(c=>{if(c.documento)cliMap[String(c.documento)]=c.id;});
+    const nuevos=parsed.cli.filter(c=>!has.has(String(c.documento)));
+    log('Clientes nuevos: '+nuevos.length);
+    for(let i=0;i<nuevos.length;i+=200){
+      const chunk=nuevos.slice(i,i+200).map(c=>({marca_id:MARCA,nombre:c.nombre,documento:c.documento,origen:'rpe'}));
+      const {data,error}=await sb.from('ms_clientes').insert(chunk).select('id,documento');
+      if(error){log('⚠ clientes: '+error.message);break;}
+      (data||[]).forEach(c=>{if(c.documento)cliMap[String(c.documento)]=c.id;});
+      log('  insertados '+Math.min(i+200,nuevos.length)+'/'+nuevos.length);
+    }
+  }
+
+  // 2) Ventas (dedup por serie+numdoc ya importados con origen rpe)
+  if(doPed&&parsed.peds.length){
+    log('Ventas: verificando ya importadas…');
+    const {data:exP}=await sb.from('ca_pedidos').select('comprobante_serie,comprobante_numero').eq('local_id',LOCAL).eq('origen','rpe');
+    const seen=new Set((exP||[]).map(p=>p.comprobante_serie+'|'+p.comprobante_numero));
+    const docByName={}; // no tenemos doc por pedido directo; cliente_id se asigna solo si el comprobante trae doc
+    const pend=parsed.peds.filter(p=>!seen.has(p.serie+'|'+p.numdoc));
+    log('Ventas nuevas: '+pend.length+(pend.length<parsed.peds.length?(' ('+(parsed.peds.length-pend.length)+' ya estaban)'):''));
+    let done=0;
+    for(let i=0;i<pend.length;i+=200){
+      const chunk=pend.slice(i,i+200).map(p=>({
+        marca_id:MARCA,local_id:LOCAL,estado:'cerrada',origen:'rpe',
+        abierta_at:p.ts,cerrada_at:p.ts,pagado_at:p.ts,
+        subtotal:p.subtotal,total:p.total,propina_monto:p.propina,
+        comprobante_serie:p.serie||null,comprobante_numero:p.numdoc||null,
+        notas:'Importado de Restaurant.pe · '+[p.tipo,p.mesa,p.mesero,p.pago].filter(Boolean).join(' · ')
+      }));
+      const {error}=await sb.from('ca_pedidos').insert(chunk);
+      if(error){log('⚠ ventas: '+error.message);break;}
+      done+=chunk.length;setBar(done/pend.length);log('  importadas '+done+'/'+pend.length);
+    }
+  }
+  setBar(1);log('✓ Importación terminada. Revisa Directorio y Predicción.');
+  $('#run').disabled=false;
+};
+</script>
+</body>
+</html>
