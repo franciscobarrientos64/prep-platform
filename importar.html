@@ -112,6 +112,7 @@ function procesar(text){
     const estado=(r[idx.estado]||'').trim().toLowerCase();
     if(estado&&estado!=='activa'){anuladas++;continue;}
     const ts=parseDT(r[idx.fecha],r[idx.hora]);const total=num(r[idx.total]);
+    if(!ts){continue;} // descarta filas sin fecha válida (resumen/vacías)
     const serie=(r[idx.serie]||'').trim(),numdoc=(r[idx.numdoc]||'').trim();
     const p={ts,total,subtotal:num(r[idx.subtotal])||total,propina:num(r[idx.propina]),serie,numdoc,tipo:(r[idx.tipo]||'').trim(),pago:(r[idx.pago]||'').replace(/\n/g,' ').trim(),mesa:(r[idx.mesa]||'').trim(),mesero:(r[idx.mesero]||'').trim(),canal:(r[idx.canal]||'').trim()};
     peds.push(p);suma+=total;
