@@ -7,7 +7,10 @@
   // Mapa de subdominios de cliente -> {marca, local}. Agregar aquí cada cliente con su URL.
   var SUB={
     'casa-italia':{marca:'m6',local:'l11'},
-    'symposium':{marca:'m7',local:'l12'}
+    'symposium':{marca:'m7',local:'l12'},
+    'lacuadradesalvador':{marca:'m8',local:'l13'},
+    'la-cuadra':{marca:'m8',local:'l13'},
+    'cuadra':{marca:'m8',local:'l13'}
   };
   var host=(location.hostname||'').toLowerCase();
   var sub=host.split('.')[0];
