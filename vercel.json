@@ -42,6 +42,10 @@
       "destination": "/importar.html"
     },
     {
+      "source": "/mystery",
+      "destination": "/mystery.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },

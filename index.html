@@ -148,9 +148,11 @@ const MODULOS=[
   {n:'El Libro',d:'Comunicados + SOPs + checklists',ico:'auto_stories',href:'/el-libro',ac:'#0d7a8a'},
   {n:'Directorio',d:'Reportes ejecutivos',ico:'monitoring',href:'/directorio',ac:'#0d3d34'},
   {n:'Engagement',d:'Loyalty + CRM',ico:'favorite',href:'/engagement',ac:'#e8735a'},
+  {n:'Predicción',d:'Pronóstico de demanda + qué preparar',ico:'insights',href:'/prediccion',ac:'#1e5af9'},
+  {n:'Mystery Shopper',d:'Evaluación de experiencia + ranking',ico:'visibility',href:'/mystery',ac:'#7c3aed'},
   {n:'Carta QR',d:'Menú digital + pedido en mesa',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
 ];
-const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement'};
+const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'directorio','Mystery Shopper':'directorio'};
 const access={user:null,mm:[],roles:[],usuarios:[],authed:false,authEmail:null};
 async function loadAccess(){
   const[us,mm,ro]=await Promise.all([sb.from('prep_usuarios').select('*').eq('activo',true).order('rol_sistema'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_roles').select('*')]);

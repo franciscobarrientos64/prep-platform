@@ -93,7 +93,8 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],view:'tablon',cat:'todas',channel:null};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null};
+function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function nowISO(){return new Date().toISOString()}
@@ -107,6 +108,10 @@ async function loadPosts(){const{data}=await sb.from('lb_posts').select('*').eq(
 async function loadChecklists(){const{data}=await sb.from('lb_checklists').select('*').eq('local_id',LOCAL).eq('activo',true).order('turno');state.checklists=data||[]}
 async function loadRuns(){const{data}=await sb.from('lb_checklist_runs').select('*').eq('local_id',LOCAL).eq('fecha',hoyISO());state.runs=data||[]}
 async function loadBitacora(){const{data}=await sb.from('lb_bitacora').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(60);state.bitacora=data||[]}
+async function loadLecturas(){const{data}=await sb.from('lb_lecturas').select('*').eq('local_id',LOCAL);state.lecturas=data||[]}
+function lecturasDe(id){return state.lecturas.filter(l=>l.post_id===id)}
+function yaLeido(id){const n=localStorage.getItem('lb_lector');return n&&state.lecturas.some(l=>l.post_id===id&&l.empleado===n)}
+async function confirmarLectura(id){const n=lectorName();if(!n)return;const{error}=await sb.from('lb_lecturas').insert({post_id:id,marca_id:MARCA,local_id:LOCAL,empleado:n});if(error&&!String(error.message).includes('duplicate')){toast('Atrás: '+error.message,'err');return}await loadLecturas();render();toast('Servido · lectura confirmada','ok')}
 async function loadRecetario(){
   try{
     const[r,p]=await Promise.all([
@@ -117,7 +122,7 @@ async function loadRecetario(){
   }catch(e){state.recetario=state.recetario||[];state.prodMap=state.prodMap||{}}
 }
 async function loadExamenes(){const[e,r]=await Promise.all([sb.from('rrhh_examenes').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at',{ascending:false}),sb.from('rrhh_examen_resultados').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(50)]);state.examenes=e.data||[];state.examResult=r.data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadRecetario(),loadExamenes()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
@@ -218,8 +223,22 @@ Ej:
 }
 function renderTablon(){
   const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
-  $('#screen').innerHTML=list.map(postCard).join('')||'<div class="empty">Sin comunicados</div>';
-  $$('#screen .post').forEach(c=>c.onclick=()=>verPost(state.posts.find(p=>p.id===c.dataset.id)));
+  // Mensaje del día = comunicado más reciente (prioriza alta/fijado)
+  const dia=[...list].sort((a,b)=>((b.prioridad==='alta')-(a.prioridad==='alta'))||((b.fijado)-(a.fijado))||(new Date(b.created_at)-new Date(a.created_at)))[0];
+  let banner='';
+  if(dia){const lec=lecturasDe(dia.id).length, leido=yaLeido(dia.id);
+    banner=`<div class="post fij" style="border-left-color:var(--primary);margin-bottom:14px" data-dia="${dia.id}">
+      <div class="meta" style="margin-top:0"><span class="tagx cat">📣 Mensaje del día</span>${dia.prioridad==='alta'?'<span class="tagx alta">Importante</span>':''}</div>
+      <h3 style="margin-top:6px">${(dia.titulo||'').replace(/</g,'&lt;')}</h3>
+      <div class="ex">${(dia.contenido||'').replace(/</g,'&lt;')}</div>
+      <div class="meta"><span>👁 ${lec} leyeron</span></div>
+      <div style="margin-top:10px">${leido?'<span class="prog full">✓ Leído</span>':'<button class="btn primary" id="dia-leer" style="width:auto;min-height:40px;padding:8px 16px">Confirmar lectura</button>'}</div>
+    </div>`;
+  }
+  $('#screen').innerHTML=banner+(list.map(postCard).join('')||'<div class="empty">Sin comunicados</div>');
+  const lb=$('#dia-leer');if(lb)lb.onclick=(e)=>{e.stopPropagation();confirmarLectura(dia.id)};
+  $$('#screen .post[data-id]').forEach(c=>c.onclick=()=>verPost(state.posts.find(p=>p.id===c.dataset.id)));
+  const db=$('#screen .post[data-dia]');if(db)db.onclick=()=>verPost(dia);
 }
 function renderProcs(){
   const list=state.posts.filter(p=>p.tipo==='procedimiento');
@@ -231,10 +250,18 @@ function renderProcs(){
 }
 function verPost(p){
   setHead(p.tipo==='procedimiento'?'📖':p.tipo==='politica'?'📋':'📣',p.titulo,(p.categoria||'')+' · '+(p.autor||'')+' · '+fechaCorta(p.created_at));
+  const lec=lecturasDe(p.id), leido=yaLeido(p.id);
+  const lecBlock=(p.tipo==='comunicado'||p.tipo==='politica')?`<div class="sheet-section">
+      <div class="field-lbl">Confirmación de lectura (${lec.length})</div>
+      ${leido?'<div class="prog full" style="display:inline-block">✓ Ya confirmaste tu lectura</div>':'<button class="btn primary" id="p-leer"><span class="material-symbols-outlined">done_all</span>Confirmar lectura</button>'}
+      ${lec.length?`<div class="meta" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${lec.map(l=>`<span class="tagx cat">${(l.empleado||'').replace(/</g,'&lt;')}</span>`).join('')}</div>`:'<div class="empty" style="padding:14px">Nadie ha confirmado aún</div>'}
+    </div>`:'';
   $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="contenido">${(p.contenido||'').replace(/</g,'&lt;')}</div></div>
     ${p.adjunto_url?`<div class="sheet-section"><a class="btn ghost" href="${p.adjunto_url}" target="_blank" rel="noopener"><span class="material-symbols-outlined">attach_file</span>Ver adjunto</a></div>`:''}
+    ${lecBlock}
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="p-edit"><span class="material-symbols-outlined">edit</span>Editar</button>${p.tipo==='comunicado'?`<button class="btn ghost" id="p-fij">${p.fijado?'Desfijar':'Fijar 📌'}</button>`:'<div></div>'}</div></div>`;
   openSheet();
+  if($('#p-leer'))$('#p-leer').onclick=async()=>{await confirmarLectura(p.id);verPost(state.posts.find(x=>x.id===p.id)||p);};
   $('#p-edit').onclick=()=>editarPost(p);
   if($('#p-fij'))$('#p-fij').onclick=async()=>{await sb.from('lb_posts').update({fijado:!p.fijado}).eq('id',p.id);await loadPosts();closeSheet();render();toast('Va · actualizado','ok')};
 }
@@ -322,6 +349,7 @@ function abrirChecklistNuevo(){
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('lb_'+LOCAL)
   .on('postgres_changes',{event:'*',schema:'public',table:'lb_posts',filter:'local_id=eq.'+LOCAL},async()=>{await loadPosts();render()})
   .on('postgres_changes',{event:'*',schema:'public',table:'lb_bitacora',filter:'local_id=eq.'+LOCAL},async()=>{await loadBitacora();render()})
+  .on('postgres_changes',{event:'*',schema:'public',table:'lb_lecturas',filter:'local_id=eq.'+LOCAL},async()=>{await loadLecturas();render()})
   .subscribe()}
 $('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);$('#h-add').addEventListener('click',nuevo);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});

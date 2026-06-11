@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Mystery Shopper · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="/offline.js"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}.brand-txt .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.header-info{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap;justify-content:flex-end}
+.btn-ico{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer}
+.btn-ico:active{transform:translate(2px,2px);box-shadow:none}.btn-ico.primary{background:var(--primary);color:#fff}
+.tabs{flex-shrink:0;display:flex;gap:8px;padding:10px 16px;background:var(--primary-soft);border-bottom:2px solid var(--outline);overflow-x:auto}
+.tab{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer}
+.tab.active{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.main{flex:1;overflow-y:auto;padding:16px;max-width:1100px;width:100%;margin:0 auto}
+.grp-t{font-family:var(--font-display);font-size:17px;margin:18px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px}
+.kpi .lbl{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.kpi .val{font-family:var(--font-display);font-size:30px;line-height:1.1;margin-top:6px}
+.kpi .sub{font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:2px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:12px}
+.barrow{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.barrow .nm{width:38%;font-size:13px;font-weight:600}
+.bartrack{flex:1;height:18px;background:var(--gray-soft);border:2px solid var(--outline);border-radius:999px;overflow:hidden}
+.barfill{height:100%;background:var(--primary)}
+.barrow .pc{width:46px;text-align:right;font-family:var(--font-mono);font-size:12px;font-weight:700}
+.score-pill{font-family:var(--font-mono);font-weight:700;padding:4px 12px;border-radius:999px;border:2px solid var(--outline);font-size:14px}
+.s-hi{background:var(--green);color:#fff}.s-mid{background:var(--amber-soft)}.s-lo{background:var(--red-soft)}
+.row{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:13px 15px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.row:active{transform:translate(2px,2px);box-shadow:none}
+.row .meta{font-family:var(--font-mono);font-size:11px;opacity:.65;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+.spark{display:flex;align-items:flex-end;gap:6px;height:90px;padding-top:8px}
+.spark .b{flex:1;background:var(--primary);border:2px solid var(--outline);border-radius:6px 6px 0 0;min-height:4px;position:relative}
+.spark .b .t{position:absolute;top:-18px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700}
+.spark .b .m{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:9px;opacity:.6}
+.input,.select,textarea.input{padding:10px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+textarea.input{min-height:80px;resize:vertical}
+.field-lbl{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.6;margin:12px 0 6px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:50px;cursor:pointer}
+.btn:active{transform:translate(2px,2px);box-shadow:none}.btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}.btn.dark{background:var(--ink);color:var(--bg)}
+.empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
+.crit{padding:12px 0;border-bottom:1px dashed var(--gray-soft)}
+.crit:last-child{border:none}
+.crit .ct{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px}
+.crit .pw{font-family:var(--font-mono);font-size:10px;opacity:.5}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:40px;height:40px;border:2px solid var(--outline);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:var(--surface);cursor:pointer;box-shadow:2px 2px 0 0 var(--outline)}
+.dot.on{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
+.area-h{font-family:var(--font-display);font-size:16px;margin:16px 0 4px;display:flex;align-items:center;gap:8px}
+.tagx{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:6px;border:1.5px solid var(--outline)}
+.tagx.pend{background:var(--red-soft)}.tagx.proc{background:var(--amber-soft)}.tagx.hecho{background:var(--green);color:#fff}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:94vh;display:flex;flex-direction:column}
+.sheet.open{transform:translateY(0)}.sheet-handle{width:48px;height:5px;background:var(--outline);border-radius:999px;margin:12px auto 8px;opacity:.3}
+.sheet-head{padding:6px 22px 14px;border-bottom:2px solid var(--outline);display:flex;align-items:center;gap:14px}
+.sheet-title{flex:1}.sheet-title h2{font-family:var(--font-display);font-size:21px;line-height:1;margin-bottom:4px}.sheet-title .meta{font-family:var(--font-mono);font-size:11px;opacity:.65}
+.sheet-close{width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);cursor:pointer;flex-shrink:0}
+.sheet-body{padding:16px 22px 28px;overflow-y:auto}
+.livescore{position:sticky;top:0;background:var(--surface);padding:8px 0;border-bottom:2px dashed var(--gray-soft);display:flex;align-items:center;justify-content:space-between;z-index:2}
+.toast-container{position:fixed;top:76px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.ok{background:var(--primary);color:#fff}.toast.err{background:var(--secondary);color:#fff}.toast.warn{background:var(--tertiary)}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
+.boot .logo{position:relative;width:200px;height:66px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+@media(max-width:560px){.grid3{grid-template-columns:1fr}.barrow .nm{width:46%}}
+</style>
+</head>
+<body>
+<div class="boot" id="boot"><div class="logo"><div class="l"></div></div><div class="spinner"></div><div class="msg">Mise en place…</div></div>
+
+<header class="header">
+  <a href="/" class="brand-logo" title="Hub"><div class="l"></div></a>
+  <div class="brand-txt"><div class="cli" data-client-name>Symposium</div><div class="mod">Mystery Shopper</div></div>
+  <div class="header-info">
+    <button class="btn-ico primary" onclick="openNueva()"><span class="material-symbols-outlined">add</span>Nueva evaluación</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="resumen" onclick="setTab('resumen')"><span class="material-symbols-outlined">insights</span>Resumen</button>
+  <button class="tab" data-tab="evals" onclick="setTab('evals')"><span class="material-symbols-outlined">fact_check</span>Evaluaciones</button>
+  <button class="tab" data-tab="ranking" onclick="setTab('ranking')"><span class="material-symbols-outlined">leaderboard</span>Ranking</button>
+  <button class="tab" data-tab="acciones" onclick="setTab('acciones')"><span class="material-symbols-outlined">checklist</span>Plan de acción</button>
+</nav>
+
+<main class="main" id="view"></main>
+
+<div class="backdrop" id="bd" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="sheet-handle"></div>
+  <div class="sheet-head"><div class="sheet-title"><h2 id="shTitle">—</h2><div class="meta" id="shMeta"></div></div><button class="sheet-close" onclick="closeSheet()"><span class="material-symbols-outlined">close</span></button></div>
+  <div class="sheet-body" id="shBody"></div>
+</div>
+<div class="toast-container" id="toasts"></div>
+
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const MARCA=window.PREP_MARCA||'m7', LOCAL=window.PREP_LOCAL||'l12';
+let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[]};
+let TAB='resumen';
+
+function toast(m,t='ok'){const c=document.getElementById('toasts');const e=document.createElement('div');e.className='toast '+t;e.innerHTML='<span class="material-symbols-outlined">'+(t==='err'?'error':t==='warn'?'warning':'check_circle')+'</span>'+m;c.appendChild(e);setTimeout(()=>e.remove(),3200);}
+function fmtD(d){if(!d)return'—';const x=new Date(d+'T00:00:00');return x.toLocaleDateString('es-PE',{day:'2-digit',month:'short'});}
+function sCls(s){return s>=85?'s-hi':s>=70?'s-mid':'s-lo';}
+function escapeHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+async function load(){
+  const [pl,vi,ac]=await Promise.all([
+    sb.from('mys_plantillas').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at').limit(1),
+    sb.from('mys_visitas').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}),
+    sb.from('mys_acciones').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false})
+  ]);
+  DB.plantilla=(pl.data||[])[0]||null;
+  DB.visitas=vi.data||[]; DB.acciones=ac.data||[];
+  if(DB.plantilla){
+    const cr=await sb.from('mys_criterios').select('*').eq('plantilla_id',DB.plantilla.id).order('orden');
+    DB.criterios=cr.data||[];
+  }
+  if(DB.visitas.length){
+    const ids=DB.visitas.map(v=>v.id);
+    const rp=await sb.from('mys_respuestas').select('*').in('visita_id',ids);
+    DB.respuestas=rp.data||[];
+  } else DB.respuestas=[];
+  render();
+  document.getElementById('boot').classList.add('gone');
+}
+
+function areasOf(){const a=[];DB.criterios.forEach(c=>{if(!a.includes(c.area))a.push(c.area)});return a;}
+function avg(arr){return arr.length?arr.reduce((s,x)=>s+x,0)/arr.length:0;}
+
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===TAB));
+  const v=document.getElementById('view');
+  if(TAB==='resumen')v.innerHTML=vResumen();
+  else if(TAB==='evals')v.innerHTML=vEvals();
+  else if(TAB==='ranking')v.innerHTML=vRanking();
+  else if(TAB==='acciones')v.innerHTML=vAcciones();
+}
+function setTab(t){TAB=t;render();}
+
+/* ===== RESUMEN ===== */
+function vResumen(){
+  const V=DB.visitas;
+  if(!V.length)return '<div class="empty">Aún no hay evaluaciones.<br>Toca «Nueva evaluación» para registrar la primera visita.</div>';
+  const scores=V.map(x=>+x.score_total||0);
+  const prom=avg(scores), ult=V[0];
+  const npss=V.filter(x=>x.nps!=null).map(x=>x.nps);
+  const nps= npss.length? Math.round((npss.filter(n=>n>=9).length-npss.filter(n=>n<=6).length)/npss.length*100):null;
+  // por área
+  const areas=areasOf();
+  const areaScore=areas.map(a=>{const rs=DB.respuestas.filter(r=>r.area===a);return {a,s:wAvg(rs)};}).sort((x,y)=>y.s-x.s);
+  // evolución por mes
+  const byMonth={};
+  V.forEach(x=>{const m=(x.fecha||'').slice(0,7);if(!m)return;(byMonth[m]=byMonth[m]||[]).push(+x.score_total||0);});
+  const months=Object.keys(byMonth).sort().slice(-6);
+  const maxM=Math.max(100,...months.map(m=>avg(byMonth[m])));
+  return `
+  <div class="kpis">
+    <div class="kpi"><div class="lbl">Score promedio</div><div class="val">${prom.toFixed(0)}<span style="font-size:16px;opacity:.5">/100</span></div><div class="sub">${V.length} evaluaciones</div></div>
+    <div class="kpi"><div class="lbl">Última visita</div><div class="val">${(+ult.score_total||0).toFixed(0)}</div><div class="sub">${fmtD(ult.fecha)} · ${escapeHtml(ult.turno||'—')}</div></div>
+    <div class="kpi"><div class="lbl">NPS</div><div class="val">${nps==null?'—':(nps>0?'+':'')+nps}</div><div class="sub">${npss.length} con NPS</div></div>
+    <div class="kpi"><div class="lbl">Acciones abiertas</div><div class="val">${DB.acciones.filter(a=>a.estado!=='hecho').length}</div><div class="sub">de ${DB.acciones.length} totales</div></div>
+  </div>
+  <div class="grp-t">Evolución del score</div>
+  <div class="card">${months.length? `<div class="spark">${months.map(m=>{const s=avg(byMonth[m]);return `<div class="b" style="height:${Math.max(4,s/maxM*100)}%"><div class="t">${s.toFixed(0)}</div><div class="m">${m.slice(5)}/${m.slice(2,4)}</div></div>`;}).join('')}</div><div style="height:14px"></div>`:'<div class="empty">Una sola fecha aún.</div>'}</div>
+  <div class="grp-t">Desempeño por área</div>
+  <div class="card">${areaScore.map(x=>barRow(x.a,x.s)).join('')||'<div class="empty">—</div>'}</div>`;
+}
+function wAvg(rs){if(!rs.length)return 0;let n=0,d=0;rs.forEach(r=>{const p=+r.peso||1;n+=(+r.puntaje||0)*p;d+=p;});return d?n/d:0;}
+function barRow(nm,s){const c=s>=85?'var(--green)':s>=70?'var(--amber)':'var(--secondary)';return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
+
+/* ===== EVALUACIONES ===== */
+function vEvals(){
+  if(!DB.visitas.length)return '<div class="empty">Sin evaluaciones todavía.</div>';
+  return DB.visitas.map(v=>{const s=+v.score_total||0;return `
+   <div class="row" onclick="verVisita('${v.id}')">
+     <div><div style="font-weight:700">${escapeHtml(v.empleado_evaluado||'Visita general')}</div>
+       <div class="meta"><span>${fmtD(v.fecha)}</span><span>${escapeHtml(v.turno||'—')}</span><span>${escapeHtml(v.evaluador||'')}</span>${v.nps!=null?'<span>NPS '+v.nps+'</span>':''}</div></div>
+     <span class="score-pill ${sCls(s)}">${s.toFixed(0)}</span>
+   </div>`;}).join('');
+}
+function verVisita(id){
+  const v=DB.visitas.find(x=>x.id===id);if(!v)return;
+  const rs=DB.respuestas.filter(r=>r.visita_id===id);
+  const areas=[...new Set(rs.map(r=>r.area))];
+  document.getElementById('shTitle').textContent=v.empleado_evaluado||'Evaluación';
+  document.getElementById('shMeta').textContent=`${fmtD(v.fecha)} · ${v.turno||'—'} · ${v.evaluador||''}`;
+  let h=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:10px"><span class="score-pill ${sCls(+v.score_total)}" style="font-size:18px">${(+v.score_total||0).toFixed(0)}/100</span>${v.nps!=null?'<span class="tagx cat">NPS '+v.nps+'</span>':''}${v.canal?'<span class="tagx cat">'+escapeHtml(v.canal)+'</span>':''}</div>`;
+  if(v.resumen)h+=`<div class="card" style="white-space:pre-wrap;font-size:14px;line-height:1.5">${escapeHtml(v.resumen)}</div>`;
+  areas.forEach(a=>{
+    const ar=rs.filter(r=>r.area===a);
+    h+=`<div class="area-h">${escapeHtml(a)} <span class="score-pill ${sCls(wAvg(ar))}" style="font-size:12px">${wAvg(ar).toFixed(0)}</span></div>`;
+    ar.forEach(r=>{h+=`<div class="crit"><div class="ct"><span>${escapeHtml(r.criterio)}</span><span class="score-pill ${sCls(+r.puntaje)}" style="font-size:11px;padding:2px 8px">${(+r.puntaje||0).toFixed(0)}</span></div>${r.comentario?'<div style="font-size:13px;opacity:.7">'+escapeHtml(r.comentario)+'</div>':''}</div>`;});
+  });
+  h+=`<div style="height:14px"></div><button class="btn ghost" onclick="addAccionFrom('${v.id}')"><span class="material-symbols-outlined">add_task</span>Crear acción de mejora</button>`;
+  h+=`<div style="height:8px"></div><button class="btn" style="background:var(--red-soft)" onclick="delVisita('${v.id}')"><span class="material-symbols-outlined">delete</span>Eliminar evaluación</button>`;
+  openSheet();
+  document.getElementById('shBody').innerHTML=h;
+}
+async function delVisita(id){if(!confirm('¿Eliminar esta evaluación?'))return;const{error}=await sb.from('mys_visitas').delete().eq('id',id);if(error){toast('No se pudo eliminar','err');return;}toast('Evaluación eliminada');closeSheet();await load();}
+
+/* ===== NUEVA EVALUACIÓN ===== */
+let NEW={};
+function openNueva(){
+  if(!DB.plantilla){toast('No hay plantilla activa','err');return;}
+  NEW={fecha:new Date().toISOString().slice(0,10),turno:'cena',canal:'presencial',evaluador:'',empleado:'',nps:'',resumen:'',punt:{},com:{}};
+  document.getElementById('shTitle').textContent='Nueva evaluación';
+  document.getElementById('shMeta').textContent=DB.plantilla.nombre;
+  renderNueva();openSheet();
+}
+function renderNueva(){
+  const areas=areasOf();
+  let h=`<div class="livescore"><div class="field-lbl" style="margin:0">Score en vivo</div><span class="score-pill ${sCls(liveScore())}" id="liveS" style="font-size:18px">${liveScore().toFixed(0)}/100</span></div>`;
+  h+=`<div class="grid2"><div><label class="field-lbl">Fecha</label><input type="date" class="input" value="${NEW.fecha}" onchange="NEW.fecha=this.value"></div>
+   <div><label class="field-lbl">Turno</label><select class="select" onchange="NEW.turno=this.value"><option value="almuerzo">Almuerzo</option><option value="cena" selected>Cena</option></select></div></div>`;
+  h+=`<div class="grid2"><div><label class="field-lbl">Evaluador (mystery)</label><input class="input" placeholder="Nombre" oninput="NEW.evaluador=this.value"></div>
+   <div><label class="field-lbl">Empleado observado</label><input class="input" placeholder="Mozo / anfitrión" oninput="NEW.empleado=this.value"></div></div>`;
+  h+=`<div class="grid2"><div><label class="field-lbl">Canal</label><select class="select" onchange="NEW.canal=this.value"><option value="presencial">Presencial</option><option value="delivery">Delivery</option></select></div>
+   <div><label class="field-lbl">NPS (0-10)</label><input type="number" min="0" max="10" class="input" placeholder="0-10" oninput="NEW.nps=this.value"></div></div>`;
+  areas.forEach(a=>{
+    h+=`<div class="area-h">${escapeHtml(a)}</div>`;
+    DB.criterios.filter(c=>c.area===a).forEach(c=>{
+      const cur=NEW.punt[c.id];
+      h+=`<div class="crit"><div class="ct"><span>${escapeHtml(c.criterio)} <span class="pw">×${c.peso}</span></span></div>
+        <div class="scale" id="sc-${c.id}">${[0,25,50,75,100].map(n=>`<div class="dot ${cur===n?'on':''}" data-n="${n}" onclick="setPunt('${c.id}',${n})">${n}</div>`).join('')}</div>
+        <input class="input" style="margin-top:6px;font-size:13px" placeholder="Comentario (opcional)" value="${(NEW.com[c.id]||'').replace(/"/g,'&quot;')}" oninput="NEW.com['${c.id}']=this.value"></div>`;
+    });
+  });
+  h+=`<label class="field-lbl">Resumen / observaciones generales</label><textarea class="input" oninput="NEW.resumen=this.value" placeholder="Qué destacó y qué mejorar…"></textarea>`;
+  h+=`<div style="height:14px"></div><button class="btn primary" onclick="saveVisita()"><span class="material-symbols-outlined">save</span>Guardar evaluación</button>`;
+  document.getElementById('shBody').innerHTML=h;
+}
+function setPunt(cid,n){NEW.punt[cid]=n;
+  const sc=document.getElementById('sc-'+cid);
+  if(sc)sc.querySelectorAll('.dot').forEach(d=>d.classList.toggle('on',+d.dataset.n===n));
+  renderNuevaScores();}
+function renderNuevaScores(){const s=liveScore();const el=document.getElementById('liveS');if(el){el.textContent=s.toFixed(0)+'/100';el.className='score-pill '+sCls(s);el.style.fontSize='18px';}}
+function liveScore(){let n=0,d=0;DB.criterios.forEach(c=>{if(NEW.punt&&NEW.punt[c.id]!=null){const p=+c.peso||1;n+=NEW.punt[c.id]*p;d+=p;}});return d?n/d:0;}
+async function saveVisita(){
+  const answered=DB.criterios.filter(c=>NEW.punt[c.id]!=null);
+  if(!answered.length){toast('Califica al menos un criterio','warn');return;}
+  const score=liveScore();
+  const {data:vi,error}=await sb.from('mys_visitas').insert({marca_id:MARCA,local_id:LOCAL,plantilla_id:DB.plantilla.id,
+    fecha:NEW.fecha,turno:NEW.turno,evaluador:NEW.evaluador||null,empleado_evaluado:NEW.empleado||null,canal:NEW.canal,
+    nps:NEW.nps!==''?parseInt(NEW.nps):null,score_total:Math.round(score*10)/10,resumen:NEW.resumen||null}).select().single();
+  if(error){toast('Error al guardar','err');return;}
+  const rows=answered.map(c=>({visita_id:vi.id,area:c.area,criterio:c.criterio,peso:c.peso,puntaje:NEW.punt[c.id],comentario:NEW.com[c.id]||null}));
+  await sb.from('mys_respuestas').insert(rows);
+  toast('Evaluación guardada · '+score.toFixed(0)+'/100');closeSheet();await load();
+}
+
+/* ===== RANKING ===== */
+function vRanking(){
+  if(!DB.respuestas.length)return '<div class="empty">Sin datos para rankear todavía.</div>';
+  // por empleado
+  const emp={};DB.visitas.forEach(v=>{if(v.empleado_evaluado){(emp[v.empleado_evaluado]=emp[v.empleado_evaluado]||[]).push(+v.score_total||0);}});
+  const empR=Object.entries(emp).map(([k,a])=>({k,s:avg(a),n:a.length})).sort((x,y)=>y.s-x.s);
+  // por turno
+  const tur={};DB.visitas.forEach(v=>{const t=v.turno||'—';(tur[t]=tur[t]||[]).push(+v.score_total||0);});
+  const turR=Object.entries(tur).map(([k,a])=>({k,s:avg(a),n:a.length})).sort((x,y)=>y.s-x.s);
+  // por área
+  const areas=areasOf().map(a=>({k:a,s:wAvg(DB.respuestas.filter(r=>r.area===a))})).sort((x,y)=>y.s-x.s);
+  return `
+  <div class="grp-t">Por colaborador</div>
+  <div class="card">${empR.length?empR.map((x,i)=>`<div class="barrow"><div class="nm">${i+1}. ${escapeHtml(x.k)} <span class="pw mono" style="font-size:10px;opacity:.5">(${x.n})</span></div><div class="bartrack"><div class="barfill" style="width:${x.s}%;background:${x.s>=85?'var(--green)':x.s>=70?'var(--amber)':'var(--secondary)'}"></div></div><div class="pc">${x.s.toFixed(0)}</div></div>`).join(''):'<div class="empty">Registra el «empleado observado» en las evaluaciones.</div>'}</div>
+  <div class="grp-t">Por turno</div>
+  <div class="card">${turR.map(x=>barRow(x.k+' ('+x.n+')',x.s)).join('')}</div>
+  <div class="grp-t">Fortalezas y debilidades (por área)</div>
+  <div class="card">${areas.map(x=>barRow(x.k,x.s)).join('')}</div>`;
+}
+
+/* ===== ACCIONES ===== */
+function vAcciones(){
+  let h=`<button class="btn ghost" onclick="addAccionFrom(null)"><span class="material-symbols-outlined">add</span>Nueva acción</button><div style="height:12px"></div>`;
+  if(!DB.acciones.length)return h+'<div class="empty">Sin acciones de mejora.</div>';
+  h+=DB.acciones.map(a=>`<div class="row" onclick="toggleAccion('${a.id}')">
+    <div><div style="font-weight:700">${escapeHtml(a.descripcion)}</div><div class="meta">${a.area?'<span>'+escapeHtml(a.area)+'</span>':''}${a.responsable?'<span>'+escapeHtml(a.responsable)+'</span>':''}${a.due_date?'<span>'+fmtD(a.due_date)+'</span>':''}</div></div>
+    <span class="tagx ${a.estado==='hecho'?'hecho':a.estado==='en_proceso'?'proc':'pend'}">${a.estado==='hecho'?'Hecho':a.estado==='en_proceso'?'En proceso':'Pendiente'}</span></div>`).join('');
+  return h;
+}
+async function toggleAccion(id){const a=DB.acciones.find(x=>x.id===id);if(!a)return;const nx=a.estado==='pendiente'?'en_proceso':a.estado==='en_proceso'?'hecho':'pendiente';await sb.from('mys_acciones').update({estado:nx}).eq('id',id);a.estado=nx;render();}
+function addAccionFrom(visitaId){
+  document.getElementById('shTitle').textContent='Nueva acción de mejora';document.getElementById('shMeta').textContent='';
+  document.getElementById('shBody').innerHTML=`<label class="field-lbl">Descripción</label><textarea class="input" id="ac_d" placeholder="Qué hay que mejorar / acción concreta"></textarea>
+   <div class="grid2"><div><label class="field-lbl">Área</label><input class="input" id="ac_a" placeholder="Servicio, Cocina…"></div><div><label class="field-lbl">Responsable</label><input class="input" id="ac_r" placeholder="Nombre"></div></div>
+   <label class="field-lbl">Fecha límite</label><input type="date" class="input" id="ac_due">
+   <div style="height:14px"></div><button class="btn primary" onclick="saveAccion('${visitaId||''}')"><span class="material-symbols-outlined">save</span>Guardar acción</button>`;
+  openSheet();
+}
+async function saveAccion(visitaId){
+  const d=document.getElementById('ac_d').value.trim();if(!d){toast('Escribe la acción','warn');return;}
+  const {error}=await sb.from('mys_acciones').insert({marca_id:MARCA,local_id:LOCAL,visita_id:visitaId||null,
+    descripcion:d,area:document.getElementById('ac_a').value||null,responsable:document.getElementById('ac_r').value||null,
+    due_date:document.getElementById('ac_due').value||null,estado:'pendiente'});
+  if(error){toast('Error','err');return;}toast('Acción creada');closeSheet();TAB='acciones';await load();
+}
+
+function openSheet(){document.getElementById('bd').classList.add('open');document.getElementById('sheet').classList.add('open');}
+function closeSheet(){document.getElementById('bd').classList.remove('open');document.getElementById('sheet').classList.remove('open');}
+load();
+</script>
+</body>
+</html>
