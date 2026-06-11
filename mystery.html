@@ -63,6 +63,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .heat .hc{display:flex;align-items:center;justify-content:center;min-height:34px;border:2px solid var(--outline);border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700}
 .heat .rl{display:flex;align-items:center;justify-content:flex-end;text-align:right;font-size:12px;font-weight:600;padding-right:8px}
 .heat .cl{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.6;text-align:center;align-self:end;padding-bottom:3px}
+.dg{display:grid;grid-template-columns:1fr 30px 30px 30px 30px;gap:5px;align-items:center}
+.dg .mh{grid-column:1/-1;font-family:var(--font-display);font-size:14px;margin-top:14px;border-bottom:2px solid var(--outline);padding-bottom:3px}
+.dg .vh{font-family:var(--font-mono);font-size:9px;font-weight:700;text-align:center;opacity:.6}
+.dg .it{font-size:11.5px;line-height:1.25;padding:3px 0}
+.dg .sq{height:24px;border:2px solid var(--outline);border-radius:5px}
+.dg .sq.empty{background:#f1f1f1;border-style:dashed;opacity:.55}
 .sedes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .sedecard{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
 .sedecard .rank{font-family:var(--font-mono);font-size:10px;font-weight:700;opacity:.5}
@@ -135,8 +141,8 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const MARCA=window.PREP_MARCA||'m7', LOCAL=window.PREP_LOCAL||'l12';
-let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[]};
-let TAB='resumen', booted=false, PER='all', SELC=null, RADSEL='all';
+let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[],detalle:[]};
+let TAB='resumen', booted=false, PER='all', SELC=null, RADSEL='all', AUDPER=null;
 let CHARTS=[], PENDING=[];
 const SEDE_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9'];
 const CRIT_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9','#e11d48','#65a30d','#d97706','#0891b2','#9333ea'];
@@ -159,14 +165,17 @@ function perVis(vs){return PER==='all'?vs:vs.filter(v=>(v.fecha||'').slice(0,7)=
 function chart(id,cfg,h){cfg.options=cfg.options||{};cfg.options.responsive=true;cfg.options.maintainAspectRatio=false;if(RM)cfg.options.animation=false;PENDING.push([id,cfg]);return `<div class="chartbox" style="height:${h||260}px"><canvas id="${id}"></canvas></div>`;}
 function mountCharts(){CHARTS.forEach(c=>{try{c.destroy()}catch(e){}});CHARTS=[];PENDING.forEach(([id,cfg])=>{const el=document.getElementById(id);if(el){try{CHARTS.push(new Chart(el.getContext('2d'),cfg))}catch(e){}}});PENDING=[];}
 
-function heat(rowDefs,cols,valFn){
+function heat(rowDefs,cols,valFn,opts){
+  opts=opts||{};
   const gc=`minmax(84px,1.1fr) repeat(${cols.length},minmax(40px,1fr))`;
   let h=`<div class="heatwrap"><div class="heat" style="grid-template-columns:${gc};min-width:${110+cols.length*46}px">`;
   h+=`<div></div>`+cols.map(c=>`<div class="cl">${escapeHtml(c.label)}</div>`).join('');
   rowDefs.forEach(r=>{h+=`<div class="rl">${escapeHtml(r.label)}</div>`;
-    cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">·</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${v.toFixed(0)}</div>`;});});
+    cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">${opts.nonum?'':'·'}</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${opts.nonum?'':v.toFixed(0)}</div>`;});});
   return h+`</div></div>`;
 }
+function lvlColor(v){if(v==null)return null;return ['#171c20','#ff3b30','#ffcc00','#10b981','#1e5af9'][v]||null;}
+function setAud(p){AUDPER=p;render();}
 function barRow(nm,s){const c=scoreColor(s)[0];return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
 const LEGEND=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['<70','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
 function periodBar(ms){return `<div class="perbar"><button class="pchip ${PER==='all'?'on':''}" onclick="setPer('all')">Todos</button>`+ms.map(m=>`<button class="pchip ${PER===m?'on':''}" onclick="setPer('${m}')">${mLabel(m)}</button>`).join('')+`</div>`;}
@@ -189,6 +198,7 @@ async function load(){
   if(DB.allVisitas.length){const rp=await sb.from('mys_respuestas').select('*').in('visita_id',DB.allVisitas.map(v=>v.id));DB.allResp=rp.data||[];}else DB.allResp=[];
   const locVis=new Set(DB.visitas.map(v=>v.id));
   DB.respuestas=DB.allResp.filter(r=>locVis.has(r.visita_id));
+  try{const det=await sb.from('mys_detalle').select('*').eq('local_id',LOCAL).order('orden');DB.detalle=det.data||[];}catch(e){DB.detalle=[];}
   if(!booted){booted=true;if(DB.locales.length>1)TAB='consolidado';}
   buildTabs();render();
   document.getElementById('boot').classList.add('gone');
@@ -196,6 +206,7 @@ async function load(){
 
 function buildTabs(){
   const base=[{k:'resumen',ic:'insights',t:'Resumen'},{k:'tendencias',ic:'show_chart',t:'Tendencias'},{k:'radar',ic:'radar',t:'Radar'},{k:'detalle',ic:'table_rows',t:'Detalle'},{k:'acciones',ic:'checklist',t:'Plan'}];
+  if(DB.detalle&&DB.detalle.length)base.splice(4,0,{k:'auditoria',ic:'grid_view',t:'Auditoría'});
   const tabs=DB.locales.length>1?[{k:'consolidado',ic:'stacked_bar_chart',t:'Todas las sedes'},...base]:base;
   document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="tab ${TAB===t.k?'active':''}" onclick="setTab('${t.k}')"><span class="material-symbols-outlined">${t.ic}</span>${t.t}</button>`).join('');
 }
@@ -207,6 +218,7 @@ function render(){
   else if(TAB==='tendencias')v.innerHTML=vTendencias();
   else if(TAB==='radar')v.innerHTML=vRadar();
   else if(TAB==='detalle')v.innerHTML=vDetalle();
+  else if(TAB==='auditoria')v.innerHTML=vAuditoria();
   else if(TAB==='acciones')v.innerHTML=vAcciones();
   else v.innerHTML=vResumen();
   mountCharts();
@@ -282,6 +294,32 @@ function vDetalle(){
   const cols=vis.map((v,i)=>({key:v.id,label:'V'+(i+1)})).concat([{key:'__p',label:'Prom'}]);
   const valFn=(r,c)=>{if(c.key==='__p'){const x=vis.map(v=>pmap[v.id+'|'+r.key]).filter(z=>z!=null);return x.length?avg(x):null;}const z=pmap[c.key+'|'+r.key];return z==null?null:z;};
   return periodBar(ms)+`<div class="section"><div class="section-h"><h3>${mLabel(PER)} · ${vis.length} visitas</h3><span class="hint">cada criterio en las visitas del mes</span></div><div class="card">${heat(crows,cols,valFn)}<div class="legend">${LEGEND}</div></div></div>`;
+}
+
+/* ===== AUDITORÍA (detalle ítem por ítem, color) ===== */
+function vAuditoria(){
+  const det=DB.detalle||[];
+  const V=DB.visitas,R=DB.respuestas,ms=months(V);
+  const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
+  let h=`<div class="section"><div class="section-h"><h3>Puntajes generales</h3><span class="hint">color por nivel · sin nota</span></div>
+    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})),ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{nonum:true})}<div class="legend">${LEGEND}</div></div></div>`;
+  if(!det.length)return h+'<div class="empty">Sin detalle ítem por ítem cargado.</div>';
+  const periodos=[...new Set(det.map(d=>d.periodo))].sort();
+  const per=AUDPER||periodos[periodos.length-1];
+  const items=det.filter(d=>d.periodo===per);
+  const mundos=[];items.forEach(d=>{if(!mundos.includes(d.mundo))mundos.push(d.mundo);});
+  const chips=periodos.length>1?`<div class="perbar">${periodos.map(p=>`<button class="pchip ${p===per?'on':''}" onclick="setAud('${p}')">${escapeHtml(p)}</button>`).join('')}</div>`:'';
+  const lvlLeg=[['Sin evaluar','#f1f1f1'],['No cumple','#171c20'],['Bajo','#ff3b30'],['Medio','#ffcc00'],['Bueno','#10b981'],['Excelente','#1e5af9']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+  let g='<div class="dg">';
+  mundos.forEach(mu=>{
+    g+=`<div class="mh">${escapeHtml(mu)}</div><div></div><div class="vh">V1</div><div class="vh">V2</div><div class="vh">V3</div><div class="vh">V4</div>`;
+    items.filter(d=>d.mundo===mu).forEach(d=>{
+      g+=`<div class="it">${escapeHtml(d.item)}</div>`;
+      [d.v1,d.v2,d.v3,d.v4].forEach(v=>{const c=lvlColor(v);g+=`<div class="sq${c?'':' empty'}"${c?` style="background:${c}"`:''}></div>`;});
+    });
+  });
+  g+='</div>';
+  return h+`<div class="section"><div class="section-h"><h3>Detalle por visita · ${escapeHtml(per)}</h3><span class="hint">${items.length} ítems</span></div>${chips}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${g}</div></div>`;
 }
 
 /* ===== CONSOLIDADO (todas las sedes) ===== */
