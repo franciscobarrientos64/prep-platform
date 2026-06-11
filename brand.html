@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Book · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<style>
+:root{
+  --primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;
+  --primary-soft:#d6e2ff;--primary-dark:#001a47;--gray-soft:#dfe3e8;--green:#10b981;
+  --shadow-sm:4px 4px 0 0 #000;--shadow:8px 8px 0 0 #000;--shadow-lg:12px 12px 0 0 #000;
+  --font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px 80px}
+.material-symbols-outlined{vertical-align:middle}
+/* Hero */
+.hero{background:var(--primary);border-bottom:3px solid var(--outline);color:#fff;padding:64px 20px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:28px 28px}
+.hero .logo{font-family:var(--font-display);font-size:72px;line-height:1;position:relative}
+.hero .logo .b{color:#fff}.hero .logo .x{color:var(--tertiary)}
+.hero p{font-family:var(--font-mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;margin-top:14px;opacity:.9;position:relative}
+.hero .tag{display:inline-block;margin-top:20px;background:var(--ink);color:#fff;border:2px solid #fff;border-radius:999px;padding:8px 20px;font-weight:700;font-size:14px;position:relative}
+/* Section */
+section{margin-top:56px}
+.kicker{font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary)}
+h2{font-family:var(--font-display);font-size:32px;line-height:1.05;margin:6px 0 18px}
+h3{font-family:var(--font-display);font-size:20px;margin:26px 0 10px}
+p.lead{font-size:17px;max-width:70ch}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:22px;margin-bottom:16px}
+.muted{opacity:.7}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+/* Colors */
+.swatch{border:2px solid var(--outline);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.swatch .chip{height:96px}
+.swatch .meta{padding:10px 12px;background:var(--surface);font-family:var(--font-mono);font-size:12px}
+.swatch .meta b{display:block;font-family:var(--font-body);font-size:14px;margin-bottom:2px}
+/* Type */
+.typ{border:2px solid var(--outline);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm);padding:20px;margin-bottom:14px}
+.typ .lbl{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:8px}
+/* Components demo */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:2px solid var(--outline);border-radius:999px;font-family:var(--font-body);font-weight:600;font-size:14px;cursor:pointer;box-shadow:var(--shadow-sm);background:var(--surface);transition:transform .1s,box-shadow .1s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.btn.primary{background:var(--primary);color:#fff}.btn.danger{background:var(--secondary);color:#fff}.btn.warn{background:var(--tertiary);color:var(--ink)}.btn.dark{background:var(--ink);color:var(--bg)}
+.badge{display:inline-block;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:2px solid var(--outline)}
+.demo-card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow);padding:20px;transition:transform .15s,box-shadow .15s}
+.demo-card:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-lg)}
+.input{padding:10px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-size:14px;box-shadow:var(--shadow-sm);width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* Lexicon table */
+table{width:100%;border-collapse:collapse;background:var(--surface);border:2px solid var(--outline);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--gray-soft);font-size:14px;vertical-align:top}
+th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+tr:last-child td{border-bottom:none}
+.word{font-family:var(--font-display);font-size:18px;color:var(--primary)}
+.do,.dont{border-left-width:7px;border-radius:12px;border:2px solid var(--outline);padding:14px 16px;margin-bottom:10px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.do{border-left-color:var(--green)}.dont{border-left-color:var(--secondary)}
+.do b,.dont b{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.ico-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+@media(max-width:760px){.ico-grid{grid-template-columns:repeat(4,1fr)}}
+.ico{border:2px solid var(--outline);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 6px;text-align:center}
+.ico .material-symbols-outlined{font-size:28px;color:var(--primary)}
+.ico div{font-family:var(--font-mono);font-size:9px;margin-top:6px;opacity:.7;word-break:break-all}
+.toc{columns:2;gap:18px;font-family:var(--font-mono);font-size:13px}
+.toc a{color:var(--ink);text-decoration:none;display:block;padding:4px 0;border-bottom:1px dashed var(--gray-soft)}
+footer{margin-top:60px;border-top:2px solid var(--outline);padding-top:20px;font-family:var(--font-mono);font-size:12px;opacity:.6;text-align:center}
+@media print{.hero{padding:36px 20px}.btn{box-shadow:none}section{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="logo"><span class="b">prep</span><span class="x">!</span></div>
+  <p>Brand Book · Sistema de diseño</p>
+  <div class="tag">Neo-brutalismo cálido</div>
+</div>
+
+<div class="wrap">
+
+<section id="intro">
+  <div class="kicker">01 · Esencia</div>
+  <h2>Qué es Prep!</h2>
+  <p class="lead">Software de operaciones para restaurantes. Una PWA responsive, rápida y sin fricción, hecha para que el equipo del restaurante <b>trabaje mejor cada turno</b>. La marca es directa, cálida y con carácter: hablamos el idioma de la cocina, no el de la consultora.</p>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3 style="margin-top:0">Directo</h3><p class="muted">Cero relleno. Botones grandes, palabras cortas, una acción clara por pantalla.</p></div>
+    <div class="card"><h3 style="margin-top:0">Cálido</h3><p class="muted">Crema, no blanco frío. Tuteo. Lenguaje de cocina peruana, LATAM neutral.</p></div>
+    <div class="card"><h3 style="margin-top:0">Con carácter</h3><p class="muted">Bordes negros, sombras duras, color pleno. Se ve seguro de sí mismo.</p></div>
+  </div>
+</section>
+
+<section id="logo">
+  <div class="kicker">02 · Logotipo</div>
+  <h2>El logo</h2>
+  <p class="lead">El wordmark es <b>prep!</b> en minúsculas, fuente Bagel Fat One. La <b>“!”</b> siempre va en amarillo o rojo según el fondo — es el acento de energía de la marca.</p>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card" style="text-align:center;background:var(--bg)"><div style="font-family:var(--font-display);font-size:54px"><span style="color:var(--primary)">prep</span><span style="color:var(--secondary)">!</span></div><div class="muted mono" style="font-size:11px;margin-top:8px">Sobre crema · ! roja</div></div>
+    <div class="card" style="text-align:center;background:var(--primary)"><div style="font-family:var(--font-display);font-size:54px;color:#fff">prep<span style="color:var(--tertiary)">!</span></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre cobalto · ! amarilla</div></div>
+    <div class="card" style="text-align:center;background:var(--ink)"><div style="font-family:var(--font-display);font-size:54px;color:var(--bg)">prep<span style="color:var(--tertiary)">!</span></div><div style="color:#fff;font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.8">Sobre tinta · ! amarilla</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="do"><b>Sí</b><p style="margin-top:4px">Mantener la “!” en color de acento. Respetar el aire alrededor. Usar el negro de contorno en versiones sobre claro.</p></div>
+    <div class="dont"><b>No</b><p style="margin-top:4px">No estirar, rotar ni cambiar la fuente. No usar degradados en el wordmark. No poner la “!” del mismo color que “prep”.</p></div>
+  </div>
+</section>
+
+<section id="color">
+  <div class="kicker">03 · Color</div>
+  <h2>Paleta</h2>
+  <p class="lead">Cobalto eléctrico como color de marca; rojo y amarillo como acentos; crema como fondo (nunca blanco puro de pantalla). El negro es estructural: contornos y sombras.</p>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="swatch"><div class="chip" style="background:#1e5af9"></div><div class="meta"><b>Primary</b>#1e5af9<br>Cobalto eléctrico</div></div>
+    <div class="swatch"><div class="chip" style="background:#ff3b30"></div><div class="meta"><b>Secondary</b>#ff3b30<br>Rojo</div></div>
+    <div class="swatch"><div class="chip" style="background:#ffcc00"></div><div class="meta"><b>Tertiary</b>#ffcc00<br>Amarillo</div></div>
+    <div class="swatch"><div class="chip" style="background:#171c20"></div><div class="meta"><b>Ink</b>#171c20<br>Texto / contorno</div></div>
+    <div class="swatch"><div class="chip" style="background:#fcf9f8;border-bottom:2px solid #000"></div><div class="meta"><b>BG</b>#fcf9f8<br>Crema (fondo)</div></div>
+    <div class="swatch"><div class="chip" style="background:#ffffff;border-bottom:2px solid #000"></div><div class="meta"><b>Surface</b>#ffffff<br>Tarjetas</div></div>
+    <div class="swatch"><div class="chip" style="background:#d6e2ff"></div><div class="meta"><b>Primary soft</b>#d6e2ff<br>Fondos suaves</div></div>
+    <div class="swatch"><div class="chip" style="background:#10b981"></div><div class="meta"><b>Green</b>#10b981<br>Éxito / OK</div></div>
+  </div>
+  <h3>Sombras (estructura brutalista)</h3>
+  <div class="row">
+    <div class="card" style="box-shadow:var(--shadow-sm);margin:8px 14px 14px 0">--shadow-sm · 4px</div>
+    <div class="card" style="box-shadow:var(--shadow);margin:8px 14px 14px 0">--shadow · 8px</div>
+    <div class="card" style="box-shadow:var(--shadow-lg);margin:8px 14px 18px 0">--shadow-lg · 12px</div>
+  </div>
+</section>
+
+<section id="type">
+  <div class="kicker">04 · Tipografía</div>
+  <h2>Fuentes</h2>
+  <div class="typ"><div class="lbl">Display · Bagel Fat One</div><div style="font-family:var(--font-display);font-size:40px">Mise en place</div><p class="muted mono" style="font-size:11px;margin-top:6px">Títulos, logo, números grandes. Solo en piezas cortas.</p></div>
+  <div class="typ"><div class="lbl">Body · IBM Plex Sans</div><div style="font-size:22px;font-weight:700">El equipo trabaja mejor cada turno.</div><div style="font-size:15px;margin-top:6px">Texto de interfaz, párrafos, botones. Pesos 400/500/600/700.</div></div>
+  <div class="typ"><div class="lbl">Mono · IBM Plex Mono</div><div style="font-family:var(--font-mono);font-size:16px">S/ 374,810 · 4,419 ventas · 18:42</div><p class="muted mono" style="font-size:11px;margin-top:6px">Datos, montos, horas, etiquetas técnicas y códigos.</p></div>
+</section>
+
+<section id="components">
+  <div class="kicker">05 · Componentes</div>
+  <h2>UI brutalista</h2>
+  <h3>Botones</h3>
+  <div class="row">
+    <button class="btn primary"><span class="material-symbols-outlined">add</span>Primario</button>
+    <button class="btn">Secundario</button>
+    <button class="btn danger">Peligro</button>
+    <button class="btn warn">Aviso</button>
+    <button class="btn dark">Oscuro</button>
+  </div>
+  <p class="muted mono" style="font-size:11px;margin-top:8px">Pill, borde 2px, sombra dura. Hover sube (-2,-2); active baja (2,2) sin sombra.</p>
+  <h3>Tarjetas</h3>
+  <div class="grid g2">
+    <div class="demo-card"><div class="badge" style="background:var(--primary-soft)">Mesa M4</div><div style="font-family:var(--font-display);font-size:24px;margin-top:10px">S/ 142.00</div><p class="muted">Pasa el cursor: la tarjeta se levanta.</p></div>
+    <div class="demo-card"><div class="row" style="justify-content:space-between"><span class="badge" style="background:var(--green);color:#fff">Servido</span><span class="material-symbols-outlined" style="color:var(--primary)">restaurant</span></div><div style="margin-top:10px;font-weight:700">Lasagna de la casa</div><p class="muted">Card de ítem / KDS.</p></div>
+  </div>
+  <h3>Badges de estado</h3>
+  <div class="row">
+    <span class="badge" style="background:var(--green);color:#fff">Servido</span>
+    <span class="badge" style="background:var(--tertiary)">En fuego</span>
+    <span class="badge" style="background:var(--primary-soft)">Oído</span>
+    <span class="badge" style="background:#fee2e2">Atrás</span>
+    <span class="badge" style="background:var(--gray-soft)">Pendiente</span>
+  </div>
+  <h3>Inputs</h3>
+  <div class="grid g2"><input class="input" placeholder="Buscar comensal…"><input class="input" value="S/ 0.00"></div>
+</section>
+
+<section id="icons">
+  <div class="kicker">06 · Iconografía</div>
+  <h2>Material Symbols Outlined</h2>
+  <p class="lead">Un solo set de íconos: <b>Material Symbols Outlined</b>. Nunca Font Awesome, Lucide, Heroicons ni emojis como íconos de UI.</p>
+  <div class="ico-grid" style="margin-top:16px">
+    <div class="ico"><span class="material-symbols-outlined">restaurant</span><div>restaurant</div></div>
+    <div class="ico"><span class="material-symbols-outlined">point_of_sale</span><div>point_of_sale</div></div>
+    <div class="ico"><span class="material-symbols-outlined">visibility</span><div>visibility</div></div>
+    <div class="ico"><span class="material-symbols-outlined">auto_stories</span><div>auto_stories</div></div>
+    <div class="ico"><span class="material-symbols-outlined">badge</span><div>badge</div></div>
+    <div class="ico"><span class="material-symbols-outlined">insights</span><div>insights</div></div>
+    <div class="ico"><span class="material-symbols-outlined">inventory_2</span><div>inventory_2</div></div>
+    <div class="ico"><span class="material-symbols-outlined">local_fire_department</span><div>local_fire…</div></div>
+    <div class="ico"><span class="material-symbols-outlined">qr_code_2</span><div>qr_code_2</div></div>
+    <div class="ico"><span class="material-symbols-outlined">checklist</span><div>checklist</div></div>
+    <div class="ico"><span class="material-symbols-outlined">favorite</span><div>favorite</div></div>
+    <div class="ico"><span class="material-symbols-outlined">leaderboard</span><div>leaderboard</div></div>
+  </div>
+</section>
+
+<section id="voz">
+  <div class="kicker">07 · Voz y micro-copy</div>
+  <h2>Cómo hablamos</h2>
+  <p class="lead">Español LATAM neutral, <b>tuteo</b>, frases cortas. La marca usa el léxico de cocina para los estados del sistema — cada estado tiene su palabra.</p>
+  <table style="margin-top:16px">
+    <tr><th>Estado</th><th>Palabra</th><th>Uso</th></tr>
+    <tr><td>Loading</td><td class="word">Oído</td><td>Algo se está procesando</td></tr>
+    <tr><td>Complete</td><td class="word">Servido</td><td>Acción completada</td></tr>
+    <tr><td>Error</td><td class="word">Atrás</td><td>Algo falló</td></tr>
+    <tr><td>Confirm</td><td class="word">Va</td><td>Confirmación de acción</td></tr>
+    <tr><td>A cocina</td><td class="word">En fuego</td><td>Pedido enviado a cocina</td></tr>
+    <tr><td>Setup</td><td class="word">Mise en place</td><td>Configuración inicial</td></tr>
+  </table>
+  <h3>Palabras que NO usamos</h3>
+  <div class="dont"><b>Prohibidas en la UI</b><p style="margin-top:6px">revolucionario · game changer · AI-powered · disruptivo · innovador · artesanal · “gastro” (en inglés). Tampoco “clientes” para los comensales → usamos <b>comensales / invitados / huéspedes</b>.</p></div>
+  <div class="do"><b>Tono</b><p style="margin-top:6px">Claro y humano. “Listo, mesa cobrada.” mejor que “La transacción se ha procesado exitosamente.”</p></div>
+</section>
+
+<section id="nombres">
+  <div class="kicker">08 · Módulos</div>
+  <h2>Nomenclatura oficial</h2>
+  <p class="lead">Los módulos tienen nombres propios. No se inventan ni se traducen.</p>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><b>Pase</b><div class="muted">Dashboard ejecutivo</div></div>
+    <div class="card"><b>POS</b><div class="muted">Caja / toma de pedido</div></div>
+    <div class="card"><b>Línea</b><div class="muted">KDS de cocina</div></div>
+    <div class="card"><b>Bienvenida</b><div class="muted">Reservas / anfitrión</div></div>
+    <div class="card"><b>Mercado</b><div class="muted">Compras + inventario</div></div>
+    <div class="card"><b>Recetas</b><div class="muted">Costeo / food cost</div></div>
+    <div class="card"><b>RRHH</b><div class="muted">Equipo + planilla</div></div>
+    <div class="card"><b>Delivery</b><div class="muted">Pedidos + repartidores</div></div>
+    <div class="card"><b>Contabilidad</b><div class="muted">Finanzas + presupuesto</div></div>
+    <div class="card"><b>Vuelto</b><div class="muted">Caja chica</div></div>
+    <div class="card"><b>El Libro</b><div class="muted">Intranet + SOPs</div></div>
+    <div class="card"><b>Directorio</b><div class="muted">Reportes / BI</div></div>
+    <div class="card"><b>Engagement</b><div class="muted">Loyalty + CRM</div></div>
+    <div class="card"><b>Mystery Shopper</b><div class="muted">Evaluación de experiencia</div></div>
+    <div class="card"><b>Predicción</b><div class="muted">Pronóstico de demanda</div></div>
+  </div>
+</section>
+
+<footer>
+  prep! brand book · fuente de verdad del sistema de diseño · generado desde los tokens reales de la app
+</footer>
+</div>
+</body>
+</html>

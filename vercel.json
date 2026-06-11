@@ -46,6 +46,10 @@
       "destination": "/mystery.html"
     },
     {
+      "source": "/brand",
+      "destination": "/brand.html"
+    },
+    {
       "source": "/prep-negocio",
       "destination": "/prep-negocio.html"
     },
