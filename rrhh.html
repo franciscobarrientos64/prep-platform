@@ -448,7 +448,9 @@ function renderPlanilla(){
       <td style="opacity:.7">+${money(essalud(e))}</td></tr>`;}).join('');
   const dia=new Date().getDate();const planillaMTD=costoEmpresa/30*dia;const ventasMes=Number(state.ventasMes||0);
   const laborPct=ventasMes>0?(planillaMTD/ventasMes*100):0;const alto=laborPct>30;
+  const esMuestra=act.some(e=>(e.notas||'').toLowerCase().includes('muestra'));
   $('#screen').innerHTML=`
+    ${esMuestra?`<button onclick="alert('Los sueldos, DNIs y datos bancarios de esta planilla son de MUESTRA para la demostración. No corresponden a información real.')" style="width:100%;background:var(--secondary);color:#fff;border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:11px 14px;font-weight:700;font-size:13px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span class="material-symbols-outlined" style="font-size:18px">warning</span>Información de muestra</button>`:''}
     <div class="kpis"><div class="kpi"><div class="v">${money(tBruto)}</div><div class="l">Bruto mensual</div></div>
       <div class="kpi"><div class="v" style="color:var(--secondary)">${money(tPension+tRenta)}</div><div class="l">Descuentos (pensión+renta)</div></div>
       <div class="kpi good"><div class="v">${money(tNeto)}</div><div class="l">Neto a pagar</div></div>
