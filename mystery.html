@@ -85,7 +85,52 @@ textarea.input{min-height:80px;resize:vertical}
 .boot .logo{position:relative;width:200px;height:66px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
-@media(max-width:560px){.grid3{grid-template-columns:1fr}.barrow .nm{width:46%}}
+/* ---- secciones + data-viz ---- */
+.section{margin:20px 0 0}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 10px}
+.section-h h3{font-family:var(--font-display);font-size:18px;line-height:1}
+.section-h .hint{font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:right}
+.up{color:var(--green)}.down{color:var(--secondary)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;font-weight:600;margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border:2px solid var(--outline);border-radius:4px}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart .grid{stroke:var(--gray-soft);stroke-width:1}
+.chart .axis{font-family:var(--font-mono);font-size:9px;fill:var(--ink);opacity:.55}
+.chart polyline{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.chart circle{stroke:var(--outline);stroke-width:1.5}
+/* heatmap */
+.heatwrap{overflow-x:auto}
+.heat{display:grid;gap:4px}
+.heat .hc{display:flex;align-items:center;justify-content:center;min-height:34px;border:2px solid var(--outline);border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700}
+.heat .rl{display:flex;align-items:center;justify-content:flex-end;text-align:right;font-size:12px;font-weight:600;padding-right:8px}
+.heat .cl{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.6;text-align:center;align-self:end;padding-bottom:3px}
+/* impacto */
+.imp{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--gray-soft)}
+.imp:last-child{border:0}
+.imp .nm{flex:1;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;min-width:0}
+.imp .nm .pw{font-family:var(--font-mono);font-size:9px;font-weight:700;border:1.5px solid var(--outline);border-radius:6px;padding:1px 6px;background:var(--primary-soft);flex-shrink:0}
+.imp .track{width:26%;min-width:60px;height:14px;background:var(--gray-soft);border:2px solid var(--outline);border-radius:999px;overflow:hidden}
+.imp .track .fill{height:100%}
+.imp .v{width:34px;text-align:right;font-family:var(--font-mono);font-size:12px;font-weight:700}
+.imp .lost{width:54px;text-align:right;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--secondary)}
+/* sedes */
+.sedes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.sedecard{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.sedecard .rank{font-family:var(--font-mono);font-size:10px;font-weight:700;opacity:.5}
+.sedecard .nm{font-weight:700;font-size:15px;margin:2px 0 8px}
+.sedecard .big{font-family:var(--font-display);font-size:36px;line-height:1}
+.sedecard .trend{font-family:var(--font-mono);font-size:11px;font-weight:700;margin-top:6px}
+@media(prefers-reduced-motion:no-preference){
+  .chart polyline{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1.2s cubic-bezier(.2,.7,0,1) forwards}
+  .barfill,.imp .track .fill{transform-origin:left;animation:grow .8s cubic-bezier(.2,.7,0,1) both}
+  .reveal{animation:rise .5s cubic-bezier(.2,.7,0,1) both}
+  .sedes .sedecard:nth-child(2){animation-delay:.05s}.sedes .sedecard:nth-child(3){animation-delay:.1s}.sedes .sedecard:nth-child(4){animation-delay:.15s}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:560px){.grid3{grid-template-columns:1fr}.barrow .nm{width:46%}.imp .track{display:none}}
 </style>
 </head>
 <body>
@@ -100,6 +145,7 @@ textarea.input{min-height:80px;resize:vertical}
 </header>
 
 <nav class="tabs">
+  <button class="tab" data-tab="consolidado" id="tabCons" style="display:none" onclick="setTab('consolidado')"><span class="material-symbols-outlined">stacked_bar_chart</span>Todas las sedes</button>
   <button class="tab active" data-tab="resumen" onclick="setTab('resumen')"><span class="material-symbols-outlined">insights</span>Resumen</button>
   <button class="tab" data-tab="evals" onclick="setTab('evals')"><span class="material-symbols-outlined">fact_check</span>Evaluaciones</button>
   <button class="tab" data-tab="ranking" onclick="setTab('ranking')"><span class="material-symbols-outlined">leaderboard</span>Ranking</button>
@@ -120,8 +166,9 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const MARCA=window.PREP_MARCA||'m7', LOCAL=window.PREP_LOCAL||'l12';
-let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[]};
-let TAB='resumen';
+let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[]};
+let TAB='resumen', booted=false;
+const SEDE_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9'];
 
 function toast(m,t='ok'){const c=document.getElementById('toasts');const e=document.createElement('div');e.className='toast '+t;e.innerHTML='<span class="material-symbols-outlined">'+(t==='err'?'error':t==='warn'?'warning':'check_circle')+'</span>'+m;c.appendChild(e);setTimeout(()=>e.remove(),3200);}
 function fmtD(d){if(!d)return'—';const x=new Date(d+'T00:00:00');return x.toLocaleDateString('es-PE',{day:'2-digit',month:'short'});}
@@ -129,24 +176,61 @@ function sCls(s){return s>=85?'s-hi':s>=70?'s-mid':'s-lo';}
 function escapeHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 async function load(){
-  const [pl,vi,ac]=await Promise.all([
+  const [loc,pl,vi,ac]=await Promise.all([
+    sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('id'),
     sb.from('mys_plantillas').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at').limit(1),
-    sb.from('mys_visitas').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}),
+    sb.from('mys_visitas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}),
     sb.from('mys_acciones').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false})
   ]);
+  DB.locales=loc.data||[];
   DB.plantilla=(pl.data||[])[0]||null;
-  DB.visitas=vi.data||[]; DB.acciones=ac.data||[];
+  DB.allVisitas=vi.data||[];
+  DB.visitas=DB.allVisitas.filter(v=>v.local_id===LOCAL);
+  DB.acciones=ac.data||[];
   if(DB.plantilla){
     const cr=await sb.from('mys_criterios').select('*').eq('plantilla_id',DB.plantilla.id).order('orden');
     DB.criterios=cr.data||[];
   }
-  if(DB.visitas.length){
-    const ids=DB.visitas.map(v=>v.id);
-    const rp=await sb.from('mys_respuestas').select('*').in('visita_id',ids);
-    DB.respuestas=rp.data||[];
-  } else DB.respuestas=[];
+  if(DB.allVisitas.length){
+    const rp=await sb.from('mys_respuestas').select('*').in('visita_id',DB.allVisitas.map(v=>v.id));
+    DB.allResp=rp.data||[];
+  } else DB.allResp=[];
+  const locVis=new Set(DB.visitas.map(v=>v.id));
+  DB.respuestas=DB.allResp.filter(r=>locVis.has(r.visita_id));
+  // sede consolidada solo para marcas con 2+ locales
+  if(DB.locales.length>1){document.getElementById('tabCons').style.display='';}
+  if(!booted){booted=true;if(DB.locales.length>1)TAB='consolidado';}
   render();
   document.getElementById('boot').classList.add('gone');
+}
+/* ---- helpers de data-viz ---- */
+const MESN=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+function months(vs){return [...new Set(vs.map(v=>(v.fecha||'').slice(0,7)).filter(Boolean))].sort();}
+function mLabel(m){if(!m)return'';const[y,mo]=m.split('-');return MESN[+mo]+" '"+y.slice(2);}
+function scoreColor(s){if(s>=85)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];if(s>=50)return['#f59e0b','#3a2400'];return['#ff3b30','#fff'];}
+function lineChart(series,ms,{ymin=0,ymax=100,h=190}={}){
+  const W=620,H=h,padL=28,padR=12,padT=14,padB=20,iw=W-padL-padR,ih=H-padT-padB,n=ms.length;
+  const x=i=>n<=1?padL+iw/2:padL+iw*i/(n-1), y=v=>padT+ih*(1-(Math.max(ymin,Math.min(ymax,v))-ymin)/(ymax-ymin));
+  let g='';
+  for(let t=Math.ceil(ymin/20)*20;t<=ymax;t+=20){g+=`<line class="grid" x1="${padL}" y1="${y(t)}" x2="${W-padR}" y2="${y(t)}"/><text class="axis" x="${padL-5}" y="${y(t)+3}" text-anchor="end">${t}</text>`;}
+  ms.forEach((m,i)=>{g+=`<text class="axis" x="${x(i)}" y="${H-5}" text-anchor="middle">${MESN[+m.split('-')[1]]}</text>`;});
+  series.forEach(s=>{const pts=ms.map((m,i)=>s.map[m]==null?null:`${x(i).toFixed(1)},${y(s.map[m]).toFixed(1)}`).filter(Boolean).join(' ');
+    g+=`<polyline points="${pts}" style="stroke:${s.color}"/>`;
+    ms.forEach((m,i)=>{if(s.map[m]!=null)g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(s.map[m]).toFixed(1)}" r="3.5" style="fill:${s.color}"/>`;});});
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Evolución del score">${g}</svg>`;
+}
+function heat(rowDefs,cols,valFn){
+  const gc=`minmax(84px,1.1fr) repeat(${cols.length},minmax(40px,1fr))`;
+  let h=`<div class="heatwrap"><div class="heat" style="grid-template-columns:${gc};min-width:${110+cols.length*46}px">`;
+  h+=`<div></div>`+cols.map(c=>`<div class="cl">${escapeHtml(c.label)}</div>`).join('');
+  rowDefs.forEach(r=>{h+=`<div class="rl">${escapeHtml(r.label)}</div>`;
+    cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">·</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${v.toFixed(0)}</div>`;});});
+  return h+`</div></div>`;
+}
+function impactList(resp){
+  const byC={};resp.forEach(r=>{(byC[r.criterio]=byC[r.criterio]||{peso:+r.peso||1,vals:[]}).vals.push(+r.puntaje||0);});
+  const rows=Object.entries(byC).map(([k,o])=>{const s=avg(o.vals);return{k,peso:o.peso,s,lost:o.peso*(100-s)/100};}).sort((a,b)=>b.lost-a.lost);
+  return rows.map(r=>{const[bg]=scoreColor(r.s);return `<div class="imp"><div class="nm"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.k)}</span><span class="pw">peso ${r.peso}</span></div><div class="track"><div class="fill" style="width:${r.s}%;background:${bg}"></div></div><div class="v">${r.s.toFixed(0)}</div><div class="lost">−${r.lost.toFixed(1)}</div></div>`;}).join('');
 }
 
 function areasOf(){const a=[];DB.criterios.forEach(c=>{if(!a.includes(c.area))a.push(c.area)});return a;}
@@ -155,7 +239,8 @@ function avg(arr){return arr.length?arr.reduce((s,x)=>s+x,0)/arr.length:0;}
 function render(){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===TAB));
   const v=document.getElementById('view');
-  if(TAB==='resumen')v.innerHTML=vResumen();
+  if(TAB==='consolidado')v.innerHTML=vConsolidado();
+  else if(TAB==='resumen')v.innerHTML=vResumen();
   else if(TAB==='evals')v.innerHTML=vEvals();
   else if(TAB==='ranking')v.innerHTML=vRanking();
   else if(TAB==='acciones')v.innerHTML=vAcciones();
@@ -164,31 +249,60 @@ function setTab(t){TAB=t;render();}
 
 /* ===== RESUMEN ===== */
 function vResumen(){
-  const V=DB.visitas;
-  if(!V.length)return '<div class="empty">Aún no hay evaluaciones.<br>Toca «Nueva evaluación» para registrar la primera visita.</div>';
-  const scores=V.map(x=>+x.score_total||0);
-  const prom=avg(scores), ult=V[0];
-  const npss=V.filter(x=>x.nps!=null).map(x=>x.nps);
-  const nps= npss.length? Math.round((npss.filter(n=>n>=9).length-npss.filter(n=>n<=6).length)/npss.length*100):null;
-  // por área
-  const areas=areasOf();
-  const areaScore=areas.map(a=>{const rs=DB.respuestas.filter(r=>r.area===a);return {a,s:wAvg(rs)};}).sort((x,y)=>y.s-x.s);
-  // evolución por mes
-  const byMonth={};
-  V.forEach(x=>{const m=(x.fecha||'').slice(0,7);if(!m)return;(byMonth[m]=byMonth[m]||[]).push(+x.score_total||0);});
-  const months=Object.keys(byMonth).sort().slice(-6);
-  const maxM=Math.max(100,...months.map(m=>avg(byMonth[m])));
+  const V=DB.visitas, R=DB.respuestas;
+  if(!V.length)return '<div class="empty">Aún no hay evaluaciones para esta sede.<br>Toca «Nueva evaluación» para registrar la primera visita.</div>';
+  const prom=avg(V.map(x=>+x.score_total||0));
+  const areas=areasOf().map(a=>({a,s:wAvg(R.filter(r=>r.area===a))})).sort((x,y)=>y.s-x.s);
+  const best=areas[0]||{a:'—',s:0}, worst=areas[areas.length-1]||{a:'—',s:0};
+  const ms=months(V);
+  const byMonth={};V.forEach(x=>{const m=(x.fecha||'').slice(0,7);if(m)(byMonth[m]=byMonth[m]||[]).push(+x.score_total||0);});
+  const serie=[{name:'Score',color:'#1e5af9',map:Object.fromEntries(ms.map(m=>[m,avg(byMonth[m])]))}];
+  const delta=ms.length>1?avg(byMonth[ms[ms.length-1]])-avg(byMonth[ms[0]]):0;
+  const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   return `
   <div class="kpis">
-    <div class="kpi"><div class="lbl">Score promedio</div><div class="val">${prom.toFixed(0)}<span style="font-size:16px;opacity:.5">/100</span></div><div class="sub">${V.length} evaluaciones</div></div>
-    <div class="kpi"><div class="lbl">Última visita</div><div class="val">${(+ult.score_total||0).toFixed(0)}</div><div class="sub">${fmtD(ult.fecha)} · ${escapeHtml(ult.turno||'—')}</div></div>
-    <div class="kpi"><div class="lbl">NPS</div><div class="val">${nps==null?'—':(nps>0?'+':'')+nps}</div><div class="sub">${npss.length} con NPS</div></div>
-    <div class="kpi"><div class="lbl">Acciones abiertas</div><div class="val">${DB.acciones.filter(a=>a.estado!=='hecho').length}</div><div class="sub">de ${DB.acciones.length} totales</div></div>
+    <div class="kpi reveal"><div class="lbl">Score ponderado</div><div class="val">${prom.toFixed(0)}<span style="font-size:16px;opacity:.5">/100</span></div><div class="sub">${V.length} evaluaciones · ${ms.length} meses</div></div>
+    <div class="kpi reveal"><div class="lbl">Tendencia</div><div class="val ${delta>=0?'up':'down'}">${delta>=0?'+':''}${delta.toFixed(1)}</div><div class="sub">${mLabel(ms[0])} → ${mLabel(ms[ms.length-1])}</div></div>
+    <div class="kpi reveal"><div class="lbl">Mejor área</div><div class="val" style="font-size:21px">${best.s.toFixed(0)}</div><div class="sub">${escapeHtml(best.a)}</div></div>
+    <div class="kpi reveal"><div class="lbl">A reforzar</div><div class="val down" style="font-size:21px">${worst.s.toFixed(0)}</div><div class="sub">${escapeHtml(worst.a)}</div></div>
   </div>
-  <div class="grp-t">Evolución del score</div>
-  <div class="card">${months.length? `<div class="spark">${months.map(m=>{const s=avg(byMonth[m]);return `<div class="b" style="height:${Math.max(4,s/maxM*100)}%"><div class="t">${s.toFixed(0)}</div><div class="m">${m.slice(5)}/${m.slice(2,4)}</div></div>`;}).join('')}</div><div style="height:14px"></div>`:'<div class="empty">Una sola fecha aún.</div>'}</div>
-  <div class="grp-t">Desempeño por área</div>
-  <div class="card">${areaScore.map(x=>barRow(x.a,x.s)).join('')||'<div class="empty">—</div>'}</div>`;
+  <div class="section"><div class="section-h"><h3>Evolución del score</h3><span class="hint">promedio mensual ponderado</span></div>
+    <div class="card">${ms.length>1?lineChart(serie,ms,{ymin:40}):'<div class="empty">Una sola fecha aún.</div>'}</div></div>
+  <div class="section"><div class="section-h"><h3>Desempeño por área</h3></div>
+    <div class="card">${areas.map(x=>barRow(x.a,x.s)).join('')}</div></div>
+  <div class="section"><div class="section-h"><h3>Impacto por criterio</h3><span class="hint">peso × brecha = pts a recuperar</span></div>
+    <div class="card">${impactList(R)}</div></div>
+  <div class="section"><div class="section-h"><h3>Mapa de calor · criterio × mes</h3><span class="hint">desliza →</span></div>
+    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})), ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})), (r,c)=>{const vals=R.filter(x=>x.criterio===r.key && v2m[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;})}</div></div>`;
+}
+/* ===== CONSOLIDADO (todas las sedes) ===== */
+function vConsolidado(){
+  const V=DB.allVisitas, R=DB.allResp, locs=DB.locales;
+  if(!V.length)return '<div class="empty">Sin datos consolidados.</div>';
+  const ms=months(V);
+  const v2l={},v2m={};V.forEach(v=>{v2l[v.id]=v.local_id;v2m[v.id]=(v.fecha||'').slice(0,7);});
+  const sede=locs.map((l,i)=>{const vs=V.filter(v=>v.local_id===l.id);
+    const first=avg(vs.filter(v=>v2m[v.id]===ms[0]).map(v=>+v.score_total||0));
+    const last=avg(vs.filter(v=>v2m[v.id]===ms[ms.length-1]).map(v=>+v.score_total||0));
+    return {l,n:vs.length,s:avg(vs.map(v=>+v.score_total||0)),delta:last-first,color:SEDE_COLORS[i%SEDE_COLORS.length]};
+  }).sort((a,b)=>b.s-a.s);
+  const series=locs.map((l,i)=>{const map={};ms.forEach(m=>{const vs=V.filter(v=>v.local_id===l.id&&v2m[v.id]===m);if(vs.length)map[m]=avg(vs.map(v=>+v.score_total||0));});return{name:l.nombre,color:SEDE_COLORS[i%SEDE_COLORS.length],map};});
+  const crit=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
+  const cols=locs.map(l=>({key:l.id,label:(l.nombre||'').split(' ')[0]}));
+  const cellCS=(r,c)=>{const vals=R.filter(x=>x.criterio===r.key&&v2l[x.visita_id]===c.key).map(x=>+x.puntaje||0);return vals.length?avg(vals):null;};
+  const legend=[['≥85','#10b981'],['70–84','#ffcc00'],['50–69','#f59e0b'],['<50','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+  return `
+  <div class="section"><div class="section-h"><h3>Ranking de sedes</h3><span class="hint">${V.length} evaluaciones · ${ms.length} meses</span></div>
+    <div class="sedes">${sede.map((x,i)=>`<div class="sedecard reveal" style="border-top:6px solid ${x.color}">
+      <div class="rank">#${i+1}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
+      <div class="big">${x.s.toFixed(0)}<span style="font-size:15px;opacity:.4">/100</span></div>
+      <div class="trend ${x.delta>=0?'up':'down'}">${x.delta>=0?'▲ +':'▼ '}${x.delta.toFixed(1)} pts · ${x.n} visitas</div></div>`).join('')}</div></div>
+  <div class="section"><div class="section-h"><h3>Evolución por sede</h3><span class="hint">score ponderado mensual</span></div>
+    <div class="card">${lineChart(series,ms,{ymin:40})}<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${escapeHtml(s.name)}</span>`).join('')}</div></div></div>
+  <div class="section"><div class="section-h"><h3>Mapa de calor · criterio × sede</h3><span class="hint">dónde duele en cada local</span></div>
+    <div class="card">${heat(crit,cols,cellCS)}<div class="legend">${legend}</div></div></div>
+  <div class="section"><div class="section-h"><h3>Impacto por criterio · cadena</h3><span class="hint">peso × brecha = pts a recuperar</span></div>
+    <div class="card">${impactList(R)}</div></div>`;
 }
 function wAvg(rs){if(!rs.length)return 0;let n=0,d=0;rs.forEach(r=>{const p=+r.peso||1;n+=(+r.puntaje||0)*p;d+=p;});return d?n/d:0;}
 function barRow(nm,s){const c=s>=85?'var(--green)':s>=70?'var(--amber)':'var(--secondary)';return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
@@ -275,22 +389,18 @@ async function saveVisita(){
 
 /* ===== RANKING ===== */
 function vRanking(){
-  if(!DB.respuestas.length)return '<div class="empty">Sin datos para rankear todavía.</div>';
-  // por empleado
-  const emp={};DB.visitas.forEach(v=>{if(v.empleado_evaluado){(emp[v.empleado_evaluado]=emp[v.empleado_evaluado]||[]).push(+v.score_total||0);}});
+  const V=DB.visitas, R=DB.respuestas;
+  if(!R.length)return '<div class="empty">Sin datos para rankear en esta sede.</div>';
+  const areas=areasOf().map(a=>({k:a,s:wAvg(R.filter(r=>r.area===a))})).sort((x,y)=>y.s-x.s);
+  const emp={};V.forEach(v=>{if(v.empleado_evaluado)(emp[v.empleado_evaluado]=emp[v.empleado_evaluado]||[]).push(+v.score_total||0);});
   const empR=Object.entries(emp).map(([k,a])=>({k,s:avg(a),n:a.length})).sort((x,y)=>y.s-x.s);
-  // por turno
-  const tur={};DB.visitas.forEach(v=>{const t=v.turno||'—';(tur[t]=tur[t]||[]).push(+v.score_total||0);});
+  const tur={};V.forEach(v=>{const t=v.turno||'—';(tur[t]=tur[t]||[]).push(+v.score_total||0);});
   const turR=Object.entries(tur).map(([k,a])=>({k,s:avg(a),n:a.length})).sort((x,y)=>y.s-x.s);
-  // por área
-  const areas=areasOf().map(a=>({k:a,s:wAvg(DB.respuestas.filter(r=>r.area===a))})).sort((x,y)=>y.s-x.s);
-  return `
-  <div class="grp-t">Por colaborador</div>
-  <div class="card">${empR.length?empR.map((x,i)=>`<div class="barrow"><div class="nm">${i+1}. ${escapeHtml(x.k)} <span class="pw mono" style="font-size:10px;opacity:.5">(${x.n})</span></div><div class="bartrack"><div class="barfill" style="width:${x.s}%;background:${x.s>=85?'var(--green)':x.s>=70?'var(--amber)':'var(--secondary)'}"></div></div><div class="pc">${x.s.toFixed(0)}</div></div>`).join(''):'<div class="empty">Registra el «empleado observado» en las evaluaciones.</div>'}</div>
-  <div class="grp-t">Por turno</div>
-  <div class="card">${turR.map(x=>barRow(x.k+' ('+x.n+')',x.s)).join('')}</div>
-  <div class="grp-t">Fortalezas y debilidades (por área)</div>
-  <div class="card">${areas.map(x=>barRow(x.k,x.s)).join('')}</div>`;
+  let h=`<div class="section"><div class="section-h"><h3>Fortalezas y debilidades</h3><span class="hint">por área</span></div><div class="card">${areas.map(x=>barRow(x.k,x.s)).join('')}</div></div>`;
+  h+=`<div class="section"><div class="section-h"><h3>Impacto por criterio</h3><span class="hint">peso × brecha</span></div><div class="card">${impactList(R)}</div></div>`;
+  if(empR.length)h+=`<div class="section"><div class="section-h"><h3>Por colaborador</h3></div><div class="card">${empR.map((x,i)=>barRow((i+1)+'. '+x.k+' ('+x.n+')',x.s)).join('')}</div></div>`;
+  if(turR.length>1)h+=`<div class="section"><div class="section-h"><h3>Por turno</h3></div><div class="card">${turR.map(x=>barRow(x.k+' ('+x.n+')',x.s)).join('')}</div></div>`;
+  return h;
 }
 
 /* ===== ACCIONES ===== */
