@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script src="/auth-guard.js"></script>
@@ -182,7 +183,8 @@ function periodBar(ms){return `<div class="perbar"><button class="pchip ${PER===
 function setPer(p){PER=p;render();}
 
 async function load(){
-  if(window.Chart){Chart.defaults.font.family="'IBM Plex Sans',sans-serif";Chart.defaults.font.size=11;Chart.defaults.color='#171c20';Chart.defaults.borderColor='#dfe3e8';}
+  if(window.Chart){Chart.defaults.font.family="'IBM Plex Sans',sans-serif";Chart.defaults.font.size=11;Chart.defaults.color='#171c20';Chart.defaults.borderColor='#dfe3e8';
+    if(window.ChartDataLabels){Chart.register(ChartDataLabels);Chart.defaults.plugins.datalabels.display=false;}}
   const [loc,pl,vi,ac]=await Promise.all([
     sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('id'),
     sb.from('mys_plantillas').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at').limit(1),
@@ -237,9 +239,9 @@ function vResumen(){
   const lastM=msAll[msAll.length-1], lastScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===lastM).map(v=>+v.score_total||0));
   const anual=avg(Vall.map(v=>+v.score_total||0));
   const periodLbl=PER==='all'?'todos los meses':mLabel(PER);
-  const barCfg={type:'bar',data:{labels:rows.map(r=>r.c),datasets:[{data:rows.map(r=>Math.round(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',scales:{x:{min:0,max:100,ticks:{stepSize:20}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'/100'}}}}};
+  const barCfg={type:'bar',data:{labels:rows.map(r=>r.c),datasets:[{data:rows.map(r=>Math.round(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',scales:{x:{min:0,max:100,ticks:{stepSize:20}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'/100'}},datalabels:{display:true,anchor:'end',align:'start',offset:6,color:ctx=>{const v=ctx.dataset.data[ctx.dataIndex];return (v>=70&&v<80)?'#3a2e00':'#fff';},font:{weight:'700',size:11},formatter:v=>v}}}};
   const bands=[0,0,0,0];rows.forEach(r=>{bands[r.s>=90?0:r.s>=80?1:r.s>=70?2:3]++;});
-  const donut={type:'doughnut',data:{labels:['Excelente','Bueno','Regular','A mejorar'],datasets:[{data:bands,backgroundColor:['#1e5af9','#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:2}]},options:{cutout:'58%',plugins:{legend:{position:'bottom'}}}};
+  const donut={type:'doughnut',data:{labels:['Excelente','Bueno','Regular','A mejorar'],datasets:[{data:bands,backgroundColor:['#1e5af9','#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:2}]},options:{cutout:'58%',plugins:{legend:{position:'bottom'},datalabels:{display:true,color:ctx=>ctx.dataIndex===2?'#3a2e00':'#fff',font:{weight:'800',size:14},formatter:v=>v>0?v:''}}}};
   return `
   ${periodBar(msAll)}
   <div class="kpis">
