@@ -76,6 +76,13 @@ textarea.input{min-height:120px;resize:vertical}
 .boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cdow{font-family:var(--font-mono);font-size:10px;font-weight:700;text-align:center;opacity:.5;padding-bottom:2px}
+.cd{min-height:64px;border:2px solid var(--outline);border-radius:9px;background:var(--surface);padding:4px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.cd-n{font-family:var(--font-mono);font-size:11px;font-weight:700;opacity:.55}
+.cd-e{font-family:var(--font-mono);font-size:8.5px;font-weight:700;color:#fff;border:1.5px solid var(--outline);border-radius:4px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exc{display:flex;align-items:center;justify-content:center;min-height:30px;border:2px solid var(--outline);border-radius:7px;font-family:var(--font-mono);font-size:12px;font-weight:700}
+@media(max-width:560px){.cd{min-height:52px}.cd-e{font-size:0;padding:4px}}
 </style>
 </head>
 <body>
@@ -93,7 +100,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -122,15 +129,20 @@ async function loadRecetario(){
   }catch(e){state.recetario=state.recetario||[];state.prodMap=state.prodMap||{}}
 }
 async function loadExamenes(){const[e,r]=await Promise.all([sb.from('rrhh_examenes').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at',{ascending:false}),sb.from('rrhh_examen_resultados').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(50)]);state.examenes=e.data||[];state.examResult=r.data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadEquipo(){try{const{data}=await sb.rpc('prep_login_roster',{p_marca:MARCA});state.equipo=data||[]}catch(e){state.equipo=[]}}
+async function loadEventos(){const{data}=await sb.from('lb_eventos').select('*').eq('local_id',LOCAL).order('fecha');state.eventos=data||[]}
+async function loadExamPanel(){try{const[e,n]=await Promise.all([sb.from('lb_examenes').select('*').eq('local_id',LOCAL).order('orden'),sb.from('lb_examen_notas').select('*')]);state.examPanel=e.data||[];state.examNotas=n.data||[]}catch(e){state.examPanel=[];state.examNotas=[]}}
+async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['checklists','Checklists','checklist'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['checklists','Checklists','checklist'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',bitacora:'Bitácora'}[state.view];
-  if(state.view==='tablon')renderTablon();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='checklists')renderChecklists();else renderBitacora();
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',bitacora:'Bitácora'}[state.view];
+  const HIDEADD=['equipo','politicas','recetario','plantillas'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';
+  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='checklists')renderChecklists();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -184,7 +196,7 @@ function renderRecetario(){
 }
 function renderExamenes(){
   const exs=state.examenes||[],res=state.examResult||[];
-  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
+  $('#screen').innerHTML=examPanelHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:6px 0 12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
     (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.map(r=>Math.round(r.puntaje/r.total*100))):null;
       return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${preg.length} preguntas${e.descripcion?(' · '+e.descripcion):''}${mejor!=null?(' · mejor '+mejor+'%'):''}</div></div><button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button></div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
     (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`+res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);const pct=Math.round(r.puntaje/r.total*100);return `<div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed var(--gray-soft);font-size:13px"><span>${r.persona||'—'} · ${ex?ex.titulo:'examen'}</span><strong style="color:${pct>=70?'var(--green)':'var(--secondary)'}">${pct}%</strong></div>`}).join(''):'');
@@ -220,6 +232,117 @@ Ej:
     if(!preg.length){toast('Agrega al menos una pregunta con opciones','warn');return}
     const{error}=await sb.from('rrhh_examenes').insert({marca_id:MARCA,local_id:LOCAL,titulo:tit,descripcion:$('#ex-desc').value||null,preguntas:preg,activo:true});
     if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadExamenes();render();toast('Servido · examen creado','ok')};
+}
+/* ===== EQUIPO ===== */
+function renderEquipo(){
+  const t=state.equipo||[];
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">${t.length} miembros del equipo 👥</div>
+   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">${
+     t.map(m=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;display:flex;align-items:center;gap:12px">
+       <div style="width:44px;height:44px;border-radius:50%;border:2px solid var(--outline);background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;flex-shrink:0">${(m.nombre||'?').trim().slice(0,1)}</div>
+       <div style="min-width:0"><div style="font-weight:700">${m.nombre||''}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${m.puesto||'—'}</div></div></div>`).join('')||'<div class="empty">Sin miembros del equipo.</div>'}</div>`;
+}
+/* ===== PANEL DE EXÁMENES ===== */
+function pctColor(p){return p>=85?'#1e5af9':p>=75?'#10b981':p>=65?'#ffcc00':'#ff3b30';}
+function examPanelHTML(){
+  const exs=state.examPanel||[],notas=state.examNotas||[];if(!exs.length)return'';
+  const ids=new Set(exs.map(e=>e.id));const ns=notas.filter(n=>ids.has(n.examen_id));
+  const members=[...new Set(ns.map(n=>n.nombre_persona))];
+  const get=(m,eid)=>{const r=ns.find(x=>x.nombre_persona===m&&x.examen_id===eid);return r&&r.nota_pct!=null?Number(r.nota_pct):null;};
+  const avgM=m=>{const vs=exs.map(e=>get(m,e.id)).filter(v=>v!=null);return vs.length?Math.round(vs.reduce((a,b)=>a+b,0)/vs.length):null;};
+  members.sort((a,b)=>(avgM(a)||0)-(avgM(b)||0));
+  const cols=exs.length, maxp=Math.max(...exs.map(e=>+e.max_pct||100));
+  let h=`<div class="grp-t" style="margin:0 0 6px">Panel de exámenes</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:8px">${cols} exámenes · nota máxima ${maxp}%</div>
+   <div style="overflow-x:auto"><div style="display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(${cols},minmax(52px,1fr)) minmax(52px,.9fr);gap:4px;min-width:${150+cols*58+58}px">
+   <div></div>${exs.map(e=>`<div style="font-family:var(--font-mono);font-size:9px;font-weight:700;text-align:center;opacity:.6;align-self:end;padding-bottom:3px">${(e.nombre||'').split(' ').slice(0,2).join(' ')}</div>`).join('')}<div style="font-family:var(--font-mono);font-size:9px;font-weight:700;text-align:center;opacity:.6;align-self:end;padding-bottom:3px">PROM</div>`;
+  members.forEach(m=>{h+=`<div style="font-size:12px;font-weight:600;display:flex;align-items:center">${m}</div>`;
+    exs.forEach(e=>{const v=get(m,e.id);h+=v==null?`<div class="exc" style="background:var(--gray-soft);opacity:.4">·</div>`:`<div class="exc" style="background:${pctColor(v)};color:#fff">${v}</div>`;});
+    const a=avgM(m);h+=`<div class="exc" style="background:${a==null?'var(--gray-soft)':pctColor(a)};color:#fff;font-weight:800">${a==null?'·':a}</div>`;});
+  h+=`</div></div><div style="height:18px"></div>`;return h;
+}
+/* ===== CALENDARIO ===== */
+const EVCOL={capacitacion:'#1e5af9',observacion:'#ffcc00',reunion:'#10b981',the_talk:'#7c3aed',otro:'#9aa3ab'};
+const EVLBL={capacitacion:'Capacitación',observacion:'Observación',reunion:'Reunión',the_talk:'The Talk',otro:'Evento'};
+function shiftMonth(ym,d){let[Y,M]=ym.split('-').map(Number);M+=d;if(M<1){M=12;Y--}if(M>12){M=1;Y++}return Y+'-'+String(M).padStart(2,'0');}
+function renderCalendario(){
+  if(!state.calMonth){const ev=state.eventos||[];state.calMonth=(ev[0]&&ev[0].fecha?ev[0].fecha.slice(0,7):hoyISO().slice(0,7));}
+  const ym=state.calMonth,[Y,M]=ym.split('-').map(Number);
+  const start=(new Date(Y,M-1,1).getDay()+6)%7, days=new Date(Y,M,0).getDate();
+  const ev=(state.eventos||[]).filter(e=>(e.fecha||'').slice(0,7)===ym), byDay={};
+  ev.forEach(e=>{const d=+e.fecha.slice(8,10);(byDay[d]=byDay[d]||[]).push(e);});
+  const mn=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre'][M-1];
+  let cells='';for(let i=0;i<start;i++)cells+='<div></div>';
+  for(let d=1;d<=days;d++){const evs=byDay[d]||[];cells+=`<div class="cd"><div class="cd-n">${d}</div>${evs.map(e=>`<div class="cd-e" style="background:${EVCOL[e.tipo]||'#9aa3ab'}">${(e.hora_ini||'').slice(0,5)} ${EVLBL[e.tipo]||''}</div>`).join('')}</div>`;}
+  $('#screen').innerHTML=`
+   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+     <button class="btn-ico" id="cal-prev" style="width:auto"><span class="material-symbols-outlined">chevron_left</span></button>
+     <div style="font-family:var(--font-display);font-size:18px">${mn} ${Y}</div>
+     <button class="btn-ico" id="cal-next" style="width:auto"><span class="material-symbols-outlined">chevron_right</span></button></div>
+   <div class="calgrid">${['L','M','M','J','V','S','D'].map(d=>`<div class="cdow">${d}</div>`).join('')}${cells}</div>
+   <div class="grp-t" style="margin-top:16px">Agenda</div>
+   ${ev.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.hora_ini||'').localeCompare(b.hora_ini||'')).map(e=>`<div style="display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px"><div style="width:10px;align-self:stretch;border-radius:4px;background:${EVCOL[e.tipo]||'#9aa3ab'}"></div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.65">${e.fecha} · ${(e.hora_ini||'').slice(0,5)}–${(e.hora_fin||'').slice(0,5)}${e.responsable?(' · '+e.responsable):''}</div></div><span class="tagx cat">${EVLBL[e.tipo]||''}</span></div>`).join('')||'<div class="empty">Sin eventos este mes.</div>'}`;
+  $('#cal-prev').onclick=()=>{state.calMonth=shiftMonth(ym,-1);renderCalendario()};
+  $('#cal-next').onclick=()=>{state.calMonth=shiftMonth(ym,1);renderCalendario()};
+}
+function agregarEvento(){
+  setHead('📅','Agregar evento','');
+  $('#sheet-body').innerHTML=`
+   <div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="ev-tit" placeholder="Capacitación, observación de turno…"></div>
+   <div class="sheet-section"><div class="field-lbl">Tipo</div><select class="input" id="ev-tipo"><option value="capacitacion">Capacitación</option><option value="observacion">Observación de turno</option><option value="reunion">Reunión</option><option value="the_talk">The Talk</option><option value="otro">Otro</option></select></div>
+   <div class="sheet-section"><div class="field-lbl">Fecha</div><input class="input" id="ev-fecha" type="date" value="${hoyISO()}"></div>
+   <div class="sheet-section" style="display:flex;gap:10px"><div style="flex:1"><div class="field-lbl">Desde</div><input class="input" id="ev-hi" type="time" value="16:30"></div><div style="flex:1"><div class="field-lbl">Hasta</div><input class="input" id="ev-hf" type="time" value="18:30"></div></div>
+   <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="ev-resp" placeholder="Maître, Supervisor…"></div>
+   <div class="sheet-section"><div class="field-lbl">Descripción</div><textarea class="input" id="ev-desc"></textarea></div>
+   <div class="sheet-section"><button class="btn primary" id="ev-save" style="width:100%">Guardar evento</button></div>`;
+  openSheet();
+  $('#ev-save').onclick=async()=>{const t=$('#ev-tit').value.trim();if(!t){toast('Falta título','warn');return}const f=$('#ev-fecha').value;
+    const{error}=await sb.from('lb_eventos').insert({marca_id:MARCA,local_id:LOCAL,titulo:t,tipo:$('#ev-tipo').value,fecha:f,hora_ini:$('#ev-hi').value||null,hora_fin:$('#ev-hf').value||null,responsable:$('#ev-resp').value||null,descripcion:$('#ev-desc').value||null});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();state.calMonth=f.slice(0,7);await loadEventos();render();toast('Servido · evento agregado','ok')};
+}
+/* ===== THE TALK ===== */
+function renderThetalk(){
+  const t=state.thetalk||[];
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Conversaciones 1 a 1 · feedback y compromisos 🤝</div>`+
+   (t.map(x=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px">
+     <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div style="font-weight:700">${x.lider||''} → ${x.colaborador||''}</div><span class="tagx cat">${x.fecha}</span></div>
+     ${x.fortalezas?`<div style="margin-top:8px"><span class="tagx" style="background:var(--green-soft,#d1fae5)">Fortalezas</span><div style="font-size:13px;margin-top:3px">${x.fortalezas}</div></div>`:''}
+     ${x.mejoras?`<div style="margin-top:8px"><span class="tagx" style="background:var(--amber-soft,#fef3c7)">A mejorar</span><div style="font-size:13px;margin-top:3px">${x.mejoras}</div></div>`:''}
+     ${x.compromisos?`<div style="margin-top:8px"><span class="tagx" style="background:var(--primary-soft)">Compromisos</span><div style="font-size:13px;margin-top:3px">${x.compromisos}</div></div>`:''}
+     ${x.proxima?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:8px">📆 Próxima conversación: ${x.proxima}</div>`:''}</div>`).join('')||'<div class="empty">Sin conversaciones. Toca "+ The Talk".</div>');
+}
+function nuevoTalk(){
+  setHead('🤝','Nuevo The Talk','Conversación 1 a 1');
+  $('#sheet-body').innerHTML=`
+   <div class="sheet-section"><div class="field-lbl">Líder</div><input class="input" id="tt-lid" placeholder="Nombre y puesto"></div>
+   <div class="sheet-section"><div class="field-lbl">Colaborador</div><input class="input" id="tt-col" placeholder="Nombre y puesto"></div>
+   <div class="sheet-section"><div class="field-lbl">Fecha</div><input class="input" id="tt-fec" type="date" value="${hoyISO()}"></div>
+   <div class="sheet-section"><div class="field-lbl">Fortalezas</div><textarea class="input" id="tt-for"></textarea></div>
+   <div class="sheet-section"><div class="field-lbl">A mejorar</div><textarea class="input" id="tt-mej"></textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Compromisos</div><textarea class="input" id="tt-com"></textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Próxima conversación</div><input class="input" id="tt-prox" type="date"></div>
+   <div class="sheet-section"><button class="btn primary" id="tt-save" style="width:100%">Guardar</button></div>`;
+  openSheet();
+  $('#tt-save').onclick=async()=>{const l=$('#tt-lid').value.trim(),c=$('#tt-col').value.trim();if(!l||!c){toast('Falta líder o colaborador','warn');return}
+    const{error}=await sb.from('lb_thetalk').insert({marca_id:MARCA,local_id:LOCAL,fecha:$('#tt-fec').value,lider:l,colaborador:c,fortalezas:$('#tt-for').value||null,mejoras:$('#tt-mej').value||null,compromisos:$('#tt-com').value||null,proxima:$('#tt-prox').value||null});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadThetalk();render();toast('Servido · The Talk registrado','ok')};
+}
+/* ===== POLÍTICAS ===== */
+const POLITICAS=[
+ {t:'Jornada y puntualidad',c:'• Marca tu ingreso y salida (asistencia).\n• Llega 10 min antes de tu turno, uniformado y listo para el briefing.\n• Tres tardanzas en el mes = llamada de atención formal.'},
+ {t:'Presentación e higiene personal',c:'• Uniforme completo, limpio y planchado.\n• Cabello recogido, uñas cortas y limpias, sin perfumes intensos.\n• Lavado de manos al ingresar, tras cada pausa y al cambiar de tarea (HACCP).'},
+ {t:'Manipulación de alimentos (HACCP)',c:'• Respeta la cadena de frío y las temperaturas de cocción.\n• Rotación FEFO: primero en vencer, primero en salir.\n• Reporta de inmediato cualquier insumo en mal estado.'},
+ {t:'Atención al comensal',c:'• Trato cálido, cercano y respetuoso en todo momento.\n• Protocolo LAST ante reclamos: escucha, discúlpate, resuelve, agradece.\n• Nunca discutas con un comensal: escala al supervisor de turno.'},
+ {t:'Propinas y caja',c:'• Las propinas se reparten según la política acordada del equipo.\n• No se solicita ni se induce propina.\n• Prohibido manejar efectivo de caja sin autorización.'},
+ {t:'Conducta y convivencia',c:'• Cero tolerancia a discriminación, acoso o maltrato.\n• Celular guardado durante el turno (salvo urgencias autorizadas).\n• Respeto entre compañeros y con todas las áreas.'},
+ {t:'Seguridad',c:'• Conoce salidas, extintores y botiquín.\n• Reporta riesgos (pisos mojados, fallas eléctricas) de inmediato.\n• Sigue el plan de evacuación ante sismo o incendio.'},
+ {t:'Confidencialidad',c:'• Recetas, proveedores y datos de comensales son confidenciales.\n• No compartas información del negocio fuera del trabajo.'},
+ {t:'Faltas y sanciones',c:'• Leves: llamada de atención verbal.\n• Reiteradas o graves: amonestación escrita.\n• Muy graves (robo, agresión, abandono de turno): según reglamento y ley laboral vigente.'}
+];
+function renderPoliticas(){
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Reglamento interno de trabajo ⚖️</div>`+
+   POLITICAS.map((p,i)=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px">
+     <div style="font-family:var(--font-display);font-size:16px;margin-bottom:6px">${i+1}. ${p.t}</div>
+     <div style="font-size:13px;line-height:1.6;white-space:pre-wrap;opacity:.9">${p.c}</div></div>`).join('');
 }
 function renderTablon(){
   const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
@@ -330,7 +453,7 @@ function abrirBitacora(){
   openSheet();
 }
 
-function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else if(state.view==='examenes'){crearExamen()}else{editarPost(null)}}
+function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else if(state.view==='examenes'){crearExamen()}else if(state.view==='calendario'){agregarEvento()}else if(state.view==='thetalk'){nuevoTalk()}else if(state.view==='equipo'||state.view==='politicas'){/* sin acción */}else{editarPost(null)}}
 function abrirChecklistNuevo(){
   setHead('✅','Nuevo checklist','El Libro');let items=[''];
   const draw=()=>{$('#sheet-body').innerHTML=`
