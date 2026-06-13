@@ -563,6 +563,35 @@ Cada módulo nuevo debe seguir esta estructura HTML:
 - EN-03 [F3] Analytics predictivo
 - EN-04 [F2] Campañas segmentadas
 
+#### Sub-módulo: Voz del Cliente (reemplaza a "Mystery Shopper" como contenedor)
+"Mystery Shopper" era demasiado específico. El contenedor ahora se llama **Voz del Cliente** (Voice of Customer) y agrupa TRES formas de medir la experiencia del comensal. Archivo: `voz-cliente.html` (renombrar desde `mystery.html`, manteniendo el contenido de Mystery Shopper como una pestaña interna).
+
+**Pestaña 1 — Mystery Shopper** (ya construido en mystery.html):
+- VC-01 [F2] Evaluaciones de comprador incógnito con checklist configurable
+- VC-02 [F2] Scoring por categorías (servicio, comida, limpieza, ambiente, tiempos)
+- VC-03 [F2] Fotos y evidencia adjunta por evaluación
+- VC-04 [F2] Comparativo de evaluaciones entre sedes y en el tiempo
+
+**Pestaña 2 — Encuestas** (nuevo):
+- VC-05 [F2] Constructor de encuestas (NPS, CSAT, preguntas abiertas y cerradas)
+- VC-06 [F2] Envío post-visita automático por WhatsApp/email (al cerrar cuenta en POS, usando teléfono de Bienvenida)
+- VC-07 [F2] QR en mesa/boleta para encuesta rápida
+- VC-08 [F2] Dashboard de resultados: NPS, CSAT, tendencias, segmentación por sede/mozo/plato
+- VC-09 [F2] Alertas por respuesta negativa para seguimiento inmediato
+
+**Pestaña 3 — Reseñas** (inspirado en Cinquo, tabla `eng_resenas`):
+- VC-10 [F2] Monitor de reviews Google + TripAdvisor: rating real (sin redondeo), reviews sin responder, tendencias
+- VC-11 [F2] Solicitud automática post-visita: al cerrar cuenta en POS, WhatsApp con link directo a Google review
+- VC-12 [F2] QR trackeable por mesero/mesa para saber quién genera mejores reviews
+- VC-13 [F2] Respuestas con IA usando contexto del comensal (qué pidió, cuántas visitas, si es VIP) — ventaja sobre Cinquo que solo ve el texto
+- VC-14 [F2] Compartir reseñas en redes con templates de marca
+- VC-15 [F2] Alertas de reputación (caída de rating, review negativo, reviews sin responder >24h)
+- VC-16 [F3] Correlación review↔operación: cruzar review negativo con la mesa/turno/mozo de esa noche para detectar patrones (EXCLUSIVO de Prep!, Cinquo no puede)
+
+**Diferenciador comercial vs Cinquo:** Prep! ya sabe quién comió, qué pidió y cuánto gastó. Cinquo es externo y solo ve el texto del review. Prep! sugiere la respuesta con el contexto real de esa visita y correlaciona reseñas con la operación.
+
+**Integraciones técnicas necesarias:** Google My Business API (lectura + respuesta de reviews), TripAdvisor Content API, WhatsApp Business API (compartida con Bienvenida), LLM para respuestas (Claude API).
+
 ## 14. ALFRED — Sistema de Project Management
 
 Alfred es el sistema interno de gestión de proyectos de Francisco. Vive en la MISMA base de datos Supabase (proyecto `jmkvphayyhwzootlybde`).
