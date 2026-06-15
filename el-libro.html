@@ -100,7 +100,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -133,16 +133,18 @@ async function loadEquipo(){try{const{data}=await sb.rpc('prep_login_roster',{p_
 async function loadEventos(){const{data}=await sb.from('lb_eventos').select('*').eq('local_id',LOCAL).order('fecha');state.eventos=data||[]}
 async function loadExamPanel(){try{const[e,n]=await Promise.all([sb.from('lb_examenes').select('*').eq('local_id',LOCAL).order('orden'),sb.from('lb_examen_notas').select('*')]);state.examPanel=e.data||[];state.examNotas=n.data||[]}catch(e){state.examPanel=[];state.examNotas=[]}}
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
+async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['checklists','Checklists','checklist'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',bitacora:'Bitácora'}[state.view];
+  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
   const HIDEADD=['equipo','politicas','recetario','plantillas'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';
-  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='checklists')renderChecklists();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
+  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -363,6 +365,97 @@ function renderPoliticas(){
      <div style="font-family:var(--font-display);font-size:16px;margin-bottom:6px">${i+1}. ${p.t}</div>
      <div style="font-size:13px;line-height:1.6;white-space:pre-wrap;opacity:.9">${p.c}</div></div>`).join('');
 }
+/* ===== BRIEFING ===== */
+function fmtHora(ts){if(!ts)return'';try{return new Date(ts).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function briefCard(b){return `<div class="bfcard" data-id="${b.id}" style="cursor:pointer;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:9px">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><div style="font-weight:700">${b.fecha} · ${b.turno||''}</div><span class="tagx cat">${b.responsable||''}</span></div>
+  ${b.objetivos?`<div style="font-size:13px;margin-top:6px"><b>Objetivos:</b> ${b.objetivos}</div>`:''}
+  ${b.reservas_eventos?`<div style="font-size:13px;margin-top:3px"><b>Reservas/eventos:</b> ${b.reservas_eventos}</div>`:''}
+  ${b.focos_servicio?`<div style="font-size:13px;margin-top:3px"><b>Focos:</b> ${b.focos_servicio}</div>`:''}
+  ${b.notas?`<div style="font-size:13px;margin-top:3px;opacity:.8">${b.notas}</div>`:''}
+  <div style="font-family:var(--font-mono);font-size:10px;opacity:.45;margin-top:6px">Generado ${fmtHora(b.created_at)} · ✏️ editar</div></div>`;}
+function renderBriefing(){
+  const hoy=hoyISO();
+  const today=(state.briefings||[]).filter(b=>b.fecha===hoy);
+  const hist=(state.briefings||[]).filter(b=>b.fecha!==hoy).slice(0,20);
+  const clName={};(state.checklists||[]).forEach(c=>clName[c.id]=c.nombre);
+  const runsHoy=state.runs||[];
+  const gen=`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:12px;font-family:var(--font-mono);font-size:12px;line-height:1.7">
+     <div style="font-weight:700;margin-bottom:4px">⏱️ Generado hoy</div>
+     ${today.length?today.map(b=>`Briefing (${b.turno||'—'}): <b>${fmtHora(b.created_at)}</b>`).join('<br>'):'Briefing: <span style="opacity:.5">pendiente</span>'}<br>
+     ${runsHoy.length?runsHoy.map(r=>`${clName[r.checklist_id]||'Checklist'}: <b>${fmtHora(r.created_at)}</b>`).join('<br>'):'Checklists: <span style="opacity:.5">pendientes</span>'}</div>`;
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Briefing diario · toca para editar 🚩</div>`+gen+
+   (today.length?today.map(briefCard).join(''):'<div class="empty">Sin briefing de hoy. Toca «+ Briefing».</div>')+
+   (hist.length?`<div class="grp-t" style="margin-top:16px">Anteriores</div>`+hist.map(briefCard).join(''):'');
+  $$('#screen .bfcard').forEach(c=>c.onclick=()=>briefingSheet(state.briefings.find(b=>b.id===c.dataset.id)));
+}
+function briefingSheet(rec){
+  const ed=!!rec, v=s=>(s||'').replace(/"/g,'&quot;');
+  setHead('🚩',ed?'Editar briefing':'Briefing diario','Formato diario');
+  $('#sheet-body').innerHTML=`
+   <div class="sheet-section" style="display:flex;gap:10px"><div style="flex:1"><div class="field-lbl">Fecha</div><input class="input" id="bf-fec" type="date" value="${ed?rec.fecha:hoyISO()}"></div>
+     <div style="flex:1"><div class="field-lbl">Turno</div><select class="input" id="bf-tur"><option value="apertura">Apertura</option><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option></select></div></div>
+   <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="bf-resp" value="${ed?v(rec.responsable):''}" placeholder="Quién dirige el briefing"></div>
+   <div class="sheet-section"><div class="field-lbl">Objetivos del día</div><textarea class="input" id="bf-obj">${ed&&rec.objetivos?rec.objetivos:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Reservas y eventos</div><textarea class="input" id="bf-res">${ed&&rec.reservas_eventos?rec.reservas_eventos:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Focos de servicio</div><textarea class="input" id="bf-foc">${ed&&rec.focos_servicio?rec.focos_servicio:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Notas</div><textarea class="input" id="bf-not">${ed&&rec.notas?rec.notas:''}</textarea></div>
+   <div class="sheet-section"><button class="btn primary" id="bf-save" style="width:100%">${ed?'Guardar cambios':'Guardar briefing'}</button>${ed?'<button class="btn ghost" id="bf-del" style="width:100%;margin-top:8px;color:var(--secondary)">Eliminar</button>':''}</div>`;
+  openSheet();
+  if(ed&&$('#bf-tur'))$('#bf-tur').value=rec.turno||'cena';
+  $('#bf-save').onclick=async()=>{const payload={fecha:$('#bf-fec').value,turno:$('#bf-tur').value,responsable:$('#bf-resp').value||null,objetivos:$('#bf-obj').value||null,reservas_eventos:$('#bf-res').value||null,focos_servicio:$('#bf-foc').value||null,notas:$('#bf-not').value||null};
+    const{error}=ed?await sb.from('lb_briefings').update(payload).eq('id',rec.id):await sb.from('lb_briefings').insert(Object.assign({marca_id:MARCA,local_id:LOCAL},payload));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadBriefings();render();toast(ed?'Va · actualizado':'Servido · briefing guardado','ok')};
+  if(ed)$('#bf-del').onclick=async()=>{if(!confirm('¿Eliminar este briefing?'))return;await sb.from('lb_briefings').delete().eq('id',rec.id);closeSheet();await loadBriefings();render();toast('Eliminado','ok')};
+}
+/* ===== EVENTUALIDADES + reporte diario ===== */
+const GRAV={baja:'var(--green)',media:'var(--tertiary)',alta:'var(--secondary)'};
+function eventCard(e){return `<div class="evcard" data-id="${e.id}" style="cursor:pointer;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:13px 14px;margin-bottom:8px;display:flex;gap:10px">
+  <div style="width:10px;align-self:stretch;border-radius:4px;background:${GRAV[e.gravedad]||'#9aa3ab'}"></div>
+  <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:8px"><div style="font-weight:700">${e.tipo||'Eventualidad'} <span style="font-family:var(--font-mono);font-size:10px;opacity:.5">${e.turno||''}</span></div><span class="tagx" style="background:${GRAV[e.gravedad]||'var(--gray-soft)'};${e.gravedad==='media'?'':'color:#fff'}">${e.gravedad||''}</span></div>
+    <div style="font-size:13px;margin-top:3px">${e.descripcion||''}</div>
+    ${e.accion?`<div style="font-size:12px;opacity:.75;margin-top:2px"><b>Acción:</b> ${e.accion}</div>`:''}
+    <div style="font-family:var(--font-mono);font-size:10px;opacity:.45;margin-top:4px">${e.responsable||''} · ${fmtHora(e.created_at)} · ✏️ editar</div></div></div>`;}
+function renderEventualidades(){
+  const hoy=hoyISO();const ev=state.eventualidades||[];
+  const byDay={};ev.forEach(e=>{(byDay[e.fecha]=byDay[e.fecha]||[]).push(e);});
+  const dias=Object.keys(byDay).sort().reverse();
+  $('#screen').innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+     <div style="flex:1;font-family:var(--font-mono);font-size:11px;opacity:.6">Reporte de eventualidades · cierre del día 📝</div>
+     <button class="btn-ico primary" id="ev-send" style="width:auto"><span class="material-symbols-outlined" style="font-size:16px">mail</span>Enviar reporte de hoy</button></div>`+
+   (dias.length?dias.map(d=>`<div class="grp-t" style="margin:14px 0 8px">${d===hoy?'Hoy · ':''}${d}</div>`+byDay[d].map(eventCard).join('')).join(''):'<div class="empty">Sin eventualidades. Toca «+ Eventualidad».</div>');
+  const sb1=$('#ev-send');if(sb1)sb1.onclick=enviarReporte;
+  $$('#screen .evcard').forEach(c=>c.onclick=()=>eventSheet(state.eventualidades.find(e=>e.id===c.dataset.id)));
+}
+function eventSheet(rec){
+  const ed=!!rec, v=s=>(s||'').replace(/"/g,'&quot;');
+  setHead('📝',ed?'Editar eventualidad':'Nueva eventualidad','Reporte del turno');
+  $('#sheet-body').innerHTML=`
+   <div class="sheet-section" style="display:flex;gap:10px"><div style="flex:1"><div class="field-lbl">Fecha</div><input class="input" id="ve-fec" type="date" value="${ed?rec.fecha:hoyISO()}"></div>
+     <div style="flex:1"><div class="field-lbl">Turno</div><select class="input" id="ve-tur"><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option></select></div></div>
+   <div class="sheet-section" style="display:flex;gap:10px"><div style="flex:1"><div class="field-lbl">Tipo</div><input class="input" id="ve-tipo" value="${ed?v(rec.tipo):''}" placeholder="Servicio, Cocina, Equipo…"></div>
+     <div style="flex:1"><div class="field-lbl">Gravedad</div><select class="input" id="ve-grav"><option value="baja">Baja</option><option value="media">Media</option><option value="alta">Alta</option></select></div></div>
+   <div class="sheet-section"><div class="field-lbl">Descripción</div><textarea class="input" id="ve-desc">${ed&&rec.descripcion?rec.descripcion:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Acción tomada</div><textarea class="input" id="ve-acc">${ed&&rec.accion?rec.accion:''}</textarea></div>
+   <div class="sheet-section"><div class="field-lbl">Responsable</div><input class="input" id="ve-resp" value="${ed?v(rec.responsable):''}"></div>
+   <div class="sheet-section"><button class="btn primary" id="ve-save" style="width:100%">${ed?'Guardar cambios':'Registrar'}</button>${ed?'<button class="btn ghost" id="ve-del" style="width:100%;margin-top:8px;color:var(--secondary)">Eliminar</button>':''}</div>`;
+  openSheet();
+  if(ed){if($('#ve-tur'))$('#ve-tur').value=rec.turno||'cena';if($('#ve-grav'))$('#ve-grav').value=rec.gravedad||'baja';}
+  $('#ve-save').onclick=async()=>{const d=$('#ve-desc').value.trim();if(!d){toast('Escribe la descripción','warn');return}
+    const payload={fecha:$('#ve-fec').value,turno:$('#ve-tur').value,tipo:$('#ve-tipo').value||null,gravedad:$('#ve-grav').value,descripcion:d,accion:$('#ve-acc').value||null,responsable:$('#ve-resp').value||null};
+    const{error}=ed?await sb.from('lb_eventualidades').update(payload).eq('id',rec.id):await sb.from('lb_eventualidades').insert(Object.assign({marca_id:MARCA,local_id:LOCAL},payload));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadEventualidades();render();toast(ed?'Va · actualizado':'Servido · eventualidad registrada','ok')};
+  if(ed)$('#ve-del').onclick=async()=>{if(!confirm('¿Eliminar?'))return;await sb.from('lb_eventualidades').delete().eq('id',rec.id);closeSheet();await loadEventualidades();render();toast('Eliminado','ok')};
+}
+async function enviarReporte(){
+  toast('Generando reporte…');
+  try{const{data,error}=await sb.functions.invoke('reporte-diario',{body:{local_id:LOCAL,fecha:hoyISO()}});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    const r=(data&&data.resultados&&data.resultados[0])||{};
+    if(r.sent)toast('Servido · reporte enviado a '+((r.recipients||[]).length)+' correos','ok');
+    else toast('Reporte generado ('+(r.eventualidades||0)+' eventualidades). Falta configurar el correo.','warn');
+  }catch(e){toast('Atrás: '+(e.message||e),'err');}
+}
 function renderTablon(){
   const list=state.posts.filter(p=>p.tipo==='comunicado'||p.tipo==='politica');
   // Mensaje del día = comunicado más reciente (prioriza alta/fijado)
@@ -472,7 +565,7 @@ function abrirBitacora(){
   openSheet();
 }
 
-function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else if(state.view==='examenes'){crearExamen()}else if(state.view==='calendario'){agregarEvento()}else if(state.view==='thetalk'){nuevoTalk()}else if(state.view==='equipo'||state.view==='politicas'){/* sin acción */}else{editarPost(null)}}
+function nuevo(){if(state.view==='checklists'){abrirChecklistNuevo()}else if(state.view==='bitacora'){abrirBitacora()}else if(state.view==='examenes'){crearExamen()}else if(state.view==='calendario'){agregarEvento()}else if(state.view==='thetalk'){nuevoTalk()}else if(state.view==='briefing'){briefingSheet(null)}else if(state.view==='eventualidades'){eventSheet(null)}else if(state.view==='equipo'||state.view==='politicas'){/* sin acción */}else{editarPost(null)}}
 function abrirChecklistNuevo(){
   setHead('✅','Nuevo checklist','El Libro');let items=[''];
   const draw=()=>{$('#sheet-body').innerHTML=`
