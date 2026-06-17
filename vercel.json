@@ -70,6 +70,10 @@
       "destination": "/admin.html"
     },
     {
+      "source": "/cuenta",
+      "destination": "/cuenta.html"
+    },
+    {
       "source": "/prep",
       "destination": "/prep.html"
     },
