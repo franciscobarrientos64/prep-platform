@@ -220,14 +220,6 @@
     {
       "source": "/nav",
       "destination": "/nav.html"
-    },
-    {
-      "source": "/evolving-studio",
-      "destination": "/evolving-studio.html"
-    },
-    {
-      "source": "/estudio",
-      "destination": "/evolving-studio.html"
     }
   ],
   "headers": [
