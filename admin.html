@@ -37,6 +37,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .row .info{flex:1;min-width:0}.row .info h3{font-size:15px;font-weight:700}.row .info .meta{font-family:var(--font-mono);font-size:11px;opacity:.7;display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
 .tagx{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
 .tagx.sa{background:var(--secondary);color:#fff}.tagx.adm{background:var(--primary);color:#fff}.tagx.op{background:var(--gray-soft)}
+.sendbtn{flex-shrink:0;width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--tertiary);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000;cursor:pointer}.sendbtn:active{transform:translate(2px,2px);box-shadow:none}.sendbtn .material-symbols-outlined{font-size:19px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 #000;cursor:pointer}.chip.active{background:var(--ink);color:var(--bg)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:48px}
@@ -105,9 +106,10 @@ function render(){
 }
 function renderUsuarios(){
   $('#screen').innerHTML=state.usuarios.map(u=>{const cls=u.rol_sistema==='superadmin'?'sa':u.rol_sistema==='admin_marca'?'adm':'op';
-    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div><span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
+    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div>${u.email?`<button class="sendbtn" data-send="${u.id}" title="Enviar acceso por correo"><span class="material-symbols-outlined">forward_to_inbox</span></button>`:''}<span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
   }).join('')||'<div class="empty">Sin usuarios</div>';
   $$('#screen .row').forEach(r=>r.onclick=()=>editarUsuario(state.usuarios.find(u=>u.id===r.dataset.id)));
+  $$('#screen .sendbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();enviarAcceso(state.usuarios.find(u=>u.id===b.dataset.send))});
 }
 function editarUsuario(u){
   const ed=!!u;const c=Object.assign({nombre:'',email:'',rol_sistema:'operativo',marca_id:'m6',local_id:'l11',rol_id:null,empleado_id:null,activo:true},u||{});
@@ -122,6 +124,7 @@ function editarUsuario(u){
       ${c.rol_sistema==='operativo'?`<div class="sheet-section"><div class="field-lbl">Rol / permisos</div><select class="select" id="u-rol"><option value="">— elegir rol —</option>${rolesM.map(r=>`<option value="${r.id}" ${c.rol_id===r.id?'selected':''}>${r.nombre}</option>`).join('')}</select></div>`:''}
       <div class="sheet-section"><div class="field-lbl">Vincular empleado (RRHH, opcional)</div><select class="select" id="u-emp"><option value="">— ninguno —</option>${empsL.map(e=>`<option value="${e.id}" ${c.empleado_id===e.id?'selected':''}>${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
       <div class="sheet-section"><label class="chip ${c.activo?'active':''}" id="u-act" style="cursor:pointer">${c.activo?'✓ Activo':'Inactivo'}</label></div>
+      ${ed&&c.email?`<div class="sheet-section"><button class="btn" id="u-send" style="background:var(--tertiary)"><span class="material-symbols-outlined">forward_to_inbox</span>Enviar acceso por correo</button><div class="field-lbl" style="margin-top:8px;opacity:.55;text-transform:none;letter-spacing:0">Genera una contraseña temporal nueva y la envía a ${c.email}. El usuario deberá cambiarla al ingresar.</div></div>`:''}
       <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="u-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="u-cancel">Atrás</button>'}<button class="btn primary" id="u-save">Guardar</button></div></div>`;
     $$('#u-rs .chip').forEach(b=>b.onclick=()=>{c.rol_sistema=b.dataset.r;draw()});
     if($('#u-marca'))$('#u-marca').onchange=e=>{c.marca_id=e.target.value;c.local_id='';c.rol_id=null;draw()};
@@ -129,6 +132,7 @@ function editarUsuario(u){
     if($('#u-rol'))$('#u-rol').onchange=e=>c.rol_id=e.target.value||null;
     $('#u-emp').onchange=e=>c.empleado_id=e.target.value||null;
     $('#u-act').onclick=()=>{c.activo=!c.activo;draw()};
+    if($('#u-send'))$('#u-send').onclick=()=>enviarAcceso(u);
     if($('#u-cancel'))$('#u-cancel').onclick=closeSheet;
     if($('#u-del'))$('#u-del').onclick=async()=>{if(!confirm('¿Eliminar usuario?'))return;await sb.from('prep_usuarios').delete().eq('id',u.id);closeSheet();await load();toast('Usuario eliminado')};
     $('#u-save').onclick=async()=>{c.nombre=$('#u-nom').value;c.email=$('#u-email').value;
@@ -137,6 +141,17 @@ function editarUsuario(u){
       const{error}=ed?await sb.from('prep_usuarios').update(p).eq('id',u.id):await sb.from('prep_usuarios').insert(p);
       if(error){toast('Error: '+error.message);return}closeSheet();await load();toast('Usuario guardado')};
   };draw();openSheet();
+}
+async function enviarAcceso(u){
+  if(!u||!u.email){toast('El usuario no tiene correo');return}
+  if(!confirm(`Enviar acceso a ${u.nombre||u.email}?\n\nSe generará una contraseña temporal nueva y se enviará a:\n${u.email}\n\nEl usuario deberá crear su propia clave al ingresar.`))return;
+  toast('Enviando…');
+  try{
+    const{data,error}=await sb.functions.invoke('admin-enviar-acceso',{body:{to:u.email}});
+    if(error){toast('Error: '+(error.message||error));return}
+    if(data&&data.ok){toast('Acceso enviado a '+u.email);closeSheet();}
+    else toast('No se envió: '+((data&&data.error)||'error desconocido'));
+  }catch(e){toast('Error: '+(e.message||e))}
 }
 function renderRoles(){
   $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).length;
