@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script src="/auth-guard.js"></script>
@@ -38,6 +39,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .tagx{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:2px solid var(--outline)}
 .tagx.sa{background:var(--secondary);color:#fff}.tagx.adm{background:var(--primary);color:#fff}.tagx.op{background:var(--gray-soft)}
 .sendbtn{flex-shrink:0;width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--tertiary);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000;cursor:pointer}.sendbtn:active{transform:translate(2px,2px);box-shadow:none}.sendbtn .material-symbols-outlined{font-size:19px}
+.pdfbtn{flex-shrink:0;width:40px;height:40px;border:2px solid var(--outline);border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 0 #000;cursor:pointer}.pdfbtn:active{transform:translate(2px,2px);box-shadow:none}.pdfbtn .material-symbols-outlined{font-size:19px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-size:12px;font-weight:600;box-shadow:2px 2px 0 0 #000;cursor:pointer}.chip.active{background:var(--ink);color:var(--bg)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border:2px solid var(--outline);border-radius:14px;font-weight:600;font-size:14px;background:var(--surface);box-shadow:var(--shadow-sm);width:100%;min-height:48px}
@@ -106,10 +108,11 @@ function render(){
 }
 function renderUsuarios(){
   $('#screen').innerHTML=state.usuarios.map(u=>{const cls=u.rol_sistema==='superadmin'?'sa':u.rol_sistema==='admin_marca'?'adm':'op';
-    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div>${u.email?`<button class="sendbtn" data-send="${u.id}" title="Enviar acceso por correo"><span class="material-symbols-outlined">forward_to_inbox</span></button>`:''}<span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
+    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div>${u.email?`<button class="pdfbtn" data-pdf="${u.id}" title="Descargar acceso en PDF"><span class="material-symbols-outlined">picture_as_pdf</span></button><button class="sendbtn" data-send="${u.id}" title="Enviar acceso por correo"><span class="material-symbols-outlined">forward_to_inbox</span></button>`:''}<span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
   }).join('')||'<div class="empty">Sin usuarios</div>';
   $$('#screen .row').forEach(r=>r.onclick=()=>editarUsuario(state.usuarios.find(u=>u.id===r.dataset.id)));
   $$('#screen .sendbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();enviarAcceso(state.usuarios.find(u=>u.id===b.dataset.send))});
+  $$('#screen .pdfbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();descargarAccesoPDF(state.usuarios.find(u=>u.id===b.dataset.pdf))});
 }
 function editarUsuario(u){
   const ed=!!u;const c=Object.assign({nombre:'',email:'',rol_sistema:'operativo',marca_id:'m6',local_id:'l11',rol_id:null,empleado_id:null,activo:true},u||{});
@@ -124,7 +127,7 @@ function editarUsuario(u){
       ${c.rol_sistema==='operativo'?`<div class="sheet-section"><div class="field-lbl">Rol / permisos</div><select class="select" id="u-rol"><option value="">— elegir rol —</option>${rolesM.map(r=>`<option value="${r.id}" ${c.rol_id===r.id?'selected':''}>${r.nombre}</option>`).join('')}</select></div>`:''}
       <div class="sheet-section"><div class="field-lbl">Vincular empleado (RRHH, opcional)</div><select class="select" id="u-emp"><option value="">— ninguno —</option>${empsL.map(e=>`<option value="${e.id}" ${c.empleado_id===e.id?'selected':''}>${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
       <div class="sheet-section"><label class="chip ${c.activo?'active':''}" id="u-act" style="cursor:pointer">${c.activo?'✓ Activo':'Inactivo'}</label></div>
-      ${ed&&c.email?`<div class="sheet-section"><button class="btn" id="u-send" style="background:var(--tertiary)"><span class="material-symbols-outlined">forward_to_inbox</span>Enviar acceso por correo</button><div class="field-lbl" style="margin-top:8px;opacity:.55;text-transform:none;letter-spacing:0">Genera una contraseña temporal nueva y la envía a ${c.email}. El usuario deberá cambiarla al ingresar.</div></div>`:''}
+      ${ed&&c.email?`<div class="sheet-section grid2"><button class="btn" id="u-pdf" style="background:var(--ink);color:#fff"><span class="material-symbols-outlined">picture_as_pdf</span>Descargar PDF</button><button class="btn" id="u-send" style="background:var(--tertiary)"><span class="material-symbols-outlined">forward_to_inbox</span>Enviar por correo</button></div><div class="field-lbl" style="margin-top:8px;opacity:.55;text-transform:none;letter-spacing:0">Cualquiera de las dos genera una contraseña temporal nueva (invalida la anterior). El usuario deberá cambiarla al ingresar.</div>`:''}
       <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="u-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="u-cancel">Atrás</button>'}<button class="btn primary" id="u-save">Guardar</button></div></div>`;
     $$('#u-rs .chip').forEach(b=>b.onclick=()=>{c.rol_sistema=b.dataset.r;draw()});
     if($('#u-marca'))$('#u-marca').onchange=e=>{c.marca_id=e.target.value;c.local_id='';c.rol_id=null;draw()};
@@ -133,6 +136,7 @@ function editarUsuario(u){
     $('#u-emp').onchange=e=>c.empleado_id=e.target.value||null;
     $('#u-act').onclick=()=>{c.activo=!c.activo;draw()};
     if($('#u-send'))$('#u-send').onclick=()=>enviarAcceso(u);
+    if($('#u-pdf'))$('#u-pdf').onclick=()=>descargarAccesoPDF(u);
     if($('#u-cancel'))$('#u-cancel').onclick=closeSheet;
     if($('#u-del'))$('#u-del').onclick=async()=>{if(!confirm('¿Eliminar usuario?'))return;await sb.from('prep_usuarios').delete().eq('id',u.id);closeSheet();await load();toast('Usuario eliminado')};
     $('#u-save').onclick=async()=>{c.nombre=$('#u-nom').value;c.email=$('#u-email').value;
@@ -152,6 +156,75 @@ async function enviarAcceso(u){
     if(data&&data.ok){toast('Acceso enviado a '+u.email);closeSheet();}
     else toast('No se envió: '+((data&&data.error)||'error desconocido'));
   }catch(e){toast('Error: '+(e.message||e))}
+}
+async function descargarAccesoPDF(u){
+  if(!u||!u.email){toast('El usuario no tiene correo');return}
+  if(!window.jspdf||!window.jspdf.jsPDF){toast('No cargó el generador de PDF');return}
+  if(!confirm(`Generar PDF de acceso para ${u.nombre||u.email}?\n\nSe creará una contraseña temporal NUEVA (la anterior deja de servir). El usuario deberá cambiarla al ingresar.`))return;
+  toast('Generando…');
+  try{
+    const{data,error}=await sb.functions.invoke('admin-enviar-acceso',{body:{to:u.email,mode:'pdf'}});
+    if(error){toast('Error: '+(error.message||error));return}
+    if(!data||!data.ok){toast('No se generó: '+((data&&data.error)||'error'));return}
+    buildPDF(data);
+    toast('PDF descargado');
+  }catch(e){toast('Error: '+(e.message||e))}
+}
+function buildPDF(d){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=18;let y=0;
+  // barra superior de marca
+  doc.setFillColor(30,90,249);doc.rect(0,0,W,26,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(26);
+  doc.text('prep!',M,17);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);
+  doc.text('Accesos al sistema',W-M,16,{align:'right'});
+  y=42;
+  doc.setTextColor(23,28,32);doc.setFont('helvetica','bold');doc.setFontSize(18);
+  doc.text('Tus accesos a Prep!',M,y);y+=12;
+  doc.setFont('helvetica','normal');doc.setFontSize(12);
+  doc.text(`Hola ${d.nombre||''},`,M,y);y+=7;
+  const intro=doc.splitTextToSize('Te compartimos tus credenciales para ingresar al sistema operativo Prep!. Guarda este documento en un lugar seguro.',W-2*M);
+  doc.text(intro,M,y);y+=intro.length*6+6;
+  // caja de credenciales
+  const boxH=30;doc.setDrawColor(0,0,0);doc.setLineWidth(0.6);doc.setFillColor(244,246,251);
+  doc.roundedRect(M,y,W-2*M,boxH,3,3,'FD');
+  doc.setFontSize(9);doc.setTextColor(90,90,90);doc.text('USUARIO',M+6,y+9);
+  doc.text('CONTRASEÑA TEMPORAL',M+6,y+21);
+  doc.setFont('courier','bold');doc.setFontSize(13);doc.setTextColor(23,28,32);
+  doc.text(d.to,M+6,y+15);
+  doc.text(d.password,M+6,y+27);
+  y+=boxH+12;
+  // restaurantes / urls
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(23,28,32);
+  doc.text(d.accesos&&d.accesos.length>1?'Tus restaurantes':'Ingresa aquí',M,y);y+=7;
+  doc.setFont('helvetica','normal');doc.setFontSize(11);
+  (d.accesos&&d.accesos.length?d.accesos:[{nombre:'Prep!',url:'https://os.prep.rest'}]).forEach(a=>{
+    doc.setTextColor(23,28,32);doc.setFont('helvetica','bold');doc.text('• '+a.nombre+':',M,y);
+    doc.setFont('helvetica','normal');doc.setTextColor(30,90,249);doc.text(a.url,M+5+doc.getTextWidth('• '+a.nombre+': '),y);
+    y+=7;
+  });
+  if(d.multi){y+=1;doc.setFontSize(9.5);doc.setTextColor(110,110,110);
+    const m=doc.splitTextToSize('Entras a todos con el mismo usuario; cambias de restaurante desde el selector del encabezado.',W-2*M);
+    doc.text(m,M,y);y+=m.length*5+4;}
+  y+=4;
+  // nota seguridad
+  doc.setFillColor(255,204,0);doc.setDrawColor(0,0,0);
+  const nh=18;doc.roundedRect(M,y,W-2*M,nh,3,3,'FD');
+  doc.setTextColor(23,28,32);doc.setFont('helvetica','bold');doc.setFontSize(10);
+  doc.text('Por seguridad',M+6,y+7);
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+  const sec=doc.splitTextToSize('El sistema te pedirá crear una contraseña nueva la primera vez que ingreses. Esta clave temporal dejará de funcionar después.',W-2*M-12);
+  doc.text(sec,M+6,y+12);
+  y+=nh+14;
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(23,28,32);
+  doc.text('Cualquier duda, quedamos atentos!',M,y);y+=6;
+  doc.text('Prep! Team',M,y);
+  // pie
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(150,150,150);
+  doc.text('Documento generado por Prep! · Confidencial',M,287);
+  const safe=(d.nombre||d.to).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'');
+  doc.save(`Acceso-Prep-${safe}.pdf`);
 }
 function renderRoles(){
   $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).length;
