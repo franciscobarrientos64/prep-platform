@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script src="/auth-guard.js"></script>
@@ -123,6 +124,7 @@ textarea.input{min-height:80px;resize:vertical}
   <a href="/" class="brand-logo" title="Hub"><div class="l"></div></a>
   <div class="brand-txt"><div class="cli" data-client-name>Symposium</div><div class="mod">Mystery Shopper</div></div>
   <div class="header-info">
+    <button class="btn-ico" onclick="exportarPDF()" title="Exportar reporte en PDF"><span class="material-symbols-outlined">picture_as_pdf</span>Exportar PDF</button>
     <button class="btn-ico primary" onclick="openNueva()"><span class="material-symbols-outlined">add</span>Nueva evaluación</button>
   </div>
 </header>
@@ -438,6 +440,222 @@ async function saveAccion(visitaId){
 
 function openSheet(){document.getElementById('bd').classList.add('open');document.getElementById('sheet').classList.add('open');}
 function closeSheet(){document.getElementById('bd').classList.remove('open');document.getElementById('sheet').classList.remove('open');}
+
+/* ===================== EXPORTAR PDF (reporte ejecutivo) ===================== */
+const PDFC={primary:[30,90,249],second:[255,59,48],tert:[255,204,0],green:[16,185,129],ink:[23,28,32],cream:[252,249,248],gray:[223,227,232],mut:[120,120,120]};
+function pdfScoreRGB(s){if(s>=90)return PDFC.primary;if(s>=80)return PDFC.green;if(s>=70)return PDFC.tert;return PDFC.second;}
+function pdfScoreFG(s){return (s>=70&&s<80)?[58,46,0]:[255,255,255];}
+function lvlRGB(v){return [[23,28,32],[255,59,48],[255,204,0],[16,185,129],[30,90,249]][v]||null;}
+function offChart(cfg,w,h){
+  return new Promise(res=>{
+    const wrap=document.createElement('div');wrap.style.cssText='position:fixed;left:-99999px;top:0;background:#fff';
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.style.width=w+'px';cv.style.height=h+'px';
+    wrap.appendChild(cv);document.body.appendChild(wrap);
+    cfg.options=cfg.options||{};cfg.options.responsive=false;cfg.options.maintainAspectRatio=false;cfg.options.animation=false;cfg.options.devicePixelRatio=2;
+    cfg.plugins=(cfg.plugins||[]).concat([{id:'wbg',beforeDraw:c=>{const x=c.ctx;x.save();x.globalCompositeOperation='destination-over';x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.restore();}}]);
+    let ch;try{ch=new Chart(cv.getContext('2d'),cfg);}catch(e){wrap.remove();res(null);return;}
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{let u=null;try{u=cv.toDataURL('image/png');}catch(e){}try{ch.destroy()}catch(e){}wrap.remove();res(u);}));
+  });
+}
+function loadImg(src){return new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});}
+async function exportarPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){toast('No cargó el generador de PDF','err');return;}
+  if(!DB.allVisitas.length){toast('No hay datos para exportar','warn');return;}
+  toast('Generando reporte…');
+  try{await buildReportPDF();toast('Reporte descargado');}
+  catch(e){console.error(e);toast('Error al generar el PDF','err');}
+}
+async function buildReportPDF(){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4',compress:true});
+  const W=210,H=297,M=16,CW=W-2*M;
+  const cliEl=document.querySelector('[data-client-name]');
+  const CLI=(cliEl&&cliEl.textContent.trim())||({m6:'Casa Italia',m7:'Symposium',m8:'La Cuadra de Salvador'}[MARCA])||'Restaurante';
+  const locs=DB.locales,multi=locs.length>1;
+  const Vall=DB.allVisitas,Rall=DB.allResp,msAll=months(Vall);
+  const scopeV=PER==='all'?Vall:Vall.filter(v=>(v.fecha||'').slice(0,7)===PER);
+  const idsP=new Set(scopeV.map(v=>v.id));
+  const scopeR=Rall.filter(r=>idsP.has(r.visita_id));
+  const crit=DB.criterios.map(c=>c.criterio);
+  const cAvg=c=>{const x=scopeR.filter(z=>z.criterio===c).map(z=>+z.puntaje||0);return x.length?avg(x):0;};
+  const critRows=crit.map(c=>({k:c,s:cAvg(c)})).sort((a,b)=>b.s-a.s);
+  const best=critRows[0]||{k:'—',s:0},worst=critRows[critRows.length-1]||{k:'—',s:0};
+  const overall=avg(scopeV.map(v=>+v.score_total||0));
+  const firstM=msAll[0],lastM=msAll[msAll.length-1];
+  const fScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===firstM).map(v=>+v.score_total||0));
+  const lScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===lastM).map(v=>+v.score_total||0));
+  const delta=(msAll.length>1)?(lScore-fScore):0;
+  const perLbl=PER==='all'?(msAll.length?`${mLabel(firstM)} – ${mLabel(lastM)}`:'Histórico'):mLabel(PER);
+  const genDate=new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  const v2m={},v2l={};Vall.forEach(v=>{v2m[v.id]=(v.fecha||'').slice(0,7);v2l[v.id]=v.local_id;});
+
+  let page=0,y=0;
+  function footer(){page++;doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...PDFC.mut);
+    doc.text(`Prep!  ·  Mystery Shopper  ·  ${CLI}  ·  Confidencial`,M,H-8);doc.text(String(page),W-M,H-8,{align:'right'});}
+  function np(){footer();doc.addPage();doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');y=22;}
+  function ensure(h){if(y+h>H-16)np();}
+  function sectionTitle(t,sub){ensure(26);doc.setFillColor(...PDFC.primary);doc.rect(M,y,4,12,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...PDFC.ink);
+    const tl=doc.splitTextToSize(t,CW-8);doc.text(tl,M+8,y+5);let yy=y+5+(tl.length-1)*6;
+    if(sub){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...PDFC.mut);doc.text(doc.splitTextToSize(sub,CW-8),M+8,yy+6);yy+=6;}
+    y=yy+9;}
+  function bandLegend(){ensure(8);const b=[['≥90',PDFC.primary],['80–89',PDFC.green],['70–79',PDFC.tert],['<70',PDFC.second]];let lx=M;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDFC.ink);
+    b.forEach(it=>{doc.setFillColor(...it[1]);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(lx,y,4,4,1,1,'FD');doc.text(it[0],lx+6,y+3.6);lx+=26;});y+=8;}
+  function heatPDF(rows,cols,valFn,opt){opt=opt||{};const labW=opt.labW||46,cellW=(CW-labW)/cols.length,rh=opt.rh||8,hh=7;
+    ensure(hh+Math.min(rows.length,3)*rh);
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...PDFC.ink);
+    cols.forEach((c,i)=>doc.text(String(c.label),M+labW+i*cellW+cellW/2,y+5,{align:'center'}));
+    let yy=y+hh;
+    rows.forEach(r=>{if(yy+rh>H-16){y=yy;np();yy=y;doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...PDFC.ink);cols.forEach((c,i)=>doc.text(String(c.label),M+labW+i*cellW+cellW/2,yy+5,{align:'center'}));yy+=hh;}
+      doc.setFont(opt.boldRow&&r.bold?'helvetica':'helvetica',r.bold?'bold':'normal');doc.setFontSize(8.5);doc.setTextColor(...PDFC.ink);
+      doc.text(doc.splitTextToSize(String(r.label),labW-2)[0],M,yy+rh/2+1.4);
+      cols.forEach((c,i)=>{const v=valFn(r,c),cx=M+labW+i*cellW;
+        if(v==null){doc.setFillColor(...PDFC.gray);doc.roundedRect(cx+1,yy+1,cellW-2,rh-2,1.3,1.3,'F');}
+        else{const bg=pdfScoreRGB(v),fg=pdfScoreFG(v);doc.setFillColor(...bg);doc.roundedRect(cx+1,yy+1,cellW-2,rh-2,1.3,1.3,'F');
+          if(!opt.nonum){doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...fg);doc.text(String(Math.round(v)),cx+cellW/2,yy+rh/2+1.4,{align:'center'});}}});
+      yy+=rh;});
+    y=yy+3;}
+
+  /* ---------- PORTADA ---------- */
+  doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');
+  doc.setFillColor(...PDFC.primary);doc.rect(0,0,W,68,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(34);doc.setTextColor(255,255,255);doc.text('prep',M,42);
+  const pw=doc.getTextWidth('prep');doc.setTextColor(...PDFC.tert);doc.text('!',M+pw+1,42);
+  doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text('Experiencia del cliente',W-M,40,{align:'right'});
+  doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(30);doc.text('Reporte Mystery',M,106);doc.text('Shopper',M,118);
+  doc.setFont('helvetica','normal');doc.setFontSize(13);doc.setTextColor(...PDFC.mut);doc.text('Evaluación de estándares de servicio',M,130);
+  const logo=await loadImg(`/logos/${MARCA}.png`);let nx=M,ny=158;
+  if(logo){const lw=22,lh=lw*((logo.height||1)/(logo.width||1));try{doc.addImage(logo,'PNG',M,ny-12,lw,lh);nx=M+lw+8;}catch(e){}}
+  doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text(CLI,nx,ny);
+  const cov=[['Periodo',perLbl],['Evaluaciones',String(scopeV.length)],[multi?'Sedes':'Sede',multi?String(locs.length):((locs[0]&&locs[0].nombre)||'—')],['Generado',genDate]];
+  const bw=CW/2,bh=22,by=205;
+  cov.forEach((it,i)=>{const bx=M+(i%2)*bw,byy=by+Math.floor(i/2)*(bh+6);
+    doc.setFillColor(255,255,255);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.5);doc.roundedRect(bx,byy,bw-6,bh,3,3,'FD');
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...PDFC.mut);doc.text(it[0].toUpperCase(),bx+6,byy+8);
+    doc.setFont('helvetica','bold');doc.setFontSize(12.5);doc.setTextColor(...PDFC.ink);doc.text(doc.splitTextToSize(it[1],bw-14)[0],bx+6,byy+16);});
+  footer();
+
+  /* ---------- RESUMEN EJECUTIVO ---------- */
+  doc.addPage();doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');y=22;
+  let head;
+  if(delta>=3)head=`${CLI} mejora ${delta.toFixed(0)} pts; "${worst.k}" concentra la mayor oportunidad`;
+  else if(delta<=-3)head=`La experiencia cae ${Math.abs(delta).toFixed(0)} pts; foco urgente en "${worst.k}"`;
+  else head=`Servicio en ${overall.toFixed(0)}/100; "${worst.k}" es la palanca de mejora`;
+  sectionTitle(head,`Resumen ejecutivo · Programa Mystery Shopper · ${perLbl}`);
+  const kpis=[['Puntaje general',overall.toFixed(0),'sobre 100',pdfScoreRGB(overall)],['Mejor criterio',best.s.toFixed(0),best.k,pdfScoreRGB(best.s)],['Crítico',worst.s.toFixed(0),worst.k,pdfScoreRGB(worst.s)],['Tendencia',(delta>=0?'+':'')+delta.toFixed(1),`${mLabel(firstM)}→${mLabel(lastM)}`,delta>=0?PDFC.green:PDFC.second]];
+  const kw=CW/2,kh=26;
+  kpis.forEach((k,i)=>{const kx=M+(i%2)*kw,ky=y+Math.floor(i/2)*(kh+6);
+    doc.setFillColor(255,255,255);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.5);doc.roundedRect(kx,ky,kw-6,kh,3,3,'FD');
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDFC.mut);doc.text(k[0].toUpperCase(),kx+6,ky+8);
+    doc.setFont('helvetica','bold');doc.setFontSize(21);doc.setTextColor(...k[3]);doc.text(String(k[1]),kx+6,ky+18.5);
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...PDFC.mut);doc.text(doc.splitTextToSize(k[2],kw-14)[0],kx+6,ky+24);});
+  y+=2*(kh+6)+4;
+  const nar=`En el periodo ${perLbl}, ${CLI} alcanzó un puntaje general de ${overall.toFixed(0)}/100 a partir de ${scopeV.length} evaluaciones de comprador incógnito. El criterio más sólido fue "${best.k}" (${best.s.toFixed(0)}/100), mientras que "${worst.k}" (${worst.s.toFixed(0)}/100) concentra la mayor oportunidad de mejora. ${msAll.length>1?(delta>=0?`La tendencia es positiva: +${delta.toFixed(1)} pts frente al inicio del periodo.`:`La tendencia es a la baja: ${delta.toFixed(1)} pts frente al inicio del periodo, lo que exige acción inmediata.`):''}`;
+  doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(...PDFC.ink);
+  const nl=doc.splitTextToSize(nar,CW);ensure(nl.length*5.4+4);doc.text(nl,M,y);y+=nl.length*5.4+8;
+
+  /* ---------- PUNTAJE POR CRITERIO (barras) ---------- */
+  const barCfg={type:'bar',data:{labels:critRows.map(r=>r.k),datasets:[{data:critRows.map(r=>Math.round(r.s)),backgroundColor:critRows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:1.5,borderRadius:4}]},options:{indexAxis:'y',layout:{padding:{right:26,left:4,top:4,bottom:4}},scales:{x:{min:0,max:100,ticks:{stepSize:20}},y:{ticks:{font:{size:12}}}},plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'end',color:'#171c20',font:{weight:'700',size:12},formatter:v=>v}}}};
+  const barH=Math.max(360,critRows.length*30+50);const barImg=await offChart(barCfg,820,barH);
+  sectionTitle('Puntaje por criterio',`Ordenado de mayor a menor · ${perLbl}`);
+  if(barImg){const iw=CW,ih=iw*(barH/820);ensure(ih);doc.addImage(barImg,'PNG',M,y,iw,ih);y+=ih+4;}
+  bandLegend();
+
+  /* ---------- DISTRIBUCIÓN ---------- */
+  const bands=[0,0,0,0];critRows.forEach(r=>{bands[r.s>=90?0:r.s>=80?1:r.s>=70?2:3]++;});
+  const donutCfg={type:'doughnut',data:{labels:['Excelente (≥90)','Bueno (80–89)','Regular (70–79)','A mejorar (<70)'],datasets:[{data:bands,backgroundColor:['#1e5af9','#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:1.5}]},options:{cutout:'56%',plugins:{legend:{position:'right',labels:{font:{size:12},boxWidth:14}},datalabels:{display:true,color:ctx=>ctx.dataIndex===2?'#3a2e00':'#fff',font:{weight:'800',size:14},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+(+b||0),0);return v>0&&t?Math.round(v/t*100)+'%':'';}}}}};
+  const donImg=await offChart(donutCfg,820,360);
+  sectionTitle('Distribución por nivel',`Criterios en cada banda de desempeño · ${perLbl}`);
+  if(donImg){const iw=CW,ih=iw*(360/820);ensure(ih);doc.addImage(donImg,'PNG',M,y,iw,ih);y+=ih+6;}
+
+  /* ---------- EVOLUCIÓN MENSUAL ---------- */
+  if(msAll.length>1){
+    const dsE=multi?locs.map((l,i)=>({label:l.nombre,data:msAll.map(m=>{const vs=Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))):null;}),borderColor:SEDE_COLORS[i%SEDE_COLORS.length],backgroundColor:SEDE_COLORS[i%SEDE_COLORS.length],tension:.3,spanGaps:true,pointRadius:3}))
+      :[{label:CLI,data:msAll.map(m=>{const vs=Vall.filter(v=>v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))):null;}),borderColor:'#1e5af9',backgroundColor:'#1e5af9',tension:.3,spanGaps:true,pointRadius:3,fill:false}];
+    const lineCfg={type:'line',data:{labels:msAll.map(m=>mLabel(m)),datasets:dsE},options:{scales:{y:{min:40,max:100,ticks:{stepSize:10}}},plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:14}},datalabels:{display:false}}}};
+    const lineImg=await offChart(lineCfg,820,380);
+    sectionTitle(multi?'Evolución del puntaje por sede':'Evolución del puntaje general',`Promedio mensual · ${mLabel(firstM)} – ${mLabel(lastM)}`);
+    if(lineImg){const iw=CW,ih=iw*(380/820);ensure(ih);doc.addImage(lineImg,'PNG',M,y,iw,ih);y+=ih+6;}
+  }
+
+  /* ---------- COMPARATIVO ENTRE SEDES (solo multi) ---------- */
+  if(multi){
+    const sede=locs.map(l=>{const vs=scopeV.filter(v=>v.local_id===l.id);return {l,n:vs.length,s:avg(vs.map(v=>+v.score_total||0))};}).sort((a,b)=>b.s-a.s);
+    sectionTitle(`${sede[0].l.nombre} lidera el grupo (${sede[0].s.toFixed(0)}/100)`,`Ranking de sedes · ${perLbl}`);
+    const rowH=10;ensure(rowH*(sede.length+1));
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...PDFC.mut);
+    doc.text('#',M+2,y+5);doc.text('SEDE',M+12,y+5);doc.text('PUNTAJE',M+CW-46,y+5);doc.text('VISITAS',M+CW-16,y+5,{align:'right'});y+=rowH;
+    sede.forEach((x,i)=>{doc.setDrawColor(...PDFC.gray);doc.setLineWidth(0.3);doc.line(M,y-1,M+CW,y-1);
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...PDFC.ink);doc.text(String(i+1),M+2,y+5);
+      doc.setFont('helvetica','normal');doc.text(doc.splitTextToSize(x.l.nombre,90)[0],M+12,y+5);
+      const bg=pdfScoreRGB(x.s),fg=pdfScoreFG(x.s);doc.setFillColor(...bg);doc.roundedRect(M+CW-46,y,20,7,2,2,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...fg);doc.text(x.s.toFixed(0),M+CW-36,y+5,{align:'center'});
+      doc.setTextColor(...PDFC.mut);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text(String(x.n),M+CW-16,y+5,{align:'right'});y+=rowH;});
+    y+=4;
+    const tcols=sede.map(x=>({key:x.l.id,label:(x.l.nombre||'').split(' ')[0]}));
+    const areas=areasOf();
+    const trows=[{key:'__all',label:'Score general',bold:true}].concat(areas.map(a=>({key:a,label:a})));
+    const tval=(r,c)=>{if(r.key==='__all'){const vs=scopeV.filter(v=>v.local_id===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}const rr=scopeR.filter(z=>v2l[z.visita_id]===c.key&&z.area===r.key);return rr.length?wAvg(rr):null;};
+    sectionTitle('Puntajes comparativos por sede','Score general y por área de servicio');
+    heatPDF(trows,tcols,tval,{labW:48,rh:8,boldRow:true});bandLegend();
+  }
+
+  /* ---------- MAPA CRITERIO × MES ---------- */
+  if(msAll.length>1){
+    sectionTitle('Mapa de calor: criterio × mes',`Dónde y cuándo se concentra el desempeño${multi?' (todas las sedes)':''}`);
+    const cols=msAll.map(m=>({key:m,label:MESN[+m.split('-')[1]]}));
+    const rows=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
+    heatPDF(rows,cols,(r,c)=>{const x=Rall.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{labW:50,rh:8});bandLegend();
+  }
+
+  /* ---------- PLAN DE ACCIÓN ---------- */
+  if(DB.acciones&&DB.acciones.length){
+    sectionTitle('Plan de acción','Iniciativas de mejora registradas');
+    DB.acciones.slice(0,18).forEach(a=>{ensure(11);doc.setDrawColor(...PDFC.gray);doc.setLineWidth(0.3);
+      const est=a.estado==='hecho'?['Hecho',PDFC.green,[255,255,255]]:a.estado==='en_proceso'?['En proceso',PDFC.tert,[58,46,0]]:['Pendiente',PDFC.second,[255,255,255]];
+      doc.setFillColor(...est[1]);doc.roundedRect(M,y,22,6,1.5,1.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...est[2]);doc.text(est[0],M+11,y+4,{align:'center'});
+      doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(...PDFC.ink);
+      const tl=doc.splitTextToSize(a.descripcion||'',CW-28);doc.text(tl[0],M+26,y+4.5);
+      let meta=[a.area,a.responsable,a.due_date?fmtD(a.due_date):''].filter(Boolean).join('  ·  ');
+      if(meta){doc.setFontSize(8);doc.setTextColor(...PDFC.mut);doc.text(meta,M+26,y+9);}
+      y+=12;});
+  }
+
+  /* ---------- ANEXO: AUDITORÍA ÍTEM POR ÍTEM (color) ---------- */
+  const det=DB.detalle||[];
+  if(det.length){
+    const periodos=[...new Set(det.map(d=>d.periodo))].sort();const per=periodos[periodos.length-1];
+    const items=det.filter(d=>d.periodo===per);
+    np();
+    doc.setFillColor(...PDFC.ink);doc.rect(0,0,W,30,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);doc.text('Anexo · Auditoría ítem por ítem',M,19);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(220,220,220);doc.text(`${CLI} · ${per} · ${items.length} objetivos de servicio`,M,26);
+    y=40;
+    // leyenda de niveles 0-4
+    const ll=[['Sin evaluar',PDFC.gray],['No cumple',[23,28,32]],['Bajo',[255,59,48]],['Medio',[255,204,0]],['Bueno',[16,185,129]],['Excelente',[30,90,249]]];
+    let lx=M;doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDFC.ink);
+    ll.forEach(it=>{doc.setFillColor(...it[1]);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(lx,y,4,4,1,1,'FD');doc.text(it[0],lx+6,y+3.6);lx+=29;});y+=9;
+    const mundos=[];items.forEach(d=>{if(!mundos.includes(d.mundo))mundos.push(d.mundo);});
+    const sqW=6,gap=2,sqX=M+CW-(4*sqW+3*gap);const rh=6;
+    mundos.forEach(mu=>{
+      ensure(14);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...PDFC.primary);doc.text(mu,M,y+4);
+      doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...PDFC.mut);
+      ['V1','V2','V3','V4'].forEach((vh,i)=>doc.text(vh,sqX+i*(sqW+gap)+sqW/2,y+4,{align:'center'}));
+      doc.setDrawColor(...PDFC.gray);doc.setLineWidth(0.3);doc.line(M,y+6,M+CW,y+6);y+=9;
+      items.filter(d=>d.mundo===mu).forEach(d=>{ensure(rh+1);
+        doc.setFont('helvetica','normal');doc.setFontSize(7.8);doc.setTextColor(...PDFC.ink);
+        doc.text(doc.splitTextToSize(String(d.item||''),sqX-M-3)[0],M,y+rh/2+1.3);
+        [d.v1,d.v2,d.v3,d.v4].forEach((v,i)=>{const c=lvlRGB(v),x=sqX+i*(sqW+gap);
+          if(c){doc.setFillColor(...c);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(x,y,sqW,rh-1,1,1,'FD');}
+          else{doc.setFillColor(...PDFC.gray);doc.setDrawColor(180,180,180);doc.setLineWidth(0.3);doc.roundedRect(x,y,sqW,rh-1,1,1,'FD');}});
+        y+=rh;});
+      y+=2;});
+  }
+
+  footer();
+  const safe=(CLI+'-'+perLbl).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'');
+  doc.save(`Mystery-${safe}.pdf`);
+}
 load();
 </script>
 </body>
