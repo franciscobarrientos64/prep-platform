@@ -220,6 +220,10 @@
     {
       "source": "/nav",
       "destination": "/nav.html"
+    },
+    {
+      "source": "/marketing",
+      "destination": "/marketing.html"
     }
   ],
   "headers": [
