@@ -1252,6 +1252,12 @@ const MARCA = (window.PREP_MARCA||'m6');
 const LOCAL = (window.PREP_LOCAL||'l11');
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
+// Voz del Cliente: encuesta marcada para imprimirse en el ticket (QR en la pre-cuenta)
+let ENCUESTA_TICKET_ID = null;
+sb.from('vc_encuestas').select('id').eq('marca_id', MARCA).eq('en_ticket', true).eq('activo', true)
+  .order('created_at', { ascending: false }).limit(1).maybeSingle()
+  .then(r => { if (r && r.data) ENCUESTA_TICKET_ID = r.data.id; }).catch(() => {});
+
 /* ========= STATE ========= */
 const state = {
   // catálogo
@@ -1496,7 +1502,22 @@ function imprimirPreCuenta(ped, T) {
     <hr>
     <div class="center muted">Propina sugerida no incluida</div>
     <div class="center muted">Gracias por su visita · prep!</div>`;
-  imprimirTermico('Pre-cuenta #' + ped.ticket_num, body);
+  // Inserto con QR de la encuesta (Voz del Cliente). Precargamos la imagen para que
+  // imprima sí o sí en la térmica (el iframe imprime ~250ms después de escribir el HTML).
+  const printPre = (qr) => imprimirTermico('Pre-cuenta #' + ped.ticket_num, body + qr);
+  if (ENCUESTA_TICKET_ID) {
+    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=' +
+      encodeURIComponent(location.origin + '/encuesta?id=' + ENCUESTA_TICKET_ID + (mesa ? '&mesa=' + encodeURIComponent(mesa.numero) : ''));
+    const qrHtml = `<hr><div class="center b">¿Cómo estuvo todo?</div><div class="center muted">Escanéa y cuéntanos · 30 seg</div>` +
+      `<div class="center" style="margin:6px 0"><img src="${qrSrc}" alt="Encuesta" style="width:38mm;height:38mm"></div>` +
+      `<div class="center muted">Tu opinión mejora Casa Italia 🍝</div>`;
+    const im = new Image();
+    im.onload = () => printPre(qrHtml);
+    im.onerror = () => printPre('');
+    im.src = qrSrc;
+  } else {
+    printPre('');
+  }
 }
 
 /* ========= DATA LOAD ========= */

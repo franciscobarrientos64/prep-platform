@@ -42,6 +42,10 @@
       "destination": "/importar.html"
     },
     {
+      "source": "/instalacion",
+      "destination": "/instalacion.html"
+    },
+    {
       "source": "/voz-cliente",
       "destination": "/voz-cliente.html"
     },

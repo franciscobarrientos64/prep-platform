@@ -48,7 +48,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ID=new URLSearchParams(location.search).get('id');
 const MESA=new URLSearchParams(location.search).get('mesa')||null;
 const MOZO=new URLSearchParams(location.search).get('mozo')||null;
-let ENC=null, PREG=[], VAL={};
+let ENC=null, PREG=[], VAL={}, CONTACT={nombre:'',telefono:''};
 const app=document.getElementById('app');
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -80,6 +80,12 @@ function render(){
     }
     h+=`</div>`;
   });
+  // Contacto opcional — permite al restaurante responder si algo salió mal
+  h+=`<div class="q"><div class="t">¿Te contactamos si podemos mejorar tu experiencia? <span style="font-weight:400;opacity:.6">(opcional)</span></div>
+    <input id="c_nombre" placeholder="Tu nombre" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
+      style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">
+    <input id="c_tel" placeholder="WhatsApp / teléfono" inputmode="tel" value="${esc(CONTACT.telefono)}" oninput="CONTACT.telefono=this.value"
+      style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px"></div>`;
   h+=`<button class="send" onclick="enviar()"><span class="material-symbols-outlined">send</span>Enviar</button>`;
   app.innerHTML=h;
 }
@@ -92,7 +98,7 @@ async function enviar(){
   // Generamos el id en el cliente: anon NO puede leer vc_respuestas (privacidad),
   // así que no usamos .select()/RETURNING (violaría RLS). Insert directo.
   const rid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
-  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO});
+  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO,contacto_nombre:CONTACT.nombre||null,contacto_telefono:CONTACT.telefono||null});
   if(error){if(btn){btn.textContent='Reintentar';btn.style.opacity=1;}return;}
   const items=PREG.filter(p=>VAL[p.id]!==undefined&&VAL[p.id]!=='').map(p=>({respuesta_id:rid,pregunta_id:p.id,
     valor_num:(p.tipo==='nps'||p.tipo==='csat'||p.tipo==='escala5')?VAL[p.id]:null,

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5af9">
+<title>Manual de instalación · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-display);font-size:22px;color:var(--primary)}.logo span{color:var(--secondary)}
+.mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.btn-ico{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer;text-decoration:none;color:inherit;margin-left:auto}
+.wrap{max-width:880px;margin:0 auto;padding:22px 18px 80px}
+.doc{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow);padding:26px 30px}
+.doc h1{font-family:var(--font-display);font-size:26px;line-height:1.15;margin:8px 0 14px;color:var(--primary)}
+.doc h2{font-family:var(--font-display);font-size:21px;margin:26px 0 10px;padding-top:14px;border-top:2px solid var(--gray-soft)}
+.doc h3{font-size:17px;font-weight:700;margin:18px 0 8px}
+.doc p{margin:9px 0;line-height:1.6}
+.doc ul,.doc ol{margin:9px 0 9px 22px;line-height:1.7}
+.doc li{margin:3px 0}
+.doc code{font-family:var(--font-mono);font-size:.88em;background:var(--primary-soft);padding:1px 6px;border-radius:5px}
+.doc pre{background:var(--ink);color:var(--bg);padding:14px;border-radius:10px;overflow-x:auto;margin:10px 0}
+.doc pre code{background:none;color:inherit}
+.doc table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px;display:block;overflow-x:auto}
+.doc th,.doc td{border:1.5px solid var(--outline);padding:7px 10px;text-align:left;vertical-align:top}
+.doc th{background:var(--primary-soft);font-weight:700}
+.doc blockquote{border-left:5px solid var(--tertiary);background:#fffbe6;padding:8px 14px;margin:12px 0;border-radius:0 8px 8px 0}
+.doc hr{border:none;border-top:2px dashed var(--gray-soft);margin:20px 0}
+.doc a{color:var(--primary);font-weight:600}
+.doc strong{font-weight:700}
+.center{text-align:center;padding:70px 20px}
+.center .ic{font-size:50px;color:var(--primary)}
+@media print{.header,.btn-ico{display:none}.doc{border:none;box-shadow:none;padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="/portal" style="text-decoration:none"><span class="logo">prep<span>!</span></span></a>
+  <span class="mod">Manual de instalación</span>
+  <button class="btn-ico" onclick="window.print()"><span class="material-symbols-outlined">print</span>Imprimir / PDF</button>
+</header>
+<div class="wrap"><div id="app"><div class="center"><div class="ic"><span class="material-symbols-outlined" style="font-size:50px">menu_book</span></div><p style="margin-top:12px;opacity:.6">Cargando manual…</p></div></div></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const app=document.getElementById('app');
+function box(ic,t,s){return `<div class="center"><div class="ic"><span class="material-symbols-outlined" style="font-size:50px">${ic}</span></div><h2 style="border:none">${t}</h2><p style="opacity:.65">${s}</p></div>`;}
+(async()=>{
+  // Solo super admin
+  let isSuper=false;
+  try{const{data}=await sb.rpc('prep_is_super');isSuper=!!data;}catch(e){}
+  if(!isSuper){app.innerHTML=box('lock','Acceso restringido','Este manual es solo para el super administrador. <br><a href="/" style="color:var(--primary)">Volver al inicio</a>');return;}
+  // Cargar el markdown del libro de instalación
+  try{
+    const res=await fetch('/docs/INSTALACION.md',{cache:'no-store'});
+    if(!res.ok)throw new Error('no md');
+    const md=await res.text();
+    app.innerHTML='<div class="doc">'+marked.parse(md)+'</div>';
+  }catch(e){
+    app.innerHTML=box('error','No se pudo cargar el manual','El archivo /docs/INSTALACION.md no está disponible aún. Verifica el deploy.');
+  }
+})();
+</script>
+</body>
+</html>

@@ -687,8 +687,9 @@ async function buildReportPDF(){
 
 /* ===================== VOZ DEL CLIENTE — pestañas superiores ===================== */
 let MODE='mystery';
-let ENC={loaded:false,lista:[],preg:{},resp:{},items:{},sel:null,build:null};
+let ENC={loaded:false,lista:[],preg:{},pregById:{},resp:{},items:{},sel:null,build:null,view:'lista',alertCount:0};
 let RES={loaded:false,lista:[],fSrc:'all',fEst:'all'};
+let ENC_RT=null;
 
 function setMode(m){
   MODE=m;
@@ -714,13 +715,41 @@ async function loadEncuestas(){
       sb.from('vc_preguntas').select('*').in('encuesta_id',ids).order('orden'),
       sb.from('vc_respuestas').select('*').in('encuesta_id',ids)
     ]);
-    (pq.data||[]).forEach(p=>{(ENC.preg[p.encuesta_id]=ENC.preg[p.encuesta_id]||[]).push(p);});
+    (pq.data||[]).forEach(p=>{(ENC.preg[p.encuesta_id]=ENC.preg[p.encuesta_id]||[]).push(p);ENC.pregById[p.id]=p;});
     (rs.data||[]).forEach(r=>{(ENC.resp[r.encuesta_id]=ENC.resp[r.encuesta_id]||[]).push(r);});
     const rids=(rs.data||[]).map(r=>r.id);
     if(rids.length){const it=await sb.from('vc_resp_items').select('*').in('respuesta_id',rids);
       (it.data||[]).forEach(x=>{(ENC.items[x.respuesta_id]=ENC.items[x.respuesta_id]||[]).push(x);});}
   }
-  ENC.loaded=true; renderEncuestas();
+  const prevAlerts=ENC.alertCount; ENC.alertCount=alertResponses().length;
+  ENC.loaded=true; renderEncuestas(); subscribeEncuestas();
+  return ENC.alertCount>prevAlerts;   // true si llegaron nuevas alertas
+}
+// Realtime: refresca el dashboard al llegar una respuesta nueva y avisa si es negativa
+function subscribeEncuestas(){
+  if(ENC_RT)return;
+  ENC_RT=sb.channel('vc-resp-'+MARCA)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'vc_respuestas',filter:'marca_id=eq.'+MARCA},function(){
+      setTimeout(async function(){ const masAlertas=await loadEncuestas(); if(masAlertas){try{navigator.vibrate&&navigator.vibrate(200)}catch(e){} toast('⚠️ Nueva respuesta negativa — revisa Alertas','warn');} else { toast('Nueva respuesta recibida'); } },700);
+    }).subscribe();
+}
+// Score resumido de una respuesta (nps, csat mínimo, comentario, diagnóstico, contacto)
+function respScore(r){
+  let nps=null,csats=[],comment='',diag='';
+  (ENC.items[r.id]||[]).forEach(it=>{const p=ENC.pregById[it.pregunta_id];if(!p)return;
+    if(p.tipo==='nps'&&it.valor_num!=null)nps=it.valor_num;
+    else if((p.tipo==='csat'||p.tipo==='escala5')&&it.valor_num!=null)csats.push(it.valor_num);
+    else if(p.tipo==='abierta'&&it.valor_texto)comment=it.valor_texto;
+    else if(p.tipo==='opciones'&&it.valor_texto)diag=it.valor_texto;});
+  return {nps,csatMin:csats.length?Math.min.apply(null,csats):null,comment,diag};
+}
+function esAlerta(s){return (s.nps!=null&&s.nps<=6)||(s.csatMin!=null&&s.csatMin<=2);}
+// Respuestas que disparan alerta (detractor o puntaje bajo) y NO atendidas
+function alertResponses(){
+  const out=[];
+  ENC.lista.forEach(e=>(ENC.resp[e.id]||[]).forEach(r=>{if(r.atendida)return;const s=respScore(r);if(esAlerta(s))out.push({r,s,enc:e});}));
+  out.sort((a,b)=>(b.r.created_at||'').localeCompare(a.r.created_at||''));
+  return out;
 }
 function encItemsTipo(encId,tipo){
   const ids=(ENC.preg[encId]||[]).filter(p=>p.tipo===tipo).map(p=>p.id);
@@ -732,12 +761,50 @@ function encNPS(encId){const a=encItemsTipo(encId,'nps');if(!a.length)return 0;c
 function encCSAT(encId){const a=encItemsTipo(encId,'csat');return a.length?avg(a):0;}
 function npsColor(n){return n>=50?'var(--green)':n>=0?'var(--amber)':'var(--secondary)';}
 
+function fmtDT(d){if(!d)return'—';try{return new Date(d).toLocaleString('es-PE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return d;}}
+function renderAlertas(){
+  const al=alertResponses();
+  const back=`<button class="btn-ico" onclick="ENC.view='lista';renderEncuestas()" style="margin-bottom:14px"><span class="material-symbols-outlined">arrow_back</span>Encuestas</button>`;
+  if(!al.length)return back+`<div class="empty">🎉 Sin alertas pendientes.<br>Las respuestas negativas o de bajo puntaje aparecerán aquí en vivo.</div>`;
+  return back+`<div class="section-h"><h3>${al.length} alerta${al.length>1?'s':''} por atender</h3><span class="hint">reacciona rápido</span></div>`+al.map(function(a){
+    const s=a.s,r=a.r,nm=r.contacto_nombre,tel=r.contacto_telefono;
+    const motivo=[];if(s.nps!=null&&s.nps<=6)motivo.push('NPS '+s.nps);if(s.csatMin!=null&&s.csatMin<=2)motivo.push('Puntaje '+s.csatMin+'/5');
+    const wa=tel?('https://wa.me/'+(tel.replace(/[^0-9]/g,''))+'?text='+encodeURIComponent('Hola'+(nm?' '+nm.split(' ')[0]:'')+', te escribimos de Casa Italia. Vimos tu comentario y queremos mejorar tu experiencia 🙏')):null;
+    return `<div class="rv-card" style="border-left:6px solid var(--secondary)">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${motivo.map(m=>`<span class="badge" style="background:var(--red-soft);border:1.5px solid var(--outline)">${m}</span>`).join('')}
+          ${s.diag&&s.diag!=='Todo estuvo bien'?`<span class="badge" style="background:var(--amber-soft);border:1.5px solid var(--outline)">${escapeHtml(s.diag)}</span>`:''}</div>
+        <span style="font-family:var(--font-mono);font-size:11px;opacity:.6">${fmtDT(r.created_at)}</span></div>
+      ${s.comment?`<div style="margin-top:8px;font-size:14px">“${escapeHtml(s.comment)}”</div>`:'<div style="margin-top:8px;opacity:.5;font-size:13px">(sin comentario escrito)</div>'}
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-family:var(--font-mono);font-size:11px;opacity:.75">
+        ${r.mesa?`<span>🍽️ Mesa ${escapeHtml(r.mesa)}</span>`:''}${r.mozo?`<span>🧑‍🍳 ${escapeHtml(r.mozo)}</span>`:''}
+        ${nm?`<span>👤 ${escapeHtml(nm)}</span>`:''}${tel?`<span>📱 ${escapeHtml(tel)}</span>`:''}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        ${wa?`<a class="btn-ico primary" href="${wa}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>Contactar</a>`:''}
+        <button class="btn-ico" onclick="marcarAtendida('${r.id}')"><span class="material-symbols-outlined">done</span>Marcar atendida</button></div>
+    </div>`;
+  }).join('');
+}
+async function marcarAtendida(id){
+  const {error}=await sb.from('vc_respuestas').update({atendida:true,atendida_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  ENC.lista.forEach(e=>(ENC.resp[e.id]||[]).forEach(r=>{if(r.id===id)r.atendida=true;}));
+  ENC.alertCount=alertResponses().length;
+  toast('Alerta atendida');renderEncuestas();
+}
 function renderEncuestas(){
   PENDING=[];
   const v=document.getElementById('enc-view');
   if(ENC.sel){v.innerHTML=encResultados(ENC.sel);mountCharts();return;}
+  if(ENC.view==='alertas'){v.innerHTML=renderAlertas();return;}
   if(!ENC.lista.length){v.innerHTML='<div class="empty">Aún no hay encuestas.<br>Toca «Nueva encuesta» para crear la primera.</div>';return;}
-  v.innerHTML=ENC.lista.map(e=>{
+  const nAl=ENC.alertCount;
+  const banner=`<div class="q-card" style="cursor:pointer;background:${nAl?'var(--red-soft)':'var(--green-soft)'}" onclick="ENC.view='alertas';renderEncuestas()">
+    <div style="display:flex;align-items:center;gap:10px"><span class="material-symbols-outlined" style="font-size:26px">${nAl?'notification_important':'check_circle'}</span>
+    <div style="flex:1"><div style="font-weight:700">${nAl?(nAl+' alerta'+(nAl>1?'s':'')+' por atender'):'Sin alertas pendientes'}</div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.7">Respuestas negativas o puntajes bajos · clic para reaccionar</div></div>
+    <span class="material-symbols-outlined">chevron_right</span></div></div>`;
+  v.innerHTML=banner+ENC.lista.map(e=>{
     const resp=ENC.resp[e.id]||[],nps=encNPS(e.id),csat=encCSAT(e.id),np=(ENC.preg[e.id]||[]).length;
     return `<div class="q-card" style="cursor:pointer" onclick="openResultados('${e.id}')">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
