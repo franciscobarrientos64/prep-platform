@@ -32,7 +32,10 @@ document.addEventListener('DOMContentLoaded',function(){
     c.auth.getSession().then(function(s){
       var email=s&&s.data&&s.data.session&&s.data.session.user&&s.data.session.user.email;
       if(!email)return;
-      c.from('prep_usuario_marcas').select('marca_id').then(function(r){
+      // Filtrar por el email del usuario: el selector muestra SOLO las marcas
+      // asignadas a ti. Sin esto, el super admin (RLS pum_self_read devuelve todo)
+      // veria las marcas de otros clientes en cualquier subdominio.
+      c.from('prep_usuario_marcas').select('marca_id').eq('email',email).then(function(r){
         var rows=(r&&r.data)||[]; if(rows.length<2)return;
         var ids=rows.map(function(x){return x.marca_id;});
         c.from('inv_marcas').select('id,nombre').in('id',ids).then(function(rm){
