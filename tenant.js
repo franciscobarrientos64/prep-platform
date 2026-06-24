@@ -6,7 +6,8 @@
 (function(){
   // Mapa de subdominios de cliente -> {marca, local}. Agregar aquí cada cliente con su URL.
   var SUB={
-    'casa-italia':{marca:'m6',local:'l11'},
+    'casa-italia':{marca:'m6',local:'l11'},   // casa-italia.prep.rest
+    'casaitalia':{marca:'m6',local:'l11'},    // dominio propio casaitalia.rest
     'symposium':{marca:'m7',local:'l12'},
     'lcds':{marca:'m8',local:'l13'}
   };
