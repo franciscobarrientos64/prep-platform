@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5af9">
+<title>Onboarding de cliente · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-display);font-size:22px;color:var(--primary)}.logo span{color:var(--secondary)}
+.mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.select{padding:8px 12px;border:2px solid var(--outline);border-radius:10px;background:var(--surface);font-family:var(--font-body);font-weight:600;font-size:14px;box-shadow:var(--shadow-sm);cursor:pointer}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 80px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 16px}
+.prog{flex:1;min-width:220px;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px}
+.prog .lbl{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;opacity:.6}
+.prog .val{font-family:var(--font-display);font-size:26px;margin:2px 0 6px}
+.track{height:12px;background:var(--gray-soft);border:2px solid var(--outline);border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--green)}
+.sec-h{font-family:var(--font-display);font-size:18px;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:6px 14px;margin-bottom:14px}
+.item{padding:12px 0;border-bottom:1px dashed var(--gray-soft);display:flex;gap:12px;align-items:flex-start}
+.item:last-child{border:none}
+.chk{width:26px;height:26px;border:2px solid var(--outline);border-radius:7px;background:var(--surface);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.chk.on{background:var(--green);color:#fff}
+.item .body{flex:1}
+.item .t{font-weight:600;font-size:14px;margin-bottom:6px}
+.inp{width:100%;padding:9px 11px;border:2px solid var(--outline);border-radius:9px;background:var(--surface);font-family:var(--font-body);font-size:14px}
+.cfg{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--gray-soft)}
+.cfg:last-child{border:none}
+.cfg .nm{font-weight:600;font-size:14px}.cfg .cur{font-family:var(--font-mono);font-size:11px;opacity:.6;word-break:break-all}
+.badge{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1.5px solid var(--outline);flex-shrink:0}
+.badge.ok{background:var(--green-soft)}.badge.no{background:var(--red-soft)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:600;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer;text-decoration:none;color:inherit}
+.btn.primary{background:var(--primary);color:#fff}
+.center{text-align:center;padding:60px 20px;opacity:.7}
+.toast-container{position:fixed;top:70px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--ink);color:var(--bg);border:2px solid var(--outline);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:600;box-shadow:var(--shadow)}
+.toast.ok{background:var(--green)}.toast.err{background:var(--secondary)}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="/portal" style="text-decoration:none"><span class="logo">prep<span>!</span></span></a>
+  <span class="mod">Onboarding</span>
+  <select class="select" id="selMarca" style="margin-left:auto"></select>
+  <select class="select" id="selLocal" style="display:none"></select>
+</header>
+<div class="wrap"><div id="app"><div class="center">Cargando…</div></div></div>
+<div class="toast-container" id="toasts"></div>
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const app=document.getElementById('app');
+let MARCAS=[], LOCALES=[], MARCA=null, LOCAL=null, CFG_VAL={}, ONB={};
+
+// Checklist de información a solicitar al cliente
+const RELEV=[
+  {sec:'🖥️ Equipos',items:[
+    {k:'eq_mozos',t:'Tablets/celulares para mozos (cantidad y modelo)'},
+    {k:'eq_caja',t:'Tablet o PC fija para Caja/POS'},
+    {k:'eq_kds',t:'Pantallas para cocina/barra (KDS) — TV o tablet'},
+    {k:'eq_anfitrion',t:'Tablet de anfitrión/recepción'},
+    {k:'eq_impresoras',t:'Impresoras térmicas (cantidad y tipo: USB/red/Bluetooth)'},
+    {k:'eq_impresoras_ip',t:'IPs de las impresoras de red'},
+    {k:'eq_gerencia',t:'Equipo de gerencia para reportes'},
+  ]},
+  {sec:'🌐 Red e internet',items:[
+    {k:'net_isp',t:'Proveedor y velocidad de internet'},
+    {k:'net_wifi',t:'WiFi cubre salón + cocina + barra (nombre de red)'},
+    {k:'net_4g',t:'Plan de datos 4G de respaldo'},
+  ]},
+  {sec:'👥 Usuarios y roles',items:[
+    {k:'us_cantidad',t:'Cuántas personas usarán el sistema y en qué rol'},
+    {k:'us_admin',t:'Quién será el administrador'},
+    {k:'us_mozos_modo',t:'Mozos: ¿cuenta propia o de estación compartida?'},
+    {k:'us_correos',t:'Correos reales de gerentes/administradores'},
+  ]},
+  {sec:'🔌 Decisiones de integración',items:[
+    {k:'int_facturacion',t:'Método de facturación: SUNAT propio o sistema externo'},
+    {k:'int_cobro',t:'Método de cobro: efectivo / Yape / pasarela'},
+    {k:'int_geofence',t:'Coordenadas reales del local (geofence de asistencia)'},
+  ]},
+];
+// Campos de config_local que el sistema necesita para configurar
+const CFG=[
+  {k:'razon_social',t:'Razón social'},
+  {k:'nombre_comercial',t:'Nombre comercial'},
+  {k:'ruc',t:'RUC',bad:v=>!v||/x/i.test(String(v))},
+  {k:'direccion',t:'Dirección',bad:v=>!v||String(v).trim()==='Lima, Perú'},
+  {k:'telefono',t:'Teléfono',bad:v=>!v||String(v).replace(/[^0-9]/g,'').length<6},
+  {k:'logo_url',t:'Logo',bad:v=>!v},
+  {k:'reporte_emails',t:'Correos de reporte de cierre',bad:v=>!v||(Array.isArray(v)&&!v.length)},
+  {k:'igv_pct',t:'IGV %'},
+  {k:'servicio_pct_default',t:'Servicio %'},
+  {k:'tipo_cambio_usd',t:'Tipo de cambio USD'},
+  {k:'ticket_footer',t:'Pie de ticket'},
+];
+
+function toast(m,t){const c=document.getElementById('toasts');const e=document.createElement('div');e.className='toast '+(t||'ok');e.textContent=m;c.appendChild(e);setTimeout(()=>e.remove(),2200);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cfgBad(f){const v=CFG_VAL[f.k];return f.bad?f.bad(v):(v==null||v==='');}
+function cfgShow(v){if(v==null||v==='')return '—';if(Array.isArray(v))return v.length?v.join(', '):'—';return String(v);}
+
+(async()=>{
+  let isSuper=false; try{const{data}=await sb.rpc('prep_is_super');isSuper=!!data;}catch(e){}
+  if(!isSuper){app.innerHTML='<div class="center">🔒 Solo para super administrador. <a href="/">Volver</a></div>';return;}
+  const{data:ms}=await sb.from('inv_marcas').select('id,nombre').order('id');
+  MARCAS=ms||[];
+  const sm=document.getElementById('selMarca');
+  sm.innerHTML=MARCAS.map(m=>`<option value="${m.id}">${esc(m.nombre)} (${m.id})</option>`).join('');
+  sm.onchange=()=>selectMarca(sm.value);
+  if(MARCAS.length)selectMarca(MARCAS[0].id);
+})();
+
+async function selectMarca(mid){
+  MARCA=mid;
+  const{data:ls}=await sb.from('inv_locales').select('id,nombre').eq('marca_id',mid).order('id');
+  LOCALES=ls||[]; LOCAL=LOCALES[0]?LOCALES[0].id:null;
+  const sl=document.getElementById('selLocal');
+  if(LOCALES.length>1){sl.style.display='';sl.innerHTML=LOCALES.map(l=>`<option value="${l.id}">${esc(l.nombre)} (${l.id})</option>`).join('');sl.onchange=()=>{LOCAL=sl.value;loadClient();};}
+  else sl.style.display='none';
+  loadClient();
+}
+async function loadClient(){
+  app.innerHTML='<div class="center">Cargando datos del cliente…</div>';
+  const [cfg,onb]=await Promise.all([
+    LOCAL?sb.from('config_local').select('*').eq('local_id',LOCAL).maybeSingle():Promise.resolve({data:null}),
+    sb.from('prep_onboarding').select('*').eq('marca_id',MARCA)
+  ]);
+  CFG_VAL=cfg.data||{};
+  ONB={}; (onb.data||[]).forEach(r=>ONB[r.item_key]=r);
+  render();
+}
+function render(){
+  const totalItems=RELEV.reduce((s,g)=>s+g.items.length,0);
+  const doneItems=RELEV.reduce((s,g)=>s+g.items.filter(i=>ONB[i.k]&&ONB[i.k].hecho).length,0);
+  const cfgOk=CFG.filter(f=>!cfgBad(f)).length;
+  const pInfo=Math.round(doneItems/totalItems*100), pCfg=Math.round(cfgOk/CFG.length*100);
+  const mn=(MARCAS.find(m=>m.id===MARCA)||{}).nombre||MARCA;
+  let h=`<div class="bar">
+    <div class="prog"><div class="lbl">Información recibida</div><div class="val">${doneItems}/${totalItems}</div><div class="track"><div class="fill" style="width:${pInfo}%"></div></div></div>
+    <div class="prog"><div class="lbl">Configuración en el sistema</div><div class="val">${cfgOk}/${CFG.length}</div><div class="track"><div class="fill" style="width:${pCfg}%;background:${pCfg<100?'var(--tertiary)':'var(--green)'}"></div></div></div>
+  </div>`;
+
+  h+=`<div class="sec-h"><span class="material-symbols-outlined">checklist</span>Solicitud de información — ${esc(mn)}</div>`;
+  RELEV.forEach(g=>{
+    h+=`<div style="font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;opacity:.6;margin:14px 0 6px">${g.sec}</div><div class="card">`;
+    g.items.forEach(it=>{
+      const o=ONB[it.k]||{}; const on=!!o.hecho;
+      h+=`<div class="item">
+        <div class="chk ${on?'on':''}" onclick="toggleItem('${it.k}')">${on?'<span class="material-symbols-outlined" style="font-size:18px">check</span>':''}</div>
+        <div class="body"><div class="t">${esc(it.t)}</div>
+        <input class="inp" placeholder="Respuesta del cliente…" value="${esc(o.valor)}" onchange="saveItem('${it.k}',this.value)"></div></div>`;
+    });
+    h+=`</div>`;
+  });
+
+  h+=`<div class="sec-h"><span class="material-symbols-outlined">settings</span>Estado de configuración (config_local)</div>
+   <div class="card">`+CFG.map(f=>{
+    const bad=cfgBad(f);
+    return `<div class="cfg"><div><div class="nm">${esc(f.t)}</div><div class="cur">${esc(cfgShow(CFG_VAL[f.k]))}</div></div>
+      <span class="badge ${bad?'no':'ok'}">${bad?'Falta':'OK'}</span></div>`;
+  }).join('')+`</div>
+  <a class="btn primary" href="/ajustes?marca=${MARCA}&local=${LOCAL||''}" target="_blank"><span class="material-symbols-outlined">edit</span>Editar configuración en Ajustes</a>`;
+  app.innerHTML=h;
+}
+async function saveItem(key,val){
+  const row={marca_id:MARCA,local_id:LOCAL,item_key:key,valor:val,hecho:(ONB[key]&&ONB[key].hecho)||false,updated_at:new Date().toISOString()};
+  const{error}=await sb.from('prep_onboarding').upsert(row,{onConflict:'marca_id,item_key'});
+  if(error){toast('Error al guardar','err');return;}
+  ONB[key]=row; toast('Guardado');
+}
+async function toggleItem(key){
+  const cur=ONB[key]||{valor:''}; const nx=!cur.hecho;
+  const row={marca_id:MARCA,local_id:LOCAL,item_key:key,valor:cur.valor||'',hecho:nx,updated_at:new Date().toISOString()};
+  const{error}=await sb.from('prep_onboarding').upsert(row,{onConflict:'marca_id,item_key'});
+  if(error){toast('Error','err');return;}
+  ONB[key]=row; render();
+}
+</script>
+</body>
+</html>

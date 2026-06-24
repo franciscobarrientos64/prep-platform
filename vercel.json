@@ -46,6 +46,10 @@
       "destination": "/instalacion.html"
     },
     {
+      "source": "/onboarding",
+      "destination": "/onboarding.html"
+    },
+    {
       "source": "/voz-cliente",
       "destination": "/voz-cliente.html"
     },
