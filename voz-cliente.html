@@ -65,13 +65,15 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .heat .hc{display:flex;align-items:center;justify-content:center;min-height:34px;border:2px solid var(--outline);border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700}
 .heat .rl{display:flex;align-items:center;justify-content:flex-end;text-align:right;font-size:12px;font-weight:600;padding-right:8px}
 .heat .cl{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.6;text-align:center;align-self:end;padding-bottom:3px}
-.dg .mh{display:grid;gap:5px;align-items:end;font-family:var(--font-display);font-size:14px;margin:16px 0 4px;border-bottom:2px solid var(--outline);padding-bottom:3px}
+.dg .mh{display:flex;align-items:flex-end;gap:8px;font-family:var(--font-display);font-size:14px;margin:16px 0 4px;border-bottom:2px solid var(--outline);padding-bottom:3px}
 .dg .mh:first-child{margin-top:0}
-.dg .vh{font-family:var(--font-mono);font-size:9px;font-weight:700;text-align:center;opacity:.6;align-self:end}
-.dg .drow{display:grid;gap:5px;align-items:center;padding:3px 0;border-bottom:1px solid #eef0f2}
+.dg .mh .mu{flex:1;min-width:0}
+.dg .sqs{display:flex;gap:5px;flex-shrink:0}
+.dg .vh{font-family:var(--font-mono);font-size:9px;font-weight:700;width:30px;text-align:center;opacity:.6}
+.dg .drow{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #eef0f2}
 .dg .drow:last-child{border-bottom:none}
-.dg .it{font-size:11.5px;line-height:1.25}
-.dg .sq{height:24px;align-self:center;border:2px solid var(--outline);border-radius:5px}
+.dg .it{flex:1;min-width:0;font-size:11.5px;line-height:1.25}
+.dg .sq{width:30px;height:24px;flex:0 0 30px;border:2px solid var(--outline);border-radius:5px}
 .dg .sq.empty{background:#f3f4f6;border-style:dashed;border-color:#c2c7ce}
 /* desglose por visita (un solo recorrido, ítem por ítem) */
 .vmh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:var(--font-display);font-size:15px;margin:18px 0 6px;border-bottom:2px solid var(--outline);padding-bottom:4px}
@@ -381,13 +383,12 @@ function vAuditoria(){
     return h+`<div class="section"><div class="section-h"><h3>Visita ${n} · ${escapeHtml(per)}</h3><span class="hint">${allScored.length} ítems evaluados · ${tot}/100</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${body||'<div class="empty">Sin ítems.</div>'}</div></div>`;
   }
   // --- grilla: todas las visitas del período lado a lado ---
-  const gcols=`1fr repeat(${visCols.length},30px)`;
   let g='<div class="dg">';
   mundos.forEach(mu=>{
-    g+=`<div class="mh" style="grid-template-columns:${gcols}"><span>${escapeHtml(mu)}</span>`+visCols.map(c=>`<span class="vh">V${c}</span>`).join('')+`</div>`;
+    g+=`<div class="mh"><span class="mu">${escapeHtml(mu)}</span><span class="sqs">`+visCols.map(c=>`<span class="vh">V${c}</span>`).join('')+`</span></div>`;
     items.filter(d=>d.mundo===mu).forEach(d=>{
-      g+=`<div class="drow" style="grid-template-columns:${gcols}"><div class="it">${escapeHtml(d.item)}</div>`
-        +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq${col?'':' empty'}"${col?` style="background:${col}"`:''}></div>`;}).join('')+`</div>`;
+      g+=`<div class="drow"><div class="it">${escapeHtml(d.item)}</div><div class="sqs">`
+        +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq${col?'':' empty'}"${col?` style="background:${col}"`:''}></div>`;}).join('')+`</div></div>`;
     });
   });
   g+='</div>';
