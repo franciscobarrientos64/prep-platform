@@ -89,9 +89,12 @@ function setTxt(id,t){VAL[id]=t;render();}
 async function enviar(){
   for(const p of PREG){if(p.requerida&&(VAL[p.id]===undefined||VAL[p.id]==='')){alert('Por favor responde: '+p.texto);return;}}
   const btn=document.querySelector('.send');if(btn){btn.textContent='Enviando…';btn.style.opacity=.6;}
-  const {data:r,error}=await sb.from('vc_respuestas').insert({encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO}).select().single();
-  if(error||!r){if(btn){btn.textContent='Reintentar';btn.style.opacity=1;}return;}
-  const items=PREG.filter(p=>VAL[p.id]!==undefined&&VAL[p.id]!=='').map(p=>({respuesta_id:r.id,pregunta_id:p.id,
+  // Generamos el id en el cliente: anon NO puede leer vc_respuestas (privacidad),
+  // así que no usamos .select()/RETURNING (violaría RLS). Insert directo.
+  const rid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
+  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO});
+  if(error){if(btn){btn.textContent='Reintentar';btn.style.opacity=1;}return;}
+  const items=PREG.filter(p=>VAL[p.id]!==undefined&&VAL[p.id]!=='').map(p=>({respuesta_id:rid,pregunta_id:p.id,
     valor_num:(p.tipo==='nps'||p.tipo==='csat'||p.tipo==='escala5')?VAL[p.id]:null,
     valor_texto:(p.tipo==='opciones'||p.tipo==='abierta')?String(VAL[p.id]):null}));
   if(items.length)await sb.from('vc_resp_items').insert(items);
