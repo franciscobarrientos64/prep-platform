@@ -214,7 +214,7 @@ function heat(rowDefs,cols,valFn,opts){
   let h=`<div class="heatwrap"><div class="heat" style="grid-template-columns:${gc};min-width:${110+cols.length*46}px">`;
   h+=`<div></div>`+cols.map(c=>`<div class="cl">${escapeHtml(c.label)}</div>`).join('');
   rowDefs.forEach(r=>{h+=`<div class="rl">${escapeHtml(r.label)}</div>`;
-    cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">${opts.nonum?'':'·'}</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${opts.nonum?'':v.toFixed(0)}</div>`;});});
+    cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">${opts.nonum?'':'·'}</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${opts.nonum?'':v.toFixed(0)+(opts.pct?'%':'')}</div>`;});});
   return h+`</div></div>`;
 }
 function lvlColor(v){if(v==null)return null;return ['#171c20','#ff3b30','#ffcc00','#10b981','#1e5af9'][v]||null;}
@@ -347,7 +347,7 @@ function vAuditoria(){
   const V=DB.visitas,R=DB.respuestas,ms=months(V);
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   let h=`<div class="section"><div class="section-h"><h3>Puntajes generales</h3><span class="hint">% alcanzado por criterio y mes</span></div>
-    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})),ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;})}<div class="legend">${LEGEND}</div></div></div>`;
+    <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})),ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{pct:true})}<div class="legend">${LEGEND}</div></div></div>`;
   if(!det.length)return h+'<div class="empty">Sin detalle ítem por ítem cargado.</div>';
   const periodos=[...new Set(det.map(d=>d.periodo))].sort();
   const per=AUDPER||periodos[periodos.length-1];
