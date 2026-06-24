@@ -552,7 +552,7 @@ async function buildReportPDF(){
   const fScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===firstM).map(v=>+v.score_total||0));
   const lScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===lastM).map(v=>+v.score_total||0));
   const delta=(msAll.length>1)?(lScore-fScore):0;
-  const perLbl=PER==='all'?(msAll.length?`${mLabel(firstM)} – ${mLabel(lastM)}`:'Histórico'):mLabel(PER);
+  const perLbl=PER==='all'?(msAll.length?`${mLabel(firstM)} a ${mLabel(lastM)}`:'Histórico'):mLabel(PER);
   const genDate=new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const v2m={},v2l={};Vall.forEach(v=>{v2m[v.id]=(v.fecha||'').slice(0,7);v2l[v.id]=v.local_id;});
 
@@ -561,16 +561,16 @@ async function buildReportPDF(){
     doc.text(`Prep!  ·  Mystery Shopper  ·  ${CLI}  ·  Confidencial`,M,H-8);doc.text(String(page),W-M,H-8,{align:'right'});}
   function np(){footer();doc.addPage();doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');y=22;}
   function ensure(h){if(y+h>H-16)np();}
-  function sectionTitle(t,sub){ensure(26);doc.setFillColor(...PDFC.primary);doc.rect(M,y,4,12,'F');
+  function sectionTitle(t,sub,reserve){ensure(26+(reserve||0));doc.setFillColor(...PDFC.primary);doc.rect(M,y,4,12,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...PDFC.ink);
     const tl=doc.splitTextToSize(t,CW-8);doc.text(tl,M+8,y+5);let yy=y+5+(tl.length-1)*6;
     if(sub){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...PDFC.mut);doc.text(doc.splitTextToSize(sub,CW-8),M+8,yy+6);yy+=6;}
     y=yy+9;}
-  function bandLegend(){ensure(8);const b=[['≥90',PDFC.primary],['80–89',PDFC.green],['70–79',PDFC.tert],['<70',PDFC.second]];let lx=M;
+  function bandLegend(){ensure(8);const b=[['Mayor a 90',PDFC.primary],['80 a 89',PDFC.green],['70 a 79',PDFC.tert],['Menor a 70',PDFC.second]];let lx=M;
     doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...PDFC.ink);
-    b.forEach(it=>{doc.setFillColor(...it[1]);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(lx,y,4,4,1,1,'FD');doc.text(it[0],lx+6,y+3.6);lx+=26;});y+=8;}
+    b.forEach(it=>{doc.setFillColor(...it[1]);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(lx,y,4,4,1,1,'FD');doc.text(it[0],lx+6,y+3.6);lx+=34;});y+=8;}
   function heatPDF(rows,cols,valFn,opt){opt=opt||{};const labW=opt.labW||46,cellW=(CW-labW)/cols.length,rh=opt.rh||8,hh=7;
-    ensure(hh+Math.min(rows.length,3)*rh);
+    ensure(Math.min(hh+rows.length*rh,H-2*M-10));
     doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...PDFC.ink);
     cols.forEach((c,i)=>doc.text(String(c.label),M+labW+i*cellW+cellW/2,y+5,{align:'center'}));
     let yy=y+hh;
@@ -586,16 +586,18 @@ async function buildReportPDF(){
 
   /* ---------- PORTADA ---------- */
   doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');
-  doc.setFillColor(...PDFC.primary);doc.rect(0,0,W,68,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(34);doc.setTextColor(255,255,255);doc.text('prep',M,42);
-  const pw=doc.getTextWidth('prep');doc.setTextColor(...PDFC.tert);doc.text('!',M+pw+1,42);
-  doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text('Experiencia del cliente',W-M,40,{align:'right'});
-  doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(30);doc.text('Reporte Mystery',M,106);doc.text('Shopper',M,118);
-  doc.setFont('helvetica','normal');doc.setFontSize(13);doc.setTextColor(...PDFC.mut);doc.text('Evaluación de estándares de servicio',M,130);
-  const logo=await loadImg(`/logos/${MARCA}.png`);let nx=M,ny=158;
+  doc.setFillColor(...PDFC.primary);doc.rect(0,0,W,9,'F');
+  doc.setFillColor(...PDFC.tert);doc.rect(0,9,W,2,'F');
+  const prepLogo=await loadImg('/logo.png');
+  if(prepLogo){const lw=50,lh=lw*((prepLogo.height||346)/(prepLogo.width||1044));try{doc.addImage(prepLogo,'PNG',M,26,lw,lh);}catch(e){}}
+  else{doc.setFont('helvetica','bold');doc.setFontSize(34);doc.setTextColor(...PDFC.ink);doc.text('prep',M,42);const pw=doc.getTextWidth('prep');doc.setTextColor(...PDFC.primary);doc.text('!',M+pw+1,42);}
+  doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(...PDFC.mut);doc.text('Experiencia del cliente',W-M,36,{align:'right'});
+  doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(31);doc.text('Reporte Mystery',M,108);doc.text('Shopper',M,121);
+  doc.setFont('helvetica','normal');doc.setFontSize(13);doc.setTextColor(...PDFC.mut);doc.text('Evaluación de estándares de servicio',M,133);
+  const logo=await loadImg(`/logos/${MARCA}.png`);let nx=M,ny=164;
   if(logo){const lw=22,lh=lw*((logo.height||1)/(logo.width||1));try{doc.addImage(logo,'PNG',M,ny-12,lw,lh);nx=M+lw+8;}catch(e){}}
   doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text(CLI,nx,ny);
-  const cov=[['Periodo',perLbl],['Evaluaciones',String(scopeV.length)],[multi?'Sedes':'Sede',multi?String(locs.length):((locs[0]&&locs[0].nombre)||'—')],['Generado',genDate]];
+  const cov=[['Periodo',perLbl],['Evaluaciones',String(scopeV.length)],[multi?'Sedes':'Sede',multi?String(locs.length):((locs[0]&&locs[0].nombre)||'-')],['Generado',genDate]];
   const bw=CW/2,bh=22,by=205;
   cov.forEach((it,i)=>{const bx=M+(i%2)*bw,byy=by+Math.floor(i/2)*(bh+6);
     doc.setFillColor(255,255,255);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.5);doc.roundedRect(bx,byy,bw-6,bh,3,3,'FD');
@@ -625,16 +627,18 @@ async function buildReportPDF(){
   /* ---------- PUNTAJE POR CRITERIO (barras) ---------- */
   const barCfg={type:'bar',data:{labels:critRows.map(r=>r.k),datasets:[{data:critRows.map(r=>Math.round(r.s)),backgroundColor:critRows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:1.5,borderRadius:4}]},options:{indexAxis:'y',layout:{padding:{right:26,left:4,top:4,bottom:4}},scales:{x:{min:0,max:100,ticks:{stepSize:20}},y:{ticks:{font:{size:12}}}},plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'end',color:'#171c20',font:{weight:'700',size:12},formatter:v=>v}}}};
   const barH=Math.max(360,critRows.length*30+50);const barImg=await offChart(barCfg,820,barH);
-  sectionTitle('Puntaje por criterio',`Ordenado de mayor a menor · ${perLbl}`);
-  if(barImg){const iw=CW,ih=iw*(barH/820);ensure(ih);doc.addImage(barImg,'PNG',M,y,iw,ih);y+=ih+4;}
+  const barIh=CW*(barH/820);
+  sectionTitle('Puntaje por criterio',`Ordenado de mayor a menor · ${perLbl}`,barIh+10);
+  if(barImg){doc.addImage(barImg,'PNG',M,y,CW,barIh);y+=barIh+4;}
   bandLegend();
 
   /* ---------- DISTRIBUCIÓN ---------- */
   const bands=[0,0,0,0];critRows.forEach(r=>{bands[r.s>=90?0:r.s>=80?1:r.s>=70?2:3]++;});
   const donutCfg={type:'doughnut',data:{labels:['Excelente (≥90)','Bueno (80–89)','Regular (70–79)','A mejorar (<70)'],datasets:[{data:bands,backgroundColor:['#1e5af9','#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:1.5}]},options:{cutout:'56%',plugins:{legend:{position:'right',labels:{font:{size:12},boxWidth:14}},datalabels:{display:true,color:ctx=>ctx.dataIndex===2?'#3a2e00':'#fff',font:{weight:'800',size:14},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+(+b||0),0);return v>0&&t?Math.round(v/t*100)+'%':'';}}}}};
   const donImg=await offChart(donutCfg,820,360);
-  sectionTitle('Distribución por nivel',`Criterios en cada banda de desempeño · ${perLbl}`);
-  if(donImg){const iw=CW,ih=iw*(360/820);ensure(ih);doc.addImage(donImg,'PNG',M,y,iw,ih);y+=ih+6;}
+  const donIh=CW*(360/820);
+  sectionTitle('Distribución por nivel',`Criterios en cada banda de desempeño · ${perLbl}`,donIh);
+  if(donImg){doc.addImage(donImg,'PNG',M,y,CW,donIh);y+=donIh+6;}
 
   /* ---------- EVOLUCIÓN MENSUAL ---------- */
   if(msAll.length>1){
@@ -642,8 +646,9 @@ async function buildReportPDF(){
       :[{label:CLI,data:msAll.map(m=>{const vs=Vall.filter(v=>v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))):null;}),borderColor:'#1e5af9',backgroundColor:'#1e5af9',tension:.3,spanGaps:true,pointRadius:3,fill:false}];
     const lineCfg={type:'line',data:{labels:msAll.map(m=>mLabel(m)),datasets:dsE},options:{scales:{y:{min:40,max:100,ticks:{stepSize:10}}},plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:14}},datalabels:{display:false}}}};
     const lineImg=await offChart(lineCfg,820,380);
-    sectionTitle(multi?'Evolución del puntaje por sede':'Evolución del puntaje general',`Promedio mensual · ${mLabel(firstM)} – ${mLabel(lastM)}`);
-    if(lineImg){const iw=CW,ih=iw*(380/820);ensure(ih);doc.addImage(lineImg,'PNG',M,y,iw,ih);y+=ih+6;}
+    const lineIh=CW*(380/820);
+    sectionTitle(multi?'Evolución del puntaje por sede':'Evolución del puntaje general',`Promedio mensual · ${mLabel(firstM)} a ${mLabel(lastM)}`,lineIh);
+    if(lineImg){doc.addImage(lineImg,'PNG',M,y,CW,lineIh);y+=lineIh+6;}
   }
 
   /* ---------- COMPARATIVO ENTRE SEDES (solo multi) ---------- */
@@ -664,21 +669,52 @@ async function buildReportPDF(){
     const areas=areasOf();
     const trows=[{key:'__all',label:'Score general',bold:true}].concat(areas.map(a=>({key:a,label:a})));
     const tval=(r,c)=>{if(r.key==='__all'){const vs=scopeV.filter(v=>v.local_id===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}const rr=scopeR.filter(z=>v2l[z.visita_id]===c.key&&z.area===r.key);return rr.length?wAvg(rr):null;};
-    sectionTitle('Puntajes comparativos por sede','Score general y por área de servicio');
+    sectionTitle('Puntajes comparativos por sede','Score general y por área de servicio',7+trows.length*8+14);
     heatPDF(trows,tcols,tval,{labW:48,rh:8,boldRow:true});bandLegend();
   }
 
   /* ---------- MAPA CRITERIO × MES ---------- */
   if(msAll.length>1){
-    sectionTitle('Mapa de calor: criterio × mes',`Dónde y cuándo se concentra el desempeño${multi?' (todas las sedes)':''}`);
+    sectionTitle('Mapa de calor: criterio y mes',`Dónde y cuándo se concentra el desempeño${multi?' (todas las sedes)':''}`,7+DB.criterios.length*8+14);
     const cols=msAll.map(m=>({key:m,label:MESN[+m.split('-')[1]]}));
     const rows=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
     heatPDF(rows,cols,(r,c)=>{const x=Rall.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{labW:50,rh:8});bandLegend();
   }
 
-  /* ---------- PLAN DE ACCIÓN ---------- */
+  /* ---------- PLAN DE ACCIÓN RECOMENDADO (derivado del periodo) ---------- */
+  const RECO={
+    mesero:'Reforzar la secuencia de servicio del salón: sugerencia de carta, atención proactiva y lectura de la mesa.',
+    recibimiento:'Estandarizar el protocolo de bienvenida: saludo en menos de 1 minuto, contacto visual y anfitrión asignado.',
+    comida:'Revisar fichas técnicas y tiempos de cocina; controlar temperatura y presentación al momento del pase.',
+    vino:'Capacitar en carta de vinos y maridaje; asegurar disponibilidad y oferta por copa.',
+    pago:'Agilizar cuenta y cobro; ofrecer medios de pago y cerrar con una despedida cordial.',
+    administracion:'Asegurar presencia del administrador en piso, con rondas de mesa para medir la satisfacción.',
+    reserva:'Mejorar la gestión de reservas: confirmación, datos correctos y manejo de la no disponibilidad.',
+    estacionamiento:'Coordinar apoyo de estacionamiento e indicaciones claras de llegada.',
+    infraestructura:'Plan de mantenimiento de instalaciones: iluminación, baños, mobiliario y limpieza.',
+    mesa:'Estandarizar montaje y limpieza de mesa: mantelería, cubertería y mise en place.',
+    lealtad:'Activar la fidelización: captura de datos del comensal y seguimiento post-visita.'};
+  const normK=s=>(s||'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const recoFor=k=>{const n=normK(k);for(const key in RECO){if(n.includes(key))return RECO[key];}return 'Definir el estándar, capacitar al equipo y medir el cumplimiento semanal.';};
+  const plan=[];
+  critRows.filter(r=>r.s<80).sort((a,b)=>a.s-b.s).slice(0,5).forEach(r=>{plan.push({prio:r.s<60?'Alta':r.s<72?'Media':'Baja',area:r.k,txt:recoFor(r.k)+` (actual ${r.s.toFixed(0)}/100, meta 80).`});});
+  const detP=DB.detalle||[];
+  if(detP.length){const perA=[...new Set(detP.map(d=>d.periodo))].sort().pop();
+    detP.filter(d=>d.periodo===perA).map(d=>{const xs=[d.v1,d.v2,d.v3,d.v4].filter(v=>v!=null);return {mundo:d.mundo,item:d.item,a:xs.length?avg(xs):null};}).filter(x=>x.a!=null&&x.a<=1.5).sort((a,b)=>a.a-b.a).slice(0,4)
+      .forEach(x=>plan.push({prio:x.a<=0.5?'Alta':'Media',area:x.mundo,txt:'Falla recurrente: '+x.item+'. Corregir y verificar en el próximo ciclo.'}));}
+  if(plan.length){
+    sectionTitle('Plan de acción recomendado',`Prioridades derivadas del desempeño · ${perLbl}`,40);
+    const PB={Alta:[PDFC.second,[255,255,255]],Media:[PDFC.tert,[58,46,0]],Baja:[PDFC.green,[255,255,255]]};
+    plan.forEach(p=>{const lines=doc.splitTextToSize(p.txt,CW-24);ensure(lines.length*5+8);
+      const pb=PB[p.prio];doc.setFillColor(...pb[0]);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.3);doc.roundedRect(M,y,18,6,1.5,1.5,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...pb[1]);doc.text(p.prio.toUpperCase(),M+9,y+4,{align:'center'});
+      doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...PDFC.primary);doc.text(doc.splitTextToSize(String(p.area),CW-24)[0],M+22,y+4.5);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...PDFC.ink);doc.text(lines,M+22,y+9.5);
+      y+=Math.max(11,lines.length*5+8);doc.setDrawColor(...PDFC.gray);doc.setLineWidth(0.2);doc.line(M,y-3,M+CW,y-3);});
+  }
+  /* ---------- INICIATIVAS REGISTRADAS (si existen) ---------- */
   if(DB.acciones&&DB.acciones.length){
-    sectionTitle('Plan de acción','Iniciativas de mejora registradas');
+    sectionTitle('Iniciativas registradas','Acciones de mejora cargadas en el sistema');
     DB.acciones.slice(0,18).forEach(a=>{ensure(11);doc.setDrawColor(...PDFC.gray);doc.setLineWidth(0.3);
       const est=a.estado==='hecho'?['Hecho',PDFC.green,[255,255,255]]:a.estado==='en_proceso'?['En proceso',PDFC.tert,[58,46,0]]:['Pendiente',PDFC.second,[255,255,255]];
       doc.setFillColor(...est[1]);doc.roundedRect(M,y,22,6,1.5,1.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...est[2]);doc.text(est[0],M+11,y+4,{align:'center'});
