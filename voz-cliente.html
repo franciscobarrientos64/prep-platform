@@ -115,6 +115,16 @@ textarea.input{min-height:80px;resize:vertical}
 @media(prefers-reduced-motion:no-preference){.reveal{animation:rise .5s cubic-bezier(.2,.7,0,1) both}}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media(max-width:560px){.barrow .nm{width:46%}}
+.act{display:inline-flex;gap:8px;align-items:center}
+.modes{flex-shrink:0;display:flex;gap:8px;padding:8px 16px;background:var(--ink);border-bottom:2px solid var(--outline);overflow-x:auto}
+.mode-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px;box-shadow:var(--shadow-sm);cursor:pointer;white-space:nowrap}
+.mode-btn.active{background:var(--tertiary);transform:translate(2px,2px);box-shadow:none}
+.mode-wrap{flex:1;min-height:0;display:flex;flex-direction:column}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.stars{display:inline-flex;gap:0}.stars .material-symbols-outlined{font-size:18px;color:#f59e0b;font-variation-settings:'FILL' 1}
+.rv-card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px}
+.rv-src{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border:1.5px solid var(--outline);border-radius:6px}
+.q-card{background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -122,15 +132,33 @@ textarea.input{min-height:80px;resize:vertical}
 
 <header class="header">
   <a href="/" class="brand-logo" title="Hub"><div class="l"></div></a>
-  <div class="brand-txt"><div class="cli" data-client-name>Symposium</div><div class="mod">Mystery Shopper</div></div>
+  <div class="brand-txt"><div class="cli" data-client-name>Casa Italia</div><div class="mod" id="modName">Mystery Shopper</div></div>
   <div class="header-info">
-    <button class="btn-ico" onclick="exportarPDF()" title="Exportar reporte en PDF"><span class="material-symbols-outlined">picture_as_pdf</span>Exportar PDF</button>
-    <button class="btn-ico primary" onclick="openNueva()"><span class="material-symbols-outlined">add</span>Nueva evaluación</button>
+    <span class="act" id="act-mystery">
+      <button class="btn-ico" onclick="exportarPDF()" title="Exportar reporte en PDF"><span class="material-symbols-outlined">picture_as_pdf</span>Exportar PDF</button>
+      <button class="btn-ico primary" onclick="openNueva()"><span class="material-symbols-outlined">add</span>Nueva evaluación</button>
+    </span>
+    <span class="act" id="act-encuestas" style="display:none">
+      <button class="btn-ico primary" onclick="openEncuesta()"><span class="material-symbols-outlined">add</span>Nueva encuesta</button>
+    </span>
+    <span class="act" id="act-resenas" style="display:none">
+      <button class="btn-ico" onclick="loadResenas(true)" title="Actualizar reseñas"><span class="material-symbols-outlined">refresh</span>Actualizar</button>
+    </span>
   </div>
 </header>
 
-<nav class="tabs" id="tabs"></nav>
-<main class="main" id="view"></main>
+<nav class="modes" id="modes">
+  <button class="mode-btn active" data-m="mystery" onclick="setMode('mystery')"><span class="material-symbols-outlined">visibility</span>Mystery Shopper</button>
+  <button class="mode-btn" data-m="encuestas" onclick="setMode('encuestas')"><span class="material-symbols-outlined">ballot</span>Encuestas</button>
+  <button class="mode-btn" data-m="resenas" onclick="setMode('resenas')"><span class="material-symbols-outlined">reviews</span>Reseñas</button>
+</nav>
+
+<div class="mode-wrap" id="mode-mystery">
+  <nav class="tabs" id="tabs"></nav>
+  <main class="main" id="view"></main>
+</div>
+<div class="mode-wrap" id="mode-encuestas" style="display:none"><main class="main" id="enc-view"></main></div>
+<div class="mode-wrap" id="mode-resenas" style="display:none"><main class="main" id="res-view"></main></div>
 
 <div class="backdrop" id="bd" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet"><div class="sheet-handle"></div>
@@ -656,6 +684,205 @@ async function buildReportPDF(){
   const safe=(CLI+'-'+perLbl).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'');
   doc.save(`Mystery-${safe}.pdf`);
 }
+
+/* ===================== VOZ DEL CLIENTE — pestañas superiores ===================== */
+let MODE='mystery';
+let ENC={loaded:false,lista:[],preg:{},resp:{},items:{},sel:null,build:null};
+let RES={loaded:false,lista:[],fSrc:'all',fEst:'all'};
+
+function setMode(m){
+  MODE=m;
+  ['mystery','encuestas','resenas'].forEach(x=>{
+    const w=document.getElementById('mode-'+x); if(w)w.style.display=(x===m?'flex':'none');
+    const a=document.getElementById('act-'+x); if(a)a.style.display=(x===m?'inline-flex':'none');
+  });
+  document.querySelectorAll('#modes .mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
+  document.getElementById('modName').textContent={mystery:'Mystery Shopper',encuestas:'Encuestas',resenas:'Reseñas'}[m];
+  if(m==='mystery'){if(booted)render();}
+  else if(m==='encuestas'){ENC.loaded?renderEncuestas():loadEncuestas();}
+  else if(m==='resenas'){RES.loaded?renderResenas():loadResenas();}
+}
+
+/* ========== ENCUESTAS ========== */
+async function loadEncuestas(){
+  const e=await sb.from('vc_encuestas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false});
+  ENC.lista=e.data||[];
+  const ids=ENC.lista.map(x=>x.id);
+  ENC.preg={};ENC.resp={};ENC.items={};
+  if(ids.length){
+    const [pq,rs]=await Promise.all([
+      sb.from('vc_preguntas').select('*').in('encuesta_id',ids).order('orden'),
+      sb.from('vc_respuestas').select('*').in('encuesta_id',ids)
+    ]);
+    (pq.data||[]).forEach(p=>{(ENC.preg[p.encuesta_id]=ENC.preg[p.encuesta_id]||[]).push(p);});
+    (rs.data||[]).forEach(r=>{(ENC.resp[r.encuesta_id]=ENC.resp[r.encuesta_id]||[]).push(r);});
+    const rids=(rs.data||[]).map(r=>r.id);
+    if(rids.length){const it=await sb.from('vc_resp_items').select('*').in('respuesta_id',rids);
+      (it.data||[]).forEach(x=>{(ENC.items[x.respuesta_id]=ENC.items[x.respuesta_id]||[]).push(x);});}
+  }
+  ENC.loaded=true; renderEncuestas();
+}
+function encItemsTipo(encId,tipo){
+  const ids=(ENC.preg[encId]||[]).filter(p=>p.tipo===tipo).map(p=>p.id);
+  if(!ids.length)return [];
+  const out=[];(ENC.resp[encId]||[]).forEach(r=>(ENC.items[r.id]||[]).forEach(it=>{if(ids.includes(it.pregunta_id)&&it.valor_num!=null)out.push(it.valor_num);}));
+  return out;
+}
+function encNPS(encId){const a=encItemsTipo(encId,'nps');if(!a.length)return 0;const p=a.filter(x=>x>=9).length,d=a.filter(x=>x<=6).length;return Math.round((p-d)/a.length*100);}
+function encCSAT(encId){const a=encItemsTipo(encId,'csat');return a.length?avg(a):0;}
+function npsColor(n){return n>=50?'var(--green)':n>=0?'var(--amber)':'var(--secondary)';}
+
+function renderEncuestas(){
+  PENDING=[];
+  const v=document.getElementById('enc-view');
+  if(ENC.sel){v.innerHTML=encResultados(ENC.sel);mountCharts();return;}
+  if(!ENC.lista.length){v.innerHTML='<div class="empty">Aún no hay encuestas.<br>Toca «Nueva encuesta» para crear la primera.</div>';return;}
+  v.innerHTML=ENC.lista.map(e=>{
+    const resp=ENC.resp[e.id]||[],nps=encNPS(e.id),csat=encCSAT(e.id),np=(ENC.preg[e.id]||[]).length;
+    return `<div class="q-card" style="cursor:pointer" onclick="openResultados('${e.id}')">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div><div style="font-weight:700;font-size:15px">${escapeHtml(e.titulo)}</div>
+          <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:3px">${np} preguntas · ${resp.length} respuestas</div></div>
+        <span class="badge" style="background:${e.activo?'var(--green-soft)':'var(--gray-soft)'};border:1.5px solid var(--outline)">${e.activo?'Activa':'Inactiva'}</span></div>
+      <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
+        <div><div style="font-family:var(--font-mono);font-size:10px;opacity:.6;font-weight:700">NPS</div><div style="font-family:var(--font-display);font-size:24px;color:${npsColor(nps)}">${resp.length?nps:'—'}</div></div>
+        <div><div style="font-family:var(--font-mono);font-size:10px;opacity:.6;font-weight:700">CSAT</div><div style="font-family:var(--font-display);font-size:24px">${resp.length?csat.toFixed(1):'—'}<span style="font-size:13px;opacity:.4">/5</span></div></div></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" onclick="event.stopPropagation()">
+        <button class="btn-ico" onclick="compartirEncuesta('${e.id}')"><span class="material-symbols-outlined">qr_code_2</span>QR / Link</button>
+        <button class="btn-ico" onclick="toggleEncuesta('${e.id}')"><span class="material-symbols-outlined">${e.activo?'pause':'play_arrow'}</span>${e.activo?'Pausar':'Activar'}</button></div>
+    </div>`;
+  }).join('');
+}
+function openResultados(id){ENC.sel=id;renderEncuestas();}
+function encResultados(encId){
+  const e=ENC.lista.find(x=>x.id===encId),resp=ENC.resp[encId]||[],preg=ENC.preg[encId]||[];
+  const back=`<button class="btn-ico" onclick="ENC.sel=null;renderEncuestas()" style="margin-bottom:14px"><span class="material-symbols-outlined">arrow_back</span>Encuestas</button>`;
+  if(!resp.length)return back+`<div class="empty">«${escapeHtml(e.titulo)}» aún no tiene respuestas.<br>Comparte el QR para empezar a recibir feedback.</div>`;
+  const nps=encNPS(encId),npsA=encItemsTipo(encId,'nps'),csat=encCSAT(encId);
+  const prom=npsA.filter(x=>x>=9).length,pas=npsA.filter(x=>x>6&&x<9).length,det=npsA.filter(x=>x<=6).length;
+  let h=back+`<div class="kpis">
+    <div class="kpi"><div class="lbl">NPS</div><div class="val" style="color:${npsColor(nps)}">${nps}</div><div class="sub">${npsA.length} respuestas</div></div>
+    <div class="kpi"><div class="lbl">CSAT</div><div class="val">${csat.toFixed(1)}<span style="font-size:14px;opacity:.4">/5</span></div><div class="sub">${Math.round(csat/5*100)}% satisfacción</div></div>
+    <div class="kpi"><div class="lbl">Respuestas</div><div class="val">${resp.length}</div><div class="sub">${escapeHtml(e.titulo)}</div></div></div>`;
+  if(npsA.length){const don={type:'doughnut',data:{labels:['Promotores','Pasivos','Detractores'],datasets:[{data:[prom,pas,det],backgroundColor:['#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:2}]},options:{cutout:'58%',plugins:{legend:{position:'bottom'}}}};
+    h+=`<div class="section"><div class="section-h"><h3>Distribución NPS</h3><span class="hint">promotores · pasivos · detractores</span></div><div class="card">${chart('encNps',don,240)}</div></div>`;}
+  const csatP=preg.filter(p=>p.tipo==='csat'||p.tipo==='escala5');
+  if(csatP.length){const rows=csatP.map(p=>{const a=[];resp.forEach(r=>(ENC.items[r.id]||[]).forEach(it=>{if(it.pregunta_id===p.id&&it.valor_num!=null)a.push(it.valor_num);}));return{t:p.texto,s:a.length?avg(a):0};});
+    h+=`<div class="section"><div class="section-h"><h3>Satisfacción por pregunta</h3><span class="hint">sobre 5</span></div><div class="card">`+rows.map(r=>`<div class="barrow"><div class="nm">${escapeHtml(r.t)}</div><div class="bartrack"><div class="barfill" style="width:${r.s/5*100}%;background:${r.s>=4?'#10b981':r.s>=3?'#ffcc00':'#ff3b30'}"></div></div><div class="pc">${r.s.toFixed(1)}</div></div>`).join('')+`</div></div>`;}
+  preg.filter(p=>p.tipo==='opciones').forEach(p=>{
+    const cnt={};resp.forEach(r=>(ENC.items[r.id]||[]).forEach(it=>{if(it.pregunta_id===p.id&&it.valor_texto)cnt[it.valor_texto]=(cnt[it.valor_texto]||0)+1;}));
+    const ent=Object.entries(cnt).sort((a,b)=>b[1]-a[1]),tot=ent.reduce((s,x)=>s+x[1],0)||1;
+    if(ent.length)h+=`<div class="section"><div class="section-h"><h3>${escapeHtml(p.texto)}</h3></div><div class="card">`+ent.map(([k,n])=>`<div class="barrow"><div class="nm">${escapeHtml(k)}</div><div class="bartrack"><div class="barfill" style="width:${n/tot*100}%"></div></div><div class="pc">${n}</div></div>`).join('')+`</div></div>`;});
+  const abIds=preg.filter(p=>p.tipo==='abierta').map(p=>p.id),coms=[];
+  resp.forEach(r=>(ENC.items[r.id]||[]).forEach(it=>{if(abIds.includes(it.pregunta_id)&&it.valor_texto)coms.push(it.valor_texto);}));
+  if(coms.length)h+=`<div class="section"><div class="section-h"><h3>Comentarios</h3><span class="hint">${coms.length}</span></div>`+coms.slice(0,25).map(c=>`<div class="rv-card">“${escapeHtml(c)}”</div>`).join('')+`</div>`;
+  return h;
+}
+function openEncuesta(){
+  ENC.build={titulo:'',descripcion:'',preguntas:[{texto:'¿Qué tan probable es que nos recomiendes a un amigo?',tipo:'nps'},{texto:'¿Cómo calificas la comida?',tipo:'csat'},{texto:'¿Cómo calificas el servicio?',tipo:'csat'},{texto:'¿Algo que podamos mejorar?',tipo:'abierta'}]};
+  document.getElementById('shTitle').textContent='Nueva encuesta';document.getElementById('shMeta').textContent='Voz del Cliente';
+  renderBuilder();openSheet();
+}
+function renderBuilder(){
+  const b=ENC.build,tipos=[['nps','NPS 0-10'],['csat','CSAT 1-5'],['escala5','Escala 1-5'],['opciones','Opción múltiple'],['abierta','Texto abierto']];
+  let h=`<label class="field-lbl">Título</label><input class="input" value="${escapeHtml(b.titulo)}" oninput="ENC.build.titulo=this.value" placeholder="Encuesta post-visita">
+   <label class="field-lbl">Descripción</label><input class="input" value="${escapeHtml(b.descripcion)}" oninput="ENC.build.descripcion=this.value" placeholder="Cuéntanos cómo fue tu experiencia">
+   <label class="field-lbl">Preguntas</label>`;
+  b.preguntas.forEach((p,i)=>{
+    h+=`<div class="q-card"><div style="display:flex;gap:8px;align-items:flex-start">
+      <input class="input" value="${escapeHtml(p.texto)}" oninput="ENC.build.preguntas[${i}].texto=this.value" placeholder="Texto de la pregunta" style="flex:1">
+      <button class="sheet-close" style="width:40px;height:40px;flex-shrink:0" onclick="ENC.build.preguntas.splice(${i},1);renderBuilder()"><span class="material-symbols-outlined">delete</span></button></div>
+      <select class="select" style="margin-top:8px" onchange="ENC.build.preguntas[${i}].tipo=this.value;renderBuilder()">${tipos.map(t=>`<option value="${t[0]}"${p.tipo===t[0]?' selected':''}>${t[1]}</option>`).join('')}</select>
+      ${p.tipo==='opciones'?`<input class="input" style="margin-top:8px" value="${escapeHtml((p.opciones||[]).join(', '))}" oninput="ENC.build.preguntas[${i}].opciones=this.value.split(',').map(x=>x.trim()).filter(Boolean)" placeholder="Opciones separadas por coma">`:''}</div>`;
+  });
+  h+=`<button class="btn ghost" onclick="ENC.build.preguntas.push({texto:'',tipo:'escala5'});renderBuilder()"><span class="material-symbols-outlined">add</span>Agregar pregunta</button>
+   <div style="height:14px"></div><button class="btn primary" onclick="saveEncuesta()"><span class="material-symbols-outlined">save</span>Crear encuesta</button>`;
+  document.getElementById('shBody').innerHTML=h;
+}
+async function saveEncuesta(){
+  const b=ENC.build;if(!b.titulo.trim()){toast('Ponle un título','warn');return;}
+  const preg=b.preguntas.filter(p=>p.texto.trim());if(!preg.length){toast('Agrega al menos una pregunta','warn');return;}
+  const {data:e,error}=await sb.from('vc_encuestas').insert({marca_id:MARCA,local_id:LOCAL,titulo:b.titulo,descripcion:b.descripcion||null,activo:true}).select().single();
+  if(error){toast('Error al crear','err');return;}
+  await sb.from('vc_preguntas').insert(preg.map((p,i)=>({encuesta_id:e.id,orden:i+1,texto:p.texto,tipo:p.tipo,opciones:p.tipo==='opciones'?(p.opciones||[]):null,requerida:p.tipo==='nps'||p.tipo==='csat'})));
+  toast('Encuesta creada');closeSheet();ENC.loaded=false;await loadEncuestas();
+}
+function compartirEncuesta(id){
+  const url=location.origin+'/encuesta?id='+id;
+  document.getElementById('shTitle').textContent='Compartir encuesta';document.getElementById('shMeta').textContent='QR para la mesa o la boleta';
+  document.getElementById('shBody').innerHTML=`<div style="text-align:center">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}" alt="QR" style="border:2px solid var(--outline);border-radius:12px;background:#fff;padding:8px;max-width:240px">
+    <div style="margin-top:14px"><input class="input" value="${url}" readonly onclick="this.select()"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${url}');toast('Link copiado')"><span class="material-symbols-outlined">content_copy</span>Copiar</button>
+      <a class="btn primary" href="https://wa.me/?text=${encodeURIComponent('Cuéntanos cómo fue tu experiencia 🍝 '+url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined">share</span>WhatsApp</a></div>
+    <div style="margin-top:12px;font-family:var(--font-mono);font-size:11px;opacity:.6">Pégalo en la mesa o imprímelo en la boleta. Cada respuesta entra al dashboard en vivo.</div></div>`;
+  openSheet();
+}
+async function toggleEncuesta(id){const e=ENC.lista.find(x=>x.id===id);if(!e)return;await sb.from('vc_encuestas').update({activo:!e.activo}).eq('id',id);e.activo=!e.activo;renderEncuestas();}
+
+/* ========== RESEÑAS ========== */
+async function loadResenas(force){
+  const r=await sb.from('eng_resenas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false});
+  RES.lista=r.data||[];RES.loaded=true;renderResenas();
+  if(force)toast('Reseñas actualizadas');
+}
+function stars(n){let s='';for(let i=1;i<=5;i++)s+=`<span class="material-symbols-outlined" style="${i<=n?'':'opacity:.22'}">star</span>`;return `<span class="stars">${s}</span>`;}
+function draftRespuesta(x){
+  const nm=(x.nombre||'').split(' ')[0]||'';
+  if((x.rating||0)>=4)return `¡Hola ${nm}! Mil gracias por tu reseña y por las ${x.rating} estrellas 🍝. Nos alegra muchísimo que hayas disfrutado tu visita a Casa Italia. ¡Te esperamos pronto de nuevo!`;
+  return `Hola ${nm}, gracias por tomarte el tiempo de escribirnos. Lamentamos que tu experiencia no haya estado a la altura y tomamos muy en serio tu comentario para mejorar. Nos encantaría darte otra oportunidad de atenderte como mereces. — Equipo de Casa Italia`;
+}
+function renderResenas(){
+  const v=document.getElementById('res-view'),L=RES.lista;
+  if(!L.length){v.innerHTML='<div class="empty">Aún no hay reseñas registradas.</div>';return;}
+  const prom=avg(L.map(x=>+x.rating||0));
+  const sinResp=L.filter(x=>!x.respuesta&&x.estado!=='respondida').length;
+  const fuentes=['all',...[...new Set(L.map(x=>x.fuente||'Otra'))]];
+  const estados=[['all','Todas'],['nueva','Sin responder'],['respondida','Respondidas']];
+  let h=`<div class="kpis">
+    <div class="kpi"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px;color:#f59e0b">star</span>Rating real</div><div class="val">${prom.toFixed(1)}<span style="font-size:14px;opacity:.4">/5</span></div><div class="sub">${L.length} reseñas</div></div>
+    <div class="kpi"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px;color:var(--secondary)">mark_chat_unread</span>Sin responder</div><div class="val ${sinResp?'down':''}">${sinResp}</div><div class="sub">requieren atención</div></div>
+    <div class="kpi"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px">verified</span>5 estrellas</div><div class="val">${L.filter(x=>x.rating===5).length}</div><div class="sub">de ${L.length}</div></div></div>`;
+  h+=`<div class="pills" style="margin-top:14px">`+fuentes.map(f=>`<button class="pill ${RES.fSrc===f?'on':''}" onclick="RES.fSrc='${f}';renderResenas()">${f==='all'?'Todas las fuentes':escapeHtml(f)}</button>`).join('')+`</div>`;
+  h+=`<div class="pills">`+estados.map(([k,t])=>`<button class="pill ${RES.fEst===k?'on':''}" onclick="RES.fEst='${k}';renderResenas()">${t}</button>`).join('')+`</div>`;
+  let list=L.slice();
+  if(RES.fSrc!=='all')list=list.filter(x=>(x.fuente||'Otra')===RES.fSrc);
+  if(RES.fEst==='nueva')list=list.filter(x=>!x.respuesta&&x.estado!=='respondida');
+  else if(RES.fEst==='respondida')list=list.filter(x=>x.respuesta||x.estado==='respondida');
+  h+=`<div class="section">`+(list.length?list.map(resenaCard).join(''):'<div class="empty">Sin reseñas en este filtro.</div>')+`</div>`;
+  v.innerHTML=h;
+}
+function resenaCard(x){
+  const resp=x.respuesta;
+  return `<div class="rv-card">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px"><strong>${escapeHtml(x.nombre||'Anónimo')}</strong><span class="rv-src">${escapeHtml(x.fuente||'')}</span></div>
+      ${stars(x.rating||0)}</div>
+    <div style="margin-top:8px;font-size:14px">${escapeHtml(x.comentario||'')}</div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.55;margin-top:6px">${fmtD(x.fecha)}</div>
+    ${resp?`<div style="margin-top:10px;padding:10px 12px;background:var(--primary-soft);border:2px solid var(--outline);border-radius:10px"><div style="font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;opacity:.6;margin-bottom:4px">Respuesta publicada</div>${escapeHtml(resp)}</div>`
+      :`<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn-ico primary" onclick="responderResena('${x.id}')"><span class="material-symbols-outlined">smart_toy</span>Responder con IA</button></div>`}</div>`;
+}
+function responderResena(id){
+  const x=RES.lista.find(r=>r.id===id);if(!x)return;
+  document.getElementById('shTitle').textContent='Responder reseña';document.getElementById('shMeta').textContent=(x.fuente||'')+' · '+(x.nombre||'');
+  document.getElementById('shBody').innerHTML=`
+    <div class="rv-card">${stars(x.rating||0)}<div style="margin-top:6px">${escapeHtml(x.comentario||'')}</div></div>
+    <label class="field-lbl">Borrador sugerido (IA) — edítalo antes de publicar</label>
+    <textarea class="input" id="rv_resp" style="min-height:130px">${escapeHtml(draftRespuesta(x))}</textarea>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:8px 0">Generado con el contexto de la reseña. La publicación en Google/TripAdvisor es manual por ahora.</div>
+    <button class="btn primary" onclick="guardarRespuesta('${id}')"><span class="material-symbols-outlined">send</span>Guardar respuesta</button>`;
+  openSheet();
+}
+async function guardarRespuesta(id){
+  const t=document.getElementById('rv_resp').value.trim();if(!t){toast('Escribe la respuesta','warn');return;}
+  const {error}=await sb.from('eng_resenas').update({respuesta:t,estado:'respondida'}).eq('id',id);
+  if(error){toast('Error al guardar','err');return;}
+  const x=RES.lista.find(r=>r.id===id);if(x){x.respuesta=t;x.estado='respondida';}
+  toast('Respuesta guardada');closeSheet();renderResenas();
+}
+
 load();
 </script>
 </body>

@@ -42,8 +42,20 @@
       "destination": "/importar.html"
     },
     {
+      "source": "/voz-cliente",
+      "destination": "/voz-cliente.html"
+    },
+    {
+      "source": "/voz",
+      "destination": "/voz-cliente.html"
+    },
+    {
       "source": "/mystery",
-      "destination": "/mystery.html"
+      "destination": "/voz-cliente.html"
+    },
+    {
+      "source": "/encuesta",
+      "destination": "/encuesta.html"
     },
     {
       "source": "/brand",
