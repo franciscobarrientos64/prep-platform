@@ -75,7 +75,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .dg .drow:last-child{border-bottom:none}
 .dg .it{flex:1;min-width:0;font-size:11.5px;line-height:1.25}
 .dg .sq{width:30px;height:24px;flex:0 0 30px;border:2px solid var(--outline);border-radius:5px}
-.dg .sq.empty{background:#f3f4f6;border-style:dashed;border-color:#c2c7ce}
+.dg .sq.empty{background:transparent;border-width:1.5px;border-style:dashed;border-color:#d9dce0}
+.dg .drow.na{opacity:.45}
+.dg .drow.na .it{font-style:italic}
 /* desglose por visita (un solo recorrido, ítem por ítem) */
 .vmh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:var(--font-display);font-size:15px;margin:18px 0 6px;border-bottom:2px solid var(--outline);padding-bottom:4px}
 .vmh:first-child{margin-top:0}
@@ -432,7 +434,8 @@ function vAuditoria(){
   mundos.forEach(mu=>{
     g+=`<div class="mh"><span class="mu">${escapeHtml(mu)}</span><span class="sqs">`+visCols.map(c=>`<span class="vh">V${c}</span>`).join('')+`</span></div>`;
     items.filter(d=>d.mundo===mu).forEach(d=>{
-      g+=`<div class="drow"><div class="it">${escapeHtml(d.item)}</div><div class="sqs">`
+      const naRow=visCols.every(c=>d['v'+c]==null);
+      g+=`<div class="drow${naRow?' na':''}"><div class="it">${escapeHtml(d.item)}</div><div class="sqs">`
         +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq${col?'':' empty'}"${col?` style="background:${col}"`:''}></div>`;}).join('')+`</div></div>`;
     });
   });

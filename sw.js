@@ -1,7 +1,7 @@
 // Service Worker de Prep — Nivel 1 offline (app shell + assets).
 // Estrategia: navegaciones = network-first (deploys frescos) con fallback a caché;
 // assets/CDN/fuentes = stale-while-revalidate. La data de Supabase NO se cachea (siempre red).
-const V = 'prep-cache-v2';
+const V = 'prep-cache-v3';
 const PRECACHE = ['/', '/logo.png', '/auth-guard.js', '/tenant.js', '/client-name.js', '/offline.js', '/manifest.webmanifest'];
 
 self.addEventListener('install', e => {
