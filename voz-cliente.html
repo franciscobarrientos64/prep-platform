@@ -456,14 +456,16 @@ function vConsolidado(){
     if(PER==='all'){const a=avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[0]).map(v=>+v.score_total||0));const b=avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[msAll.length-1]).map(v=>+v.score_total||0));delta=b-a;}
     else{const idx=msAll.indexOf(PER);const prev=idx>0?avg(Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===msAll[idx-1]).map(v=>+v.score_total||0)):null;delta=prev==null?null:avg(vs.map(v=>+v.score_total||0))-prev;}
     return {l,n:vs.length,s:avg(vs.map(v=>+v.score_total||0)),delta,color:SEDE_COLORS[i%SEDE_COLORS.length]};
-  }).sort((a,b)=>b.s-a.s);
-  const top=sede[0], bot=sede[sede.length-1];
+  }); // orden fijo (por inv_locales.orden); el ranking va solo como número
+  const byScore=[...sede].sort((a,b)=>b.s-a.s);
+  const rankOf={};byScore.forEach((x,i)=>{rankOf[x.l.id]=i+1;});
+  const top=byScore[0], bot=byScore[byScore.length-1];
   const ds=locs.map((l,i)=>{const col=SEDE_COLORS[i%SEDE_COLORS.length];return {label:l.nombre,data:msAll.map(m=>{const vs=Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))):null;}),borderColor:col,backgroundColor:col,pointBackgroundColor:col,pointBorderColor:'#171c20',pointBorderWidth:2,borderWidth:3,tension:.3,spanGaps:true,pointRadius:4,pointHoverRadius:6};});
   const evoCfg={type:'line',data:{labels:msAll.map(m=>MESN[+m.split('-')[1]]),datasets:ds},options:{scales:{y:{min:40,max:100}},plugins:{legend:{position:'bottom'}}}};
   const crit=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
-  const cols=locs.map(l=>({key:l.id,label:(l.nombre||'').split(' ')[0]}));
+  const cols=locs.map(l=>({key:l.id,label:l.nombre}));
   const cellCS=(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2l[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;};
-  const tcols=sede.map(x=>({key:x.l.id,label:(x.l.nombre||'').split(' ')[0]}));
+  const tcols=sede.map(x=>({key:x.l.id,label:x.l.nombre}));
   const trows=[{key:'__all',label:'Score general'}].concat(areasOf().map(a=>({key:a,label:a})));
   const tval=(r,c)=>{if(r.key==='__all'){const vs=V.filter(v=>v.local_id===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}const rr=R.filter(z=>v2l[z.visita_id]===c.key&&z.area===r.key);return rr.length?wAvg(rr):null;};
   const critAvg=DB.criterios.map(c=>({k:c.criterio,s:avg(R.filter(z=>z.criterio===c.criterio).map(z=>+z.puntaje||0))})).sort((a,b)=>a.s-b.s);
@@ -473,7 +475,7 @@ function vConsolidado(){
   ${periodBar(msAll)}
   <div class="section"><div class="section-h"><h3>${tRank}</h3><span class="hint">${V.length} evaluaciones · ${periodLbl}</span></div>
     <div class="sedes">${sede.map((x,i)=>`<div class="sedecard reveal" style="border-top:6px solid ${x.color}">
-      <div class="rank">#${i+1}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
+      <div class="rank">#${rankOf[x.l.id]}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
       <div class="big">${x.s.toFixed(0)}<span style="font-size:15px;opacity:.4">/100</span></div>
       <div class="trend ${x.delta==null?'':x.delta>=0?'up':'down'}">${x.delta==null?(x.n+' visitas'):((x.delta>=0?'▲ +':'▼ ')+x.delta.toFixed(1)+' pts · '+x.n+' vis.')}</div></div>`).join('')}</div></div>
   <div class="section"><div class="section-h"><h3>Puntajes comparativos por sede</h3><span class="hint">general y por área · ${periodLbl}</span></div>
@@ -579,7 +581,8 @@ let EXP={sede:'',mes:'all'};
 function exportarPDF(){
   if(!window.jspdf||!window.jspdf.jsPDF){toast('No cargó el generador de PDF','err');return;}
   if(!DB.allVisitas.length){toast('No hay datos para exportar','warn');return;}
-  EXP={sede:(DB.locales.length>1?'':((DB.locales[0]&&DB.locales[0].id)||'')),mes:(PER||'all')};
+  const _msE=months(DB.allVisitas);
+  EXP={sede:(DB.locales.length>1?'':((DB.locales[0]&&DB.locales[0].id)||'')),mes:(_msE.length?_msE[_msE.length-1]:'all')};
   document.getElementById('shTitle').textContent='Generar informe PDF';
   document.getElementById('shMeta').textContent='Elige la sede y el mes del documento';
   renderExportPicker();openSheet();
@@ -745,7 +748,7 @@ async function buildReportPDF(scopeLocal,detArg,scopeMonth){
       doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...fg);doc.text(x.s.toFixed(0),M+CW-36,y+5,{align:'center'});
       doc.setTextColor(...PDFC.mut);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text(String(x.n),M+CW-16,y+5,{align:'right'});y+=rowH;});
     y+=4;
-    const tcols=sede.map(x=>({key:x.l.id,label:(x.l.nombre||'').split(' ')[0]}));
+    const tcols=locs.map(l=>({key:l.id,label:l.nombre}));
     const areas=areasOf();
     const trows=[{key:'__all',label:'Score general',bold:true}].concat(areas.map(a=>({key:a,label:a})));
     const tval=(r,c)=>{if(r.key==='__all'){const vs=scopeV.filter(v=>v.local_id===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}const rr=scopeR.filter(z=>v2l[z.visita_id]===c.key&&z.area===r.key);return rr.length?wAvg(rr):null;};
