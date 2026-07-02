@@ -957,9 +957,11 @@ function renderAlertas(){
   const back=`<button class="btn-ico" onclick="ENC.view='lista';renderEncuestas()" style="margin-bottom:14px"><span class="material-symbols-outlined">arrow_back</span>Encuestas</button>`;
   if(!al.length)return back+`<div class="empty">🎉 Sin alertas pendientes.<br>Las respuestas negativas o de bajo puntaje aparecerán aquí en vivo.</div>`;
   return back+`<div class="section-h"><h3>${al.length} alerta${al.length>1?'s':''} por atender</h3><span class="hint">reacciona rápido</span></div>`+al.map(function(a){
-    const s=a.s,r=a.r,nm=r.contacto_nombre,tel=r.contacto_telefono;
+    const s=a.s,r=a.r,nm=[r.contacto_nombre,r.contacto_apellido].filter(Boolean).join(' ').trim()||null,tel=r.contacto_telefono,eml=r.contacto_email;
     const motivo=[];if(s.nps!=null&&s.nps<=6)motivo.push('NPS '+s.nps);if(s.csatMin!=null&&s.csatMin<=2)motivo.push('Puntaje '+s.csatMin+'/5');
-    const wa=tel?('https://wa.me/'+(tel.replace(/[^0-9]/g,''))+'?text='+encodeURIComponent('Hola'+(nm?' '+nm.split(' ')[0]:'')+', te escribimos de Casa Italia. Vimos tu comentario y queremos mejorar tu experiencia 🙏')):null;
+    const saludo='Hola'+(nm?' '+nm.split(' ')[0]:'')+', te escribimos de Casa Italia. Vimos tu comentario y queremos mejorar tu experiencia 🙏';
+    const wa=tel?('https://wa.me/'+(tel.replace(/[^0-9]/g,''))+'?text='+encodeURIComponent(saludo)):null;
+    const mail=eml?('mailto:'+eml+'?subject='+encodeURIComponent('Casa Italia — tu experiencia')+'&body='+encodeURIComponent(saludo)):null;
     return `<div class="rv-card" style="border-left:6px solid var(--secondary)">
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
         <div style="display:flex;gap:6px;flex-wrap:wrap">${motivo.map(m=>`<span class="badge" style="background:var(--red-soft);border:1.5px solid var(--outline)">${m}</span>`).join('')}
@@ -968,9 +970,10 @@ function renderAlertas(){
       ${s.comment?`<div style="margin-top:8px;font-size:14px">“${escapeHtml(s.comment)}”</div>`:'<div style="margin-top:8px;opacity:.5;font-size:13px">(sin comentario escrito)</div>'}
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-family:var(--font-mono);font-size:11px;opacity:.75">
         ${r.mesa?`<span>🍽️ Mesa ${escapeHtml(r.mesa)}</span>`:''}${r.mozo?`<span>🧑‍🍳 ${escapeHtml(r.mozo)}</span>`:''}
-        ${nm?`<span>👤 ${escapeHtml(nm)}</span>`:''}${tel?`<span>📱 ${escapeHtml(tel)}</span>`:''}</div>
+        ${nm?`<span>👤 ${escapeHtml(nm)}</span>`:''}${tel?`<span>📱 ${escapeHtml(tel)}</span>`:''}${eml?`<span>✉️ ${escapeHtml(eml)}</span>`:''}</div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         ${wa?`<a class="btn-ico primary" href="${wa}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>Contactar</a>`:''}
+        ${!wa&&mail?`<a class="btn-ico primary" href="${mail}"><span class="material-symbols-outlined">mail</span>Contactar</a>`:''}
         <button class="btn-ico" onclick="marcarAtendida('${r.id}')"><span class="material-symbols-outlined">done</span>Marcar atendida</button></div>
     </div>`;
   }).join('');

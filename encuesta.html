@@ -48,7 +48,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ID=new URLSearchParams(location.search).get('id');
 const MESA=new URLSearchParams(location.search).get('mesa')||null;
 const MOZO=new URLSearchParams(location.search).get('mozo')||null;
-let ENC=null, PREG=[], VAL={}, CONTACT={nombre:'',telefono:''};
+let ENC=null, PREG=[], VAL={}, CONTACT={nombre:'',apellido:'',telefono:'',email:''};
 const app=document.getElementById('app');
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -66,6 +66,14 @@ function msgBox(ic,big,sub){return `<div class="center"><div class="emoji"><span
 function render(){
   let h=`<div class="top"><span class="logo">prep<span>!</span></span></div>
    <h1>${esc(ENC.titulo)}</h1>${ENC.descripcion?`<div class="desc">${esc(ENC.descripcion)}</div>`:''}`;
+  // Identificación al inicio: nombre + apellido (obligatorio si la encuesta lo pide)
+  if(ENC.pide_nombre){
+    h+=`<div class="q"><div class="t">¿Cómo te llamas?${ENC.contacto_obligatorio||ENC.pide_nombre?' <span class="req">*</span>':''}</div>
+      <input id="c_nombre" placeholder="Nombre" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
+        style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">
+      <input id="c_apellido" placeholder="Apellido" value="${esc(CONTACT.apellido)}" oninput="CONTACT.apellido=this.value"
+        style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px"></div>`;
+  }
   PREG.forEach(p=>{
     h+=`<div class="q"><div class="t">${esc(p.texto)}${p.requerida?' <span class="req">*</span>':''}</div>`;
     if(p.tipo==='nps'){
@@ -80,11 +88,21 @@ function render(){
     }
     h+=`</div>`;
   });
-  // Contacto opcional — permite al restaurante responder si algo salió mal
-  h+=`<div class="q"><div class="t">¿Te contactamos si podemos mejorar tu experiencia? <span style="font-weight:400;opacity:.6">(opcional)</span></div>
-    <input id="c_nombre" placeholder="Tu nombre" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
+  // Contacto. Obligatorio (teléfono O email) para enviar cuando la encuesta lo exige;
+  // si no, queda opcional para que el restaurante pueda responder si algo salió mal.
+  const oblig=ENC.contacto_obligatorio;
+  h+=`<div class="q"><div class="t">${oblig
+      ?`Para enviar tu encuesta, déjanos un dato de contacto <span class="req">*</span>`
+      :`¿Te contactamos si podemos mejorar tu experiencia? <span style="font-weight:400;opacity:.6">(opcional)</span>`}
+      <div style="font-weight:400;font-size:12px;opacity:.6;margin-top:2px">${oblig?'Teléfono o email — usa el que prefieras':''}</div></div>`;
+  // Si la encuesta no pide nombre arriba, se ofrece aquí (opcional, compat. con encuestas previas)
+  if(!ENC.pide_nombre){
+    h+=`<input id="c_nombre" placeholder="Tu nombre" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
+      style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">`;
+  }
+  h+=`<input id="c_tel" placeholder="WhatsApp / teléfono" inputmode="tel" value="${esc(CONTACT.telefono)}" oninput="CONTACT.telefono=this.value"
       style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">
-    <input id="c_tel" placeholder="WhatsApp / teléfono" inputmode="tel" value="${esc(CONTACT.telefono)}" oninput="CONTACT.telefono=this.value"
+    <input id="c_email" placeholder="Email" inputmode="email" value="${esc(CONTACT.email)}" oninput="CONTACT.email=this.value"
       style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px"></div>`;
   h+=`<button class="send" onclick="enviar()"><span class="material-symbols-outlined">send</span>Enviar</button>`;
   app.innerHTML=h;
@@ -93,12 +111,15 @@ function setNum(id,n){VAL[id]=n;render();}
 function setTxt(id,t){VAL[id]=t;render();}
 
 async function enviar(){
+  const nom=(CONTACT.nombre||'').trim(), ape=(CONTACT.apellido||'').trim(), tel=(CONTACT.telefono||'').trim(), eml=(CONTACT.email||'').trim();
+  if(ENC.pide_nombre&&(!nom||!ape)){alert('Por favor déjanos tu nombre y apellido.');const el=document.getElementById(!nom?'c_nombre':'c_apellido');if(el)el.focus();return;}
   for(const p of PREG){if(p.requerida&&(VAL[p.id]===undefined||VAL[p.id]==='')){alert('Por favor responde: '+p.texto);return;}}
+  if(ENC.contacto_obligatorio&&!tel&&!eml){alert('Para enviar tu encuesta, déjanos un teléfono o un email.');const el=document.getElementById('c_tel');if(el)el.focus();return;}
   const btn=document.querySelector('.send');if(btn){btn.textContent='Enviando…';btn.style.opacity=.6;}
   // Generamos el id en el cliente: anon NO puede leer vc_respuestas (privacidad),
   // así que no usamos .select()/RETURNING (violaría RLS). Insert directo.
   const rid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
-  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO,contacto_nombre:CONTACT.nombre||null,contacto_telefono:CONTACT.telefono||null});
+  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO,contacto_nombre:nom||null,contacto_apellido:ape||null,contacto_telefono:tel||null,contacto_email:eml||null});
   if(error){if(btn){btn.textContent='Reintentar';btn.style.opacity=1;}return;}
   const items=PREG.filter(p=>VAL[p.id]!==undefined&&VAL[p.id]!=='').map(p=>({respuesta_id:rid,pregunta_id:p.id,
     valor_num:(p.tipo==='nps'||p.tipo==='csat'||p.tipo==='escala5')?VAL[p.id]:null,
