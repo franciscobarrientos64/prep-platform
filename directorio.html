@@ -85,7 +85,7 @@ async function load(){
   const{data:recetas}=await sb.from('inv_recetas').select('id,ingredientes').eq('marca_id',MARCA);
   const[allPe,locs]=await Promise.all([
     sb.from('ca_pedidos').select('local_id,total').eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00'),
-    sb.from('inv_locales').select('id,nombre').order('id')
+    sb.from('inv_locales').select('id,nombre').order('orden',{nullsFirst:false}).order('id')
   ]);
   state.data={peds,items,recetas:recetas||[],prod:prod.data||[],stock:stock.data||[],merm:merm.data||[],vu:vu.data||[],emp:emp.data||[],res:res.data||[],dl:dl.data||[],fin:fin_p.data||[],sedesRaw:allPe.data||[],locales:locs.data||[]};
   render();$('#boot').classList.add('gone');

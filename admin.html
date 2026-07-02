@@ -94,7 +94,7 @@ async function load(){
     sb.from('prep_usuarios').select('*').order('created_at'),
     sb.from('prep_roles').select('*').order('nombre'),
     sb.from('inv_marcas').select('*').order('id'),
-    sb.from('inv_locales').select('*').order('id'),
+    sb.from('inv_locales').select('*').order('orden',{nullsFirst:false}).order('id'),
     sb.from('rrhh_empleados').select('id,nombre,apellidos,local_id')
   ]);
   state.usuarios=us.data||[];state.roles=ro.data||[];state.marcas=ma.data||[];state.locales=lo.data||[];state.emp=em.data||[];

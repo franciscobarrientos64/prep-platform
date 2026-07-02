@@ -121,7 +121,7 @@ async function load(){
   if(!(await guard()))return;
   const[ma,lo,mm,mf,us]=await Promise.all([
     sb.from('inv_marcas').select('*').order('id'),
-    sb.from('inv_locales').select('*').order('id'),
+    sb.from('inv_locales').select('*').order('orden',{nullsFirst:false}).order('id'),
     sb.from('prep_marca_modulos').select('*'),
     sb.from('prep_marca_features').select('*'),
     sb.from('prep_usuarios').select('id,marca_id,activo')

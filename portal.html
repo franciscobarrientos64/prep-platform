@@ -85,7 +85,7 @@ async function guard(){let s=null;try{s=(await sb.auth.getSession()).data.sessio
   if(s&&s.user){const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle()).data;if(!me||me.rol_sistema!=='superadmin'){alert('Portal solo para Super Admin.');location.href='/';return false}}return true}
 async function load(){
   if(!(await guard()))return;
-  const[ma,lo,mm,su]=await Promise.all([sb.from('inv_marcas').select('*').order('id'),sb.from('inv_locales').select('*').order('id'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_suscripciones').select('*')]);
+  const[ma,lo,mm,su]=await Promise.all([sb.from('inv_marcas').select('*').order('id'),sb.from('inv_locales').select('*').order('orden',{nullsFirst:false}).order('id'),sb.from('prep_marca_modulos').select('*'),sb.from('prep_suscripciones').select('*')]);
   state.marcas=ma.data||[];state.locales=lo.data||[];state.mm=mm.data||[];state.subs=su.data||[];
   if(!state.marcas.find(m=>m.id===state.sel))state.sel=state.marcas[0]?.id;
   if(!localesDe(state.sel).find(l=>l.id===state.selLocal))state.selLocal=localesDe(state.sel)[0]?.id||'';

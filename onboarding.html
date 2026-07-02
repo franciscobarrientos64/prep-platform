@@ -125,7 +125,7 @@ function cfgShow(v){if(v==null||v==='')return '—';if(Array.isArray(v))return v
 
 async function selectMarca(mid){
   MARCA=mid;
-  const{data:ls}=await sb.from('inv_locales').select('id,nombre').eq('marca_id',mid).order('id');
+  const{data:ls}=await sb.from('inv_locales').select('id,nombre').eq('marca_id',mid).order('orden',{nullsFirst:false}).order('id');
   LOCALES=ls||[]; LOCAL=LOCALES[0]?LOCALES[0].id:null;
   const sl=document.getElementById('selLocal');
   if(LOCALES.length>1){sl.style.display='';sl.innerHTML=LOCALES.map(l=>`<option value="${l.id}">${esc(l.nombre)} (${l.id})</option>`).join('');sl.onchange=()=>{LOCAL=sl.value;loadClient();};}

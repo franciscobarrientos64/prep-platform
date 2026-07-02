@@ -270,7 +270,7 @@ function setPer(p){PER=p;render();}
 async function load(){
   themeCharts();
   const [loc,pl,vi,ac]=await Promise.all([
-    sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('id'),
+    sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('orden',{nullsFirst:false}).order('id'),
     sb.from('mys_plantillas').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at').limit(1),
     sb.from('mys_visitas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}),
     sb.from('mys_acciones').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false})
@@ -575,21 +575,50 @@ function offChart(cfg,w,h){
   });
 }
 function loadImg(src){return new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});}
-async function exportarPDF(){
+let EXP={sede:'',mes:'all'};
+function exportarPDF(){
   if(!window.jspdf||!window.jspdf.jsPDF){toast('No cargó el generador de PDF','err');return;}
   if(!DB.allVisitas.length){toast('No hay datos para exportar','warn');return;}
-  toast('Generando reporte…');
-  try{await buildReportPDF();toast('Reporte descargado');}
-  catch(e){console.error(e);toast('Error al generar el PDF','err');}
+  EXP={sede:(DB.locales.length>1?'':((DB.locales[0]&&DB.locales[0].id)||'')),mes:(PER||'all')};
+  document.getElementById('shTitle').textContent='Generar informe PDF';
+  document.getElementById('shMeta').textContent='Elige la sede y el mes del documento';
+  renderExportPicker();openSheet();
 }
-async function buildReportPDF(){
+function renderExportPicker(){
+  const ms=months(DB.allVisitas);
+  const sedeOpts=(DB.locales.length>1?[['','Todas las sedes']]:[]).concat(DB.locales.map(l=>[l.id,l.nombre]));
+  const mesOpts=[['all','Todos los meses']].concat(ms.map(m=>[m,mLabel(m)]));
+  const grp=(opts,key)=>`<div class="pills">`+opts.map(([id,nm])=>`<button class="pill ${EXP[key]===id?'on':''}" onclick='EXP.${key}=${JSON.stringify(id)};renderExportPicker()'>${escapeHtml(nm)}</button>`).join('')+`</div>`;
+  document.getElementById('shBody').innerHTML=
+    `<label class="field-lbl">Sede</label>${grp(sedeOpts,'sede')}`
+   +`<label class="field-lbl">Mes</label>${grp(mesOpts,'mes')}`
+   +`<div style="height:16px"></div><button class="btn primary" onclick="doExport()"><span class="material-symbols-outlined">picture_as_pdf</span>Generar informe</button>`;
+}
+function doExport(){closeSheet();runExport(EXP.sede||null,EXP.mes);}
+async function runExport(scopeLocal,scopeMonth){
+  toast('Generando reporte…');
+  try{
+    let det=DB.detalle;
+    if(scopeLocal&&scopeLocal!==LOCAL){const r=await sb.from('mys_detalle').select('*').eq('local_id',scopeLocal).order('orden');det=r.data||[];}
+    await buildReportPDF(scopeLocal||null,det,scopeMonth);
+    toast('Reporte descargado');
+  }catch(e){console.error(e);toast('Error al generar el PDF','err');}
+}
+async function buildReportPDF(scopeLocal,detArg,scopeMonth){
   const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4',compress:true});
   const W=210,H=297,M=16,CW=W-2*M;
   const cliEl=document.querySelector('[data-client-name]');
   const CLI=(cliEl&&cliEl.textContent.trim())||({m6:'Casa Italia',m7:'Symposium',m8:'La Cuadra de Salvador'}[MARCA])||'Restaurante';
-  const locs=DB.locales,multi=locs.length>1;
-  const Vall=DB.allVisitas,Rall=DB.allResp,msAll=months(Vall);
-  const scopeV=PER==='all'?Vall:Vall.filter(v=>(v.fecha||'').slice(0,7)===PER);
+  const locs=DB.locales;
+  const sedeObj=scopeLocal?locs.find(l=>l.id===scopeLocal):null;
+  const multi=!scopeLocal&&locs.length>1;                 // secciones comparativas solo en el consolidado
+  const scopeName=sedeObj?sedeObj.nombre:(locs.length>1?'Todas las sedes':((locs[0]&&locs[0].nombre)||''));
+  const Vall=scopeLocal?DB.allVisitas.filter(v=>v.local_id===scopeLocal):DB.allVisitas;
+  const _sids=new Set(Vall.map(v=>v.id));
+  const Rall=DB.allResp.filter(r=>_sids.has(r.visita_id));
+  const msAll=months(Vall);
+  const PERX=(scopeMonth==null?PER:scopeMonth);
+  const scopeV=PERX==='all'?Vall:Vall.filter(v=>(v.fecha||'').slice(0,7)===PERX);
   const idsP=new Set(scopeV.map(v=>v.id));
   const scopeR=Rall.filter(r=>idsP.has(r.visita_id));
   const crit=DB.criterios.map(c=>c.criterio);
@@ -601,13 +630,13 @@ async function buildReportPDF(){
   const fScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===firstM).map(v=>+v.score_total||0));
   const lScore=avg(Vall.filter(v=>(v.fecha||'').slice(0,7)===lastM).map(v=>+v.score_total||0));
   const delta=(msAll.length>1)?(lScore-fScore):0;
-  const perLbl=PER==='all'?(msAll.length?`${mLabel(firstM)} a ${mLabel(lastM)}`:'Histórico'):mLabel(PER);
+  const perLbl=PERX==='all'?(msAll.length?`${mLabel(firstM)} a ${mLabel(lastM)}`:'Histórico'):mLabel(PERX);
   const genDate=new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const v2m={},v2l={};Vall.forEach(v=>{v2m[v.id]=(v.fecha||'').slice(0,7);v2l[v.id]=v.local_id;});
 
   let page=0,y=0;
   function footer(){page++;doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...PDFC.mut);
-    doc.text(`Prep!  ·  Mystery Shopper  ·  ${CLI}  ·  Confidencial`,M,H-8);doc.text(String(page),W-M,H-8,{align:'right'});}
+    doc.text(`Prep!  ·  Mystery Shopper  ·  ${CLI} — ${scopeName}  ·  Confidencial`,M,H-8);doc.text(String(page),W-M,H-8,{align:'right'});}
   function np(){footer();doc.addPage();doc.setFillColor(...PDFC.cream);doc.rect(0,0,W,H,'F');y=22;}
   function ensure(h){if(y+h>H-16)np();}
   function sectionTitle(t,sub,reserve){ensure(26+(reserve||0));doc.setFillColor(...PDFC.primary);doc.rect(M,y,4,12,'F');
@@ -646,7 +675,9 @@ async function buildReportPDF(){
   const logo=await loadImg(`/logos/${MARCA}.png`);let nx=M,ny=164;
   if(logo){const lw=22,lh=lw*((logo.height||1)/(logo.width||1));try{doc.addImage(logo,'PNG',M,ny-12,lw,lh);nx=M+lw+8;}catch(e){}}
   doc.setTextColor(...PDFC.ink);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text(CLI,nx,ny);
-  const cov=[['Periodo',perLbl],['Evaluaciones',String(scopeV.length)],[multi?'Sedes':'Sede',multi?String(locs.length):((locs[0]&&locs[0].nombre)||'-')],['Generado',genDate]];
+  const scopeIsSede=(scopeLocal||locs.length<=1);
+  doc.setFont('helvetica','bold');doc.setFontSize(13.5);doc.setTextColor(...PDFC.primary);doc.text((scopeIsSede?'Sede: ':'Alcance: ')+scopeName,nx,ny+10);
+  const cov=[['Periodo',perLbl],['Evaluaciones',String(scopeV.length)],[scopeIsSede?'Sede':'Alcance',scopeName],['Generado',genDate]];
   const bw=CW/2,bh=22,by=205;
   cov.forEach((it,i)=>{const bx=M+(i%2)*bw,byy=by+Math.floor(i/2)*(bh+6);
     doc.setFillColor(255,255,255);doc.setDrawColor(...PDFC.ink);doc.setLineWidth(0.5);doc.roundedRect(bx,byy,bw-6,bh,3,3,'FD');
@@ -660,7 +691,7 @@ async function buildReportPDF(){
   if(delta>=3)head=`${CLI} mejora ${delta.toFixed(0)} pts; "${worst.k}" concentra la mayor oportunidad`;
   else if(delta<=-3)head=`La experiencia cae ${Math.abs(delta).toFixed(0)} pts; foco urgente en "${worst.k}"`;
   else head=`Servicio en ${overall.toFixed(0)}/100; "${worst.k}" es la palanca de mejora`;
-  sectionTitle(head,`Resumen ejecutivo · Programa Mystery Shopper · ${perLbl}`);
+  sectionTitle(head,`${scopeName} · Resumen ejecutivo · Programa Mystery Shopper · ${perLbl}`);
   const kpis=[['Puntaje general',overall.toFixed(0),'sobre 100',pdfScoreRGB(overall)],['Mejor criterio',best.s.toFixed(0),best.k,pdfScoreRGB(best.s)],['Crítico',worst.s.toFixed(0),worst.k,pdfScoreRGB(worst.s)],['Tendencia',(delta>=0?'+':'')+delta.toFixed(1),`${mLabel(firstM)}→${mLabel(lastM)}`,delta>=0?PDFC.green:PDFC.second]];
   const kw=CW/2,kh=26;
   kpis.forEach((k,i)=>{const kx=M+(i%2)*kw,ky=y+Math.floor(i/2)*(kh+6);
@@ -775,14 +806,15 @@ async function buildReportPDF(){
   }
 
   /* ---------- ANEXO: AUDITORÍA ÍTEM POR ÍTEM (color) ---------- */
-  const det=DB.detalle||[];
+  const det=(detArg!=null?detArg:DB.detalle)||[];
+  const detSede=det.length?(((locs.find(l=>l.id===det[0].local_id)||{}).nombre)||scopeName):scopeName;
   if(det.length){
     const periodos=[...new Set(det.map(d=>d.periodo))].sort();const per=periodos[periodos.length-1];
     const items=det.filter(d=>d.periodo===per);
     np();
     doc.setFillColor(...PDFC.ink);doc.rect(0,0,W,30,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);doc.text('Anexo · Auditoría ítem por ítem',M,19);
-    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(220,220,220);doc.text(`${CLI} · ${per} · ${items.length} objetivos de servicio`,M,26);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(220,220,220);doc.text(`${CLI} — ${detSede} · ${per} · ${items.length} objetivos de servicio`,M,26);
     y=40;
     // leyenda de niveles 0-4
     const ll=[['Sin evaluar',PDFC.gray],['No cumple',[23,28,32]],['Bajo',[255,59,48]],['Medio',[255,204,0]],['Bueno',[16,185,129]],['Excelente',[30,90,249]]];
@@ -813,7 +845,7 @@ async function buildReportPDF(){
       doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);doc.text(`Visita ${n} · detalle por sección`,M,17);
       const allScored=items.map(d=>d['v'+n]).filter(v=>v!=null);
       const tot=allScored.length?Math.round(avg(allScored)/4*100):0;
-      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(220,228,255);doc.text(`${CLI} · ${per} · ${allScored.length} ítems evaluados · ${tot}/100`,M,24);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(220,228,255);doc.text(`${CLI} — ${detSede} · ${per} · ${allScored.length} ítems evaluados · ${tot}/100`,M,24);
       y=38;
       mundos.forEach(mu=>{
         const muItems=items.filter(d=>d.mundo===mu);
@@ -836,7 +868,7 @@ async function buildReportPDF(){
   }
 
   footer();
-  const safe=(CLI+'-'+perLbl).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'');
+  const safe=(CLI+'-'+scopeName+'-'+perLbl).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'');
   doc.save(`Mystery-${safe}.pdf`);
 }
 
