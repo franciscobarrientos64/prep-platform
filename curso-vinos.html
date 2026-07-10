@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Curso de Vinos · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237c1f3a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>%F0%9F%8D%B7</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--amber:#f59e0b;--gold:#c9a227;
+--white-wine:#efe08c;--rose:#f2b8c6;--red-wine:#7c1f3a;--sparkle:#f6e7a8;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 80px}
+a{color:inherit}
+
+/* Header / hero */
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .bar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:9px 18px;flex-wrap:wrap}
+.logo{font-family:var(--font-display);font-size:22px;color:var(--primary)}.logo b{color:var(--secondary)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+
+.hero{background:var(--wine);color:#fff;border:2px solid var(--outline);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 30px;margin:24px 0 10px;position:relative;overflow:hidden}
+.hero:before{content:"🍷";position:absolute;right:-10px;top:-24px;font-size:200px;opacity:.10;transform:rotate(12deg)}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,60px);line-height:.98;margin:8px 0 12px}
+.hero p{font-size:16px;max-width:640px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+
+/* Section shells */
+section{scroll-margin-top:70px;margin-top:40px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sh .n{flex:0 0 auto;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;background:var(--tertiary);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(22px,3.4vw,30px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:15px;opacity:.9;margin-bottom:16px;max-width:760px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* Type cards (tipos de vino) */
+.tipo{border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;background:var(--surface)}
+.tipo .dot{width:34px;height:34px;border-radius:50%;border:2px solid var(--outline);margin-bottom:10px}
+.tipo h3{font-size:16px;margin-bottom:4px}
+.tipo .d{font-size:13px;opacity:.85}
+.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+
+/* Cepa cards */
+.cepa{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.cepa .h{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cepa .h b{font-size:15px}
+.cepa .h .pill{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;border:1.5px solid var(--outline);border-radius:999px;padding:2px 7px}
+.cepa .notes{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.cepa .notes span{font-size:11px;background:var(--bg);border:1.5px solid var(--outline);border-radius:999px;padding:2px 8px}
+.bar{height:9px;border:2px solid var(--outline);border-radius:999px;background:repeating-linear-gradient(90deg,#eee,#eee 6px,#fff 6px,#fff 12px);overflow:hidden;margin-top:3px}
+.bar>i{display:block;height:100%;background:var(--wine)}
+.barrow{display:grid;grid-template-columns:74px 1fr;gap:8px;align-items:center;font-family:var(--font-mono);font-size:10px;margin-top:5px}
+
+/* Cata pasos */
+.pasos{counter-reset:p}
+.paso{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 52px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:14px}
+.paso h4{font-size:16px;margin-bottom:3px}.paso p{font-size:13.5px;opacity:.88}
+.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+
+/* Termómetro de servicio */
+.thermo{display:flex;flex-direction:column;gap:0;border:2px solid var(--outline);border-radius:14px;overflow:hidden}
+.thermo .row{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:11px 14px;border-bottom:1.5px solid var(--outline);color:#fff}
+.thermo .row:last-child{border-bottom:none}
+.thermo .row .tmp{font-family:var(--font-mono);font-weight:700;font-size:15px}
+.thermo .row .lbl b{font-size:14px}.thermo .row .lbl div{font-size:11px;opacity:.9}
+.thermo .row .ex{font-family:var(--font-mono);font-size:11px;text-align:right;opacity:.95}
+
+/* Copa svg row */
+.copas{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center}
+@media(max-width:640px){.copas{grid-template-columns:repeat(2,1fr)}}
+.copas .c{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 8px;background:var(--surface)}
+.copas .c svg{height:92px}
+.copas .c b{display:block;font-size:13px;margin-top:6px}
+.copas .c span{font-size:11px;opacity:.75}
+
+/* Matriz de maridaje */
+.matrix{overflow-x:auto}
+.matrix table{border-collapse:separate;border-spacing:0;width:100%;min-width:560px;font-size:12.5px}
+.matrix th,.matrix td{border:1.5px solid var(--outline);padding:8px 6px;text-align:center}
+.matrix thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700}
+.matrix tbody th{background:var(--wine);color:#fff;text-align:left;font-weight:600;min-width:120px}
+.matrix .y{background:#d1fae5}.matrix .m{background:#fef3c7}.matrix .n{background:#fee2e2}
+.mleg{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;margin-top:10px}
+.mleg span{display:inline-flex;align-items:center;gap:6px}.mleg i{width:14px;height:14px;border:2px solid var(--outline);border-radius:4px;display:inline-block}
+
+/* Frases mesero */
+.say{border-left:6px solid var(--wine);background:var(--wine-soft);border-radius:0 12px 12px 0;padding:12px 16px;margin-bottom:10px}
+.say .q{font-size:14px;font-weight:600}.say .w{font-size:12px;opacity:.8;margin-top:3px}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:14px;padding:14px}
+.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.do2 ul{list-style:none;font-size:13px}.do2 li{padding:3px 0 3px 20px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}
+.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+
+/* One pager */
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);padding:22px;margin-top:18px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:10px;margin-bottom:14px}
+.onepager .opt .logo{font-size:18px}.onepager .opt h3{font-family:var(--font-display);font-size:20px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}@media(max-width:760px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:12px;padding:12px}
+.op-box h4{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:8px;font-weight:700}
+.op-box ul{list-style:none;font-size:12.5px}.op-box li{padding:2px 0 2px 16px;position:relative}
+.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.chiprow span{font-family:var(--font-mono);font-size:11px;border:2px solid var(--outline);border-radius:999px;padding:3px 9px;background:var(--bg)}
+
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;font-size:14px;margin-top:14px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:50px}
+
+@media print{
+  .top,.foot{display:none}
+  body{background:#fff}
+  .hero,.card,.onepager{box-shadow:none}
+  section:not(#resumen){display:none}
+  #resumen{margin-top:0}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <span class="logo">prep<b>!</b></span><span class="mod">Curso · Vinos</span>
+    <nav class="nav">
+      <a href="#tipos">Tipos</a><a href="#cepas">Cepas</a><a href="#cata">Cata</a>
+      <a href="#servicio">Servicio</a><a href="#maridaje">Maridaje</a><a href="#sala">En sala</a>
+      <a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="k">Academia Prep! · Formación de sala</div>
+    <h1>Vinos, de cero<br>a sommelier de piso</h1>
+    <p>Todo lo que el equipo necesita para <b>entender, servir y recomendar vino</b> con seguridad y elegancia. Sin tecnicismos, con ejemplos y gráficos claros. Aprende hoy, brilla esta noche.</p>
+    <div class="meta"><span>🍇 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Meseros · Jefe de sala · Bar</span><span>📄 One-pager incluido</span></div>
+  </div>
+
+  <div class="callout"><b>Por qué importa:</b> una botella bien recomendada sube el ticket, mejora la experiencia y es la venta más rentable de la mesa. Un buen servicio de vino es la firma de un restaurante de nivel.</div>
+
+  <!-- 1. TIPOS -->
+  <section id="tipos">
+    <div class="sh"><div class="n">1</div><h2>Los 5 tipos de vino</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de recomendar, hay que reconocer. Estos son los cinco grandes grupos y en una frase, qué son.</p>
+    <div class="grid g3">
+      <div class="tipo"><div class="dot" style="background:var(--red-wine)"></div><h3>Tinto</h3><div class="d">De uvas oscuras, fermentado con la cáscara. Cuerpo, taninos y notas a fruta roja/negra.</div><div class="s">Ej: Malbec, Cabernet, Pinot Noir</div></div>
+      <div class="tipo"><div class="dot" style="background:var(--white-wine)"></div><h3>Blanco</h3><div class="d">De uvas verdes (o tintas sin cáscara). Fresco, ácido, aromas cítricos y florales.</div><div class="s">Ej: Sauvignon Blanc, Chardonnay</div></div>
+      <div class="tipo"><div class="dot" style="background:var(--rose)"></div><h3>Rosado</h3><div class="d">Contacto breve con la cáscara. Entre el tinto y el blanco: ligero y frutal.</div><div class="s">Ideal para aperitivo y verano</div></div>
+      <div class="tipo"><div class="dot" style="background:var(--sparkle)"></div><h3>Espumante</h3><div class="d">Con burbujas por segunda fermentación. Celebración, aperitivo y frescura.</div><div class="s">Ej: Champagne, Cava, Prosecco</div></div>
+      <div class="tipo"><div class="dot" style="background:var(--gold)"></div><h3>Dulce / Generoso</h3><div class="d">Azúcar residual o fortificado con alcohol. Para postres y sobremesa.</div><div class="s">Ej: Oporto, cosecha tardía</div></div>
+      <div class="tipo" style="background:var(--wine);color:#fff;border-color:#000"><div class="dot" style="background:#fff"></div><h3>Regla de oro</h3><div class="d" style="opacity:.95">Del más ligero al más intenso: espumante → blanco → rosado → tinto → dulce. Así se ordena una cata y una comida.</div></div>
+    </div>
+  </section>
+
+  <!-- 2. CEPAS -->
+  <section id="cepas">
+    <div class="sh"><div class="n">2</div><h2>Cepas que debes conocer</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">La <b>cepa</b> (variedad de uva) define el sabor. Memoriza estas ocho: son el 90% de lo que sirve una carta.</p>
+    <div class="grid g2">
+      <div class="cepa"><div class="h"><b>Malbec</b><span class="pill" style="background:var(--red-wine);color:#fff">Tinto</span></div>
+        <div class="notes"><span>ciruela</span><span>mora</span><span>violeta</span><span>chocolate</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:80%"></i></div></div>
+        <div class="barrow"><span>Taninos</span><div class="bar"><i style="width:65%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Insignia argentina. Suave y goloso. Va con carnes a la parrilla.</div></div>
+      <div class="cepa"><div class="h"><b>Cabernet Sauvignon</b><span class="pill" style="background:var(--red-wine);color:#fff">Tinto</span></div>
+        <div class="notes"><span>grosella</span><span>pimiento</span><span>cedro</span><span>tabaco</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:90%"></i></div></div>
+        <div class="barrow"><span>Taninos</span><div class="bar"><i style="width:88%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Estructurado y longevo. El rey de las carnes rojas y cortes grasos.</div></div>
+      <div class="cepa"><div class="h"><b>Pinot Noir</b><span class="pill" style="background:var(--red-wine);color:#fff">Tinto</span></div>
+        <div class="notes"><span>cereza</span><span>frambuesa</span><span>tierra</span><span>seta</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:45%"></i></div></div>
+        <div class="barrow"><span>Taninos</span><div class="bar"><i style="width:35%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Ligero y elegante. Versátil: salmón, aves, cerdo, hongos.</div></div>
+      <div class="cepa"><div class="h"><b>Syrah / Shiraz</b><span class="pill" style="background:var(--red-wine);color:#fff">Tinto</span></div>
+        <div class="notes"><span>mora</span><span>pimienta negra</span><span>ahumado</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:85%"></i></div></div>
+        <div class="barrow"><span>Taninos</span><div class="bar"><i style="width:75%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Especiado y potente. Ideal con carnes condimentadas y ahumados.</div></div>
+      <div class="cepa"><div class="h"><b>Chardonnay</b><span class="pill" style="background:var(--white-wine)">Blanco</span></div>
+        <div class="notes"><span>manzana</span><span>mantequilla</span><span>vainilla</span><span>tostado</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:70%"></i></div></div>
+        <div class="barrow"><span>Acidez</span><div class="bar"><i style="width:55%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Camaleón: fresco sin barrica, cremoso con barrica. Con pastas y pescados en salsa.</div></div>
+      <div class="cepa"><div class="h"><b>Sauvignon Blanc</b><span class="pill" style="background:var(--white-wine)">Blanco</span></div>
+        <div class="notes"><span>lima</span><span>maracuyá</span><span>pasto</span><span>herbal</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:35%"></i></div></div>
+        <div class="barrow"><span>Acidez</span><div class="bar"><i style="width:90%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Vibrante y cítrico. Perfecto con ceviche, tiraditos y mariscos.</div></div>
+      <div class="cepa"><div class="h"><b>Albariño / Torrontés</b><span class="pill" style="background:var(--white-wine)">Blanco</span></div>
+        <div class="notes"><span>durazno</span><span>flores</span><span>cítrico</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:45%"></i></div></div>
+        <div class="barrow"><span>Acidez</span><div class="bar"><i style="width:78%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Aromáticos y frescos. Aperitivo, cocina peruana y asiática.</div></div>
+      <div class="cepa"><div class="h"><b>Espumante (método)</b><span class="pill" style="background:var(--sparkle)">Burbuja</span></div>
+        <div class="notes"><span>manzana verde</span><span>pan tostado</span><span>cítrico</span></div>
+        <div class="barrow"><span>Cuerpo</span><div class="bar"><i style="width:40%"></i></div></div>
+        <div class="barrow"><span>Acidez</span><div class="bar"><i style="width:85%"></i></div></div>
+        <div class="s" style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:6px">Brut = seco (lo más pedido). Aperitivo, frituras y celebración.</div></div>
+    </div>
+    <div class="callout"><b>Truco de memoria:</b> tintos = fruta oscura + taninos (esa sensación que "seca" la boca). Blancos = fruta clara + acidez (agua en la boca, frescura).</div>
+  </section>
+
+  <!-- 3. CATA -->
+  <section id="cata">
+    <div class="sh"><div class="n">3</div><h2>Catar en 5 pasos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Catar es leer el vino con los sentidos. Estos 5 pasos te dan vocabulario para describirlo al invitado.</p>
+    <div class="card">
+      <div class="pasos">
+        <div class="paso"><div class="ico">👀</div><div><div class="t">PASO 1 · VISTA</div><h4>Mira</h4><p>Inclina la copa sobre fondo blanco. Color e intensidad: un tinto joven es violáceo; uno añejo, teja. Blanco pálido = fresco; dorado = con cuerpo o barrica.</p></div></div>
+        <div class="paso"><div class="ico">🌀</div><div><div class="t">PASO 2 · AGITAR</div><h4>Gira la copa</h4><p>Oxigena el vino y libera aromas. Las "lágrimas" que bajan por el cristal indican mayor alcohol/cuerpo.</p></div></div>
+        <div class="paso"><div class="ico">👃</div><div><div class="t">PASO 3 · OLFATO</div><h4>Huele</h4><p>El 80% del sabor es olfato. Busca familias: frutal, floral, especias, madera, tierra. No hay respuesta incorrecta.</p></div></div>
+        <div class="paso"><div class="ico">👅</div><div><div class="t">PASO 4 · GUSTO</div><h4>Prueba</h4><p>Un sorbo que recorra toda la boca. Evalúa: dulzor, acidez (frescura), taninos (astringencia), cuerpo y alcohol.</p></div></div>
+        <div class="paso"><div class="ico">⏱️</div><div><div class="t">PASO 5 · FINAL</div><h4>El retrogusto</h4><p>¿Cuánto dura el sabor tras tragar? Un final largo y agradable = vino de mayor calidad. Eso es lo que se recuerda.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SERVICIO -->
+  <section id="servicio">
+    <div class="sh"><div class="n">4</div><h2>Servicio impecable</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La temperatura correcta cambia por completo la experiencia. Servir un tinto caliente o un blanco helado arruina el vino.</p>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:6px 0 10px">🌡️ Temperatura de servicio</h3>
+    <div class="thermo">
+      <div class="row" style="background:#2b6cb0"><div class="tmp">6–8°</div><div class="lbl"><b>Espumantes</b><div>y blancos muy jóvenes</div></div><div class="ex">Bien frío</div></div>
+      <div class="row" style="background:#4a9fd4"><div class="tmp">8–10°</div><div class="lbl"><b>Blancos ligeros y rosados</b><div>Sauvignon Blanc, Albariño</div></div><div class="ex">Frío</div></div>
+      <div class="row" style="background:#7cbf8a"><div class="tmp">10–13°</div><div class="lbl"><b>Blancos con cuerpo</b><div>Chardonnay con barrica</div></div><div class="ex">Fresco</div></div>
+      <div class="row" style="background:#c98a4a"><div class="tmp">14–16°</div><div class="lbl"><b>Tintos ligeros</b><div>Pinot Noir</div></div><div class="ex">Fresco de bodega</div></div>
+      <div class="row" style="background:#7c1f3a"><div class="tmp">16–18°</div><div class="lbl"><b>Tintos con cuerpo</b><div>Malbec, Cabernet, Syrah</div></div><div class="ex">Temperatura ambiente*</div></div>
+    </div>
+    <div class="callout" style="background:var(--wine-soft);color:var(--wine)"><b>*Ojo:</b> "temperatura ambiente" es la de una bodega europea (18°), no la de Lima (24°+). Un tinto en Lima casi siempre agradece 15 min en hielera antes de servir.</div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:26px 0 10px">🍷 La copa correcta</h3>
+    <div class="copas">
+      <div class="c"><svg viewBox="0 0 60 100"><g fill="none" stroke="#171c20" stroke-width="2.5"><path d="M18 8 Q10 30 30 48 Q50 30 42 8 Z" fill="#f3d9e0"/><line x1="30" y1="48" x2="30" y2="82"/><line x1="16" y1="90" x2="44" y2="90"/><path d="M18 90 Q30 78 42 90" fill="none"/></g></svg><b>Tinto</b><span>Balón amplio: airea y concentra aromas</span></div>
+      <div class="c"><svg viewBox="0 0 60 100"><g fill="none" stroke="#171c20" stroke-width="2.5"><path d="M20 8 Q15 32 30 46 Q45 32 40 8 Z" fill="#f3ecc0"/><line x1="30" y1="46" x2="30" y2="82"/><line x1="16" y1="90" x2="44" y2="90"/><path d="M18 90 Q30 78 42 90"/></g></svg><b>Blanco</b><span>Más estrecha: mantiene el frescor</span></div>
+      <div class="c"><svg viewBox="0 0 60 100"><g fill="none" stroke="#171c20" stroke-width="2.5"><path d="M24 6 L24 44 Q24 52 30 52 Q36 52 36 44 L36 6 Z" fill="#f6ecc4"/><line x1="30" y1="52" x2="30" y2="82"/><line x1="16" y1="90" x2="44" y2="90"/></g></svg><b>Flauta</b><span>Alta y fina: conserva la burbuja</span></div>
+      <div class="c"><svg viewBox="0 0 60 100"><g fill="none" stroke="#171c20" stroke-width="2.5"><path d="M14 30 Q30 60 46 30 Q46 14 30 14 Q14 14 14 30 Z" fill="#f9f0c8"/><line x1="30" y1="48" x2="30" y2="82"/><line x1="16" y1="90" x2="44" y2="90"/></g></svg><b>Postre</b><span>Pequeña: para dulces y generosos</span></div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:26px 0 10px">📋 Ritual de servicio (los 7 pasos)</h3>
+    <div class="card"><ol style="margin-left:18px;font-size:14px;line-height:1.9">
+      <li><b>Presenta</b> la botella al anfitrión: etiqueta a la vista, nombra bodega, cepa y añada.</li>
+      <li><b>Descorcha</b> en la mesa, con la botella apoyada. Corta la cápsula bajo el gollete.</li>
+      <li>Ofrece el <b>corcho</b> (opcional) y limpia el borde de la botella.</li>
+      <li><b>Cata de aprobación:</b> sirve una onza al anfitrión y espera su visto bueno.</li>
+      <li><b>Sirve</b> a las damas primero, luego caballeros, al anfitrión al final. Por la derecha.</li>
+      <li>Llena solo <b>un tercio</b> de la copa (tinto) o la mitad (blanco). Nunca hasta el borde.</li>
+      <li>Deja la botella a la vista; <b>rellena</b> proactivamente sin que lo pidan.</li>
+    </ol></div>
+  </section>
+
+  <!-- 5. MARIDAJE -->
+  <section id="maridaje">
+    <div class="sh"><div class="n">5</div><h2>Maridaje que funciona</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Maridar = equilibrar. El vino y el plato deben tener peso similar y complementarse o contrastarse.</p>
+    <div class="grid g3" style="margin-bottom:18px">
+      <div class="tipo"><h3>⚖️ Peso con peso</h3><div class="d">Plato ligero → vino ligero. Plato potente → vino potente. Un tinto robusto aplasta un pescado suave.</div></div>
+      <div class="tipo"><h3>🤝 Complementar</h3><div class="d">Sabores que se parecen: mantecoso con mantecoso (Chardonnay + pasta en crema).</div></div>
+      <div class="tipo"><h3>⚡ Contrastar</h3><div class="d">Acidez corta la grasa (espumante + frito); dulce equilibra el picante.</div></div>
+    </div>
+    <div class="card matrix">
+      <table>
+        <thead><tr><th>Plato</th><th>Espumante</th><th>Blanco fresco</th><th>Blanco c/ cuerpo</th><th>Rosado</th><th>Tinto ligero</th><th>Tinto c/ cuerpo</th></tr></thead>
+        <tbody>
+          <tr><th>Ceviche / tiradito</th><td class="y">◎</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td><td class="n">·</td></tr>
+          <tr><th>Mariscos / conchas</th><td class="y">◎</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td><td class="n">·</td></tr>
+          <tr><th>Pescado en salsa</th><td class="m">○</td><td class="m">○</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td></tr>
+          <tr><th>Pastas en crema</th><td class="n">·</td><td class="m">○</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td></tr>
+          <tr><th>Pastas al tomate</th><td class="n">·</td><td class="m">○</td><td class="m">○</td><td class="y">◎</td><td class="y">◎</td><td class="m">○</td></tr>
+          <tr><th>Aves / cerdo</th><td class="n">·</td><td class="m">○</td><td class="y">◎</td><td class="m">○</td><td class="y">◎</td><td class="m">○</td></tr>
+          <tr><th>Carnes rojas / parrilla</th><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="m">○</td><td class="y">◎</td></tr>
+          <tr><th>Quesos maduros</th><td class="n">·</td><td class="n">·</td><td class="m">○</td><td class="n">·</td><td class="m">○</td><td class="y">◎</td></tr>
+          <tr><th>Postres</th><td class="m">○</td><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="n">·</td></tr>
+        </tbody>
+      </table>
+      <div class="mleg"><span><i class="y" style="background:#d1fae5"></i>◎ Excelente</span><span><i class="m" style="background:#fef3c7"></i>○ Funciona</span><span><i class="n" style="background:#fee2e2"></i>· Evitar</span></div>
+    </div>
+    <div class="callout" style="background:var(--wine-soft);color:var(--wine)"><b>Para postres:</b> la regla es que el vino sea siempre <b>más dulce</b> que el postre. Un espumante demi-sec o un cosecha tardía; nunca un tinto seco.</div>
+  </section>
+
+  <!-- 6. EN SALA -->
+  <section id="sala">
+    <div class="sh"><div class="n">6</div><h2>Recomendar y vender en sala</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Aquí se cierra el círculo: convertir lo que sabes en una recomendación que el invitado agradece.</p>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:6px 0 10px">💬 Frases que funcionan</h3>
+    <div class="say"><div class="q">"¿Prefiere algo fresco y ligero, o con más cuerpo?"</div><div class="w">Abre la conversación sin abrumar. Deja que el invitado guíe.</div></div>
+    <div class="say"><div class="q">"Con su plato, este Sauvignon Blanc realza el ceviche; si busca tinto, un Pinot suave también acompaña."</div><div class="w">Ofrece 2 opciones concretas y justifica con el plato.</div></div>
+    <div class="say"><div class="q">"Tenemos una excelente opción por copa para probar antes de la botella."</div><div class="w">Reduce el riesgo percibido y abre la venta.</div></div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:26px 0 10px">✅ Sí / ✕ No</h3>
+    <div class="do2">
+      <div class="box yes"><h4>✅ Siempre</h4><ul>
+        <li>Preguntar preferencias antes de sugerir</li>
+        <li>Ofrecer 2 rangos de precio, sin juzgar</li>
+        <li>Mostrar la etiqueta y confirmar la añada</li>
+        <li>Servir a la temperatura correcta</li>
+        <li>Rellenar copas de forma proactiva</li>
+        <li>Recomendar por copa para probar</li>
+      </ul></div>
+      <div class="box no"><h4>✕ Nunca</h4><ul>
+        <li>Presionar hacia la botella más cara</li>
+        <li>Llenar la copa hasta el borde</li>
+        <li>Servir el tinto caliente o el blanco helado</li>
+        <li>Decir "no sé" — di "lo consulto y le confirmo"</li>
+        <li>Descorchar lejos de la mesa</li>
+        <li>Olvidar la cata de aprobación al anfitrión</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ONE PAGER -->
+  <section id="resumen">
+    <div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager">
+      <div class="opt"><span class="logo" style="font-family:var(--font-display);color:var(--primary)">prep<b style="color:var(--secondary)">!</b></span><h3>Vinos · Chuleta de sala</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Temperatura</h4><ul>
+          <li>Espumante: 6–8°</li><li>Blanco ligero / rosado: 8–10°</li><li>Blanco con cuerpo: 10–13°</li><li>Tinto ligero (Pinot): 14–16°</li><li>Tinto con cuerpo: 16–18°</li></ul></div>
+        <div class="op-box"><h4>Orden al servir y catar</h4><ul>
+          <li>Espumante → blanco → rosado → tinto → dulce</li><li>Ligero antes que intenso</li><li>Joven antes que añejo</li><li>Seco antes que dulce</li></ul></div>
+        <div class="op-box"><h4>Maridaje express</h4><ul>
+          <li>Ceviche / mariscos → Sauvignon Blanc o espumante</li><li>Pasta en crema / pescado en salsa → Chardonnay</li><li>Aves / cerdo → Pinot Noir</li><li>Carnes / parrilla → Malbec o Cabernet</li><li>Postre → vino más dulce que el postre</li></ul></div>
+        <div class="op-box"><h4>Ritual (7 pasos)</h4><ul>
+          <li>Presentar etiqueta al anfitrión</li><li>Descorchar en mesa · limpiar borde</li><li>Cata de aprobación (1 onza)</li><li>Servir: damas → caballeros → anfitrión, por la derecha</li><li>1/3 de copa · rellenar proactivo</li></ul></div>
+      </div>
+      <div style="margin-top:14px"><h4 style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--wine);margin-bottom:8px;font-weight:700">Cepas en una palabra</h4>
+        <div class="chiprow">
+          <span>Malbec · goloso</span><span>Cabernet · potente</span><span>Pinot · elegante</span><span>Syrah · especiado</span><span>Chardonnay · cremoso</span><span>Sauvignon B. · cítrico</span><span>Albariño · aromático</span><span>Brut · seco</span>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px"><b>Frase maestra:</b> "¿Prefiere algo fresco y ligero, o con más cuerpo?" → luego ofrece 2 opciones concretas justificadas con el plato.</div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Curso de Vinos · Formación interna de sala · v1</div>
+</div>
+</body>
+</html>

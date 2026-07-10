@@ -182,6 +182,14 @@
       "destination": "/el-libro.html"
     },
     {
+      "source": "/curso-vinos",
+      "destination": "/curso-vinos.html"
+    },
+    {
+      "source": "/cursos",
+      "destination": "/curso-vinos.html"
+    },
+    {
       "source": "/libro",
       "destination": "/el-libro.html"
     },

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
@@ -19,7 +19,7 @@
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
-.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle;white-space:nowrap;word-wrap:normal;direction:ltr}.mono{font-family:var(--font-mono)}
 .header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
@@ -140,11 +140,11 @@ async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRun
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
   $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
-  const HIDEADD=['equipo','politicas','recetario','plantillas'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';
-  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
+  const HIDEADD=['equipo','politicas','recetario','plantillas','cursos'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';
+  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -195,6 +195,24 @@ function renderRecetario(){
         </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
   $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
   $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
+}
+/* ===== CURSOS (capacitación) ===== */
+const CURSOS=[
+ {id:'vinos',titulo:'Curso de Vinos',emoji:'🍷',color:'#7c1f3a',
+  desc:'De cero a sommelier de piso: tipos, cepas, cata en 5 pasos, temperaturas y copas, ritual de servicio, matriz de maridaje y cómo recomendar en sala. Incluye one-pager para imprimir y pegar en office.',
+  meta:'6 módulos · ~45 min · Sala y bar',url:'/curso-vinos'}
+];
+function renderCursos(){
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Capacitación del personal · toca «Abrir curso» 🎓</div>`+
+   CURSOS.map(c=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:12px">
+     <div style="background:${c.color};color:#fff;padding:18px 16px;display:flex;align-items:center;gap:14px">
+       <div style="font-size:40px;line-height:1">${c.emoji}</div>
+       <div><div style="font-family:var(--font-display);font-size:22px;line-height:1">${c.titulo}</div>
+         <div style="font-family:var(--font-mono);font-size:11px;opacity:.9;margin-top:5px">${c.meta}</div></div></div>
+     <div style="padding:15px 16px">
+       <div style="font-size:13.5px;line-height:1.5;opacity:.9">${c.desc}</div>
+       <a href="${c.url}" target="_blank" rel="noopener" class="btn primary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;margin-top:13px;width:auto"><span class="material-symbols-outlined">open_in_new</span>Abrir curso</a>
+     </div></div>`).join('');
 }
 function renderExamenes(){
   const exs=state.examenes||[],res=state.examResult||[];
