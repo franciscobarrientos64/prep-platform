@@ -79,17 +79,18 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .dg .drow.na{opacity:.45}
 .dg .drow.na .it{font-style:italic}
 .mg{overflow-x:auto;padding-bottom:6px}
-.mg .grid{min-width:max-content}
+.mg .grid{min-width:max-content;width:100%}
 .mg .hrow,.mg .mrow{display:flex;align-items:center;gap:8px}
 .mg .hrow{border-bottom:2px solid var(--outline);padding-bottom:5px;margin-bottom:4px;position:sticky;top:0;background:var(--surface);z-index:1}
 .mg .mrow{padding:3px 0;border-bottom:1px solid #eef0f2}
 .mg .mrow:last-child{border-bottom:none}
 .mg .num{flex:0 0 22px;width:22px;font-family:var(--font-mono);font-size:10px;opacity:.5;text-align:right}
-.mg .lbl{flex:0 0 250px;width:250px;font-size:11px;line-height:1.25}
-.mg .cg{flex:0 0 111px;width:111px;display:flex;gap:3px;padding-right:12px;border-right:1px solid #e5e7eb;box-sizing:border-box}
+.mg .lbl{flex:1 1 300px;min-width:220px;font-size:11px;line-height:1.25}
+.mg .cg{flex:0 0 134px;width:134px;display:flex;align-items:center;gap:3px;padding-right:12px;border-right:1px solid #e5e7eb;box-sizing:border-box}
 .mg .cg:last-child{border-right:none}
-.mg .cgh{flex:0 0 111px;width:111px;padding-right:12px;font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:center;box-sizing:border-box}
+.mg .cgh{flex:0 0 134px;width:134px;padding-right:12px;font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:center;box-sizing:border-box}
 .mg .msq{width:22px;height:20px;flex:0 0 22px;border:2px solid var(--outline);border-radius:4px;box-sizing:border-box}
+.mg .dind{flex:0 0 20px;width:20px;text-align:center;font-size:13px;font-weight:800;font-family:var(--font-mono);line-height:1}
 .mg .muh{font-family:var(--font-display);font-size:14px;margin:14px 0 5px;border-bottom:2px solid var(--outline);padding-bottom:3px}
 /* desglose por visita (un solo recorrido, ítem por ítem) */
 .vmh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:var(--font-display);font-size:15px;margin:18px 0 6px;border-bottom:2px solid var(--outline);padding-bottom:4px}
@@ -280,22 +281,29 @@ function audMatrix(per){
   const locs=DB.locales;
   const rows=(DB.allDetalle||[]).filter(d=>d.periodo===per);
   if(!rows.length)return '<div class="empty">Sin detalle para este período.</div>';
+  const periods=[...new Set((DB.allDetalle||[]).map(d=>d.periodo))].sort();
+  const pi=periods.indexOf(per), prevPer=pi>0?periods[pi-1]:null;
   const mundos=[], itemsByMundo={};
   rows.slice().sort((a,b)=>(a.orden||0)-(b.orden||0)).forEach(d=>{
     if(!mundos.includes(d.mundo)){mundos.push(d.mundo);itemsByMundo[d.mundo]=[];}
     const key=(d.orden!=null?d.orden:'')+'␟'+d.item;
     if(!itemsByMundo[d.mundo].some(x=>x.key===key))itemsByMundo[d.mundo].push({key,orden:d.orden,item:d.item});
   });
-  const byLoc={};
-  rows.forEach(d=>{byLoc[d.local_id+'|'+d.mundo+'|'+((d.orden!=null?d.orden:'')+'␟'+d.item)]=d;});
+  const cur={}, prev={};
+  (DB.allDetalle||[]).forEach(d=>{const k=d.local_id+'|'+d.mundo+'|'+((d.orden!=null?d.orden:'')+'␟'+d.item);if(d.periodo===per)cur[k]=d;else if(prevPer&&d.periodo===prevPer)prev[k]=d;});
+  const iavg=d=>{if(!d)return null;const xs=[d.v1,d.v2,d.v3,d.v4].filter(v=>v!=null);return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null;};
+  const dind=k=>{const ca=iavg(cur[k]),pa=prevPer?iavg(prev[k]):null;
+    if(ca==null||pa==null)return `<div class="dind" style="color:#c8ccd0" title="sin comparación">·</div>`;
+    const dd=ca-pa, flat=Math.abs(dd)<0.13, up=dd>0, col=flat?'#9aa0a6':(up?'var(--green)':'var(--secondary)');
+    return `<div class="dind" style="color:${col}" title="${flat?'se mantiene':(up?'subió':'bajó')} vs ${prevPer}">${flat?'=':(up?'▲':'▼')}</div>`;};
   const header=`<div class="hrow"><div class="num"></div><div class="lbl"></div>`+locs.map(l=>`<div class="cgh">${escapeHtml(l.nombre)}</div>`).join('')+`</div>`;
   let body='';
   mundos.forEach(mu=>{
     body+=`<div class="muh">${escapeHtml(mu)}</div>`;
     itemsByMundo[mu].forEach(it=>{
       body+=`<div class="mrow"><div class="num">${it.orden!=null?it.orden:''}</div><div class="lbl">${escapeHtml(it.item)}</div>`
-        +locs.map(l=>{const d=byLoc[l.id+'|'+mu+'|'+it.key];
-          return `<div class="cg">`+[1,2,3,4].map(n=>{const v=d?d['v'+n]:null,col=lvlColor(v);return `<div class="msq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+`</div>`;}).join('')
+        +locs.map(l=>{const k=l.id+'|'+mu+'|'+it.key,d=cur[k];
+          return `<div class="cg">`+[1,2,3,4].map(n=>{const v=d?d['v'+n]:null,col=lvlColor(v);return `<div class="msq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+dind(k)+`</div>`;}).join('')
         +`</div>`;
     });
   });
@@ -470,7 +478,7 @@ function vAuditoria(){
     +visCols.map(n=>`<button class="pchip ${AUDVIS===n?'on':''}" onclick="setAudVis('${n}')">Visita ${n}</button>`).join('')+`</div>`;
   // --- consolidado: 4 visitas de TODAS las sedes juntas, ítem por ítem ---
   if(AUDVIS==='sedes'&&multi){
-    return h+`<div class="section"><div class="section-h"><h3>Detalle por sede · ${escapeHtml(per)}</h3><span class="hint">las 4 visitas de cada sede, ítem por ítem</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${audMatrix(per)}</div></div>`;
+    return h+`<div class="section"><div class="section-h"><h3>Detalle por sede · ${escapeHtml(per)}</h3><span class="hint">las 4 visitas de cada sede + ▲/▼ vs mes anterior, ítem por ítem</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${audMatrix(per)}</div></div>`;
   }
   // --- desglose ítem por ítem de UNA visita, agrupado por sección ---
   if(AUDVIS!=null){
