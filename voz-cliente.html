@@ -80,6 +80,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .dg .sq.empty{background:transparent;border-width:1.5px;border-style:dashed;border-color:#d9dce0}
 .dg .drow.na{opacity:.45}
 .dg .drow.na .it{font-style:italic}
+.dg .drow.scg{border-top:1.5px solid var(--outline);border-bottom:none;margin-top:2px;padding-top:5px;background:transparent!important}
+.dg .drow.scg .it{font-weight:700;font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;opacity:.75}
+.dg .scpill{display:inline-block;min-width:40px;text-align:center;padding:2px 4px;border:2px solid var(--outline);border-radius:6px;font-family:var(--font-mono);font-size:11px;font-weight:700}
 .mg{overflow-x:auto;padding-bottom:6px}
 .mg .grid{width:100%}
 .mg .hrow,.mg .mrow{display:flex;align-items:center;gap:8px}
@@ -518,6 +521,9 @@ function vAuditoria(){
     return h+`<div class="section"><div class="section-h"><h3>Visita ${n} · ${escapeHtml(per)}</h3><span class="hint">${allScored.length} ítems evaluados · ${tot}/100</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${body||'<div class="empty">Sin ítems.</div>'}</div></div>`;
   }
   // --- grilla: todas las visitas del período lado a lado ---
+  const gi=periodos.indexOf(per), gprev=gi>0?periodos[gi-1]:null;
+  const prevItems=gprev?det.filter(d=>d.periodo===gprev):[];
+  const muPct=(set,mu)=>{let s=0,c=0;set.filter(d=>d.mundo===mu).forEach(d=>[1,2,3,4].forEach(n=>{if(d['v'+n]!=null){s+=d['v'+n];c++;}}));return c?s/c/4*100:null;};
   let g='<div class="dg">';
   mundos.forEach(mu=>{
     g+=`<div class="mh"><span class="mu">${escapeHtml(mu)}</span><span class="sqs">`+visCols.map(c=>`<span class="vh">V${c}</span>`).join('')+`</span></div>`;
@@ -526,6 +532,11 @@ function vAuditoria(){
       g+=`<div class="drow${naRow?' na':''}"><div class="it">${escapeHtml(d.item)}</div><div class="sqs">`
         +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+`</div></div>`;
     });
+    const sc=muPct(items,mu);
+    if(sc!=null){const col=scoreColor(sc),pv=gprev?muPct(prevItems,mu):null,dd=pv==null?null:sc-pv;
+      const arr=dd==null?'':(Math.abs(dd)<0.5?' <span style="color:#9aa0a6;font-weight:800">=</span>':dd>0?' <span style="color:var(--green);font-weight:800">▲</span>':' <span style="color:var(--secondary);font-weight:800">▼</span>');
+      g+=`<div class="drow scg"><div class="it">Puntaje · ${escapeHtml(mu)}</div><div class="sqs"><span class="scpill" style="background:${col[0]};color:${col[1]}">${Math.round(sc)}%</span>${arr}</div></div>`;
+    }
   });
   g+='</div>';
   return h+`<div class="section"><div class="section-h"><h3>Detalle por visita · ${escapeHtml(per)}</h3><span class="hint">${items.length} ítems · toca una visita para el desglose</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${g}</div></div>`;
