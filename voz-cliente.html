@@ -85,12 +85,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .mg .mrow{padding:3px 0;border-bottom:1px solid #eef0f2}
 .mg .mrow:last-child{border-bottom:none}
 .mg .num{flex:0 0 22px;width:22px;font-family:var(--font-mono);font-size:10px;opacity:.5;text-align:right}
-.mg .lbl{flex:1 1 300px;min-width:220px;font-size:11px;line-height:1.25}
-.mg .cg{flex:0 0 134px;width:134px;display:flex;align-items:center;gap:3px;padding-right:12px;border-right:1px solid #e5e7eb;box-sizing:border-box}
+.mg .lbl{flex:3 1 0;min-width:190px;font-size:11px;line-height:1.22}
+.mg .cg{flex:1 1 0;min-width:104px;display:flex;align-items:center;justify-content:flex-start;gap:3px;padding:0 9px;border-right:1px solid #e5e7eb;box-sizing:border-box}
 .mg .cg:last-child{border-right:none}
-.mg .cgh{flex:0 0 134px;width:134px;padding-right:12px;font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:center;box-sizing:border-box}
-.mg .msq{width:22px;height:20px;flex:0 0 22px;border:2px solid var(--outline);border-radius:4px;box-sizing:border-box}
-.mg .dind{flex:0 0 20px;width:20px;text-align:center;font-size:13px;font-weight:800;font-family:var(--font-mono);line-height:1}
+.mg .cgh{flex:1 1 0;min-width:104px;padding:0 9px;font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:left;box-sizing:border-box}
+.mg .msq{width:18px;height:18px;flex:0 0 18px;border:2px solid var(--outline);border-radius:4px;box-sizing:border-box}
+.mg .dind{flex:0 0 18px;width:18px;text-align:center;font-size:12px;font-weight:800;font-family:var(--font-mono);line-height:1;margin-left:1px}
 .mg .muh{font-family:var(--font-display);font-size:14px;margin:14px 0 5px;border-bottom:2px solid var(--outline);padding-bottom:3px}
 /* desglose por visita (un solo recorrido, ítem por ítem) */
 .vmh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:var(--font-display);font-size:15px;margin:18px 0 6px;border-bottom:2px solid var(--outline);padding-bottom:4px}
@@ -307,7 +307,7 @@ function audMatrix(per){
         +`</div>`;
     });
   });
-  return `<div class="mg"><div class="grid" style="min-width:${260+locs.length*142}px">${header}${body}</div></div>`;
+  return `<div class="mg"><div class="grid" style="min-width:${230+locs.length*118}px">${header}${body}</div></div>`;
 }
 function barRow(nm,s){const c=scoreColor(s)[0];return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
 const LEGEND=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['<70','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
