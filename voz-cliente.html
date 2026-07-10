@@ -79,7 +79,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .dg .drow.na{opacity:.45}
 .dg .drow.na .it{font-style:italic}
 .mg{overflow-x:auto;padding-bottom:6px}
-.mg .grid{min-width:max-content;width:100%}
+.mg .grid{width:100%}
 .mg .hrow,.mg .mrow{display:flex;align-items:center;gap:8px}
 .mg .hrow{border-bottom:2px solid var(--outline);padding-bottom:5px;margin-bottom:4px;position:sticky;top:0;background:var(--surface);z-index:1}
 .mg .mrow{padding:3px 0;border-bottom:1px solid #eef0f2}
@@ -307,7 +307,7 @@ function audMatrix(per){
         +`</div>`;
     });
   });
-  return `<div class="mg"><div class="grid">${header}${body}</div></div>`;
+  return `<div class="mg"><div class="grid" style="min-width:${260+locs.length*142}px">${header}${body}</div></div>`;
 }
 function barRow(nm,s){const c=scoreColor(s)[0];return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
 const LEGEND=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['<70','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
