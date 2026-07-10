@@ -190,6 +190,14 @@
       "destination": "/curso-vinos.html"
     },
     {
+      "source": "/curso-vino-origenes",
+      "destination": "/curso-vino-origenes.html"
+    },
+    {
+      "source": "/curso-origen",
+      "destination": "/curso-vino-origenes.html"
+    },
+    {
       "source": "/libro",
       "destination": "/el-libro.html"
     },

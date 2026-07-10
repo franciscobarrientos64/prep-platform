@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>El vino: origen y mundo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234a1526'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='58' fill='%23fcf9f8' text-anchor='middle'>%F0%9F%8D%87</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--amber:#f59e0b;--gold:#c9a227;
+--red-wine:#7c1f3a;--white-wine:#efe08c;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 80px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink);text-decoration:none}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:#4a1526;color:#fff;border:2px solid var(--outline);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 30px;margin:24px 0 10px;position:relative;overflow:hidden}
+.hero:before{content:"🍇";position:absolute;right:-6px;top:-26px;font-size:200px;opacity:.12;transform:rotate(10deg)}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(32px,6vw,58px);line-height:.98;margin:8px 0 12px}
+.hero p{font-size:16px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:40px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sh .n{flex:0 0 auto;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;background:var(--tertiary);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(22px,3.4vw,30px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:15px;opacity:.9;margin-bottom:16px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;background:var(--surface)}
+.tipo h3{font-size:16px;margin-bottom:4px}.tipo .d{font-size:13px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;font-size:14px;margin-top:14px}
+.callout b{font-family:var(--font-display);font-weight:400}
+/* Timeline historia */
+.tl{position:relative;padding-left:26px}
+.tl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:3px;background:var(--wine)}
+.tlrow{position:relative;padding:10px 0}
+.tlrow:before{content:"";position:absolute;left:-23px;top:15px;width:13px;height:13px;border-radius:50%;background:var(--tertiary);border:2px solid var(--outline)}
+.tlrow .y{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--wine)}
+.tlrow h4{font-size:15px;margin:2px 0}.tlrow p{font-size:13px;opacity:.88}
+/* Proceso pasos */
+.paso{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 48px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:13px}
+.paso h4{font-size:15px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}
+.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+/* Metodos */
+.metodo{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.metodo .h{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.metodo .h .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--outline);flex-shrink:0}
+.metodo .h b{font-size:15px}.metodo p{font-size:13px;opacity:.9}
+/* Regiones */
+.region{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.region .h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.region .fl{font-size:30px;line-height:1}
+.region .h b{font-size:16px;display:block}.region .h span{font-family:var(--font-mono);font-size:10px;opacity:.6;text-transform:uppercase;letter-spacing:.04em}
+.region .reg{font-size:12.5px;margin-bottom:8px}.region .reg b{color:var(--wine)}
+.region .gr{display:flex;flex-wrap:wrap;gap:5px}
+.region .gr span{font-size:11px;background:var(--bg);border:1.5px solid var(--outline);border-radius:999px;padding:2px 8px}
+.region.nw{background:#f7e7ec}.region.ow{background:#eef2ff}
+/* Viejo vs Nuevo */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.vs{grid-template-columns:1fr}}
+.vs .box{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:16px}
+.vs .ow{background:#eef2ff}.vs .nw{background:#f7e7ec}
+.vs h4{font-family:var(--font-display);font-size:17px;margin-bottom:8px}
+.vs ul{list-style:none;font-size:13px}.vs li{padding:3px 0 3px 18px;position:relative}.vs li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+/* Glosario */
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px 14px;background:var(--surface)}
+.gterm b{display:block;font-size:14.5px;color:var(--wine);margin-bottom:3px}.gterm span{font-size:12.5px;opacity:.9;line-height:1.42}
+/* One pager */
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);padding:22px;margin-top:18px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:10px;margin-bottom:14px}
+.onepager .opt .oplogo{width:82px;height:26px;display:inline-block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:20px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}@media(max-width:760px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:12px;padding:12px}
+.op-box h4{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:8px;font-weight:700}
+.op-box ul{list-style:none;font-size:12.5px}.op-box li{padding:2px 0 2px 16px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:50px}
+@media print{
+  @page{size:A4 portrait;margin:9mm}
+  html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top,.foot{display:none!important}.wrap{padding:0;max-width:100%;margin:0}
+  section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+  .onepager{box-shadow:none;padding:11px 12px;margin:0}.onepager .opt{padding-bottom:6px;margin-bottom:8px}
+  .onepager .opt h3{font-size:15px}.onepager .opt .oplogo{width:64px;height:20px}
+  .op-grid{gap:8px}.op-box{padding:8px 9px}.op-box h4{font-size:9.5px}.op-box ul,.op-box li{font-size:10px;line-height:1.32}.op-box li{padding:1px 0 1px 13px}
+  .callout{padding:7px 10px;font-size:10.5px;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Origen del vino</span>
+    <nav class="nav">
+      <a href="#origen">Origen</a><a href="#proceso">Elaboración</a><a href="#metodos">Métodos</a>
+      <a href="#terroir">Terroir</a><a href="#regiones">Regiones</a><a href="#owvnw">Viejo/Nuevo</a>
+      <a href="#glosario">Glosario</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="k">Academia Prep! · Cultura de vino</div>
+    <h1>El vino: de dónde<br>viene y cómo se hace</h1>
+    <p>Antes de servirlo, hay que entenderlo. Un recorrido claro por el <b>origen</b> del vino, <b>cómo se elabora</b>, sus <b>métodos</b> y las <b>regiones del mundo</b> que debes nombrar con seguridad.</p>
+    <div class="meta"><span>🍇 6 módulos</span><span>⏱️ ~40 min</span><span>🌎 Historia · Proceso · Mundo</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> saber contar de dónde viene una botella y cómo se hizo transforma el servicio en una experiencia. El invitado no solo bebe: entiende y disfruta más.</div>
+
+  <!-- 1. ORIGEN -->
+  <section id="origen">
+    <div class="sh"><div class="n">1</div><h2>Orígenes e historia</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">El vino acompaña a la humanidad desde hace más de 8.000 años. Esta es su ruta.</p>
+    <div class="card"><div class="tl">
+      <div class="tlrow"><div class="y">~6000 a.C. · Cáucaso</div><h4>La cuna: Georgia y Armenia</h4><p>Las primeras vasijas de vino conocidas. En Georgia aún fermentan en ánforas de barro enterradas (qvevri).</p></div>
+      <div class="tlrow"><div class="y">Antigüedad · Egipto y Grecia</div><h4>El vino sagrado y social</h4><p>Egipto lo registra en tumbas; Grecia lo lleva por el Mediterráneo y lo asocia a Dioniso.</p></div>
+      <div class="tlrow"><div class="y">Imperio · Roma</div><h4>Roma expande el viñedo</h4><p>Los romanos plantan vides en Francia, España e Italia y perfeccionan barricas y ánforas.</p></div>
+      <div class="tlrow"><div class="y">Edad Media · Monasterios</div><h4>Los monjes guardan el saber</h4><p>En Borgoña y el Rin, los monasterios mapean los mejores viñedos y refinan la elaboración.</p></div>
+      <div class="tlrow"><div class="y">Siglo XVI · Nuevo Mundo</div><h4>El vino cruza el océano</h4><p>España lleva la vid a América. En Perú, Ica se vuelve un polo temprano de vino y, luego, de pisco.</p></div>
+      <div class="tlrow"><div class="y">Siglo XIX-XX · Ciencia</div><h4>Pasteur y la modernidad</h4><p>Se entiende la fermentación (levaduras). Surgen las denominaciones de origen y el control de calidad.</p></div>
+    </div></div>
+  </section>
+
+  <!-- 2. PROCESO -->
+  <section id="proceso">
+    <div class="sh"><div class="n">2</div><h2>De la uva a la copa</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Vinificar es, en esencia, transformar el azúcar de la uva en alcohol. Estos son los pasos.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🍇</div><div><div class="t">PASO 1 · VENDIMIA</div><h4>Cosecha</h4><p>Se recogen las uvas en su punto justo de azúcar y acidez. A mano (calidad) o a máquina (volumen).</p></div></div>
+      <div class="paso"><div class="ico">🌀</div><div><div class="t">PASO 2 · DESPALILLADO Y MOLIENDA</div><h4>Separar y romper</h4><p>Se quitan los raspones (palos) y se rompe la piel para liberar el mosto (jugo).</p></div></div>
+      <div class="paso"><div class="ico">🫗</div><div><div class="t">PASO 3 · PRENSADO</div><h4>Extraer el jugo</h4><p>En blancos se prensa antes de fermentar (sin cáscara). En tintos, después (para dar color).</p></div></div>
+      <div class="paso"><div class="ico">🧫</div><div><div class="t">PASO 4 · FERMENTACIÓN</div><h4>Azúcar → alcohol</h4><p>Las levaduras convierten el azúcar en alcohol y CO₂. Dura de días a semanas y define el estilo.</p></div></div>
+      <div class="paso"><div class="ico">🍷</div><div><div class="t">PASO 5 · MACERACIÓN (tintos)</div><h4>Color y taninos</h4><p>El mosto reposa con las cáscaras: de ahí salen el color, los taninos y muchos aromas.</p></div></div>
+      <div class="paso"><div class="ico">🛢️</div><div><div class="t">PASO 6 · CRIANZA</div><h4>Reposo y afinado</h4><p>En barrica de roble (aporta vainilla, tostado, cuerpo) o en acero (conserva la fruta y la frescura).</p></div></div>
+      <div class="paso"><div class="ico">🫙</div><div><div class="t">PASO 7 · CLARIFICADO Y EMBOTELLADO</div><h4>Limpiar y guardar</h4><p>Se clarifica, se filtra y se embotella. Algunos vinos siguen evolucionando años en botella.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 3. METODOS -->
+  <section id="metodos">
+    <div class="sh"><div class="n">3</div><h2>Métodos de elaboración</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La misma uva puede dar vinos muy distintos según cómo se trabaje.</p>
+    <div class="grid g2">
+      <div class="metodo"><div class="h"><span class="dot" style="background:var(--red-wine)"></span><b>Tinto</b></div><p>Fermenta <b>con la cáscara</b>. De ahí el color, los taninos y el cuerpo. Suele tener crianza.</p></div>
+      <div class="metodo"><div class="h"><span class="dot" style="background:var(--white-wine)"></span><b>Blanco</b></div><p>Se prensa <b>antes</b> de fermentar: sin cáscara. Resultado fresco, ácido y aromático.</p></div>
+      <div class="metodo"><div class="h"><span class="dot" style="background:#f2b8c6"></span><b>Rosado</b></div><p>Contacto <b>breve</b> (horas) con la cáscara: toma algo de color y fruta, pero se mantiene ligero.</p></div>
+      <div class="metodo"><div class="h"><span class="dot" style="background:#f6e7a8"></span><b>Espumante · método tradicional</b></div><p>Segunda fermentación <b>en la botella</b>: burbuja fina y compleja. Es el método del Champagne y el Cava.</p></div>
+      <div class="metodo"><div class="h"><span class="dot" style="background:#f6e7a8"></span><b>Espumante · método Charmat</b></div><p>Segunda fermentación <b>en tanque</b>: más fresco, frutal y económico. Es el del Prosecco.</p></div>
+      <div class="metodo"><div class="h"><span class="dot" style="background:var(--gold)"></span><b>Dulces y fortificados</b></div><p>Uvas muy maduras (cosecha tardía) o vino con alcohol añadido (Oporto, Jerez): más dulce y potente.</p></div>
+    </div>
+    <div class="callout"><b>Roble vs acero:</b> la barrica de roble suma vainilla, tostado y estructura; el acero inoxidable preserva la fruta fresca. Muchas bodegas combinan ambos.</div>
+  </section>
+
+  <!-- 4. TERROIR -->
+  <section id="terroir">
+    <div class="sh"><div class="n">4</div><h2>Terroir y añada</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Por qué el mismo tipo de uva sabe distinto según dónde y cuándo se cultive.</p>
+    <div class="grid g2" style="margin-bottom:14px">
+      <div class="tipo"><h3>🌱 Terroir</h3><div class="d">La suma de <b>clima + suelo + variedad + mano humana</b> de un lugar. Es la "huella" que hace único a un vino de una región.</div></div>
+      <div class="tipo"><h3>📅 Añada</h3><div class="d">El <b>año de cosecha</b>. Como el clima cambia cada año, dos añadas del mismo vino pueden ser distintas.</div></div>
+      <div class="tipo"><h3>☀️ Clima</h3><div class="d">Climas <b>cálidos</b> → uvas más maduras, vinos con más cuerpo y alcohol. Climas <b>frescos</b> → más acidez y elegancia.</div></div>
+      <div class="tipo"><h3>⛰️ Altura y suelo</h3><div class="d">La altura (ej. Mendoza) da frescura y color; el suelo (piedra, arcilla, caliza) marca el carácter.</div></div>
+    </div>
+  </section>
+
+  <!-- 5. REGIONES -->
+  <section id="regiones">
+    <div class="sh"><div class="n">5</div><h2>Regiones del mundo</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Se dividen en <b>Viejo Mundo</b> (Europa, la tradición) y <b>Nuevo Mundo</b> (América, Oceanía, Sudáfrica).</p>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:6px 0 10px">🏛️ Viejo Mundo</h3>
+    <div class="grid g3">
+      <div class="region ow"><div class="h"><span class="fl">🇫🇷</span><div><b>Francia</b><span>La referencia mundial</span></div></div>
+        <div class="reg"><b>Burdeos</b> (Cabernet/Merlot), <b>Borgoña</b> (Pinot Noir/Chardonnay), <b>Champagne</b>, <b>Ródano</b> (Syrah).</div>
+        <div class="gr"><span>Cabernet</span><span>Merlot</span><span>Pinot Noir</span><span>Chardonnay</span></div></div>
+      <div class="region ow"><div class="h"><span class="fl">🇮🇹</span><div><b>Italia</b><span>Mayor productor</span></div></div>
+        <div class="reg"><b>Toscana</b> (Sangiovese/Chianti), <b>Piamonte</b> (Nebbiolo/Barolo), <b>Véneto</b> (Prosecco).</div>
+        <div class="gr"><span>Sangiovese</span><span>Nebbiolo</span><span>Prosecco</span></div></div>
+      <div class="region ow"><div class="h"><span class="fl">🇪🇸</span><div><b>España</b><span>Más viñedo del mundo</span></div></div>
+        <div class="reg"><b>Rioja</b> y <b>Ribera del Duero</b> (Tempranillo), <b>Cava</b> (espumante), <b>Jerez</b>.</div>
+        <div class="gr"><span>Tempranillo</span><span>Garnacha</span><span>Cava</span></div></div>
+      <div class="region ow"><div class="h"><span class="fl">🇵🇹</span><div><b>Portugal</b><span>Fortificados</span></div></div>
+        <div class="reg"><b>Douro</b> y <b>Oporto</b> (vino fortificado dulce, ideal de postre).</div>
+        <div class="gr"><span>Oporto</span><span>Touriga</span></div></div>
+      <div class="region ow"><div class="h"><span class="fl">🇩🇪</span><div><b>Alemania</b><span>Blancos de clima frío</span></div></div>
+        <div class="reg"><b>Mosela</b> y <b>Rin</b>: los mejores <b>Riesling</b> del mundo, aromáticos y de gran acidez.</div>
+        <div class="gr"><span>Riesling</span></div></div>
+      <div class="region ow" style="background:var(--ink);color:#fff;border-color:#000"><div class="h"><span class="fl">💡</span><div><b>Estilo Viejo Mundo</b></div></div>
+        <div class="reg" style="opacity:.95">Más sobrio y terroso; se nombra por <b>región</b> (ej. "un Borgoña"), no por la uva. Etiquetas por denominación de origen.</div></div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:24px 0 10px">🌎 Nuevo Mundo</h3>
+    <div class="grid g3">
+      <div class="region nw"><div class="h"><span class="fl">🇵🇪</span><div><b>Perú</b><span>Ica · casa</span></div></div>
+        <div class="reg"><b>Ica</b>: cuna del vino y el pisco en América. Bodegas <b>Tacama</b> y <b>Queirolo</b>. Clima cálido y seco.</div>
+        <div class="gr"><span>Quebranta</span><span>Malbec</span><span>Tannat</span></div></div>
+      <div class="region nw"><div class="h"><span class="fl">🇦🇷</span><div><b>Argentina</b><span>El Malbec</span></div></div>
+        <div class="reg"><b>Mendoza</b>: viñedos de altura al pie de los Andes. Malbec de fama mundial.</div>
+        <div class="gr"><span>Malbec</span><span>Torrontés</span></div></div>
+      <div class="region nw"><div class="h"><span class="fl">🇨🇱</span><div><b>Chile</b><span>Valles fríos</span></div></div>
+        <div class="reg"><b>Maipo</b> y <b>Colchagua</b>: Cabernet excelente y la insignia <b>Carménère</b>.</div>
+        <div class="gr"><span>Cabernet</span><span>Carménère</span></div></div>
+      <div class="region nw"><div class="h"><span class="fl">🇺🇸</span><div><b>EE. UU.</b><span>California</span></div></div>
+        <div class="reg"><b>Napa</b> y <b>Sonoma</b>: Cabernet potente y Chardonnay cremoso de alta gama.</div>
+        <div class="gr"><span>Cabernet</span><span>Chardonnay</span></div></div>
+      <div class="region nw"><div class="h"><span class="fl">🇦🇺</span><div><b>Australia</b><span>Shiraz</span></div></div>
+        <div class="reg"><b>Barossa</b>: Shiraz intenso y especiado, cálido y frutal.</div>
+        <div class="gr"><span>Shiraz</span></div></div>
+      <div class="region nw" style="background:var(--wine);color:#fff;border-color:#000"><div class="h"><span class="fl">💡</span><div><b>Estilo Nuevo Mundo</b></div></div>
+        <div class="reg" style="opacity:.95">Más frutal, maduro y directo; se nombra por la <b>uva</b> (ej. "un Malbec"). Etiquetas fáciles de leer.</div></div>
+    </div>
+  </section>
+
+  <!-- 6. VIEJO VS NUEVO -->
+  <section id="owvnw">
+    <div class="sh"><div class="n">6</div><h2>Viejo vs Nuevo Mundo</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La diferencia clave que te hará sonar experto en la mesa.</p>
+    <div class="vs">
+      <div class="box ow"><h4>🏛️ Viejo Mundo</h4><ul>
+        <li>Europa: Francia, Italia, España, Alemania…</li>
+        <li>Se nombra por <b>región</b> (Borgoña, Rioja)</li>
+        <li>Estilo más <b>sobrio, terroso y ácido</b></li>
+        <li>Fuerte peso de la <b>tradición</b> y la denominación</li>
+        <li>Climas más frescos → elegancia</li>
+      </ul></div>
+      <div class="box nw"><h4>🌎 Nuevo Mundo</h4><ul>
+        <li>América, Oceanía, Sudáfrica</li>
+        <li>Se nombra por la <b>uva</b> (Malbec, Cabernet)</li>
+        <li>Estilo más <b>frutal, maduro y directo</b></li>
+        <li>Más <b>innovación</b> y etiquetas claras</li>
+        <li>Climas cálidos / altura → cuerpo y fruta</li>
+      </ul></div>
+    </div>
+    <div class="callout" style="background:var(--wine-soft);color:var(--wine)"><b>En la mesa:</b> "¿Prefiere un estilo más clásico europeo, o algo más frutal del Nuevo Mundo?" — una pregunta simple que ordena la recomendación al instante.</div>
+  </section>
+
+  <!-- GLOSARIO -->
+  <section id="glosario">
+    <div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <p class="lead">Los términos de este curso, en simple.</p>
+    <div class="glos">
+      <div class="gterm"><b>Vinificación</b><span>El proceso completo de transformar la uva en vino.</span></div>
+      <div class="gterm"><b>Mosto</b><span>El jugo de uva antes y durante la fermentación.</span></div>
+      <div class="gterm"><b>Fermentación</b><span>Las levaduras convierten el azúcar de la uva en alcohol y CO₂.</span></div>
+      <div class="gterm"><b>Vendimia</b><span>La cosecha de la uva; también el año/campaña de cosecha.</span></div>
+      <div class="gterm"><b>Despalillado</b><span>Quitar los raspones (palos) del racimo antes de moler.</span></div>
+      <div class="gterm"><b>Maceración</b><span>Dejar el mosto en contacto con la cáscara para extraer color y taninos.</span></div>
+      <div class="gterm"><b>Crianza</b><span>El reposo del vino en barrica o acero antes de embotellar.</span></div>
+      <div class="gterm"><b>Barrica</b><span>Barril de roble que aporta aromas (vainilla, tostado) y estructura.</span></div>
+      <div class="gterm"><b>Terroir</b><span>La combinación de clima, suelo, variedad y mano humana de un lugar.</span></div>
+      <div class="gterm"><b>Añada</b><span>El año de cosecha de las uvas; aparece en la etiqueta.</span></div>
+      <div class="gterm"><b>Denominación de origen</b><span>Sello que certifica que un vino viene de una región y sigue sus reglas.</span></div>
+      <div class="gterm"><b>Método tradicional</b><span>Espumante con segunda fermentación en la botella (Champagne, Cava).</span></div>
+      <div class="gterm"><b>Método Charmat</b><span>Espumante con segunda fermentación en tanque (Prosecco).</span></div>
+      <div class="gterm"><b>Fortificado</b><span>Vino con alcohol añadido (Oporto, Jerez); más potente y a menudo dulce.</span></div>
+      <div class="gterm"><b>Viejo Mundo</b><span>Las regiones vinícolas tradicionales de Europa.</span></div>
+      <div class="gterm"><b>Nuevo Mundo</b><span>Las regiones vinícolas fuera de Europa (América, Oceanía, Sudáfrica).</span></div>
+    </div>
+  </section>
+
+  <!-- ONE PAGER -->
+  <section id="resumen">
+    <div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager">
+      <div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Origen del vino · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>De la uva a la copa</h4><ul>
+          <li>Vendimia → despalillado → prensado</li><li>Fermentación (azúcar → alcohol)</li><li>Maceración (tintos: color y taninos)</li><li>Crianza (roble o acero)</li><li>Clarificado → embotellado</li></ul></div>
+        <div class="op-box"><h4>Métodos</h4><ul>
+          <li>Tinto: fermenta con cáscara</li><li>Blanco: prensado antes (sin cáscara)</li><li>Rosado: maceración breve</li><li>Espumante: tradicional (botella) / Charmat (tanque)</li><li>Dulces/fortificados: cosecha tardía o con alcohol</li></ul></div>
+        <div class="op-box"><h4>Viejo Mundo (por región)</h4><ul>
+          <li>🇫🇷 Francia: Burdeos, Borgoña, Champagne</li><li>🇮🇹 Italia: Toscana, Piamonte, Prosecco</li><li>🇪🇸 España: Rioja, Ribera, Cava</li><li>🇩🇪 Alemania: Riesling (Mosela)</li></ul></div>
+        <div class="op-box"><h4>Nuevo Mundo (por uva)</h4><ul>
+          <li>🇵🇪 Perú: Ica (Tacama, Queirolo)</li><li>🇦🇷 Argentina: Mendoza · Malbec</li><li>🇨🇱 Chile: Maipo · Cabernet, Carménère</li><li>🇺🇸 EE.UU.: Napa · Cabernet</li></ul></div>
+      </div>
+      <div class="callout" style="margin-top:16px"><b>Terroir:</b> clima + suelo + uva + mano humana = por qué cada región sabe distinto. <b>Añada</b> = año de cosecha.</div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Origen del vino · Formación interna · v1</div>
+</div>
+<script src="/course-audio.js"></script>
+</body>
+</html>
