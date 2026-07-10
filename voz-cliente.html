@@ -283,11 +283,11 @@ function audMatrix(per){
   const mundos=[], itemsByMundo={};
   rows.slice().sort((a,b)=>(a.orden||0)-(b.orden||0)).forEach(d=>{
     if(!mundos.includes(d.mundo)){mundos.push(d.mundo);itemsByMundo[d.mundo]=[];}
-    const key=(d.orden!=null?d.orden:d.item);
+    const key=(d.orden!=null?d.orden:'')+'␟'+d.item;
     if(!itemsByMundo[d.mundo].some(x=>x.key===key))itemsByMundo[d.mundo].push({key,orden:d.orden,item:d.item});
   });
   const byLoc={};
-  rows.forEach(d=>{byLoc[d.local_id+'|'+d.mundo+'|'+(d.orden!=null?d.orden:d.item)]=d;});
+  rows.forEach(d=>{byLoc[d.local_id+'|'+d.mundo+'|'+((d.orden!=null?d.orden:'')+'␟'+d.item)]=d;});
   const header=`<div class="hrow"><div class="num"></div><div class="lbl"></div>`+locs.map(l=>`<div class="cgh">${escapeHtml(l.nombre)}</div>`).join('')+`</div>`;
   let body='';
   mundos.forEach(mu=>{
@@ -323,7 +323,7 @@ async function load(){
   if(DB.allVisitas.length){const rp=await sb.from('mys_respuestas').select('*').in('visita_id',DB.allVisitas.map(v=>v.id));DB.allResp=rp.data||[];}else DB.allResp=[];
   const locVis=new Set(DB.visitas.map(v=>v.id));
   DB.respuestas=DB.allResp.filter(r=>locVis.has(r.visita_id));
-  try{const det=await sb.from('mys_detalle').select('*').eq('marca_id',MARCA).order('orden');DB.allDetalle=det.data||[];DB.detalle=DB.allDetalle.filter(d=>d.local_id===LOCAL);}catch(e){DB.allDetalle=[];DB.detalle=[];}
+  try{let all=[],from=0;const page=1000;while(true){const r=await sb.from('mys_detalle').select('*').eq('marca_id',MARCA).order('orden').range(from,from+page-1);const d=r.data||[];all=all.concat(d);if(d.length<page)break;from+=page;}DB.allDetalle=all;DB.detalle=all.filter(d=>d.local_id===LOCAL);}catch(e){DB.allDetalle=[];DB.detalle=[];}
   if(!booted){booted=true;if(DB.locales.length>1)TAB='consolidado';}
   buildTabs();render();
   document.getElementById('boot').classList.add('gone');
