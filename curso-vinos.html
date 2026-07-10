@@ -23,7 +23,8 @@ a{color:inherit}
 
 /* Header / hero */
 .top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
-.top .bar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:9px 18px;flex-wrap:wrap}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink);text-decoration:none}
 .logo{font-family:var(--font-display);font-size:22px;color:var(--primary)}.logo b{color:var(--secondary)}
 .top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
 .top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
@@ -140,8 +141,8 @@ section{scroll-margin-top:70px;margin-top:40px}
 </head>
 <body>
 <header class="top">
-  <div class="bar">
-    <span class="logo">prep<b>!</b></span><span class="mod">Curso · Vinos</span>
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Vinos</span>
     <nav class="nav">
       <a href="#tipos">Tipos</a><a href="#cepas">Cepas</a><a href="#cata">Cata</a>
       <a href="#servicio">Servicio</a><a href="#maridaje">Maridaje</a><a href="#sala">En sala</a>
