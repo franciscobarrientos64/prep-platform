@@ -493,7 +493,7 @@ function vConsolidado(){
   return `
   ${periodBar(msAll)}
   <div class="section"><div class="section-h"><h3>${tRank}</h3><span class="hint">${V.length} evaluaciones · ${periodLbl}</span></div>
-    <div class="sedes">${sede.map((x,i)=>`<div class="sedecard reveal" style="border-top:6px solid ${x.color}">
+    <div class="sedes">${sede.map((x,i)=>`<div class="sedecard reveal" style="border-top:6px solid ${scoreColor(x.s)[0]}">
       <div class="rank">#${rankOf[x.l.id]}</div><div class="nm">${escapeHtml(x.l.nombre)}</div>
       <div class="big">${x.s.toFixed(0)}<span style="font-size:15px;opacity:.4">/100</span></div>
       <div class="trend ${x.delta==null?'':x.delta>=0?'up':'down'}">${x.delta==null?(x.n+' visitas'):((x.delta>=0?'▲ +':'▼ ')+x.delta.toFixed(1)+' pts · '+x.n+' vis.')}</div></div>`).join('')}</div></div>
