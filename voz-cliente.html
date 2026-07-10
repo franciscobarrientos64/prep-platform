@@ -455,7 +455,7 @@ function vAuditoria(){
     items.filter(d=>d.mundo===mu).forEach(d=>{
       const naRow=visCols.every(c=>d['v'+c]==null);
       g+=`<div class="drow${naRow?' na':''}"><div class="it">${escapeHtml(d.item)}</div><div class="sqs">`
-        +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq${col?'':' empty'}"${col?` style="background:${col}"`:''}></div>`;}).join('')+`</div></div>`;
+        +visCols.map(c=>{const v=d['v'+c],col=lvlColor(v);return `<div class="sq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+`</div></div>`;
     });
   });
   g+='</div>';
