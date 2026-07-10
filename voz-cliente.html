@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -22,7 +22,7 @@
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
-.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}.mono{font-family:var(--font-mono)}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle;white-space:nowrap;word-wrap:normal;direction:ltr}.mono{font-family:var(--font-mono)}
 .header{background:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:60px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block;text-decoration:none}
@@ -368,12 +368,28 @@ function setRad(m){RADSEL=m;render();}
 
 /* ===== DETALLE (4 visitas del mes juntas) ===== */
 function vDetalle(){
-  const V=DB.visitas, R=DB.respuestas, ms=months(V);
-  if(!V.length)return '<div class="empty">Sin datos.</div>';
+  const V=DB.visitas, R=DB.respuestas, multi=DB.locales.length>1, ms=multi?months(DB.allVisitas):months(V);
+  if(!V.length && !multi)return '<div class="empty">Sin datos.</div>';
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   const crows=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
+  // ---- Vista general del mes (todas las sedes) — solo clientes multi-sede con un mes elegido ----
+  const genMes=()=>{
+    if(!multi||PER==='all')return '';
+    const Va=DB.allVisitas, Ra=DB.allResp, a2m={}, a2l={};
+    Va.forEach(v=>{a2m[v.id]=(v.fecha||'').slice(0,7);a2l[v.id]=v.local_id;});
+    const msA=months(Va), mr=Ra.filter(z=>a2m[z.visita_id]===PER);
+    const gcols=DB.locales.map(l=>({key:l.id,label:l.nombre})).concat([{key:'__g',label:'General'}]);
+    const gval=(r,c)=>{const src=c.key==='__g'?mr:mr.filter(z=>a2l[z.visita_id]===c.key);const x=src.filter(z=>z.criterio===r.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;};
+    const idx=msA.indexOf(PER), pM=idx>0?msA[idx-1]:null;
+    const gcur=r=>{const x=mr.filter(z=>z.criterio===r.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;};
+    const gprev=r=>{if(!pM)return null;const x=Ra.filter(z=>z.criterio===r.key&&a2m[z.visita_id]===pM).map(z=>+z.puntaje||0);return x.length?avg(x):null;};
+    const gdelta=pM?{label:'vs '+MESN[+pM.split('-')[1]],fn:r=>{const c=gcur(r),p=gprev(r);return(c==null||p==null)?null:c-p;}}:null;
+    const nv=Va.filter(v=>a2m[v.id]===PER).length;
+    const gh=pM?`vs ${mLabel(pM)} en la última columna · ▲ mejoró · ▼ bajó · = se mantiene`:'primer mes · aún no hay comparación';
+    return `<div class="section"><div class="section-h"><h3>Vista general del mes · todas las sedes</h3><span class="hint">${mLabel(PER)} · ${nv} evaluaciones · ${gh}</span></div><div class="card">${heat(crows,gcols,gval,{delta:gdelta})}<div class="legend">${LEGEND}</div></div></div>`;
+  };
   if(PER==='all'){
-    return periodBar(ms)+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">elige un mes para ver sus 4 visitas</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;})}<div class="legend">${LEGEND}</div></div></div>`;
+    return periodBar(ms)+genMes()+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">elige un mes para ver sus 4 visitas${multi?' y la vista general de sedes':''}</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;})}<div class="legend">${LEGEND}</div></div></div>`;
   }
   const vis=V.filter(v=>(v.fecha||'').slice(0,7)===PER).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
   const pmap={};R.forEach(r=>{pmap[r.visita_id+'|'+r.criterio]=+r.puntaje||0;});
@@ -387,7 +403,10 @@ function vDetalle(){
   const totD=prevM?avg(vis.map(v=>+v.score_total||0))-avg(V.filter(v=>v2m[v.id]===prevM).map(v=>+v.score_total||0)):null;
   const hchip=totD==null?'':' '+trendChip(totD);
   const dhint=prevM?`vs ${mLabel(prevM)} en la última columna · ▲ subió · ▼ bajó · = se mantiene`:'primer mes del periodo · aún no hay comparación';
-  return periodBar(ms)+`<div class="section"><div class="section-h"><h3>${mLabel(PER)} · ${vis.length} visitas${hchip}</h3><span class="hint">${dhint}</span></div><div class="card">${heat(crows,cols,valFn,{delta})}<div class="legend">${LEGEND}</div></div></div>`;
+  const sedeName=(DB.locales.find(l=>l.id===LOCAL)||{}).nombre||'';
+  const stitle=(multi&&vis.length?escapeHtml(sedeName)+' · ':'')+mLabel(PER)+' · '+vis.length+' visitas'+hchip;
+  const perSede=vis.length?`<div class="section"><div class="section-h"><h3>${stitle}</h3><span class="hint">${dhint}</span></div><div class="card">${heat(crows,cols,valFn,{delta})}<div class="legend">${LEGEND}</div></div></div>`:'';
+  return periodBar(ms)+genMes()+perSede;
 }
 
 /* ===== AUDITORÍA (detalle ítem por ítem, color) ===== */
