@@ -27,7 +27,7 @@ a{color:inherit}
 .top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
 .top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
 .top .nav a.print{background:var(--ink);color:var(--bg)}
-.hero{background:#4a1526;color:#fff;border:2px solid var(--outline);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 30px;margin:24px 0 10px;position:relative;overflow:hidden}
+.hero{background:#4a1526;color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
 .hero:before{content:"🍇";position:absolute;right:-6px;top:-26px;font-size:200px;opacity:.12;transform:rotate(10deg)}
 .hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
 .hero h1{font-family:var(--font-display);font-size:clamp(32px,6vw,58px);line-height:.98;margin:8px 0 12px}
@@ -40,12 +40,12 @@ section{scroll-margin-top:70px;margin-top:40px}
 .sh h2{font-family:var(--font-display);font-size:clamp(22px,3.4vw,30px);line-height:1}
 .sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
 .lead{font-size:15px;opacity:.9;margin-bottom:16px;max-width:770px}
-.card{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
 .grid{display:grid;gap:14px}
-.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(212px,1fr))}
 @media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
-.tipo{border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px;background:var(--surface)}
-.tipo h3{font-size:16px;margin-bottom:4px}.tipo .d{font-size:13px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
 .callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;font-size:14px;margin-top:14px}
 .callout b{font-family:var(--font-display);font-weight:400}
 /* Timeline historia */
@@ -62,12 +62,12 @@ section{scroll-margin-top:70px;margin-top:40px}
 .paso h4{font-size:15px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}
 .paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
 /* Metodos */
-.metodo{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.metodo{border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:11px;background:var(--surface)}
 .metodo .h{display:flex;align-items:center;gap:9px;margin-bottom:6px}
 .metodo .h .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--outline);flex-shrink:0}
 .metodo .h b{font-size:15px}.metodo p{font-size:13px;opacity:.9}
 /* Regiones */
-.region{border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;background:var(--surface)}
+.region{border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:11px;background:var(--surface)}
 .region .h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .region .fl{font-size:30px;line-height:1}
 .region .h b{font-size:16px;display:block}.region .h span{font-family:var(--font-mono);font-size:10px;opacity:.6;text-transform:uppercase;letter-spacing:.04em}
@@ -83,7 +83,7 @@ section{scroll-margin-top:70px;margin-top:40px}
 .vs ul{list-style:none;font-size:13px}.vs li{padding:3px 0 3px 18px;position:relative}.vs li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
 /* Glosario */
 .glos{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.glos{grid-template-columns:1fr}}
-.gterm{border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px 14px;background:var(--surface)}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
 .gterm b{display:block;font-size:14.5px;color:var(--wine);margin-bottom:3px}.gterm span{font-size:12.5px;opacity:.9;line-height:1.42}
 /* One pager */
 .onepager{background:var(--surface);border:3px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);padding:22px;margin-top:18px}
@@ -301,6 +301,7 @@ section{scroll-margin-top:70px;margin-top:40px}
 
   <div class="foot">Academia Prep! · Origen del vino · Formación interna · v1</div>
 </div>
+<script src="/course-protect.js"></script>
 <script src="/course-audio.js"></script>
 </body>
 </html>
