@@ -135,6 +135,10 @@ textarea.input{min-height:80px;resize:vertical}
 .dot.on{background:var(--ink);color:var(--bg);transform:translate(2px,2px);box-shadow:none}
 .area-h{font-family:var(--font-display);font-size:16px;margin:16px 0 4px}
 .row{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:13px 15px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.row.acc{align-items:flex-start}
+.accdet{margin:7px 0 5px;display:flex;flex-direction:column;gap:3px}
+.accrole{font-size:12.5px;line-height:1.38;color:#374151}.accrole b{color:var(--ink)}
+.accex{font-size:12.5px;line-height:1.35;background:var(--green-soft);border:1.5px solid var(--outline);border-radius:9px;padding:6px 10px;margin-top:3px;font-weight:600}
 .row:active{transform:translate(2px,2px);box-shadow:none}
 .row .meta{font-family:var(--font-mono);font-size:11px;opacity:.65;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
 .tagx{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:6px;border:1.5px solid var(--outline)}
@@ -634,9 +638,20 @@ async function saveVisita(){
 function vAcciones(){
   let h=`<button class="btn ghost" onclick="addAccionFrom(null)"><span class="material-symbols-outlined">add</span>Nueva acción</button><div style="height:12px"></div>`;
   if(!DB.acciones.length)return h+'<div class="empty">Sin acciones de mejora.</div>';
-  h+=DB.acciones.map(a=>`<div class="row" onclick="toggleAccion('${a.id}')">
-    <div><div style="font-weight:700">${escapeHtml(a.descripcion)}</div><div class="meta">${a.area?'<span>'+escapeHtml(a.area)+'</span>':''}${a.responsable?'<span>'+escapeHtml(a.responsable)+'</span>':''}${a.due_date?'<span>'+fmtD(a.due_date)+'</span>':''}</div></div>
-    <span class="tagx ${a.estado==='hecho'?'hecho':a.estado==='en_proceso'?'proc':'pend'}">${a.estado==='hecho'?'Hecho':a.estado==='en_proceso'?'En proceso':'Pendiente'}</span></div>`).join('');
+  h+=DB.acciones.map(a=>{
+    const parts=(a.descripcion||'').split('\n');
+    const title=parts[0]||'';
+    const det=parts.slice(1).filter(l=>l.trim());
+    const detHtml=det.map(l=>{const m=l.match(/^\s*([^:]{2,26}):\s*(.*)$/);
+      if(m&&/^(Éxito|Exito)/i.test(m[1].trim()))return `<div class="accex"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">flag</span> <b>Indicador de éxito:</b> ${escapeHtml(m[2])}</div>`;
+      if(m)return `<div class="accrole"><b>${escapeHtml(m[1].trim())}:</b> ${escapeHtml(m[2])}</div>`;
+      return `<div class="accrole">${escapeHtml(l)}</div>`;}).join('');
+    return `<div class="row acc" onclick="toggleAccion('${a.id}')">
+      <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">${escapeHtml(title)}</div>
+      ${det.length?`<div class="accdet">${detHtml}</div>`:''}
+      <div class="meta">${a.area?'<span>'+escapeHtml(a.area)+'</span>':''}${a.responsable?'<span>'+escapeHtml(a.responsable)+'</span>':''}${a.due_date?'<span>'+fmtD(a.due_date)+'</span>':''}</div></div>
+      <span class="tagx ${a.estado==='hecho'?'hecho':a.estado==='en_proceso'?'proc':'pend'}">${a.estado==='hecho'?'Hecho':a.estado==='en_proceso'?'En proceso':'Pendiente'}</span></div>`;
+  }).join('');
   return h;
 }
 async function toggleAccion(id){const a=DB.acciones.find(x=>x.id===id);if(!a)return;const nx=a.estado==='pendiente'?'en_proceso':a.estado==='en_proceso'?'hecho':'pendiente';await sb.from('mys_acciones').update({estado:nx}).eq('id',id);a.estado=nx;render();}
