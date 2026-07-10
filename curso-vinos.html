@@ -102,9 +102,13 @@ section{scroll-margin-top:70px;margin-top:40px}
 .matrix th,.matrix td{border:1.5px solid var(--outline);padding:8px 6px;text-align:center}
 .matrix thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700}
 .matrix tbody th{background:var(--wine);color:#fff;text-align:left;font-weight:600;min-width:120px}
-.matrix .y{background:#d1fae5}.matrix .m{background:#fef3c7}.matrix .n{background:#fee2e2}
+.matrix .y{background:var(--green);color:#fff}.matrix .m{background:var(--tertiary);color:#3a2e00}.matrix .n{background:#ffdad5;color:#a3382f}
 .mleg{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;margin-top:10px}
 .mleg span{display:inline-flex;align-items:center;gap:6px}.mleg i{width:14px;height:14px;border:2px solid var(--outline);border-radius:4px;display:inline-block}
+.wcol{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+#wtip{position:fixed;display:none;z-index:200;background:var(--wine);color:#fff;border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow);padding:9px 12px;max-width:250px;font-size:12.5px;line-height:1.4}
+#wtip b{font-size:13px}#wtip .u{margin-top:3px;font-family:var(--font-mono);font-size:11px;opacity:.95}
+.chiprow span.t{background:#f2d9e0}.chiprow span.b{background:#f6efc9}.chiprow span.u{background:#f4ecc6}
 
 /* Frases mesero */
 .say{border-left:6px solid var(--wine);background:var(--wine-soft);border-radius:0 12px 12px 0;padding:12px 16px;margin-bottom:10px}
@@ -306,7 +310,7 @@ section{scroll-margin-top:70px;margin-top:40px}
     </div>
     <div class="card matrix">
       <table>
-        <thead><tr><th>Plato</th><th>Espumante</th><th>Blanco fresco</th><th>Blanco c/ cuerpo</th><th>Rosado</th><th>Tinto ligero</th><th>Tinto c/ cuerpo</th></tr></thead>
+        <thead><tr><th>Plato</th><th class="wcol">Espumante</th><th class="wcol">Blanco fresco</th><th class="wcol">Blanco c/ cuerpo</th><th class="wcol">Rosado</th><th class="wcol">Tinto ligero</th><th class="wcol">Tinto c/ cuerpo</th></tr></thead>
         <tbody>
           <tr><th>Ceviche / tiradito</th><td class="y">◎</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td><td class="n">·</td></tr>
           <tr><th>Mariscos / conchas</th><td class="y">◎</td><td class="y">◎</td><td class="m">○</td><td class="m">○</td><td class="n">·</td><td class="n">·</td></tr>
@@ -319,7 +323,7 @@ section{scroll-margin-top:70px;margin-top:40px}
           <tr><th>Postres</th><td class="m">○</td><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="n">·</td><td class="n">·</td></tr>
         </tbody>
       </table>
-      <div class="mleg"><span><i class="y" style="background:#d1fae5"></i>◎ Excelente</span><span><i class="m" style="background:#fef3c7"></i>○ Funciona</span><span><i class="n" style="background:#fee2e2"></i>· Evitar</span></div>
+      <div class="mleg"><span><i class="y" style="background:var(--green)"></i>◎ Excelente</span><span><i class="m" style="background:var(--tertiary)"></i>○ Funciona</span><span><i class="n" style="background:#ffdad5"></i>· Evitar</span></div>
     </div>
     <div class="callout" style="background:var(--wine-soft);color:var(--wine)"><b>Para postres:</b> la regla es que el vino sea siempre <b>más dulce</b> que el postre. Un espumante demi-sec o un cosecha tardía; nunca un tinto seco.</div>
   </section>
@@ -408,7 +412,7 @@ section{scroll-margin-top:70px;margin-top:40px}
       </div>
       <div style="margin-top:14px"><h4 style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--wine);margin-bottom:8px;font-weight:700">Cepas en una palabra</h4>
         <div class="chiprow">
-          <span>Malbec · goloso</span><span>Cabernet · potente</span><span>Pinot · elegante</span><span>Syrah · especiado</span><span>Chardonnay · cremoso</span><span>Sauvignon B. · cítrico</span><span>Albariño · aromático</span><span>Brut · seco</span>
+          <span class="t">Malbec · goloso</span><span class="t">Cabernet · potente</span><span class="t">Pinot · elegante</span><span class="t">Syrah · especiado</span><span class="b">Chardonnay · cremoso</span><span class="b">Sauvignon B. · cítrico</span><span class="b">Albariño · aromático</span><span class="u">Brut · seco</span>
         </div>
       </div>
       <div class="callout" style="margin-top:16px"><b>Frase maestra:</b> "¿Prefiere algo fresco y ligero, o con más cuerpo?" → luego ofrece 2 opciones concretas justificadas con el plato.</div>
@@ -417,5 +421,15 @@ section{scroll-margin-top:70px;margin-top:40px}
 
   <div class="foot">Academia Prep! · Curso de Vinos · Formación interna de sala · v1</div>
 </div>
+<div id="wtip"></div>
+<script>
+const GRAPES={'Espumante':'Brut, Cava, Prosecco, Champagne','Blanco fresco':'Sauvignon Blanc, Albariño, Torrontés','Blanco c/ cuerpo':'Chardonnay (con barrica)','Rosado':'Rosados secos: Garnacha, Malbec o Pinot','Tinto ligero':'Pinot Noir','Tinto c/ cuerpo':'Malbec, Cabernet Sauvignon, Syrah'};
+(function(){const tip=document.getElementById('wtip');let pinned=null;
+function show(th){const k=th.textContent.trim();const g=GRAPES[k];if(!g)return;tip.innerHTML='<b>'+k+'</b><div class="u">Uvas: '+g+'</div>';tip.style.display='block';const r=th.getBoundingClientRect();const tw=tip.offsetWidth;let left=r.left+r.width/2-tw/2;left=Math.max(8,Math.min(left,window.innerWidth-tw-8));tip.style.left=left+'px';tip.style.top=(r.bottom+8)+'px';}
+function hide(){if(!pinned)tip.style.display='none';}
+document.querySelectorAll('.wcol').forEach(th=>{th.addEventListener('mouseenter',()=>show(th));th.addEventListener('mouseleave',hide);th.addEventListener('click',e=>{e.stopPropagation();if(pinned===th){pinned=null;tip.style.display='none';}else{pinned=th;show(th);}});});
+document.addEventListener('click',()=>{pinned=null;tip.style.display='none';});
+})();
+</script>
 </body>
 </html>
