@@ -91,7 +91,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .mg .cgh{flex:1 1 0;min-width:104px;padding:0 9px;font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:left;box-sizing:border-box}
 .mg .msq{width:18px;height:18px;flex:0 0 18px;border:2px solid var(--outline);border-radius:4px;box-sizing:border-box}
 .mg .dind{flex:0 0 18px;width:18px;text-align:center;font-size:12px;font-weight:800;font-family:var(--font-mono);line-height:1;margin-left:1px}
-.mg .muh{font-family:var(--font-display);font-size:14px;margin:14px 0 5px;border-bottom:2px solid var(--outline);padding-bottom:3px}
+.mg .muh{font-family:var(--font-display);font-size:14px;margin:16px 0 4px;border-bottom:2px solid var(--outline);padding-bottom:3px}
+.mg .srow{display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--outline);padding-bottom:3px;margin-bottom:2px}
+.mg .scorerow{display:flex;align-items:center;gap:8px;border-top:1.5px solid var(--outline);padding-top:5px;margin:2px 0 6px}
+.mg .scorerow .lbl{font-family:var(--font-mono);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.03em;opacity:.7}
+.mg .scv{flex:1 1 0;min-width:104px;padding:0 9px;box-sizing:border-box;display:flex;align-items:center;gap:4px}
+.mg .scv>span:first-child{display:inline-block;min-width:46px;text-align:center;padding:2px 0;border:2px solid var(--outline);border-radius:6px;font-family:var(--font-mono);font-size:11px;font-weight:700}
 /* desglose por visita (un solo recorrido, ítem por ítem) */
 .vmh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:var(--font-display);font-size:15px;margin:18px 0 6px;border-bottom:2px solid var(--outline);padding-bottom:4px}
 .vmh:first-child{margin-top:0}
@@ -296,18 +301,24 @@ function audMatrix(per){
     if(ca==null||pa==null)return `<div class="dind" style="color:#c8ccd0" title="sin comparación">·</div>`;
     const dd=ca-pa, flat=Math.abs(dd)<0.13, up=dd>0, col=flat?'#9aa0a6':(up?'var(--green)':'var(--secondary)');
     return `<div class="dind" style="color:${col}" title="${flat?'se mantiene':(up?'subió':'bajó')} vs ${prevPer}">${flat?'=':(up?'▲':'▼')}</div>`;};
-  const header=`<div class="hrow"><div class="num"></div><div class="lbl"></div>`+locs.map(l=>`<div class="cgh">${escapeHtml(l.nombre)}</div>`).join('')+`</div>`;
+  const sedeRow=`<div class="srow"><div class="num"></div><div class="lbl"></div>`+locs.map(l=>`<div class="cgh">${escapeHtml(l.nombre)}</div>`).join('')+`</div>`;
+  const mScore=(mu,lid,src)=>{let s=0,c=0;itemsByMundo[mu].forEach(it=>{const d=src[lid+'|'+mu+'|'+it.key];if(d)[d.v1,d.v2,d.v3,d.v4].forEach(v=>{if(v!=null){s+=v;c++;}});});return c?s/c/4*100:null;};
   let body='';
   mundos.forEach(mu=>{
-    body+=`<div class="muh">${escapeHtml(mu)}</div>`;
+    body+=`<div class="muh">${escapeHtml(mu)}</div>`+sedeRow;
     itemsByMundo[mu].forEach(it=>{
       body+=`<div class="mrow"><div class="num">${it.orden!=null?it.orden:''}</div><div class="lbl">${escapeHtml(it.item)}</div>`
         +locs.map(l=>{const k=l.id+'|'+mu+'|'+it.key,d=cur[k];
           return `<div class="cg">`+[1,2,3,4].map(n=>{const v=d?d['v'+n]:null,col=lvlColor(v);return `<div class="msq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+dind(k)+`</div>`;}).join('')
         +`</div>`;
     });
+    body+=`<div class="scorerow"><div class="num"></div><div class="lbl">Puntaje ${escapeHtml(mu)}</div>`
+      +locs.map(l=>{const s=mScore(mu,l.id,cur);if(s==null)return `<div class="scv"></div>`;const sc=scoreColor(s),p=prevPer?mScore(mu,l.id,prev):null,dd=(p==null)?null:s-p;
+        const arr=dd==null?'':(Math.abs(dd)<0.5?'<span style="color:#9aa0a6;font-weight:800">=</span>':dd>0?'<span style="color:var(--green);font-weight:800">▲</span>':'<span style="color:var(--secondary);font-weight:800">▼</span>');
+        return `<div class="scv"><span style="background:${sc[0]};color:${sc[1]}">${Math.round(s)}%</span>${arr}</div>`;}).join('')
+      +`</div>`;
   });
-  return `<div class="mg"><div class="grid" style="min-width:${230+locs.length*118}px">${header}${body}</div></div>`;
+  return `<div class="mg"><div class="grid" style="min-width:${230+locs.length*118}px">${body}</div></div>`;
 }
 function barRow(nm,s){const c=scoreColor(s)[0];return `<div class="barrow"><div class="nm">${escapeHtml(nm)}</div><div class="bartrack"><div class="barfill" style="width:${Math.min(100,s)}%;background:${c}"></div></div><div class="pc">${s.toFixed(0)}</div></div>`;}
 const LEGEND=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['<70','#ff3b30']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
