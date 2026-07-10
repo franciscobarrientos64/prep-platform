@@ -129,6 +129,12 @@ section{scroll-margin-top:70px;margin-top:40px}
 .callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;font-size:14px;margin-top:14px}
 .callout b{font-family:var(--font-display);font-weight:400}
 .foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:50px}
+.onepager .opt .oplogo{width:82px;height:26px;display:inline-block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:12px 14px;background:var(--surface)}
+.gterm b{display:block;font-size:14.5px;color:var(--wine);margin-bottom:3px}
+.gterm span{font-size:12.5px;opacity:.9;line-height:1.42}
 
 @media print{
   .top,.foot{display:none}
@@ -146,6 +152,7 @@ section{scroll-margin-top:70px;margin-top:40px}
     <nav class="nav">
       <a href="#tipos">Tipos</a><a href="#cepas">Cepas</a><a href="#cata">Cata</a>
       <a href="#servicio">Servicio</a><a href="#maridaje">Maridaje</a><a href="#sala">En sala</a>
+      <a href="#glosario">Glosario</a>
       <a href="#resumen">One-pager</a>
       <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
     </nav>
@@ -274,6 +281,15 @@ section{scroll-margin-top:70px;margin-top:40px}
       <li>Llena solo <b>un tercio</b> de la copa (tinto) o la mitad (blanco). Nunca hasta el borde.</li>
       <li>Deja la botella a la vista; <b>rellena</b> proactivamente sin que lo pidan.</li>
     </ol></div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:26px 0 10px">🫗 El decantador: ¿cuándo usarlo?</h3>
+    <p class="lead">Decantar es pasar el vino a un recipiente ancho. Se hace por dos razones muy distintas — y en la mayoría de vinos <b>no</b> se hace.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>✅ Para airear (abrir)</h3><div class="d">Tintos <b>jóvenes y potentes</b> (Malbec, Cabernet, Syrah). El contacto con el aire suaviza los taninos y libera aromas.</div><div class="s">Deja respirar 20–60 min antes de servir.</div></div>
+      <div class="tipo"><h3>🕰️ Para limpiar (sedimento)</h3><div class="d">Tintos <b>muy añejos</b> (10+ años). Vierte lento y sin agitar para dejar el poso (sedimento) en la botella.</div><div class="s">Con vela o luz detrás del gollete para ver el sedimento.</div></div>
+      <div class="tipo" style="background:var(--wine);color:#fff"><h3>🚫 No decantar</h3><div class="d" style="opacity:.95">Blancos, espumantes, rosados y tintos <b>ligeros</b> (Pinot Noir). Pierden frescura, aromas y burbuja.</div><div class="s" style="opacity:.85">Sírvelos directo a la copa, bien fríos.</div></div>
+    </div>
+    <div class="callout"><b>Regla rápida:</b> tinto joven y robusto → decanta para <b>suavizar</b> · tinto muy viejo → decanta con cuidado para <b>limpiar</b> · todo lo demás → directo a la copa. Ante la duda con una botella cara y vieja, consulta al administrador antes de agitar.</div>
   </section>
 
   <!-- 5. MARIDAJE -->
@@ -336,11 +352,47 @@ section{scroll-margin-top:70px;margin-top:40px}
     </div>
   </section>
 
+  <!-- GLOSARIO -->
+  <section id="glosario">
+    <div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <p class="lead">Todos los términos del curso, explicados en simple.</p>
+    <div class="glos">
+      <div class="gterm"><b>Sommelier</b><span>Especialista en vinos que asesora, sirve y recomienda en el restaurante.</span></div>
+      <div class="gterm"><b>Cepa (varietal)</b><span>La variedad de uva (Malbec, Chardonnay…). Define el sabor base del vino.</span></div>
+      <div class="gterm"><b>Añada</b><span>El año de cosecha de las uvas. Aparece en la etiqueta.</span></div>
+      <div class="gterm"><b>Cuerpo</b><span>El "peso" del vino en boca: de ligero (como agua) a pleno (como leche entera).</span></div>
+      <div class="gterm"><b>Taninos</b><span>Sensación seca y rasposa en encías y lengua, típica de tintos. Vienen de la cáscara y la barrica.</span></div>
+      <div class="gterm"><b>Acidez</b><span>La frescura del vino; lo que hace la boca "agua". Más marcada en blancos.</span></div>
+      <div class="gterm"><b>Astringencia</b><span>Esa sensación que "seca" la boca que dejan los taninos.</span></div>
+      <div class="gterm"><b>Barrica (crianza)</b><span>Barril de roble donde reposa el vino; aporta notas a vainilla, tostado y más cuerpo.</span></div>
+      <div class="gterm"><b>Notas / aromas</b><span>Los olores y sabores que se reconocen: fruta, flores, especias, madera…</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Combinar un vino con un plato para que se realcen mutuamente.</span></div>
+      <div class="gterm"><b>Cata / catar</b><span>Evaluar el vino con la vista, el olfato y el gusto.</span></div>
+      <div class="gterm"><b>Retrogusto (final)</b><span>El sabor que queda tras tragar. Mientras más largo y agradable, mayor calidad.</span></div>
+      <div class="gterm"><b>Lágrimas (piernas)</b><span>Los hilos que bajan por la copa al girarla; indican más alcohol o cuerpo.</span></div>
+      <div class="gterm"><b>Airear / oxigenar</b><span>Dejar respirar el vino (girando la copa o decantando) para abrir sus aromas.</span></div>
+      <div class="gterm"><b>Decantar</b><span>Pasar el vino a un decantador para airearlo o separar sedimentos.</span></div>
+      <div class="gterm"><b>Decantador</b><span>Recipiente ancho de vidrio donde se airea o limpia el vino.</span></div>
+      <div class="gterm"><b>Sedimento (poso)</b><span>Partículas sólidas que sueltan los tintos añejos; se separan al decantar.</span></div>
+      <div class="gterm"><b>Descorche</b><span>Abrir la botella retirando el corcho, idealmente en la mesa.</span></div>
+      <div class="gterm"><b>Cata de aprobación</b><span>Servir una onza al anfitrión para que apruebe el vino antes de servir al resto.</span></div>
+      <div class="gterm"><b>Gollete / cápsula</b><span>El gollete es el reborde del cuello de la botella; la cápsula, la envoltura que lo cubre.</span></div>
+      <div class="gterm"><b>Copa balón</b><span>Copa amplia y redonda para tintos; airea y concentra los aromas.</span></div>
+      <div class="gterm"><b>Espumante</b><span>Vino con burbujas por segunda fermentación (Champagne, Cava, Prosecco).</span></div>
+      <div class="gterm"><b>Brut</b><span>Espumante seco (poco azúcar). Es el estilo más pedido.</span></div>
+      <div class="gterm"><b>Demi-sec</b><span>Espumante semidulce; acompaña postres.</span></div>
+      <div class="gterm"><b>Vino generoso / fortificado</b><span>Vino con alcohol añadido (Oporto, Jerez); más potente y a menudo dulce.</span></div>
+      <div class="gterm"><b>Cosecha tardía</b><span>Vino dulce de uvas muy maduras; ideal para postres.</span></div>
+      <div class="gterm"><b>Rosado</b><span>Vino de uvas tintas con contacto breve con la cáscara; entre el tinto y el blanco.</span></div>
+      <div class="gterm"><b>Aperitivo</b><span>Bebida ligera antes de comer para abrir el apetito.</span></div>
+    </div>
+  </section>
+
   <!-- ONE PAGER -->
   <section id="resumen">
     <div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
     <div class="onepager">
-      <div class="opt"><span class="logo" style="font-family:var(--font-display);color:var(--primary)">prep<b style="color:var(--secondary)">!</b></span><h3>Vinos · Chuleta de sala</h3></div>
+      <div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Vinos · Chuleta de sala</h3></div>
       <div class="op-grid">
         <div class="op-box"><h4>Temperatura</h4><ul>
           <li>Espumante: 6–8°</li><li>Blanco ligero / rosado: 8–10°</li><li>Blanco con cuerpo: 10–13°</li><li>Tinto ligero (Pinot): 14–16°</li><li>Tinto con cuerpo: 16–18°</li></ul></div>
