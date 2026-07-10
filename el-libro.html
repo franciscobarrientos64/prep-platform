@@ -197,25 +197,26 @@ function renderRecetario(){
   $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
 }
 /* ===== CURSOS (capacitación) ===== */
-const CURSOS=[
- {id:'vinos',titulo:'Curso de Vinos',emoji:'🍷',color:'#7c1f3a',
-  desc:'De cero a sommelier de piso: tipos, cepas, cata en 5 pasos, temperaturas y copas, ritual de servicio, matriz de maridaje y cómo recomendar en sala. Incluye one-pager para imprimir y pegar en office.',
-  meta:'6 módulos · ~45 min · Sala y bar',url:'/curso-vinos'},
- {id:'origen',titulo:'El vino: origen y mundo',emoji:'🍇',color:'#4a1526',
-  desc:'La cultura detrás de la botella: historia y orígenes del vino, cómo se elabora paso a paso, los métodos (tinto, blanco, espumante), terroir y añada, y las regiones del mundo (Viejo y Nuevo Mundo, con Perú). Incluye one-pager.',
-  meta:'6 módulos · ~40 min · Cultura de vino',url:'/curso-vino-origenes'}
+const CATALOGO=[
+ {g:'Todo el equipo',items:[{t:'Onboarding Prep!',e:'👋'},{t:'Cultura de servicio y hospitalidad',e:'🤝'},{t:'Higiene y manipulación de alimentos (HACCP)',e:'🧼'},{t:'Presentación e higiene personal',e:'🧑‍🍳'},{t:'Seguridad en el trabajo',e:'🧯'},{t:'Comunicación y trabajo en equipo',e:'💬'},{t:'Datos del comensal (Ley 29733)',e:'🔒'},{t:'Reglamento interno y conducta',e:'⚖️'}]},
+ {g:'Sala / FOH',items:[{t:'Recepción y bienvenida (anfitrión)',e:'🚪'},{t:'Reservas y lista de espera',e:'📅'},{t:'Floor plan y asignación de mesas',e:'🗺️'},{t:'Secuencia de servicio del mesero',e:'🧾'},{t:'Toma de comanda y manejo de bandeja',e:'🍽️'},{t:'Conocimiento de carta y alérgenos',e:'📖'},{t:'Venta sugestiva y lectura de mesa',e:'📈'},{t:'Curso de Vinos',e:'🍷',url:'/curso-vinos'},{t:'El vino: origen y mundo',e:'🍇',url:'/curso-vino-origenes'},{t:'Café, té y sobremesa',e:'☕'},{t:'Despedida y cierre de cuenta',e:'🙌'},{t:'Manejo de quejas (LAST)',e:'🛟'},{t:'Runner / Busser',e:'🏃'},{t:'Cajero: cobro, propinas y arqueo',e:'💳'}]},
+ {g:'Bar',items:[{t:'Bartender: fundamentos',e:'🍸'},{t:'Coctelería clásica y de autor',e:'🍹'},{t:'Pisco y destilados del Perú',e:'🥃'},{t:'Cerveza y maridaje',e:'🍺'},{t:'Control de mermas y costo de barra',e:'📊'}]},
+ {g:'Cocina / BOH',items:[{t:'Fundamentos de cocina',e:'🔪'},{t:'Estaciones de línea y el pase',e:'🔥'},{t:'Mise en place y organización',e:'🧺'},{t:'Emplatado y presentación',e:'🍽️'},{t:'Recetas estándar y food cost',e:'📋'},{t:'Inventario, recepción, FEFO y mermas',e:'📦'},{t:'Alérgenos y contaminación cruzada',e:'⚠️'},{t:'Pastelería y postres',e:'🍰'},{t:'Steward y limpieza profunda',e:'🧽'}]},
+ {g:'Delivery / Take-away',items:[{t:'Empaque y control de calidad',e:'📦'},{t:'Coordinación con apps y repartidores',e:'🛵'},{t:'Atención al cliente de delivery',e:'📱'}]},
+ {g:'Administración · Liderazgo',items:[{t:'Liderazgo de piso (jefe de sala)',e:'⭐'},{t:'Briefing pre-servicio efectivo',e:'🚩'},{t:'The Talk: feedback 1 a 1',e:'🗣️'},{t:'Manejo de quejas y crisis (avanzado)',e:'🧯'},{t:'Turnos, planilla y labor cost',e:'🗓️'},{t:'KPIs del restaurante',e:'📊'},{t:'Mystery shopper: cómo subir el puntaje',e:'🕵️'},{t:'Reclutamiento y onboarding',e:'🧲'},{t:'Caja y prevención de fraude',e:'🔐'},{t:'SUNAT, facturación y cumplimiento',e:'🧾'},{t:'Reputación online y reseñas',e:'⭐'}]},
+ {g:'Especialización',items:[{t:'Sommelier avanzado',e:'🍷'},{t:'Mixología avanzada',e:'🍸'},{t:'Atención a VIP y protocolo',e:'👑'},{t:'Inglés para restaurantes',e:'🌎'},{t:'Storytelling de platos y carta',e:'📚'},{t:'Sostenibilidad y residuos',e:'♻️'}]}
 ];
 function renderCursos(){
-  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:12px">Capacitación del personal · toca «Abrir curso» 🎓</div>`+
-   CURSOS.map(c=>`<div style="background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:12px">
-     <div style="background:${c.color};color:#fff;padding:18px 16px;display:flex;align-items:center;gap:14px">
-       <div style="font-size:40px;line-height:1">${c.emoji}</div>
-       <div><div style="font-family:var(--font-display);font-size:22px;line-height:1">${c.titulo}</div>
-         <div style="font-family:var(--font-mono);font-size:11px;opacity:.9;margin-top:5px">${c.meta}</div></div></div>
-     <div style="padding:15px 16px">
-       <div style="font-size:13.5px;line-height:1.5;opacity:.9">${c.desc}</div>
-       <a href="${c.url}" target="_blank" rel="noopener" class="btn primary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;margin-top:13px;width:auto"><span class="material-symbols-outlined">open_in_new</span>Abrir curso</a>
-     </div></div>`).join('');
+  let total=0,listos=0;CATALOGO.forEach(gr=>gr.items.forEach(it=>{total++;if(it.url)listos++;}));
+  let h=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-bottom:14px">Academia Prep! · <b>${listos} de ${total}</b> cursos listos · el resto en preparación 🎓</div>`;
+  CATALOGO.forEach(gr=>{
+    h+=`<div style="font-family:var(--font-display);font-size:16px;margin:18px 0 8px;border-bottom:2px solid var(--outline);padding-bottom:3px">${gr.g}</div>`;
+    h+=gr.items.map(it=>{const r=!!it.url;return `<div class="clk" ${r?`data-url="${it.url}"`:''} style="${r?'':'opacity:.6;cursor:default'}">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0"><span style="font-size:20px">${it.e}</span><span style="font-weight:600;font-size:14px">${it.t}</span></div>
+      ${r?'<span class="tagx" style="background:var(--green-soft);border:1.5px solid var(--outline);white-space:nowrap">Abrir ↗</span>':'<span class="tagx cat" style="white-space:nowrap">En preparación</span>'}</div>`;}).join('');
+  });
+  $('#screen').innerHTML=h;
+  $$('#screen .clk[data-url]').forEach(c=>c.onclick=()=>window.open(c.dataset.url,'_blank','noopener'));
 }
 function renderExamenes(){
   const exs=state.examenes||[],res=state.examResult||[];
