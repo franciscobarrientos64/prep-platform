@@ -1,0 +1,333 @@
+<!-- Curso Academia Prep! · KPIs del restaurante -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>KPIs del restaurante · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234338ca'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · KPIs</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#4338ca">
+    <div class="k">Academia Prep! · Administración / Liderazgo</div>
+    <h1>KPIs del restaurante</h1>
+    <p>Los pocos números que de verdad mueven la utilidad: ventas, food cost, labor cost, ticket promedio y punto de equilibrio. Aprende a leerlos sin miedo, entender qué te están diciendo y tomar la decisión correcta el mismo día, no a fin de mes cuando ya es tarde.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~55 min</span><span>🎯 Administrador</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un restaurante puede estar lleno todas las noches y aun así perder plata. La sala llena es sensación; los KPIs son la verdad. Si vendes S/ 480,000 al mes pero tu food cost trepó a 38% y tu planilla a 33%, ya te comiste el margen y no lo notaste hasta que faltó para pagar a proveedores. Dominar cinco indicadores te da el timón: sabes qué está pasando, por qué, y qué palanca mover hoy para corregirlo.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es un KPI y cómo leer tu tablero</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Un KPI (Key Performance Indicator) es un número que resume la salud de una parte del negocio y que puedes comparar contra una meta. No mides por medir: mides lo que, si se sale de rango, te obliga a actuar. La regla de oro es cuatro elementos por indicador: dato, meta, comparativo y frecuencia. Sin meta, un número no dice nada; S/ 100 de ticket puede ser excelente o pésimo según lo que apuntabas.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Dato + meta</h3><div class="d">Todo KPI vive contra un objetivo. "Food cost 32%" solo importa si tu meta es 30%. El número solo es ruido; el número vs la meta es información.</div><div class="s">Nunca reportes un dato sin su meta al lado</div></div>
+      <div class="tipo"><h3>Semáforo</h3><div class="d">Verde en meta, ámbar cerca del límite, rojo fuera de rango. Le da a todo el equipo un lenguaje común de un vistazo, sin discutir decimales.</div><div class="s">Verde sigue · ámbar vigila · rojo actúa hoy</div></div>
+      <div class="tipo"><h3>Tendencia</h3><div class="d">Un dato aislado engaña. Lo que manda es la dirección: tres semanas subiendo el food cost es una alarma aunque cada semana parezca "casi bien".</div><div class="s">Compara vs semana previa y vs mismo día del mes pasado</div></div>
+    </div>
+    <div class="callout"><b>El tablero mínimo del administrador:</b> ventas del día, ticket promedio, cubiertos, food cost, labor cost y utilidad operativa. Seis números. Si tu reporte diario tiene 40 métricas, nadie las lee y no decides nada. Menos indicadores, mejor vigilados.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>KPI que sirve</h4><ul>
+        <li>Tiene meta clara y semáforo</li>
+        <li>Se mira con la frecuencia correcta (día / semana / mes)</li>
+        <li>Alguien es dueño de moverlo</li>
+        <li>Lleva a una acción concreta cuando se desvía</li>
+        <li>Se compara contra un periodo anterior</li>
+      </ul></div>
+      <div class="box no"><h4>Número que solo decora</h4><ul>
+        <li>Un dato suelto sin objetivo</li>
+        <li>Se revisa "cuando hay tiempo"</li>
+        <li>Nadie responde por él</li>
+        <li>Se mira, se comenta y no pasa nada</li>
+        <li>Sin comparativo: imposible saber si mejora</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Ventas y ticket promedio</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Ventas es lo que entra, pero el número crudo confunde. Primero, trabaja siempre con venta neta (sin IGV): si facturaste S/ 118, tu venta real es S/ 100 y S/ 18 son del Estado. Segundo, la venta sola no dice si el negocio está sano; hay que abrirla en ticket promedio y cubiertos para entender de dónde viene y cómo crecerla.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Venta neta</h3><div class="d">Venta sin IGV. Es la base de todos los porcentajes (food cost, labor). Costear contra la venta con IGV te da porcentajes falsamente bajos.</div><div class="s">Venta neta = venta con IGV ÷ 1.18</div></div>
+      <div class="tipo"><h3>Ticket promedio</h3><div class="d">Cuánto gasta cada comensal. Se calcula por cubierto, no por mesa. Sube con venta sugestiva: entrada, la copa de vino, el postre para compartir.</div><div class="s">Ticket = venta neta ÷ N.º de cubiertos</div></div>
+      <div class="tipo"><h3>Cubiertos y rotación</h3><div class="d">Cuántos comensales atendiste y cuántas veces se sentó cada mesa en el turno. Dos palancas distintas: llenar más sillas o hacer que gasten más.</div><div class="s">Rotación = cubiertos ÷ N.º de asientos</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🧮</div><div><div class="t">Paso 1</div><h4>Saca la venta neta del turno</h4><p>Cierre de POS marca S/ 28,320 con IGV en la noche del sábado. Venta neta = 28,320 ÷ 1.18 = S/ 24,000. Ese es el número con el que trabajas todo lo demás.</p></div></div>
+      <div class="paso"><div class="ico">👥</div><div><div class="t">Paso 2</div><h4>Divide entre cubiertos, no entre mesas</h4><p>Esa noche pasaron 200 comensales. Ticket promedio = 24,000 ÷ 200 = S/ 120. Si dividieras entre las 45 cuentas, obtendrías S/ 533 por mesa: cierto, pero inútil para decidir. El comensal es la unidad.</p></div></div>
+      <div class="paso"><div class="ico">📈</div><div><div class="t">Paso 3</div><h4>Compáralo y ábrelo</h4><p>El sábado pasado el ticket fue S/ 132. Bajó S/ 12. ¿Por qué? Abre: ¿cayó la venta de vinos? ¿menos postres? ¿más gente pidió solo fondo? El promedio te avisa; el desglose te dice dónde mirar.</p></div></div>
+      <div class="paso"><div class="ico">🍷</div><div><div class="t">Paso 4</div><h4>Actúa sobre la palanca correcta</h4><p>Si el problema es bebidas, refuerza el brief de mozos sobre la carta de vinos y el maridaje sugerido. Subir el ticket S/ 8 con 200 cubiertos son S/ 1,600 extra por noche, sin gastar un sol más en marketing.</p></div></div>
+    </div>
+    <div class="callout"><b>Ejemplo — el poder de S/ 5:</b> restaurante con 4,800 cubiertos al mes. Subir el ticket promedio de S/ 100 a S/ 105 (una copa de vino de más cada dos mesas) son S/ 24,000 de venta neta adicional al mes. Con food cost al 32%, casi S/ 16,000 caen directo a la utilidad. El ticket promedio es la palanca más barata que tienes.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Leer bien las ventas</h4><ul>
+        <li>Siempre en venta neta (sin IGV)</li>
+        <li>Ticket promedio por cubierto</li>
+        <li>Comparar por día de la semana, no día calendario</li>
+        <li>Separar venta de cocina vs barra</li>
+        <li>Vigilar el mix: entradas, fondos, postres, bebidas</li>
+      </ul></div>
+      <div class="box no"><h4>Errores comunes</h4><ul>
+        <li>Costear sobre la venta con IGV</li>
+        <li>Ticket por mesa en vez de por comensal</li>
+        <li>Comparar un lunes contra un sábado</li>
+        <li>Celebrar récord de ventas con food cost disparado</li>
+        <li>No saber cuánto vende la barra vs la cocina</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Food cost: el costo de lo que sale de cocina</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El food cost es qué porcentaje de tu venta se va en insumos. Es el KPI que más rápido se te escapa y el que más margen te roba sin avisar. Hay dos maneras de mirarlo y necesitas las dos: el teórico (lo que deberían costar los platos que vendiste, según sus fichas técnicas) y el real (lo que de verdad consumiste de almacén). La diferencia entre ambos es tu fuga.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Food cost teórico</h3><div class="d">Suma el costo de ficha de cada plato vendido, dividido entre la venta neta. Es tu piso ideal: lo que costaría si nadie se equivoca ni desperdicia.</div><div class="s">Sale del POS × recetas costeadas</div></div>
+      <div class="tipo"><h3>Food cost real</h3><div class="d">Inventario inicial + compras − inventario final, sobre la venta neta. Es lo que de verdad salió de almacén, mermas y robos incluidos.</div><div class="s">Exige conteo físico de inventario</div></div>
+      <div class="tipo"><h3>La brecha</h3><div class="d">Real menos teórico. Si el teórico es 30% y el real 35%, esos 5 puntos son merma, sobreporción, roturas o robo. Ahí está tu plata.</div><div class="s">Brecha > 2-3 puntos = investigar ya</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">📖</div><div><div class="t">Fórmula real</div><h4>Inventario inicial + compras − inventario final</h4><p>Es el costo de mercadería vendida (CMV) del periodo. Empiezas el mes con S/ 42,000 en almacén, compras S/ 155,000, cierras con S/ 45,000: consumiste S/ 152,000.</p></div></div>
+      <div class="paso"><div class="ico">➗</div><div><div class="t">El porcentaje</div><h4>CMV ÷ venta neta</h4><p>Con venta neta del mes de S/ 480,000: food cost real = 152,000 ÷ 480,000 = 31.7%. Esa es la foto real, no la que asumías.</p></div></div>
+      <div class="paso"><div class="ico">🔍</div><div><div class="t">La lectura</div><h4>Compara real vs teórico</h4><p>Si tus fichas dicen que deberías estar en 29% pero el real es 31.7%, tienes 2.7 puntos de fuga = S/ 12,960 al mes que se evaporaron en merma, sobreporción o descontrol. Ahí trabajas.</p></div></div>
+      <div class="paso"><div class="ico">🛠️</div><div><div class="t">La acción</div><h4>Ataca por categoría, no en general</h4><p>Abre el food cost por familia: si las carnes están en 40% y el objetivo es 33%, el problema es proteína (porción, precio de proveedor o merma en el corte), no "la cocina en general". Precisión = solución.</p></div></div>
+    </div>
+    <div class="callout"><b>Cuándo actuar:</b> food cost objetivo en alta cocina peruana suele estar entre 28% y 34% según concepto (más alto si hay mucho pescado o insumo importado). Si sube 2 puntos sobre tu meta, revisa esta semana: (1) precios de proveedor, (2) gramajes reales vs ficha, (3) mermas registradas, (4) platos regalados/cortesías sin control. No esperes al cierre de mes.</div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Food cost real</th><th>Semáforo</th><th>Qué significa</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td>≤ 30%</td><td>🟢 Verde</td><td>En meta o mejor, margen sano</td><td>Sostener, vigilar que no baje la calidad del plato</td></tr>
+        <tr><td>31% – 34%</td><td>🟡 Ámbar</td><td>Tolerable pero al límite</td><td>Revisar mix de venta y precios de 3 insumos top</td></tr>
+        <tr><td>≥ 35%</td><td>🔴 Rojo</td><td>Fuga de margen activa</td><td>Auditar porciones, mermas y compras esta semana</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Labor cost: el costo del equipo</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El labor cost es qué porcentaje de la venta se va en planilla total: sueldos, gratificaciones, CTS, EsSalud y beneficios de sala y cocina. Junto al food cost forma el prime cost, los dos costos que más pesan y los únicos dos que puedes mover casi a diario. El error clásico es mirar solo el monto de la planilla; lo que importa es la planilla contra las ventas que generó.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Labor cost %</h3><div class="d">Costo total de personal sobre venta neta. Incluye cargas sociales, no solo el sueldo básico. En Perú la carga real suma cerca de 40-50% extra sobre el bruto.</div><div class="s">Labor = planilla total ÷ venta neta</div></div>
+      <div class="tipo"><h3>Ventas por hora-hombre</h3><div class="d">Cuánta venta genera cada hora trabajada del equipo. Mide productividad real, no cabezas. Sube cuadrando el horario a la demanda.</div><div class="s">Venta neta del turno ÷ horas trabajadas</div></div>
+      <div class="tipo"><h3>Prime cost</h3><div class="d">Food cost + labor cost. Es el número que un dueño mira primero. Si pasa de 65% de la venta, el negocio se ahoga por más que se llene.</div><div class="s">Meta prime cost: 60-65%</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">💵</div><div><div class="t">Paso 1</div><h4>Suma el costo real, con cargas</h4><p>Un mozo con sueldo de S/ 1,500 no cuesta S/ 1,500: con gratificación, CTS, EsSalud y vacaciones cuesta cerca de S/ 2,150 al mes. Presupuesta el costo total, no el básico, o tu labor cost siempre saldrá subestimado.</p></div></div>
+      <div class="paso"><div class="ico">📊</div><div><div class="t">Paso 2</div><h4>Saca el porcentaje del mes</h4><p>Planilla total (fija + variable + cargas) S/ 134,400 sobre venta neta de S/ 480,000 = 28% de labor cost. Sano para alta cocina, donde el servicio es intensivo en personal.</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">Paso 3</div><h4>Cuadra el horario a la curva de demanda</h4><p>No tengas 6 mozos a las 12:30 si el llenazo es a las 20:00. Mira las ventas por hora del último mes y programa entradas escalonadas. Cortar una hora ociosa por persona al día son miles de soles al mes sin tocar el servicio en hora pico.</p></div></div>
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Paso 4</div><h4>Vigila el prime cost, no cada costo por separado</h4><p>Food 31.7% + labor 28% = prime cost 59.7%. Verde. Si un mes el food se dispara, puedes compensar ajustando horarios; si ambos suben, es alarma roja de rentabilidad.</p></div></div>
+    </div>
+    <div class="callout"><b>La trampa de recortar:</b> bajar labor cost despidiendo o sobrecargando al equipo hunde el servicio, sube la rotación de personal (y el costo de entrenar reemplazos) y termina bajando las ventas. La palanca correcta casi nunca es "menos gente", es "la gente correcta en la hora correcta". Productividad, no tijera.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Gestionar bien el labor</h4><ul>
+        <li>Programar según ventas por hora históricas</li>
+        <li>Medir ventas por hora-hombre, no solo el monto</li>
+        <li>Costear con cargas sociales completas</li>
+        <li>Mirar prime cost como un solo número</li>
+        <li>Escalonar entradas y salidas del turno</li>
+      </ul></div>
+      <div class="box no"><h4>Cómo se descontrola</h4><ul>
+        <li>Todo el equipo entra y sale a la misma hora</li>
+        <li>Horas extra sin autorización ni registro</li>
+        <li>Presupuestar solo el sueldo básico</li>
+        <li>Recortar personal en hora pico para "ahorrar"</li>
+        <li>No saber cuánto vende cada hora del turno</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Punto de equilibrio: cuánto vender para no perder</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El punto de equilibrio (break-even) es la venta a la que no ganas ni pierdes: cubres todos los costos justo. Debajo de esa línea, cada día abres para perder plata; encima, empiezas a ganar. Es el número más tranquilizador que puede conocer un administrador, porque convierte el "¿nos irá bien?" en una meta diaria concreta de cubiertos.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Costos fijos</h3><div class="d">Lo que pagas vendas o no: alquiler, sueldos base, servicios, seguros, contador. No dependen de cuántos platos salgan esa noche.</div><div class="s">Alquiler, planilla fija, luz, agua, licencias</div></div>
+      <div class="tipo"><h3>Costos variables</h3><div class="d">Suben con cada venta: insumos del plato, comisiones de tarjeta/apps, delivery. Se expresan como % de la venta.</div><div class="s">Food cost + comisiones + variables</div></div>
+      <div class="tipo"><h3>Margen de contribución</h3><div class="d">Lo que deja cada sol de venta después de pagar lo variable, para cubrir los fijos. Si lo variable es 40%, tu margen de contribución es 60%.</div><div class="s">MC% = 100% − % costos variables</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🏠</div><div><div class="t">Paso 1</div><h4>Suma tus costos fijos del mes</h4><p>Alquiler S/ 45,000 + planilla fija S/ 55,000 + servicios S/ 15,000 + otros fijos (contador, seguros, software, licencias) S/ 15,000 = S/ 130,000 de costos fijos mensuales.</p></div></div>
+      <div class="paso"><div class="ico">📐</div><div><div class="t">Paso 2</div><h4>Calcula tu margen de contribución</h4><p>Costos variables: food cost 32% + comisiones y variables 8% = 40%. Margen de contribución = 100% − 40% = 60%. De cada S/ 100 que vendes, S/ 60 quedan para cubrir los fijos y ganar.</p></div></div>
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Paso 3</div><h4>Divide fijos entre margen</h4><p>Punto de equilibrio = 130,000 ÷ 0.60 = S/ 216,667 de venta neta al mes. Debajo de eso, pierdes. Todo lo que vendas por encima deja 60 céntimos de utilidad por sol.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">Paso 4</div><h4>Tradúcelo a cubiertos por día</h4><p>Con ticket promedio de S/ 100: necesitas 2,167 cubiertos al mes ÷ 26 días de operación ≈ 84 cubiertos al día solo para no perder. Ese es tu piso diario. Ahora el equipo tiene una meta clara, no una sensación.</p></div></div>
+    </div>
+    <div class="callout"><b>Cómo usarlo para decidir:</b> con break-even de S/ 216,667 y venta real de S/ 480,000, operas cómodo al 2.2× del piso. Pero si evalúas subir el alquiler o contratar dos personas más, primero recalcula: cada S/ 6,000 de costo fijo nuevo sube tu punto de equilibrio en S/ 10,000 de venta al mes (6,000 ÷ 0.60). Así sabes cuánta venta extra necesitas ANTES de firmar, no después.</div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Concepto</th><th>Valor</th><th>Cómo se obtiene</th></tr></thead>
+      <tbody>
+        <tr><td>Costos fijos mensuales</td><td>S/ 130,000</td><td>Alquiler + planilla base + servicios + otros</td></tr>
+        <tr><td>Costos variables</td><td>40%</td><td>Food cost 32% + comisiones/variables 8%</td></tr>
+        <tr><td>Margen de contribución</td><td>60%</td><td>100% − 40%</td></tr>
+        <tr><td>Punto de equilibrio (venta)</td><td>S/ 216,667</td><td>130,000 ÷ 0.60</td></tr>
+        <tr><td>Break-even en cubiertos/día</td><td>≈ 84</td><td>216,667 ÷ ticket S/ 100 ÷ 26 días</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>El tablero en acción: rutina y decisiones</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Los KPIs no sirven guardados en un Excel que se abre a fin de mes. Sirven en una rutina: qué miras cada día, qué revisas cada semana y qué analizas cada mes. La diferencia entre un administrador que reacciona tarde y uno que corrige a tiempo no es la inteligencia, es la cadencia con la que mira sus números y la disciplina de convertir cada desvío en una acción con responsable y fecha.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cada día (10 min)</h3><div class="d">Ventas netas del turno vs meta del día, cubiertos, ticket promedio y cortesías/descuentos. Detectas caídas de venta o regalos sin control al instante.</div><div class="s">Cierre de caja + POS de la noche anterior</div></div>
+      <div class="tipo"><h3>Cada semana (45 min)</h3><div class="d">Food cost de la semana, labor cost, horas extra, mermas y top/bottom platos. Ajustas horario y compras antes de que el mes se dañe.</div><div class="s">Junta corta con chef y jefe de sala</div></div>
+      <div class="tipo"><h3>Cada mes (2 h)</h3><div class="d">Prime cost, punto de equilibrio, P&L (estado de resultados), utilidad operativa y comparativo vs mes anterior y vs mismo mes del año pasado.</div><div class="s">Cierre con inventario físico completo</div></div>
+    </div>
+    <div class="callout"><b>La regla del desvío:</b> cuando un KPI se pone rojo, no basta con notarlo. Toda alarma en rojo sale de la junta con tres cosas: qué la causó (hipótesis), qué se va a hacer (acción concreta) y quién y cuándo. "El food cost subió a 36%" no es una conclusión; "el food subió por la merma de pescado, el sous chef revisa el fileteado esta semana y volvemos a medir el lunes" sí lo es.</div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Si ves esto…</th><th>Probable causa</th><th>Qué haces</th></tr></thead>
+      <tbody>
+        <tr><td>Ventas bien, utilidad baja</td><td>Food o labor descontrolado</td><td>Revisa prime cost: casi siempre es porción, merma o exceso de horas</td></tr>
+        <tr><td>Ticket promedio cayendo</td><td>Menos bebidas o postres</td><td>Refuerza venta sugestiva en el brief; revisa carta y sugeridos del día</td></tr>
+        <tr><td>Food cost real >> teórico</td><td>Merma, sobreporción o robo</td><td>Conteo por categoría, auditar porciones y cortesías de la semana</td></tr>
+        <tr><td>Labor cost alto con sala vacía</td><td>Horario no calza la demanda</td><td>Reprograma según ventas por hora; escalona entradas del turno</td></tr>
+        <tr><td>Venta bajo el break-even 3 días</td><td>Demanda floja o mal día</td><td>Acción comercial y ajuste de personal; no operes en piloto automático</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Un administrador que dirige con datos</h4><ul>
+        <li>Mira su tablero diario antes de abrir</li>
+        <li>Cada rojo sale con acción, responsable y fecha</li>
+        <li>Comparte los KPIs con chef y sala</li>
+        <li>Compara contra periodos, no contra su intuición</li>
+        <li>Cierra el mes con inventario físico real</li>
+      </ul></div>
+      <div class="box no"><h4>Un administrador que solo apaga incendios</h4><ul>
+        <li>Se entera del food cost a fin de mes</li>
+        <li>Anota el problema y no le pone dueño</li>
+        <li>Guarda los números para él solo</li>
+        <li>Decide por sensación de "sala llena"</li>
+        <li>Estima el inventario "a ojo" sin contar</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>KPI</b><span>Key Performance Indicator. Número clave que mide la salud de una parte del negocio contra una meta.</span></div>
+      <div class="gterm"><b>Venta neta</b><span>Venta sin IGV. Base de todos los porcentajes. Venta con IGV ÷ 1.18.</span></div>
+      <div class="gterm"><b>Ticket promedio</b><span>Cuánto gasta cada comensal. Venta neta ÷ número de cubiertos (no de mesas).</span></div>
+      <div class="gterm"><b>Cubierto</b><span>Un comensal atendido. La unidad para medir afluencia y ticket promedio.</span></div>
+      <div class="gterm"><b>Rotación de mesa</b><span>Cuántas veces se sienta gente distinta en la misma mesa en un turno. Cubiertos ÷ asientos.</span></div>
+      <div class="gterm"><b>Food cost</b><span>Porcentaje de la venta que se va en insumos. CMV ÷ venta neta.</span></div>
+      <div class="gterm"><b>Food cost teórico</b><span>Lo que deberían costar los platos vendidos según sus fichas técnicas. El piso ideal.</span></div>
+      <div class="gterm"><b>Food cost real</b><span>Consumo real de almacén: inventario inicial + compras − inventario final, sobre la venta.</span></div>
+      <div class="gterm"><b>CMV</b><span>Costo de Mercadería Vendida. Lo que de verdad consumiste de almacén en el periodo.</span></div>
+      <div class="gterm"><b>Labor cost</b><span>Costo total de personal (con cargas sociales) sobre la venta neta.</span></div>
+      <div class="gterm"><b>Prime cost</b><span>Food cost + labor cost. Los dos costos que más pesan. Meta: 60-65% de la venta.</span></div>
+      <div class="gterm"><b>Margen de contribución</b><span>Lo que deja cada sol de venta tras pagar lo variable. 100% − % costos variables.</span></div>
+      <div class="gterm"><b>Punto de equilibrio</b><span>Venta a la que no ganas ni pierdes. Costos fijos ÷ margen de contribución.</span></div>
+      <div class="gterm"><b>Utilidad operativa</b><span>Lo que queda tras cubrir todos los costos de operación. La verdad final del mes.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>KPIs del restaurante · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Las fórmulas</h4><ul>
+          <li>Venta neta = venta c/IGV ÷ 1.18</li>
+          <li>Ticket promedio = venta neta ÷ cubiertos</li>
+          <li>Food cost = CMV ÷ venta neta</li>
+          <li>CMV = inv. inicial + compras − inv. final</li>
+          <li>Labor cost = planilla total ÷ venta neta</li>
+          <li>Prime cost = food cost + labor cost</li>
+          <li>Punto equilibrio = fijos ÷ margen contribución</li>
+        </ul></div>
+        <div class="op-box"><h4>Metas y semáforo</h4><ul>
+          <li>Food cost: 28-34% (verde ≤30%, rojo ≥35%)</li>
+          <li>Labor cost: 25-30% en alta cocina</li>
+          <li>Prime cost: sano < 65% de la venta</li>
+          <li>Todo KPI: dato + meta + comparativo</li>
+          <li>Verde sigue · ámbar vigila · rojo actúa hoy</li>
+        </ul></div>
+        <div class="op-box"><h4>Rutina de revisión</h4><ul>
+          <li>Diario: ventas, ticket, cubiertos, cortesías</li>
+          <li>Semanal: food, labor, mermas, horas extra</li>
+          <li>Mensual: prime cost, break-even, P&L, utilidad</li>
+          <li>Cierre de mes = inventario físico real</li>
+        </ul></div>
+        <div class="op-box"><h4>Cada rojo sale con…</h4><ul>
+          <li>Causa (hipótesis concreta, no "subió")</li>
+          <li>Acción (qué se hace exactamente)</li>
+          <li>Responsable y fecha de re-medición</li>
+          <li>Ataca por categoría, no "en general"</li>
+          <li>Palanca barata: +S/5 de ticket &gt; recortar</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · KPIs del restaurante · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

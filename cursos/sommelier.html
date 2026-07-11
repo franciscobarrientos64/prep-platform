@@ -1,0 +1,391 @@
+<!-- Curso: Sommelier avanzado (sommelier / mesero senior) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Sommelier avanzado · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236f1d2e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Sommelier</span>
+    <nav class="nav">
+      <a href="#m1">1 · Cata</a><a href="#m2">2 · Defectos</a><a href="#m3">3 · Carta</a><a href="#m4">4 · Maridaje</a><a href="#m5">5 · Gran botella</a><a href="#m6">6 · Venta</a><a href="#glosario">Glosario</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#6f1d2e">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Sommelier avanzado</h1>
+    <p>El curso para el sommelier y el mesero senior que quiere jugar en primera. Aquí no hay poesía de vino: hay método. Aprenderás a catar como un profesional, a detectar en tres segundos si una botella está mala, a construir una carta de vinos que rota y deja margen, a maridar con cocina peruana de verdad, y a servir un magnum o descorchar un vino de guarda frente al invitado sin que te tiemble la mano. Todo aplicado al salón de un restaurante de nivel en Lima.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~55 min</span><span>🎯 Sommelier / Mesero senior</span><span>🍷 Especialización</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el vino es la categoría de mayor margen del salón y la que más eleva el ticket, pero también la que más plata pierde cuando se sirve mal. Una botella con TCA que sale a mesa sin que la detectes es una queja, un descuento y una reseña de una estrella. Un maridaje bien sugerido convierte una cena en una experiencia que el invitado cuenta y recomienda. El sommelier que sabe leer al comensal, defender la carta y servir con precisión no es un lujo: es utilidad neta.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La cata profesional</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Catar no es "tomar con cara seria". Es un método ordenado para describir un vino con palabras que cualquier colega entienda, decidir si está bien y venderlo con criterio. Se cata siempre en el mismo orden —vista, nariz, boca, conclusión— porque el orden evita que un aroma te sugestione sobre lo que "deberías" sentir después.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Fase 1 · Vista</h3><div class="d">Inclina la copa 45° sobre fondo blanco (una servilleta). Lee <b>color</b> (ribete violeta = joven; teja/ámbar = evolucionado), <b>intensidad</b> y <b>limpidez</b>. Un blanco que amarillea o un tinto con ribete marrón te avisan de edad u oxidación antes de olerlo.</div></div>
+      <div class="tipo"><h3>Fase 2 · Nariz en copa quieta</h3><div class="d">Huele sin agitar. Captas los aromas más volátiles y, sobre todo, detectas defectos (corcho, azufre) antes de que el oxígeno los disimule. Es tu primer control de calidad.</div></div>
+      <div class="tipo"><h3>Fase 3 · Nariz en copa agitada</h3><div class="d">Gira la copa 3–4 veces y vuelve a oler. El oxígeno abre aromas secundarios (fermentación: lácteo, levadura) y terciarios (crianza: vainilla, cuero, tabaco). Aquí construyes la descripción que le darás al invitado.</div></div>
+      <div class="tipo"><h3>Fase 4 · Boca</h3><div class="d">Un sorbo pequeño, pásalo por toda la lengua. Mide <b>dulzor, acidez, taninos, alcohol y cuerpo</b>, y cómo se equilibran. Termina con la <b>persistencia</b>: cuenta los segundos que el sabor queda después de tragar (o escupir).</div></div>
+      <div class="tipo"><h3>Aromas: 3 familias</h3><div class="d"><b>Primarios</b> (de la uva: fruta, flor, hierba), <b>secundarios</b> (de la fermentación: pan, mantequilla, plátano) y <b>terciarios</b> (de la crianza y el tiempo: madera, tostado, frutos secos, sotobosque).</div></div>
+      <div class="tipo"><h3>Retronasal</h3><div class="d">Con el vino en boca, exhala suave por la nariz. Muchos aromas solo aparecen por esta vía. Es lo que te deja decir "termina con un toque de cacao" con seguridad.</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h4 style="font-size:14px;margin-bottom:8px">Protocolo de cata en 20 segundos (para el pase de servicio)</h4>
+      <div class="paso"><div class="ico">👁️</div><div><div class="t">Paso 1 · Vista</div><h4>Inclina y mira</h4><p>Copa a 45° sobre servilleta blanca. ¿Color coherente con la etiqueta? ¿Brillante y limpio, sin turbidez ni partículas raras?</p></div></div>
+      <div class="paso"><div class="ico">👃</div><div><div class="t">Paso 2 · Nariz limpia</div><h4>Huele sin girar</h4><p>Primera pasada. Aquí cazas el defecto: cartón mojado (corcho), vinagre, huevo podrido. Si algo huele mal, para: no sirvas.</p></div></div>
+      <div class="paso"><div class="ico">🌀</div><div><div class="t">Paso 3 · Nariz agitada</div><h4>Gira y vuelve a oler</h4><p>Identifica 2–3 aromas concretos que puedas nombrarle al invitado ("fruta roja fresca, un toque de vainilla").</p></div></div>
+      <div class="paso"><div class="ico">👅</div><div><div class="t">Paso 4 · Boca</div><h4>Sorbo y estructura</h4><p>Acidez (¿salivas?), taninos (¿secan la encía?), alcohol (¿calienta?), cuerpo. Decide equilibrio y persistencia.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Paso 5 · Veredicto</div><h4>Apto o no apto</h4><p>Si está bien: sirve y describe. Si dudas, prueba una segunda copa de la misma botella antes de decidir cambiarla.</p></div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Traducir la estructura del vino a palabras que el invitado entienda:</p>
+    <div class="card"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Componente</th><th>Qué sientes</th><th>Cómo lo dices en mesa</th></tr></thead>
+      <tbody>
+        <tr><td>Acidez</td><td>Salivación en los lados de la lengua</td><td>"Fresco, con nervio" (alta) · "Redondo, suave" (baja)</td></tr>
+        <tr><td>Taninos</td><td>Encías y lengua que se secan y rugosan</td><td>"Estructurado, con carácter" · "Sedoso, fácil de tomar"</td></tr>
+        <tr><td>Alcohol</td><td>Calor en el fondo de la garganta</td><td>"Con cuerpo, potente" · "Ligero, ágil"</td></tr>
+        <tr><td>Dulzor</td><td>Punta de la lengua</td><td>"Seco" · "Con un toque dulce" · "Dulce de postre"</td></tr>
+        <tr><td>Persistencia</td><td>Segundos de sabor tras tragar</td><td>"Largo, deja recuerdo" (bueno) · "Corto" (simple)</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="callout"><b>Regla de oro:</b> nunca describas un vino que no acabas de probar tú. La botella de hoy no sabe igual que la de la semana pasada. En cada servicio de la carta por copa, cata la primera copa del día de cada vino abierto: te ahorra servir un blanco que llevaba tres días descorchado y ya perdió su fruta.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Defectos del vino</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Detectar un vino defectuoso en segundos es lo que separa al sommelier del que solo abre botellas. La mayoría de los defectos se huelen antes de probar. Tu trabajo es reconocerlos, decidir rápido si la botella sale o se cambia, y hacerlo sin alarmar a la mesa. Un vino con defecto grave nunca se sirve, aunque la botella sea cara: se retira y se reporta.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>TCA · "Gusto a corcho"</h3><div class="d">El más común. Huele a <b>cartón mojado, trapo húmedo, sótano</b>. El TCA no se va con aire: se acentúa. Apaga toda la fruta. <b>Cambia la botella sin discusión</b> — es un defecto, no un tema de gusto.</div><div class="s">Frecuencia: alta</div></div>
+      <div class="tipo"><h3>Oxidación</h3><div class="d">Contacto excesivo con aire. El vino pierde fruta, sabe a <b>manzana marrón, nuez, jerez</b>; el color vira a teja/dorado apagado. Típico en botellas mal guardadas o abiertas hace días.</div><div class="s">Frecuencia: media</div></div>
+      <div class="tipo"><h3>Reducción</h3><div class="d">Falta de oxígeno. Huele a <b>huevo podrido, fósforo quemado, ajo, caucho</b>. A diferencia del TCA, <b>sí mejora</b> con aire: decanta o agita en copa y espera. Si a los 10 min sigue, cambia.</div><div class="s">Frecuencia: media</div></div>
+      <div class="tipo"><h3>Avinagrado (acidez volátil)</h3><div class="d">Exceso de ácido acético. Huele a <b>vinagre y quitaesmalte</b>. En dosis mínimas da complejidad; cuando pica en la nariz y raspa, el vino está pasado. No sale.</div><div class="s">Frecuencia: baja-media</div></div>
+      <div class="tipo"><h3>Brettanomyces ("brett")</h3><div class="d">Levadura silvestre. <b>Cuadra de caballo, sudor, curita, clavo</b>. Poco puede sumar rusticidad; mucho tapa la fruta y es defecto. Depende del vino y del invitado.</div><div class="s">Frecuencia: baja</div></div>
+      <div class="tipo"><h3>Refermentación / gas</h3><div class="d">Un vino tranquilo que llega con <b>burbuja y turbidez</b> y huele a levadura activa. Fermentó en botella por error. Devuélvelo.</div><div class="s">Frecuencia: baja</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Defecto</th><th>Señal clave</th><th>¿Mejora con aire?</th><th>Qué haces</th></tr></thead>
+      <tbody>
+        <tr><td>TCA (corcho)</td><td>Cartón mojado, fruta apagada</td><td>No, empeora</td><td>Cambiar botella, reportar al proveedor</td></tr>
+        <tr><td>Oxidación</td><td>Nuez, manzana marrón, color teja</td><td>No</td><td>Cambiar botella</td></tr>
+        <tr><td>Reducción</td><td>Huevo podrido, fósforo</td><td>Sí</td><td>Decantar/airear; reevaluar a los 10 min</td></tr>
+        <tr><td>Avinagrado</td><td>Vinagre, pica en nariz</td><td>No</td><td>Cambiar botella</td></tr>
+        <tr><td>Brett (alto)</td><td>Establo, curita</td><td>No</td><td>Ofrecer cambio según el invitado</td></tr>
+        <tr><td>Cristales de tartrato</td><td>"Vidritos" en el corcho o el fondo</td><td>—</td><td><b>No es defecto.</b> Explica con calma, sirve normal</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Manejo profesional del defecto</h4><ul>
+        <li>Cata siempre tú antes de servir a la mesa</li>
+        <li>Si hay defecto grave, retira sin dramatizar: "esta botella no está en su punto, le traigo otra"</li>
+        <li>Ten una segunda botella lista antes de anunciar el cambio</li>
+        <li>Registra la merma y avisa al proveedor si es TCA recurrente</li>
+        <li>Diferencia defecto (se cambia) de "no le gustó" (se conversa)</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que cuestan una mesa</h4><ul>
+        <li>Servir "por no perder la botella" un vino con corcho</li>
+        <li>Decir "así es este vino" cuando claramente está mal</li>
+        <li>Confundir el sedimento normal de un tinto viejo con suciedad</li>
+        <li>Tirar por el caño cristales de tartrato como si fueran defecto</li>
+        <li>Discutir con el invitado si el vino "está picado" en vez de recatar</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Caso real de salón:</b> un invitado devuelve un Malbec diciendo que "sabe raro". Cátalo tú delante de él con naturalidad. Si es reducción (huevo/fósforo), dile "tiene algo de reducción, deme dos minutos que lo airee" y decántalo: muchas veces se corrige y salvas la venta. Si es TCA, cámbialo de una y agradece que lo notó. Nunca hagas sentir al invitado que exagera.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Armado de la carta de vinos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Una carta de vinos es una herramienta de venta, no una colección personal. Debe cubrir todos los bolsillos, conversar con la cocina, rotar rápido y dejar margen sano. En Lima, además, tiene que hacer sitio de verdad al vino peruano y sudamericano, que el invitado local aprecia y suele tener mejor precio de compra.</p>
+    <div class="card" style="margin-bottom:12px"><h4 style="font-size:14px;margin-bottom:8px">Cómo se construye, paso a paso</h4>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">Paso 1</div><h4>Parte de la cocina, no del vino</h4><p>Lista los platos ancla del menú. Cada estilo de plato debe tener al menos un vino que lo maride bien y por copa. Si hay muchos crudos y cebiches, necesitas blancos y espumantes de sobra.</p></div></div>
+      <div class="paso"><div class="ico">📊</div><div><div class="t">Paso 2</div><h4>Arma la pirámide de precios</h4><p>Regla práctica: ~50% de etiquetas en gama de entrada, ~35% media, ~15% alta y premium. La mayoría vende en la banda media-baja; las botellas caras dan prestigio y ancla, no volumen.</p></div></div>
+      <div class="paso"><div class="ico">🌎</div><div><div class="t">Paso 3</div><h4>Organiza por lógica clara</h4><p>Por color y luego por cuerpo/región, no alfabético. Da protagonismo a Perú (Ica, Tacna), Argentina, Chile y a 2–3 clásicos del Viejo Mundo que aporten estatus.</p></div></div>
+      <div class="paso"><div class="ico">🥂</div><div><div class="t">Paso 4</div><h4>Define el vino por copa</h4><p>6 a 10 referencias mínimo. Es donde más margen dejas y donde el invitado prueba sin comprometerse a una botella. Cada copa abierta tiene fecha de vida: usa sistema de conservación o véndela en 2–3 días.</p></div></div>
+      <div class="paso"><div class="ico">💵</div><div><div class="t">Paso 5</div><h4>Fija precios con criterio</h4><p>No multipliques todo por lo mismo. Márgenes altos en copa y gama baja; márgenes más finos en botellas premium (si multiplicas x3.5 una botella de S/ 200 la matas). Guarda una "joya" con buen precio para premiar al que sabe.</p></div></div>
+      <div class="paso"><div class="ico">🔄</div><div><div class="t">Paso 6</div><h4>Revisa rotación cada mes</h4><p>Cruza ventas con inventario en Prep! Mercado. La etiqueta que no se mueve en 60–90 días entra a sugerencia del día, capacitación de staff o sale de la carta. El vino parado es plata dormida.</p></div></div>
+    </div>
+    <div class="card"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Sección</th><th>Rol en la carta</th><th>% del listado</th><th>Ejemplo para Lima</th></tr></thead>
+      <tbody>
+        <tr><td>Espumantes</td><td>Aperitivo, celebración, cebiche</td><td>10–15%</td><td>Cava, Prosecco, un espumante peruano</td></tr>
+        <tr><td>Blancos ligeros/frescos</td><td>Cocina marina, crudos, causa</td><td>20%</td><td>Sauvignon Blanc, Albariño, Torrontés</td></tr>
+        <tr><td>Blancos con cuerpo</td><td>Pastas, ave, guisos suaves</td><td>10%</td><td>Chardonnay con crianza</td></tr>
+        <tr><td>Tintos ligeros/medios</td><td>Versátiles, la mayor venta</td><td>25%</td><td>Pinot Noir, Merlot, Tannat joven</td></tr>
+        <tr><td>Tintos potentes</td><td>Carnes, cordero, parrilla</td><td>20%</td><td>Malbec, Cabernet, Petit Verdot</td></tr>
+        <tr><td>Dulces / fortificados</td><td>Postres, quesos, sobremesa</td><td>5–10%</td><td>Late Harvest, Oporto</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Carta que vende</h4><ul>
+        <li>Descripciones cortas y honestas, no poesía</li>
+        <li>Precio visible y variado, con opciones dignas en gama baja</li>
+        <li>Fuerte oferta por copa</li>
+        <li>Producto peruano y sudamericano bien representado</li>
+        <li>Se actualiza según rotación real</li>
+      </ul></div>
+      <div class="box no"><h4>Carta que espanta</h4><ul>
+        <li>Solo etiquetas caras y de importador único</li>
+        <li>Multiplicador x4 parejo que vuelve todo carísimo</li>
+        <li>Nombres impronunciables sin ninguna guía</li>
+        <li>Vinos que la cocina no puede maridar</li>
+        <li>La misma carta desde hace dos años, con quiebres de stock</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco de rentabilidad:</b> el punto óptimo casi nunca es la botella más barata ni la más cara, sino la segunda o tercera más económica de cada sección — ahí es donde el invitado tímido "sube un poquito" para no pedir la más barata. Pon ahí tu mejor relación calidad-margen y capacita al equipo para recomendarla.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Maridajes avanzados</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Maridar es hacer que vino y plato se hagan mejores juntos que por separado. Hay dos caminos: <b>por afinidad</b> (semejanza: un vino cremoso con un plato cremoso) y <b>por contraste</b> (opuestos que se equilibran: un espumante ácido corta la grasa de un chicharrón). Con cocina peruana —ácida, picante, umami— el manejo del picante y la acidez es lo que decide todo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La acidez manda</h3><div class="d">El vino debe tener igual o más acidez que el plato. Con cebiche, tiradito o causa, un vino plano sabe a nada. Blancos frescos y espumantes brut son tus aliados de la cocina marina.</div></div>
+      <div class="tipo"><h3>Picante ≠ tinto potente</h3><div class="d">El ají amplifica el alcohol y los taninos: un tinto grande sobre un plato picante quema. Ve a blancos con un toque dulce (off-dry), espumantes o tintos ligeros bien fríos. Regla de oro con rocoto y ají amarillo.</div></div>
+      <div class="tipo"><h3>Peso con peso</h3><div class="d">Plato ligero, vino ligero; plato potente, vino potente. Un seco de cordero pide un Malbec o Tannat con estructura; una corvina al vapor, un blanco delicado. Que ninguno tape al otro.</div></div>
+      <div class="tipo"><h3>Grasa vs. acidez/tanino</h3><div class="d">La grasa se corta con acidez (espumante con chicharrón) o con tanino (Cabernet con un ojo de bife jugoso). Ese "limpiar la boca" entre bocados es el maridaje funcionando.</div></div>
+      <div class="tipo"><h3>Dulce con dulce (o más)</h3><div class="d">El postre debe ser menos dulce que el vino, o el vino sabrá agrio. Un Late Harvest o un Oporto con el postre; nunca un tinto seco con torta de chocolate.</div></div>
+      <div class="tipo"><h3>Umami y sal</h3><div class="d">Umami (hongos, anticuchos, quesos madurados) endurece taninos: baja a tintos suaves o suma sal al plato para redondear. La sal siempre es amiga del vino.</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Plato peruano</th><th>Por qué es difícil</th><th>Vino que funciona</th></tr></thead>
+      <tbody>
+        <tr><td>Cebiche clásico</td><td>Mucha acidez (limón) + ají</td><td>Sauvignon Blanc, Albariño o espumante brut, bien fríos</td></tr>
+        <tr><td>Tiradito nikkei</td><td>Cítrico + soya + ají amarillo</td><td>Riesling off-dry o Torrontés: el toque dulce doma el picante</td></tr>
+        <tr><td>Causa de cangrejo</td><td>Papa, ají amarillo, mayonesa</td><td>Chardonnay ligero o espumante; acidez para la grasa</td></tr>
+        <tr><td>Ají de gallina</td><td>Cremoso, picante suave, umami</td><td>Chardonnay con crianza o Viognier; afinidad de textura</td></tr>
+        <tr><td>Lomo saltado</td><td>Soya, umami, sillao, ají</td><td>Malbec joven o Carménère; fruta que aguanta el wok</td></tr>
+        <tr><td>Anticuchos de corazón</td><td>Umami intenso, ají panca, brasa</td><td>Malbec o Tannat con cuerpo; el ahumado pide tinto</td></tr>
+        <tr><td>Seco de cordero</td><td>Culantro, chicha, carne potente</td><td>Cabernet Sauvignon o Tannat estructurado</td></tr>
+        <tr><td>Suspiro limeño</td><td>Muy dulce, con oporto</td><td>Late Harvest o el mismo estilo de oporto del postre</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Maridar como profesional</h4><ul>
+        <li>Pregunta el punto de picante antes de recomendar tinto</li>
+        <li>Ofrece un espumante como comodín para toda la mesa</li>
+        <li>Sugiere por copa cuando la mesa pide platos muy distintos</li>
+        <li>Explica el porqué en una frase: "la acidez limpia la grasa"</li>
+        <li>Ten siempre una opción sin alcohol de nivel</li>
+      </ul></div>
+      <div class="box no"><h4>Errores de maridaje</h4><ul>
+        <li>Tinto grande y tánico sobre cebiche o plato picante</li>
+        <li>Blanco plano y sin acidez con cocina marina</li>
+        <li>Vino seco con el postre</li>
+        <li>Imponer "el que combina" ignorando el gusto del invitado</li>
+        <li>Una sola botella para una mesa que pidió pescado y carne</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cuando la mesa no se pone de acuerdo:</b> si unos comen pescado y otros carne, no fuerces una botella. Propón <b>vino por copa por plato</b> o un tinto ligero y fresco (Pinot Noir, Beaujolais) servido a 14–15 °C: es el gran comodín que aguanta desde una trucha hasta un lomo. Sirve la solución, no el conflicto.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Servicio de la gran botella</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Descorchar un vino de guarda o servir un magnum frente al invitado es un momento de teatro y precisión. Un servicio impecable justifica el precio de la botella; uno torpe lo arruina. Aquí el ritual importa tanto como la técnica: temperatura correcta, decantación cuando toca, y una coreografía tranquila que hace sentir al invitado bien atendido.</p>
+    <div class="card" style="margin-bottom:12px"><h4 style="font-size:14px;margin-bottom:8px">Ritual de descorche y presentación</h4>
+      <div class="paso"><div class="ico">🏷️</div><div><div class="t">Paso 1</div><h4>Presenta la botella</h4><p>Muéstrala al anfitrión con la etiqueta hacia él antes de abrir. Confirma cosecha y productor en voz clara: evita el error de abrir la botella equivocada.</p></div></div>
+      <div class="paso"><div class="ico">🔪</div><div><div class="t">Paso 2</div><h4>Corta la cápsula limpio</h4><p>Corta bajo el segundo reborde del gollete con el cuchillo del sacacorchos. Limpia el borde con una servilleta. La botella no gira: gira el sacacorchos.</p></div></div>
+      <div class="paso"><div class="ico">🌀</div><div><div class="t">Paso 3</div><h4>Extrae el corcho sin ruido</h4><p>Centra el espiral, entra recto, saca en dos tiempos con la palanca. Termina a mano para que no suene el "pop". Huele el corcho para un primer chequeo de TCA.</p></div></div>
+      <div class="paso"><div class="ico">🍷</div><div><div class="t">Paso 4</div><h4>Cata de aprobación</h4><p>Sirve un fondo de copa al anfitrión (o cátalo tú si lo pide). No es para que "apruebe el gusto", es para confirmar que no tiene defecto. Espera su asentimiento.</p></div></div>
+      <div class="paso"><div class="ico">👥</div><div><div class="t">Paso 5</div><h4>Sirve el orden correcto</h4><p>Por la derecha, sin apoyar el pico en la copa. Damas primero, luego caballeros por edad, anfitrión al final. Copa a un tercio en tintos, para que el vino respire.</p></div></div>
+      <div class="paso"><div class="ico">🔄</div><div><div class="t">Paso 6</div><h4>Gira y limpia el gollete</h4><p>Al terminar cada copa, gira un cuarto la botella y limpia el pico con el lito. Cero goteos en el mantel es la firma de un servicio de nivel.</p></div></div>
+    </div>
+    <div class="grid g3">
+      <div class="tipo"><h3>¿Cuándo decantar?</h3><div class="d"><b>Para airear:</b> tintos jóvenes y cerrados que "necesitan abrirse". <b>Para separar sedimento:</b> tintos viejos (10+ años). Un tinto viejo se decanta con vela detrás del hombro para ver cuándo llega el poso.</div></div>
+      <div class="tipo"><h3>Tinto viejo = cuidado</h3><div class="d">Botella parada horas antes, corcho frágil (usa sacacorchos de dos púas si hace falta), decantación suave y única. No lo agites: su aroma es delicado y se puede desvanecer en minutos.</div></div>
+      <div class="tipo"><h3>El magnum y formatos grandes</h3><div class="d">Pesa el doble: sírvelo con las dos manos o desde un cestillo. Sostén por el cuerpo, no por el cuello. Envejece más lento y luce en mesa: es venta pura para grupos.</div></div>
+      <div class="tipo"><h3>Espumante: sin estruendo</h3><div class="d">Inclina 45°, sujeta el corcho firme y <b>gira la botella</b>, no el corcho. Debe salir con un suspiro, no un disparo. Sirve en dos tiempos para que no rebalse la espuma.</div></div>
+      <div class="tipo"><h3>Temperatura: el error #1</h3><div class="d">El tinto "a temperatura ambiente" en Lima (24 °C) sabe alcohólico y plano. Casi todos los tintos se sirven a 15–18 °C: 15 minutos en hielera antes de servir hacen milagros.</div></div>
+      <div class="tipo"><h3>Cubitera y reposición</h3><div class="d">Blancos y espumantes en cubitera con agua + hielo + sal (enfría más rápido). Repón las copas antes de que se vacíen, pero nunca rellenes sobre un fondo caliente.</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Tipo de vino</th><th>Temperatura de servicio</th><th>Nota práctica en Lima</th></tr></thead>
+      <tbody>
+        <tr><td>Espumante / Champagne</td><td>6–8 °C</td><td>Siempre en cubitera; se calienta rapidísimo</td></tr>
+        <tr><td>Blanco ligero / Sauvignon</td><td>8–10 °C</td><td>Cubitera entre servicios</td></tr>
+        <tr><td>Blanco con cuerpo / Chardonnay</td><td>10–12 °C</td><td>Muy frío mata sus aromas de crianza</td></tr>
+        <tr><td>Rosado</td><td>8–10 °C</td><td>Como blanco ligero</td></tr>
+        <tr><td>Tinto ligero / Pinot Noir</td><td>13–15 °C</td><td>15 min en hielera antes de servir</td></tr>
+        <tr><td>Tinto potente / Malbec, Cabernet</td><td>16–18 °C</td><td>Nunca "ambiente"; refréscalo un poco</td></tr>
+        <tr><td>Dulce / Late Harvest</td><td>8–10 °C</td><td>Frío realza el equilibrio dulzor-acidez</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="callout"><b>Regla del clima:</b> "temperatura ambiente" se inventó en bodegas europeas frescas, no en un salón limeño de verano. Si tocas la botella de tinto y está tibia, va 15 minutos a la hielera. Un tinto potente servido a 22 °C pierde fruta y gana alcohol; a 17 °C es otro vino. Este es el ajuste que más eleva la percepción de calidad con costo cero.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Asesoría y venta en mesa</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El mejor sommelier técnico que no sabe leer a la mesa vende poco. Tu trabajo final es ayudar al invitado a pedir el vino que lo va a hacer feliz y que, de paso, deja buen margen — sin que se sienta presionado ni evaluado. La venta de vino de nivel es asesoría, no presión: escuchar, proponer opciones y respetar el presupuesto.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Lee antes de hablar</h3><div class="d">¿Cena de negocios, pareja, celebración? ¿Piden la carta con confianza o dudan? El lenguaje corporal te dice cuánto asesorar. Al inseguro lo guías; al conocedor lo respetas y le sacas conversación.</div></div>
+      <div class="tipo"><h3>Pregunta, no interrogues</h3><div class="d">"¿Prefieren tinto o blanco?", "¿algún estilo que suelan disfrutar?", "¿buscan algo para acompañar toda la cena o por plato?". Con dos preguntas ya sabes qué ofrecer.</div></div>
+      <div class="tipo"><h3>Ofrece rangos, no una sola</h3><div class="d">Muestra tres opciones a distinto precio ("tengo esta muy rica, esta un paso más y esta especial"). El invitado elige sin sentirse empujado y casi siempre sube de la más barata.</div></div>
+      <div class="tipo"><h3>Respeta el presupuesto</h3><div class="d">Si señalan una botella, ofrece en esa banda o justo encima, nunca por debajo (lo haces quedar mal frente a su mesa) ni muy por encima (lo incomodas). Discreción total con los precios.</div></div>
+      <div class="tipo"><h3>Vende la copa como puerta</h3><div class="d">Al dudoso: "¿le sirvo una copa para probar antes de la botella?". Baja el riesgo, muestra tu criterio y muchas veces termina en botella. La copa es tu mejor herramienta de venta.</div></div>
+      <div class="tipo"><h3>Cierra la segunda botella</h3><div class="d">Vigila el nivel. Cuando queda un tercio y la comida sigue: "¿les traigo otra o prefieren cambiar a algo para los postres?". El momento oportuno vale más que insistir.</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h4 style="font-size:14px;margin-bottom:8px">Guion de venta sugestiva de vino</h4>
+      <div class="paso"><div class="ico">👋</div><div><div class="t">Momento 1</div><h4>Acércate con la carta y una recomendación lista</h4><p>No entregues la carta y te vayas. "Esta noche el chef tiene un cordero espectacular, y tengo el Malbec ideal para acompañarlo. ¿Les cuento las opciones?"</p></div></div>
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Momento 2</div><h4>Descubre gusto y ocasión</h4><p>Dos preguntas máximo. Escucha de verdad: si dicen "algo suave", no les lleves un Tannat tánico por mucho margen que deje.</p></div></div>
+      <div class="paso"><div class="ico">🍷</div><div><div class="t">Momento 3</div><h4>Propón la terna</h4><p>Tres etiquetas en un rango de precio, nombrando la del medio como tu favorita. Describe cada una en una frase concreta y honesta.</p></div></div>
+      <div class="paso"><div class="ico">🤝</div><div><div class="t">Momento 4</div><h4>Confirma y sirve impecable</h4><p>Repite la elección, sirve con el ritual del Módulo 5. El servicio perfecto es el que hace que confíen en tu próxima recomendación.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Momento 5</div><h4>Acompaña toda la cena</h4><p>Vuelve a la mesa: repón copas, sugiere la segunda botella o un dulce para el postre. Registra en Prep! qué tomaron para la próxima visita.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Asesoría que fideliza</h4><ul>
+        <li>Escuchar el gusto real antes de recomendar</li>
+        <li>Dar opciones en el presupuesto que marcó el invitado</li>
+        <li>Explicar el vino en simple, sin abrumar con datos</li>
+        <li>Ofrecer copa para bajar el riesgo de la decisión</li>
+        <li>Registrar la preferencia del comensal para su próxima visita</li>
+      </ul></div>
+      <div class="box no"><h4>Venta que ahuyenta</h4><ul>
+        <li>Empujar la botella más cara sin leer a la mesa</li>
+        <li>Corregir o lucirte sobre el conocimiento del invitado</li>
+        <li>Decir el precio en voz alta frente a los acompañantes</li>
+        <li>Insistir con la segunda botella cuando ya dijeron que no</li>
+        <li>Recomendar por comisión y no por lo que hará feliz al comensal</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cierre del curso:</b> el sommelier avanzado no es el que más sabe, es el que hace que el invitado disfrute más y vuelva. Técnica impecable, criterio para detectar un defecto, una carta que rota y deja margen, un maridaje que sorprende y un servicio que da gusto ver — todo eso al servicio de una sola cosa: que la persona del otro lado de la mesa se lleve una noche que va a contar. Esa es la venta que no se acaba.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>TCA</b><span>Tricloroanisol, el compuesto del "gusto a corcho". Huele a cartón mojado y apaga la fruta. Defecto: se cambia la botella.</span></div>
+      <div class="gterm"><b>Decantar</b><span>Pasar el vino a un decantador, sea para airearlo (tinto joven) o para separarlo del sedimento (tinto viejo).</span></div>
+      <div class="gterm"><b>Taninos</b><span>Compuestos de la piel y pepita de la uva que secan y rugosan la boca. Dan estructura y capacidad de guarda a los tintos.</span></div>
+      <div class="gterm"><b>Acidez</b><span>El "nervio" del vino: provoca salivación y da frescura. Clave para que un vino aguante la cocina peruana ácida.</span></div>
+      <div class="gterm"><b>Cuerpo</b><span>Sensación de peso y volumen del vino en boca. Va de ligero (agua) a potente (leche entera).</span></div>
+      <div class="gterm"><b>Reducción</b><span>Defecto por falta de oxígeno: olor a huevo podrido o fósforo. A diferencia del corcho, suele corregirse aireando.</span></div>
+      <div class="gterm"><b>Off-dry</b><span>Vino con un ligero toque de azúcar residual. Ideal para domar el picante del ají en tiraditos y platos nikkei.</span></div>
+      <div class="gterm"><b>Persistencia</b><span>Los segundos que el sabor permanece tras tragar. A más largo, mayor calidad del vino.</span></div>
+      <div class="gterm"><b>Cata de aprobación</b><span>El fondo de copa que se sirve al anfitrión al abrir. Es para confirmar que no hay defecto, no para "aprobar el gusto".</span></div>
+      <div class="gterm"><b>Cristales de tartrato</b><span>Pequeños "vidritos" inofensivos en el corcho o el fondo. No son defecto: señal de vino poco manipulado.</span></div>
+      <div class="gterm"><b>Brett</b><span>Brettanomyces, levadura silvestre. En exceso da aromas a establo y curita; poco puede aportar rusticidad.</span></div>
+      <div class="gterm"><b>Magnum</b><span>Botella de 1,5 L (dos botellas). Envejece más lento y luce en mesa; se sirve con las dos manos o desde cestillo.</span></div>
+      <div class="gterm"><b>Maridaje por contraste</b><span>Unir opuestos que se equilibran: un espumante ácido que corta la grasa de un chicharrón.</span></div>
+      <div class="gterm"><b>Retronasal</b><span>Vía por la que se perciben aromas al exhalar con el vino en boca. Revela sabores que la nariz directa no capta.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Sommelier avanzado · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Cata en 20 segundos</h4><ul>
+          <li>Vista: color y limpidez sobre servilleta blanca</li>
+          <li>Nariz quieta: caza defectos primero</li>
+          <li>Nariz agitada: 2–3 aromas para describir</li>
+          <li>Boca: acidez, taninos, alcohol, persistencia</li>
+          <li>Nunca describas un vino que no acabas de probar</li>
+        </ul></div>
+        <div class="op-box"><h4>Defectos: qué hacer</h4><ul>
+          <li>Corcho/TCA (cartón mojado): cambiar botella</li>
+          <li>Oxidación (nuez, teja): cambiar</li>
+          <li>Reducción (huevo/fósforo): airear, reevaluar</li>
+          <li>Avinagrado (pica): cambiar</li>
+          <li>Tartrato ("vidritos"): NO es defecto, sirve normal</li>
+        </ul></div>
+        <div class="op-box"><h4>Maridaje con cocina peruana</h4><ul>
+          <li>Acidez del vino ≥ acidez del plato</li>
+          <li>Picante: off-dry o tinto ligero frío, nunca tánico</li>
+          <li>Cebiche/tiradito: Sauvignon, Albariño, espumante</li>
+          <li>Lomo saltado / anticuchos: Malbec, Tannat</li>
+          <li>Postre: el vino más dulce que el plato</li>
+        </ul></div>
+        <div class="op-box"><h4>Temperaturas de servicio</h4><ul>
+          <li>Espumante 6–8 °C · Blanco 8–12 °C</li>
+          <li>Tinto ligero 13–15 °C · Tinto potente 16–18 °C</li>
+          <li>En Lima: 15 min de hielera al tinto tibio</li>
+          <li>Espumante: gira la botella, no el corcho</li>
+        </ul></div>
+        <div class="op-box"><h4>Servicio de gran botella</h4><ul>
+          <li>Presenta etiqueta y confirma cosecha</li>
+          <li>Corta cápsula limpia; gira el sacacorchos, no la botella</li>
+          <li>Huele el corcho; cata de aprobación al anfitrión</li>
+          <li>Sirve por la derecha; gira y limpia el gollete</li>
+          <li>Tinto viejo: decantar con vela, sin agitar</li>
+        </ul></div>
+        <div class="op-box"><h4>Venta y asesoría</h4><ul>
+          <li>Lee la mesa antes de hablar</li>
+          <li>Dos preguntas, luego ofrece una terna de precios</li>
+          <li>Respeta el presupuesto; nunca digas el precio en voz alta</li>
+          <li>La copa baja el riesgo y abre la botella</li>
+          <li>Vigila el nivel: ofrece la segunda en el momento justo</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Sommelier avanzado · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

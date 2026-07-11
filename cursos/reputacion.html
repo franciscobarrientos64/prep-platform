@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Reputación online y reseñas · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230e7c66'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Reputación online</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0e7c66">
+    <div class="k">Academia Prep! · Administración / Liderazgo</div>
+    <h1>Reputación online y reseñas</h1>
+    <p>Hoy la primera mesa no es la de la puerta: es la ficha de Google. Este curso es para el administrador y el encargado de marketing. Aprendes a monitorear Google y TripAdvisor, a responder toda reseña con criterio, a pedir reseñas sin rogar y a manejar una crítica negativa sin incendiar la marca. Sin agencias caras: con una rutina de 15 minutos al día.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Administrador / Marketing</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> antes de reservar, el comensal googlea "restaurante italiano Miraflores" y decide en 8 segundos mirando estrellas y las 3 reseñas más recientes. Subir de 4.1 a 4.5 estrellas puede llenarte un martes muerto; una reseña de 1 estrella sin responder ahuyenta a 20 personas que ni conociste. La reputación no se compra: se administra todos los días, reseña por reseña.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Por qué la reputación mueve la caja</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La reseña no es orgullo del chef: es un canal de venta. En Lima, donde compiten cientos de restaurantes por cuadra en Miraflores, Barranco y San Isidro, la ficha de Google es tu vitrina 24/7 y el buscador decide a quién muestra primero según tus estrellas, la cantidad de reseñas y qué tan seguido respondes. Este módulo fija el mapa: dónde te reseñan, qué mira el algoritmo y qué números vigilar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Google Business Profile</h3><div class="d">El campo de batalla principal. Es lo que sale en el mapa y en la búsqueda. Reúne el 80% de tus reseñas y define si apareces cuando alguien busca "dónde comer cerca".</div><div class="s">prioridad #1</div></div>
+      <div class="tipo"><h3>TripAdvisor</h3><div class="d">Clave para el turista extranjero y el comensal de ocasión especial. Ranking por ciudad ("#12 de 4.800 en Lima"). Menos volumen que Google, pero muy visible para quien no es de barrio.</div><div class="s">prioridad #2</div></div>
+      <div class="tipo"><h3>Redes e IA</h3><div class="d">Comentarios de Instagram/Facebook, TikTok y reseñas dentro de PedidosYa/Rappi. Cada vez más gente pregunta a ChatGPT "buenos restaurantes en Barranco" y la IA lee tus reseñas.</div><div class="s">prioridad #3</div></div>
+      <div class="tipo"><h3>Estrellas ≠ promedio simple</h3><div class="d">Google pondera reseñas recientes y con texto por encima de las viejas. Un buen mes reciente pesa más que 200 reseñas de hace 3 años. La consistencia importa más que un pico.</div><div class="s">reciente pesa más</div></div>
+      <div class="tipo"><h3>Responder también rankea</h3><div class="d">Google favorece a los negocios que responden. Contestar reseñas (buenas y malas) es señal de local activo y sube tu visibilidad local, no solo tu imagen.</div><div class="s">responder = SEO local</div></div>
+      <div class="tipo"><h3>Volumen y frescura</h3><div class="d">30 reseñas frescas de 4.6 venden más que 400 congeladas de 4.8. Un flujo constante de reseñas nuevas le dice al algoritmo —y al comensal— que el local está vivo.</div><div class="s">flujo constante</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Métrica</th><th>Qué es</th><th>Meta sana para un restaurante de nivel</th></tr></thead>
+      <tbody>
+        <tr><td><b>Rating promedio</b></td><td>Estrellas visibles en Google/TripAdvisor</td><td>≥ 4.5 en Google · Top 10% de tu categoría en la ciudad</td></tr>
+        <tr><td><b>Volumen mensual</b></td><td>Reseñas nuevas por mes</td><td>15–40 nuevas/mes según aforo (nunca cero)</td></tr>
+        <tr><td><b>Tasa de respuesta</b></td><td>% de reseñas contestadas</td><td>100% de las negativas · ≥ 80% de todas</td></tr>
+        <tr><td><b>Tiempo de respuesta</b></td><td>Cuánto tardas en contestar</td><td>&lt; 24 h las negativas · &lt; 72 h el resto</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El costo de ignorar:</b> una crítica de 1★ sin responder queda arriba, fresca y visible por meses. Con un ticket promedio de S/ 120 y mesa de 2 personas, si esa reseña espanta a 15 reservas al mes, son ~S/ 3.600 mensuales que se pierden por no invertir 10 minutos en responder bien.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Monitoreo: tu tablero de escucha</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">No puedes gestionar lo que no ves. El primer trabajo del administrador no es responder: es enterarse el mismo día. Aquí montas un sistema simple para que ninguna reseña se te escape, sin pagar herramientas caras. La meta: que a las 10 a.m. sepas exactamente qué se dijo de tu restaurante en las últimas 24 horas.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🔔</div><div><div class="t">Una sola vez · setup</div><h4>Reclama y verifica tus fichas</h4><p>Confirma que eres dueño del Perfil de Empresa de Google y del listado de TripAdvisor (botón "¿Es tu negocio?"). Sin verificar, no puedes responder. Activa las notificaciones por correo de reseñas nuevas en ambos.</p></div></div>
+      <div class="paso"><div class="ico">📱</div><div><div class="t">En tu celular</div><h4>Instala las apps y fija alertas</h4><p>App de Google Maps / Google Business y la app de TripAdvisor con notificaciones push. Cada reseña nueva te debe llegar como aviso al teléfono, igual que un pedido de delivery. Sin alerta, te enteras tarde y respondes tarde.</p></div></div>
+      <div class="paso"><div class="ico">🗂️</div><div><div class="t">Cada mañana · 5 min</div><h4>Barrido diario de plataformas</h4><p>Recorre en orden: Google, TripAdvisor, comentarios de Instagram/Facebook y reseñas dentro de PedidosYa/Rappi. Anota lo nuevo. Con Prep!, la pestaña Reseñas de Voz del Cliente centraliza Google y TripAdvisor en una sola vista con estado "sin responder".</p></div></div>
+      <div class="paso"><div class="ico">🏷️</div><div><div class="t">Al leer cada una</div><h4>Clasifica: positiva, neutra o crítica</h4><p>Marca cada reseña con un color/etiqueta: verde (4–5★, elogio), amarillo (3★, tibia o mixta) y roja (1–2★, problema real). Esto define la prioridad y el tono de tu respuesta. Las rojas van primero, siempre.</p></div></div>
+      <div class="paso"><div class="ico">🔎</div><div><div class="t">Semanal · 5 min</div><h4>Cruza la reseña con la operación</h4><p>Cuando alguien menciona fecha, plato o mesero ("fuimos el sábado, el risotto llegó frío"), revisa el POS y el registro de esa noche: qué turno, qué mozo, qué cocina. Así detectas si es un caso aislado o un patrón que hay que corregir en piso.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Monitoreo que funciona</h4><ul>
+        <li>Alertas push activas: te enteras el mismo día.</li>
+        <li>Una persona dueña del tablero (tú, el admin), no "todos y nadie".</li>
+        <li>Registro simple: fecha, plataforma, estrellas, tema, estado.</li>
+        <li>Revisas también las reseñas de tus 3 competidores directos.</li>
+      </ul></div>
+      <div class="box no"><h4>Monitoreo que falla</h4><ul>
+        <li>Entrar "cuando me acuerdo" y encontrar 12 reseñas sin responder.</li>
+        <li>Enterarte de una crítica por WhatsApp de un amigo, tarde.</li>
+        <li>Depender solo de que el mozo te avise.</li>
+        <li>Mirar solo el promedio y nunca leer el texto.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla del tablero único:</b> designa a UNA persona responsable de leer y clasificar todo cada mañana. La respuesta la puede escribir el marketing, pero la escucha diaria necesita un solo dueño para que nada se pierda entre "yo pensé que lo veías tú".</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Responder reseñas: el arte de contestar</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Responder no es solo para las malas. Cada respuesta la leen decenas de futuros comensales, no solo quien la escribió: es marketing público gratis. Una respuesta cálida y personalizada a una reseña de 5★ vende tanto como una foto del plato. Aquí tienes la estructura para responder positivas, neutras y para no cometer los errores clásicos.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Agradece con nombre</h3><div class="d">Usa el nombre de la persona y el del restaurante. "Gracias, María" pesa más que "Estimado cliente". Personal, nunca robótico.</div><div class="s">humano, no plantilla</div></div>
+      <div class="tipo"><h3>Menciona un detalle real</h3><div class="d">Recoge algo que dijo: "nos alegra que el ravioli de osobuco te conquistara". Demuestra que leíste, no que copiaste y pegaste.</div><div class="s">demuestra que leíste</div></div>
+      <div class="tipo"><h3>Invita a volver</h3><div class="d">Cierra con una razón concreta para regresar: "la próxima prueba el tiramisú, es de la casa". Un gancho, no un "vuelva pronto" vacío.</div><div class="s">gancho de retorno</div></div>
+      <div class="tipo"><h3>Firma con tu cargo</h3><div class="d">"Un abrazo, Lucía — administradora de Casa Italia". Poner cara y nombre transmite que detrás hay personas que se importan.</div><div class="s">pon nombre y cargo</div></div>
+      <div class="tipo"><h3>Reseña neutra (3★)</h3><div class="d">Agradece lo bueno, reconoce lo mejorable sin ponerte a la defensiva e invita a darte otra oportunidad. La tibia se convierte en fan si respondes bien.</div><div class="s">rescata al indeciso</div></div>
+      <div class="tipo"><h3>Sin texto, solo estrellas</h3><div class="d">Un 5★ pelado igual merece un "¡Gracias por las 5 estrellas!". Un 3★ sin texto: agradece e invita amablemente a contarte qué faltó.</div><div class="s">responde igual</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Tipo</th><th>Objetivo</th><th>Respuesta modelo (español neutro)</th></tr></thead>
+      <tbody>
+        <tr><td><b>5★ con elogio</b></td><td>Fidelizar y lucir cálido</td><td>"¡Gracias, Andrés! Nos encanta que el osobuco fuera el protagonista de tu noche. Te esperamos pronto para que pruebes nuestra carta de vinos. — Lucía, Casa Italia"</td></tr>
+        <tr><td><b>4★ mixta</b></td><td>Valorar y corregir sin excusas</td><td>"Gracias por venir, Rosa. Nos alegra que la pasta te gustara y tomamos nota de la espera en la entrada; ya estamos ajustando los tiempos del sábado. ¡Vuelve pronto!"</td></tr>
+        <tr><td><b>3★ tibia</b></td><td>Convertir al indeciso</td><td>"Gracias por tu sinceridad, Carlos. Nos hubiera gustado dejarte una mejor impresión. Nos encantaría que nos des otra oportunidad; escríbenos y con gusto te recibimos personalmente."</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí, al responder positivas</h4><ul>
+        <li>Personaliza cada una: nombre + detalle mencionado.</li>
+        <li>Varía las palabras; no pegues la misma frase 40 veces.</li>
+        <li>Responde en el idioma de la reseña (inglés al turista).</li>
+        <li>Suma un dato de venta suave: un plato, un evento, el brunch.</li>
+      </ul></div>
+      <div class="box no"><h4>No, al responder</h4><ul>
+        <li>Copiar y pegar la misma respuesta robótica a todos.</li>
+        <li>Pedir el correo o teléfono en público sin motivo.</li>
+        <li>Meter promociones agresivas o descuentos en cada respuesta.</li>
+        <li>Dejar las positivas sin responder "porque no urgen".</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Recuerda para quién escribes:</b> respondes a una persona, pero te leen cientos. Cada respuesta es una mini-página de tu carta pública. Tono cálido, cero corporativo, cero defensivo. Si suena a call center, perdiste la oportunidad.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Manejar críticas negativas sin quemarte</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Aquí se separa el amateur del profesional. Una crítica negativa bien respondida puede recuperar al cliente y, más importante, impresiona a los cientos que la leen después. La regla de oro: nunca respondas en caliente. Este protocolo de 6 pasos —cercano al método H.E.A.R.D.— te ordena la cabeza para responder con clase, incluso ante una reseña injusta.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">⏳</div><div><div class="t">Paso 1 · antes de escribir</div><h4>Respira: no respondas en caliente</h4><p>Si la reseña te hierve la sangre, espera. Redacta un borrador, guárdalo y léelo en 30 minutos. Nunca respondas defendiéndote en el primer impulso: lo que publicas queda para siempre y te leen todos.</p></div></div>
+      <div class="paso"><div class="ico">🔍</div><div><div class="t">Paso 2 · investiga</div><h4>Verifica qué pasó de verdad</h4><p>Cruza con el POS, el mozo y la cocina de esa noche. ¿La demora fue real? ¿El plato salió mal? Responde con hechos, no con suposiciones. A veces la reseña tiene razón; a veces exagera; a veces es de un competidor.</p></div></div>
+      <div class="paso"><div class="ico">🙏</div><div><div class="t">Paso 3 · reconoce</div><h4>Discúlpate y valida la molestia</h4><p>Empieza lamentando la experiencia, sin peros: "Lamentamos mucho que tu visita no estuviera a la altura". Reconocer no es admitir culpa legal: es mostrar empatía. El "pero" al inicio borra la disculpa.</p></div></div>
+      <div class="paso"><div class="ico">🛠️</div><div><div class="t">Paso 4 · responsabilízate y actúa</div><h4>Di qué vas a hacer</h4><p>Muestra que ya tomaste medidas: "hablamos con el equipo de cocina para que la temperatura de salida sea la correcta". Concreto y en presente. El lector quiere ver que el error no se repetirá.</p></div></div>
+      <div class="paso"><div class="ico">📩</div><div><div class="t">Paso 5 · lleva la conversación afuera</div><h4>Ofrece un canal privado</h4><p>Invita a resolverlo por fuera: "nos encantaría compensarte; escríbenos a reservas@... o al WhatsApp del local". Así detienes el ida y vuelta público y le das trato personal, sin discutir detalles delante de todos.</p></div></div>
+      <div class="paso"><div class="ico">🤝</div><div><div class="t">Paso 6 · cierra con dignidad</div><h4>Agradece y deja la puerta abierta</h4><p>Cierra agradeciendo el comentario y ofreciendo recibirlos personalmente. Si luego resuelves y el cliente queda contento, muchas veces edita su reseña o sube la calificación. Nunca exijas que la borre.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí, ante una crítica</h4><ul>
+        <li>Responde en menos de 24 h, con calma y en público.</li>
+        <li>Discúlpate primero, explica después (breve).</li>
+        <li>Ofrece resolverlo por privado y hazlo de verdad.</li>
+        <li>Mantén el mismo tono cálido aunque la reseña sea injusta.</li>
+      </ul></div>
+      <div class="box no"><h4>No, jamás</h4><ul>
+        <li>Discutir, contradecir o llamar mentiroso al comensal en público.</li>
+        <li>Poner excusas ("estábamos llenos", "es tu culpa por no avisar").</li>
+        <li>Ironía, sarcasmo o mayúsculas de enojo.</li>
+        <li>Exponer datos del cliente o detalles de su consumo.</li>
+      </ul></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Caso real</th><th>Respuesta pública sugerida</th></tr></thead>
+      <tbody>
+        <tr><td><b>"Esperamos 40 min por el fondo"</b></td><td>"Miguel, lamentamos la espera; no es nuestro estándar. Ese sábado tuvimos un pico y ya reforzamos la línea de cocina. Nos encantaría recibirte de nuevo; escríbenos por WhatsApp y te atendemos personalmente."</td></tr>
+        <tr><td><b>"Caro para lo que es"</b></td><td>"Gracias por tu comentario, Ana. Trabajamos con pasta fresca hecha en casa y productos de temporada, y entendemos que el precio debe reflejar la experiencia completa. Tomamos nota y esperamos verte pronto."</td></tr>
+        <tr><td><b>Reseña 1★ sin texto o sospechosa</b></td><td>"Hola, no encontramos tu visita en nuestros registros y nos gustaría entender qué pasó. Escríbenos a reservas@... para ayudarte. Si fue un error, agradeceríamos que lo revises." (Si es falsa: reportar a Google.)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Cuándo reportar en vez de responder:</b> Google permite marcar reseñas que violan sus políticas —spam, insultos, competidor, extorsión ("borro la reseña si me invitan la cena"), o de alguien que nunca vino. Repórtala y responde con cortesía neutra mientras tanto. No la ignores: repórtala y contesta breve.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Solicitar reseñas sin rogar</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La mejor defensa contra una mala reseña es un flujo constante de buenas. La mayoría de comensales felices nunca reseña… salvo que se lo pidas bien, en el momento justo. Pedir reseñas no es mendigar: es cerrar el círculo del buen servicio. La clave es el momento, la facilidad y hacerlo sin presionar ni comprar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El momento pico</h3><div class="d">Pide cuando la felicidad está alta: al traer el postre de cortesía, al cerrar una cena que salió redonda, cuando el comensal elogió en voz alta. Nunca a una mesa apurada o incómoda.</div><div class="s">timing lo es todo</div></div>
+      <div class="tipo"><h3>QR en la cuenta</h3><div class="d">Un QR en la pre-cuenta o en un pequeño soporte de mesa que lleve directo a "escribir reseña" en Google. Cero fricción: escanea y escribe. Prep! imprime el QR en la pre-cuenta desde el POS.</div><div class="s">un escaneo, listo</div></div>
+      <div class="tipo"><h3>WhatsApp post-visita</h3><div class="d">Al día siguiente, un mensaje breve al comensal que dejó su número: "¡Gracias por venir! Si la pasaste bien, nos ayudaría muchísimo tu reseña 👉 [link]". Personal y oportuno.</div><div class="s">al día siguiente</div></div>
+      <div class="tipo"><h3>El link directo</h3><div class="d">Usa el enlace corto de Google ("Pedir reseñas" en tu perfil te da un g.page/…/review). Que caiga directo en la caja de escribir, no en la ficha. Cada clic extra pierde gente.</div><div class="s">directo a escribir</div></div>
+      <div class="tipo"><h3>QR por mesero/mesa</h3><div class="d">Un QR distinto por mozo o zona te dice quién genera mejores reseñas. El mesero que más 5★ trae merece reconocimiento; el dato también sirve para entrenar al resto.</div><div class="s">trackea al equipo</div></div>
+      <div class="tipo"><h3>Constancia, no ráfagas</h3><div class="d">Mejor 2–3 pedidos bien hechos por servicio que una campaña de un día. Google castiga las ráfagas artificiales de reseñas; el flujo natural y constante es lo que rankea.</div><div class="s">goteo, no diluvio</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí, al pedir reseñas</h4><ul>
+        <li>Pide en persona, con naturalidad, en el momento de alegría.</li>
+        <li>Facilita el camino: QR o link directo a la caja de texto.</li>
+        <li>Explica que ayuda al restaurante y al equipo, con honestidad.</li>
+        <li>Agradece igual, deje o no la reseña.</li>
+      </ul></div>
+      <div class="box no"><h4>No, nunca</h4><ul>
+        <li>Comprar reseñas o pedirlas a amigos que no vinieron (Google lo detecta y penaliza).</li>
+        <li>Ofrecer descuento o postre "a cambio" de una reseña (prohibido por Google).</li>
+        <li>Filtrar: pedir 5★ solo a contentos y esconder el resto ("review gating", sancionado).</li>
+        <li>Insistir a una mesa incómoda o presionar por una nota alta.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Guion de 8 segundos para el mozo:</b> "Me alegra muchísimo que la pasaran bien. Si tienen un minuto, dejarnos una reseña en Google nos ayuda un montón —aquí está el QR en la cuenta. ¡Gracias!" Sin presión, con sonrisa, y solo a quien se ve contento. Convierte la sobremesa feliz en reputación.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Rutina, métricas y plan de acción</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La reputación no es un proyecto de una semana: es un hábito. Los restaurantes con mejor reputación no tienen suerte, tienen rutina. Este módulo convierte todo lo anterior en una agenda diaria, semanal y mensual que cabe en 15 minutos al día, y define qué medir para saber si vas ganando.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">☀️</div><div><div class="t">Diario · 15 min (mañana)</div><h4>Escucha y responde lo urgente</h4><p>Barrido de Google y TripAdvisor. Clasifica lo nuevo. Responde TODAS las negativas del día antes del mediodía y al menos las positivas destacadas. Confirma que los QR/links de reseña estén activos en las cuentas.</p></div></div>
+      <div class="paso"><div class="ico">📅</div><div><div class="t">Semanal · 30 min</div><h4>Cierra pendientes y detecta patrones</h4><p>Responde el resto de reseñas de la semana. Revisa si un tema se repite (demora los sábados, un plato específico, un mozo). Lleva ese hallazgo al briefing del equipo. Mira las reseñas de 3 competidores para calibrar.</p></div></div>
+      <div class="paso"><div class="ico">📊</div><div><div class="t">Mensual · 1 h</div><h4>Reporte de reputación</h4><p>Compara mes vs mes: rating, número de reseñas nuevas, tasa y tiempo de respuesta, temas más mencionados. Comparte el resumen con gerencia y cocina. Fija la meta del mes siguiente (ej.: subir de 4.4 a 4.5, +20 reseñas).</p></div></div>
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Continuo</div><h4>Cierra el círculo con la operación</h4><p>Lo que dicen las reseñas debe cambiar cómo opera el restaurante. Si tres comensales mencionan la espera en la entrada, es un problema de anfitrión, no de marketing. La reseña es termómetro; la mejora ocurre en el piso.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>KPI mensual</th><th>Cómo lo lees</th><th>Señal de alerta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Rating Google</b></td><td>Promedio actual vs mes pasado</td><td>Baja de 0.1★ o más: revisa qué cambió en el servicio</td></tr>
+        <tr><td><b>Reseñas nuevas/mes</b></td><td>Volumen del flujo</td><td>Menos de 10: tu equipo no está pidiendo reseñas</td></tr>
+        <tr><td><b>Tasa de respuesta</b></td><td>% contestadas</td><td>Debajo de 80%, o alguna negativa sin responder &gt;24 h</td></tr>
+        <tr><td><b>Temas negativos</b></td><td>Palabra que más se repite en las críticas</td><td>El mismo tema 3 veces = problema operativo real</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El círculo virtuoso:</b> buen servicio → pides reseña en el pico de alegría → llegan 5★ frescas → subes en Google → más gente te encuentra → más mesas → más chances de sorprender → más 5★. La reputación es el reflejo público de tu operación. Arréglala en el piso y las estrellas siguen solas.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Google Business Profile</b><span>Antes "Google My Business". Tu ficha gratuita en Google Maps y búsqueda: horario, fotos, menú y reseñas. Tu vitrina más importante.</span></div>
+      <div class="gterm"><b>TripAdvisor</b><span>Plataforma de reseñas de viaje y gastronomía con ranking por ciudad. Muy usada por turistas y para ocasiones especiales.</span></div>
+      <div class="gterm"><b>Rating / calificación</b><span>El promedio de estrellas (1 a 5) que ve el público. Google pondera las reseñas recientes y con texto por encima de las viejas.</span></div>
+      <div class="gterm"><b>Reseña / review</b><span>Opinión pública de un comensal con estrellas y, a veces, texto y fotos. Puede o no incluir comentario escrito.</span></div>
+      <div class="gterm"><b>Tasa de respuesta</b><span>Porcentaje de reseñas a las que el restaurante contestó. Responder es señal de local activo y mejora tu posición local.</span></div>
+      <div class="gterm"><b>Tiempo de respuesta</b><span>Cuánto tardas en contestar una reseña. Ideal: menos de 24 h las negativas, menos de 72 h el resto.</span></div>
+      <div class="gterm"><b>H.E.A.R.D.</b><span>Método para responder quejas: Hear (escuchar), Empathize (empatizar), Apologize (disculparse), Resolve (resolver), Diagnose (diagnosticar).</span></div>
+      <div class="gterm"><b>Review gating</b><span>Filtrar y pedir reseña solo a clientes contentos, escondiendo a los insatisfechos. Prohibido por Google; puede sancionar tu ficha.</span></div>
+      <div class="gterm"><b>SEO local</b><span>Todo lo que te hace aparecer más arriba cuando alguien busca "restaurante cerca". Reseñas frescas y respondidas lo potencian.</span></div>
+      <div class="gterm"><b>Reseña falsa</b><span>Opinión de alguien que no vino, un competidor o un bot. Se puede reportar a Google/TripAdvisor si viola sus políticas.</span></div>
+      <div class="gterm"><b>Link directo de reseña</b><span>Enlace corto (g.page/…/review) que abre la caja para escribir la reseña de golpe, sin pasos intermedios. Reduce la fricción.</span></div>
+      <div class="gterm"><b>Sentimiento</b><span>El tono general de una reseña o del conjunto: positivo, neutro o negativo. Sirve para leer la tendencia, no solo el promedio.</span></div>
+      <div class="gterm"><b>Recuperación de servicio</b><span>Convertir una mala experiencia en una buena impresión mediante una respuesta y solución excelentes. Fideliza más que una noche perfecta.</span></div>
+      <div class="gterm"><b>Volumen de reseñas</b><span>Cantidad total y ritmo de reseñas nuevas. Un flujo constante rankea mejor que muchas reseñas viejas y estancadas.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en oficina</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Reputación online · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Dónde vigilar</h4><ul>
+          <li>Google Business Profile (prioridad #1)</li>
+          <li>TripAdvisor (turista / ocasión especial)</li>
+          <li>Instagram/Facebook, PedidosYa/Rappi</li>
+          <li>Alertas push activas en el celular</li>
+        </ul></div>
+        <div class="op-box"><h4>Metas sanas</h4><ul>
+          <li>Rating ≥ 4.5 en Google</li>
+          <li>15–40 reseñas nuevas al mes (nunca cero)</li>
+          <li>100% de negativas respondidas</li>
+          <li>&lt; 24 h las negativas · &lt; 72 h el resto</li>
+        </ul></div>
+        <div class="op-box"><h4>Responder positivas</h4><ul>
+          <li>Nombre + detalle real que mencionó</li>
+          <li>Invita a volver con un gancho concreto</li>
+          <li>Firma con tu nombre y cargo</li>
+          <li>Varía las palabras, nada de copiar y pegar</li>
+        </ul></div>
+        <div class="op-box"><h4>Crítica negativa (6 pasos)</h4><ul>
+          <li>1. Respira, no respondas en caliente</li>
+          <li>2. Investiga qué pasó (POS/mozo/cocina)</li>
+          <li>3. Discúlpate sin "peros"</li>
+          <li>4. Di qué acción tomaste</li>
+          <li>5. Lleva a un canal privado</li>
+          <li>6. Cierra con dignidad, nunca discutas</li>
+        </ul></div>
+        <div class="op-box"><h4>Pedir reseñas (legítimo)</h4><ul>
+          <li>En el pico de alegría (postre / cierre feliz)</li>
+          <li>QR en la pre-cuenta + link directo</li>
+          <li>WhatsApp al día siguiente</li>
+          <li>Constante, sin comprar ni condicionar</li>
+        </ul></div>
+        <div class="op-box"><h4>Nunca hagas esto</h4><ul>
+          <li>Discutir o culpar al comensal en público</li>
+          <li>Copiar y pegar la misma respuesta</li>
+          <li>Comprar reseñas o dar premio a cambio</li>
+          <li>Dejar una negativa sin responder</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Reputación online y reseñas · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

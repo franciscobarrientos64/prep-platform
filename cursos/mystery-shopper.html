@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Mystery shopper: cómo subir el puntaje · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235b3aa6'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Mystery shopper</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#5b3aa6">
+    <div class="k">Academia Prep! · Administración / Liderazgo</div>
+    <h1>Mystery shopper: cómo subir el puntaje</h1>
+    <p>Un cliente incógnito entra a tu restaurante, vive el servicio completo como cualquier invitado y después califica cada detalle contra un checklist. Este curso te enseña, como líder, a entender de dónde sale ese puntaje, qué áreas se evalúan, cómo leer el reporte sin tomártelo personal y —lo importante— cómo convertir cada hallazgo en una acción concreta que suba el score visita tras visita.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Líderes</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el puntaje del mystery shopper no es una nota para colgar en la pared: es el retrato más honesto de lo que vive tu invitado cuando nadie del equipo lo trata distinto por ser "el evaluador". Un score que sube significa mesas que vuelven, mejores reseñas y menos quejas. Uno que baja avisa de una fuga antes de que la sientas en la caja. Tu trabajo como líder es leerlo y actuar, no defenderte.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es y cómo funciona la evaluación</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Un mystery shopper (comprador incógnito) es una persona contratada que visita tu local sin avisar, se hace pasar por un invitado normal, vive todo el recorrido —reservar, llegar, sentarse, pedir, comer, pagar— y llena una evaluación estandarizada con evidencia. La gracia es que nadie sabe que es él: por eso mide la operación real, no la de gala.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Es anónimo a propósito</h3><div class="d">No lo vas a reconocer. Puede reservar a nombre falso, venir solo o en pareja, en hora pico o valle. Si tu equipo "adivina" quién es y lo atiende distinto, la medición se arruina. Por eso el estándar tiene que ser para todos.</div><div class="s">nadie sabe quién es</div></div>
+      <div class="tipo"><h3>Sigue un checklist fijo</h3><div class="d">No califica "por sensación". Marca ítem por ítem: ¿lo saludaron en menos de 30 segundos?, ¿ofrecieron agua?, ¿el plato salió a temperatura?, ¿el baño estaba limpio? Cada ítem es un punto medible.</div><div class="s">ítem por ítem</div></div>
+      <div class="tipo"><h3>Recoge evidencia</h3><div class="d">Anota horas, nombres del mozo si los da, y muchas veces toma fotos discretas (la mesa, el baño, el plato) y guarda la boleta. El reporte no es su opinión: viene con pruebas.</div><div class="s">fotos + tiempos + boleta</div></div>
+      <div class="tipo"><h3>Mide momentos, no personas</h3><div class="d">No busca "pillar" a un mozo. Evalúa el sistema: si tres visitas fallan en lo mismo, el problema es el proceso o el entrenamiento, no una persona con mal día.</div><div class="s">falla el proceso</div></div>
+      <div class="tipo"><h3>Se repite en el tiempo</h3><div class="d">Una visita es una foto; varias son una película. El valor real aparece al comparar meses y sedes: ves si una acción funcionó o si un problema es crónico.</div><div class="s">tendencia > foto única</div></div>
+      <div class="tipo"><h3>Termina en un puntaje</h3><div class="d">Cada ítem cumplido suma; los ítems pesan distinto según su importancia. El total se expresa como % (ej. 87/100). Ese número es tu score, y es lo que este curso te enseña a subir.</div><div class="s">score = % del checklist</div></div>
+    </div>
+    <div class="callout"><b>El recorrido que vive el evaluador:</b> reserva → llegada y bienvenida → ser sentado → toma de pedido → tiempos de comida → calidad de platos y bebidas → limpieza e infraestructura → la cuenta y el pago → la despedida. En cada etapa hay ítems. Tu ventaja como líder es que ese recorrido es el mismo que vive TODO invitado: si lo cuidas siempre, el score llega solo.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Las áreas que se evalúan (los "mundos")</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">La evaluación se divide en bloques temáticos —los llamamos "mundos"— que cubren el recorrido completo. Cada mundo agrupa varios ítems y aporta un porcentaje al puntaje final. Conocerlos de memoria te permite saber, apenas lees el reporte, en qué parte del servicio se te está yendo el puntaje.</p>
+    <div class="card">
+      <div style="overflow-x:auto">
+      <table class="t">
+        <thead><tr><th>Mundo</th><th>Qué observa el evaluador</th><th>Ejemplo de ítem que califica</th></tr></thead>
+        <tbody>
+          <tr><td><b>Reserva</b></td><td>Facilidad de reservar, trato al teléfono/WhatsApp, confirmación.</td><td>¿Contestaron en menos de 3 timbres y confirmaron hora, nombre y n.º de personas?</td></tr>
+          <tr><td><b>Estacionamiento / llegada</b></td><td>Señalización, valet, seguridad al llegar.</td><td>¿Había alguien que orientara dónde estacionar o recibiera en la puerta?</td></tr>
+          <tr><td><b>Bienvenida y despedida</b></td><td>Saludo en la puerta, tiempo de espera, cierre al irse.</td><td>¿Lo saludaron en menos de 30 seg y lo despidieron por su nombre invitándolo a volver?</td></tr>
+          <tr><td><b>Infraestructura</b></td><td>Limpieza de baños, salón, iluminación, música, temperatura, olor.</td><td>¿El baño tenía papel, jabón, estaba seco y sin mal olor?</td></tr>
+          <tr><td><b>Mesa</b></td><td>Montaje, mantel/individual, cristalería y cubiertos limpios, decoración.</td><td>¿La copa tenía marcas de agua o labial? ¿Faltaba algún cubierto?</td></tr>
+          <tr><td><b>Alimentos y bebidas</b></td><td>Temperatura, presentación, sabor, porción, que llegue lo pedido.</td><td>¿El fondo salió caliente y tal como lo describe la carta?</td></tr>
+          <tr><td><b>Mesero</b></td><td>Conocimiento de la carta, sugerencias, atención, tiempos de respuesta.</td><td>¿Supo recomendar un plato y advertir sobre un alérgeno al preguntar?</td></tr>
+          <tr><td><b>Vino / bebidas</b></td><td>Carta de vinos, sugerencia de maridaje, servicio correcto de la copa.</td><td>¿Ofrecieron probar el vino antes de servir y sirvieron a la temperatura correcta?</td></tr>
+          <tr><td><b>Pago</b></td><td>Tiempo en traer la cuenta, exactitud, medios de pago, boleta.</td><td>¿La cuenta llegó en menos de 5 min de pedirla y sin errores de cobro?</td></tr>
+          <tr><td><b>Administración</b></td><td>Presencia del líder, resolución de imprevistos, orden general.</td><td>¿Se vio a un responsable atento al piso durante el servicio?</td></tr>
+          <tr><td><b>Lealtad</b></td><td>Invitación a volver, captura de datos, programa de recompensas.</td><td>¿Ofrecieron registrar al invitado o contarle del beneficio de volver?</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="callout"><b>Ojo de líder:</b> los mundos que más se descuidan casi nunca son los del plato —esos suelen estar cuidados— sino <b>Infraestructura</b> (un baño sin papel a las 9 pm) y <b>Lealtad</b> (nadie invitó a volver ni pidió el dato). Son puntos "gratis": no cuestan producto ni talento extra, solo rutina. Empieza tu revisión por ahí.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Leer el reporte sin tomártelo personal</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Cuando llega el reporte, la reacción natural del líder es defenderse: "ese día estábamos cortos", "el evaluador exageró". Bórralo. El reporte es un regalo: te dice gratis lo que un invitado molesto nunca te diría, se iría y contaría a diez. Léelo con esta secuencia para sacarle jugo.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🔢</div><div><div class="t">Primero</div><h4>Mira el score global y compáralo</h4><p>El número solo (ej. 84%) no dice nada. Compáralo con tu mes anterior y con las otras sedes. ¿Subió o bajó? ¿Estás arriba o abajo del promedio? La tendencia manda más que la foto. En Prep! esto lo ves en las vistas Resumen y Tendencias de Voz del Cliente.</p></div></div>
+      <div class="paso"><div class="ico">🕸️</div><div><div class="t">Segundo</div><h4>Abre el radar por mundos</h4><p>El gráfico de radar te muestra qué mundo se hundió. Si "Alimentos y Bebidas" está en 95% pero "Infraestructura" en 60%, ya sabes dónde poner la energía. No repartas esfuerzo parejo: ataca el hueco más profundo primero.</p></div></div>
+      <div class="paso"><div class="ico">🚨</div><div><div class="t">Tercero</div><h4>Separa lo crítico de lo menor</h4><p>Un ítem crítico (baño sucio, error de cobro, alérgeno no advertido) pesa distinto y daña la marca. Un ítem menor (tardaron 40 seg en saludar en vez de 30) se corrige con recordatorio. Marca los críticos con rojo: son tu prioridad de mañana.</p></div></div>
+      <div class="paso"><div class="ico">📷</div><div><div class="t">Cuarto</div><h4>Revisa la evidencia, ítem por ítem</h4><p>No te quedes en el puntaje: entra al detalle. La foto del baño, la hora de la comanda, el comentario textual del evaluador. La evidencia convierte una discusión ("no fue tan grave") en un hecho que el equipo no puede negar.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Quinto</div><h4>Busca el patrón entre visitas</h4><p>Un fallo aislado es ruido; el mismo fallo en tres reportes es un proceso roto. Si "no ofrecieron postre" aparece cada mes, no es olvido del mozo: es que nadie lo tiene en el paso a paso. Ahí está tu verdadera oportunidad.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Líder que aprovecha el reporte</h4><ul>
+        <li>Lo lee completo el mismo día que llega.</li>
+        <li>Agradece la evidencia y busca el patrón, no al culpable.</li>
+        <li>Prioriza los 3 hallazgos críticos, no los 20 menores.</li>
+        <li>Comparte el aprendizaje con el equipo sin humillar a nadie.</li>
+      </ul></div>
+      <div class="box no"><h4>Líder que lo desperdicia</h4><ul>
+        <li>Lo guarda "para leerlo con calma" y nunca vuelve.</li>
+        <li>Discute el puntaje en vez de mirar la evidencia.</li>
+        <li>Se enfoca en un detalle menor y olvida el crítico.</li>
+        <li>Regaña al mozo del turno y no cambia el proceso.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>De hallazgo a acción: el plan de mejora</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Un hallazgo sin acción es solo una queja archivada. El puntaje sube cuando cada hallazgo se convierte en una acción con responsable y fecha. Este es el flujo para transformar el reporte en un plan que de verdad mueva el número el próximo mes.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Paso 1 · Elige pocas batallas</div><h4>Toma los 3 hallazgos de mayor impacto</h4><p>No intentes arreglar los 20 puntos flojos a la vez: el equipo se dispersa y nada cambia. Elige los 3 que más pesan en el score o más dañan al invitado. Menos frentes, más profundidad.</p></div></div>
+      <div class="paso"><div class="ico">🔍</div><div><div class="t">Paso 2 · Busca la causa raíz</div><h4>Pregunta "por qué" hasta llegar al proceso</h4><p>"El baño estaba sucio" → ¿por qué? → nadie lo revisa en hora pico → ¿por qué? → no hay checklist de baño cada 45 min. La causa raíz casi nunca es "el mozo es flojo": es un paso que falta en el sistema.</p></div></div>
+      <div class="paso"><div class="ico">📝</div><div><div class="t">Paso 3 · Escribe la acción concreta</div><h4>Un verbo, un responsable, una fecha</h4><p>Mal: "mejorar la limpieza". Bien: "Ronda de baño cada 45 min con hoja de firma, responsable el runner de turno, arranca el lunes". Si no tiene responsable y fecha, no es una acción: es un deseo. Regístrala en el Plan de acciones de Voz del Cliente.</p></div></div>
+      <div class="paso"><div class="ico">🗣️</div><div><div class="t">Paso 4 · Bájala al briefing</div><h4>Comunica el cambio a todo el equipo</h4><p>La acción vive o muere en el pre-turno. En el briefing di qué salió en el reporte, qué vamos a cambiar y quién lo lidera. Que el equipo entienda el "para qué", no solo la orden. Un cambio explicado se cumple; uno impuesto se olvida.</p></div></div>
+      <div class="paso"><div class="ico">📅</div><div><div class="t">Paso 5 · Ponle fecha de verificación</div><h4>Revisa que la acción se sostenga</h4><p>Agenda tú mismo una mini-auditoría 2 semanas después: ¿la ronda de baño se está firmando? Lo que no se verifica, se relaja. Cierra el hallazgo solo cuando confirmes que el cambio ya es hábito, no promesa.</p></div></div>
+    </div>
+    <div class="callout"><b>Regla del hallazgo vivo:</b> un hallazgo no se cierra el día que lo lees, sino el día que el evaluador ya no lo encuentra. Entre esos dos momentos hay una acción con dueño. Si al mes siguiente vuelve a salir el mismo punto, no falló el equipo: falló el seguimiento, y eso es tuyo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Palancas que suben el puntaje rápido</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Hay hallazgos que cuestan meses y dinero (renovar la carta de vinos) y otros que suben el score la semana siguiente, gratis, solo con disciplina. Como líder, empieza por estas palancas de alto impacto y bajo costo: son los puntos que casi todos regalan y que a ti te ponen por encima del promedio.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Saludo en 30 segundos</h3><div class="d">Que nadie cruce la puerta sin un "buenas noches, bienvenido" a la vista. Es el primer ítem de Bienvenida y el más fácil de perder en hora pico. Asigna un responsable de puerta fijo.</div><div class="s">mundo Bienvenida</div></div>
+      <div class="tipo"><h3>Ronda de baño con firma</h3><div class="d">Baño limpio, con papel y jabón, revisado cada 45 min con hoja firmada. Sube Infraestructura de golpe y es lo primero que un evaluador fotografía.</div><div class="s">mundo Infraestructura</div></div>
+      <div class="tipo"><h3>Cristalería a contraluz</h3><div class="d">Antes de montar, revisa cada copa a la luz: sin marcas de agua ni labial. Un detalle que el evaluador nota de inmediato y que no cuesta nada corregir.</div><div class="s">mundo Mesa</div></div>
+      <div class="tipo"><h3>Sugerir siempre entrada y postre</h3><div class="d">Que cada mozo ofrezca una recomendación concreta ("hoy la causa está espectacular"). Sube el ítem de Mesero y, de paso, el ticket. Ensáyalo en el briefing.</div><div class="s">mundo Mesero</div></div>
+      <div class="tipo"><h3>Cuenta en menos de 5 min</h3><div class="d">Desde que la piden hasta que llega. El invitado perdona una espera al inicio, no al final. Ten el POS listo y la pre-cuenta a mano en cuanto veas señales de cierre.</div><div class="s">mundo Pago</div></div>
+      <div class="tipo"><h3>Invitar a volver y pedir el dato</h3><div class="d">Despedir por el nombre, invitar a regresar y ofrecer registrarse. El mundo Lealtad es el más olvidado: cubrirlo te distingue del promedio sin esfuerzo extra.</div><div class="s">mundo Lealtad</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sube el score de verdad</h4><ul>
+        <li>Convierte las palancas fáciles en rutina diaria.</li>
+        <li>Ataca primero el mundo más bajo del radar.</li>
+        <li>Ensaya el estándar en el briefing, no en el reporte.</li>
+        <li>Cuida la experiencia SIEMPRE, no cuando "toca visita".</li>
+      </ul></div>
+      <div class="box no"><h4>Deja puntos en la mesa</h4><ul>
+        <li>Solo corrige el día antes de una supuesta visita.</li>
+        <li>Reparte esfuerzo parejo y no mueve ningún mundo.</li>
+        <li>Da la orden una vez y asume que se cumple sola.</li>
+        <li>Trata al evaluador distinto y "gana" un score falso.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Sostener el puntaje en el tiempo</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Subir el score una vez es suerte; sostenerlo es liderazgo. El puntaje se cae cuando la mejora fue por miedo a la visita y no se volvió hábito. Estas rutinas convierten el estándar del mystery shopper en la forma normal de trabajar, todos los días, haya o no evaluador.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Auto-auditoría semanal</h3><div class="d">Una vez por semana, recorre tu local con el checklist del evaluador puesto: siéntate como invitado, ve al baño, mira la copa. Encuentra tú el fallo antes que él.</div><div class="s">tú eres el primer evaluador</div></div>
+      <div class="tipo"><h3>Un mundo por briefing</h3><div class="d">Cada pre-turno, refuerza un mundo distinto: hoy Bienvenida, mañana Mesa, pasado Lealtad. En dos semanas cubriste todo el checklist sin sermones largos.</div><div class="s">rotación de foco</div></div>
+      <div class="tipo"><h3>El estándar es para todos</h3><div class="d">Nunca "prepares" el local por una visita. Si el saludo en 30 seg es solo para el evaluador, el invitado real lo nota en tu ausencia. El nivel se sostiene tratando a todos igual.</div><div class="s">sin funciones de gala</div></div>
+      <div class="tipo"><h3>Celebra lo que sube</h3><div class="d">Cuando un mundo mejore, dilo en el briefing y reconoce al equipo. La gente repite lo que se celebra. El reporte no es solo para regañar: también para felicitar.</div><div class="s">reconocimiento visible</div></div>
+      <div class="tipo"><h3>Compara con las otras sedes</h3><div class="d">Si tu red tiene varias sedes, mira quién lidera cada mundo y pregúntale cómo lo hace. La mejor práctica de una sede puede subir a toda la marca.</div><div class="s">aprende de tus pares</div></div>
+      <div class="tipo"><h3>Cierra el ciclo cada mes</h3><div class="d">Cada reporte nuevo debe empezar revisando si las acciones del anterior funcionaron. Sin ese cierre, mejoras y recaes en círculos. El progreso es acumulado, no de un mes.</div><div class="s">acción → verificar → repetir</div></div>
+    </div>
+    <div class="callout"><b>La prueba definitiva:</b> si mañana avisaran que el mystery shopper llega esta noche y no tuvieras que cambiar absolutamente nada en tu operación, ganaste. Ese es el objetivo real de todo esto: que el estándar de evaluación y el estándar de tu servicio diario sean exactamente el mismo. Ahí el puntaje deja de ser una meta y pasa a ser una consecuencia.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Mystery shopper</b><span>Cliente incógnito contratado que evalúa el servicio sin ser identificado, siguiendo un checklist estandarizado.</span></div>
+      <div class="gterm"><b>Score / Puntaje</b><span>Resultado total de la evaluación, casi siempre en %. Suma los ítems cumplidos según su peso.</span></div>
+      <div class="gterm"><b>Mundo</b><span>Bloque temático del checklist (Reserva, Mesa, Pago, Lealtad, etc.) que agrupa ítems relacionados.</span></div>
+      <div class="gterm"><b>Ítem</b><span>La unidad mínima que se califica: una pregunta concreta de sí/no o por escala (ej. "¿saludaron en 30 seg?").</span></div>
+      <div class="gterm"><b>Ponderación</b><span>El peso de cada ítem o mundo en el total. Un ítem crítico pesa más que uno cosmético.</span></div>
+      <div class="gterm"><b>Hallazgo</b><span>Un ítem que no se cumplió. Es la materia prima de tu plan de mejora.</span></div>
+      <div class="gterm"><b>Ítem crítico</b><span>Falla que daña la marca o la seguridad (baño sucio, error de cobro, alérgeno no advertido). Prioridad máxima.</span></div>
+      <div class="gterm"><b>Causa raíz</b><span>El motivo de fondo de un hallazgo, casi siempre un proceso que falta, no una persona.</span></div>
+      <div class="gterm"><b>Radar</b><span>Gráfico que muestra el puntaje de cada mundo a la vez; revela de un vistazo dónde está el hueco.</span></div>
+      <div class="gterm"><b>Tendencia</b><span>La evolución del score a lo largo de los meses. Importa más que el resultado de una sola visita.</span></div>
+      <div class="gterm"><b>Plan de acciones</b><span>Lista de acciones derivadas del reporte, cada una con responsable y fecha, hasta cerrar el hallazgo.</span></div>
+      <div class="gterm"><b>Auto-auditoría</b><span>Recorrer tu local con el checklist del evaluador para encontrar los fallos antes que él.</span></div>
+      <div class="gterm"><b>Benchmark de sedes</b><span>Comparar tu puntaje con el de otras sedes para copiar la mejor práctica.</span></div>
+      <div class="gterm"><b>Evidencia</b><span>Fotos, tiempos, comentarios y boleta que respaldan cada hallazgo y lo vuelven indiscutible.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Mystery shopper · Chuleta del líder</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Cómo funciona</h4><ul>
+          <li>Cliente incógnito, nadie sabe quién es.</li>
+          <li>Checklist fijo + evidencia (fotos, tiempos, boleta).</li>
+          <li>Mide el proceso, no a una persona.</li>
+          <li>Score = % del checklist cumplido.</li>
+        </ul></div>
+        <div class="op-box"><h4>Los 11 mundos</h4><ul>
+          <li>Reserva · Estacionamiento · Bienvenida y despedida.</li>
+          <li>Infraestructura · Mesa · Alimentos y Bebidas.</li>
+          <li>Mesero · Vino · Pago.</li>
+          <li>Administración · Lealtad.</li>
+        </ul></div>
+        <div class="op-box"><h4>Leer el reporte</h4><ul>
+          <li>Score vs mes anterior y otras sedes.</li>
+          <li>Radar: ataca el mundo más bajo primero.</li>
+          <li>Separa lo crítico de lo menor.</li>
+          <li>Busca el patrón entre visitas.</li>
+        </ul></div>
+        <div class="op-box"><h4>De hallazgo a acción</h4><ul>
+          <li>Elige solo 3 batallas de alto impacto.</li>
+          <li>Causa raíz: pregunta "por qué" hasta el proceso.</li>
+          <li>Verbo + responsable + fecha.</li>
+          <li>Bájala al briefing y verifica en 2 semanas.</li>
+        </ul></div>
+        <div class="op-box"><h4>Palancas gratis (sube ya)</h4><ul>
+          <li>Saludo en 30 seg · baño con firma cada 45 min.</li>
+          <li>Copa a contraluz · sugerir entrada y postre.</li>
+          <li>Cuenta en menos de 5 min.</li>
+          <li>Invitar a volver + pedir el dato (Lealtad).</li>
+        </ul></div>
+        <div class="op-box"><h4>Sostenerlo</h4><ul>
+          <li>Auto-auditoría semanal con el checklist.</li>
+          <li>Un mundo por briefing (rotación).</li>
+          <li>El estándar es para todos, siempre.</li>
+          <li>Celebra lo que sube · cierra el ciclo cada mes.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Mystery shopper: cómo subir el puntaje · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

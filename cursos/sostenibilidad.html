@@ -1,0 +1,304 @@
+<!-- Curso: Sostenibilidad y manejo de residuos · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Sostenibilidad y manejo de residuos · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231f7a4d'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Sostenibilidad</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#1f7a4d">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Sostenibilidad y manejo de residuos</h1>
+    <p>Un restaurante de nivel se nota en lo que sirve y también en lo que tira. Este curso te enseña a producir menos desperdicio, segregar bien los residuos, comprar insumos responsables y ahorrar agua y energía en el día a día. Aplica a cocina, salón, bar, almacén, limpieza y administración.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> en un restaurante promedio, entre el 4% y el 10% de la comida comprada termina en la basura antes de llegar al plato, y la merma se paga con la utilidad. Menos desperdicio es más margen; segregar bien evita multas y malos olores; ahorrar agua y luz baja el recibo cada mes. Cuidar los recursos es cuidar la casa que te da trabajo.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Reducir el desperdicio de comida</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La comida que botas ya la compraste, la lavaste, la guardaste y a veces hasta la cocinaste. Reducir merma no es tacañería: es respetar el producto y el margen. La mayor parte se evita con orden y ojo, no con esfuerzo extra.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>PEPS / FIFO</h3><div class="d">Primero entra, primero sale. Lo que llegó antes va adelante y con la fecha visible. Rota el tomate y la lechuga de ayer antes que los de hoy. Un almacén sin rotación es merma programada.</div><div class="s">// lo viejo adelante</div></div>
+      <div class="tipo"><h3>Aprovechamiento total</h3><div class="d">Los tallos del culantro y del apio van al fondo de verduras; las cáscaras de camarón y las espinas, a un fumet; el pan del día anterior, a croutons o pan rallado. La casa gana un caldo y ahorra un insumo.</div><div class="s">// nose to tail, root to stem</div></div>
+      <div class="tipo"><h3>Porción estándar</h3><div class="d">Pesa y estandariza. Si el lomo saltado lleva 180 g, que sean 180 g siempre: ni de más (regalas margen) ni de menos (reclamos). Balanza en la línea, no "al ojo".</div><div class="s">// gramaje fijo</div></div>
+      <div class="tipo"><h3>Mise en place real</h3><div class="d">Prepara según lo que se va a vender, no "por si acaso". Un mise en place inflado un martes lento es merma el miércoles. Usa la predicción de cubiertos para decidir cuánto habilitar.</div><div class="s">// prepara lo que sale</div></div>
+      <div class="tipo"><h3>Rotulado con fecha</h3><div class="d">Todo lo que entra a cámara sale rotulado: qué es, quién lo abrió y cuándo. Sin fecha, se bota por duda. Con fecha, se usa a tiempo. La cinta de rotulado cuesta menos que un balde de merma.</div><div class="s">// sin rótulo, se pierde</div></div>
+      <div class="tipo"><h3>Registra la merma</h3><div class="d">Anota lo que botas y por qué (se venció, se quemó, cayó al piso, sobró del buffet). En una semana ves el patrón: quizá compras de más un insumo o una preparación no sale. Lo que no se mide, no se corrige.</div><div class="s">// mide para bajar</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí haz esto</h4><ul>
+        <li>Revisa la cámara al abrir y ubica lo que vence pronto en el frente</li>
+        <li>Convierte el excedente en un especial del día antes de que se pierda</li>
+        <li>Guarda recortes limpios de verdura y hueso para fondos y stocks</li>
+        <li>Sirve el gramaje estándar con balanza, no a mano alzada</li>
+      </ul></div>
+      <div class="box no"><h4>No hagas esto</h4><ul>
+        <li>Sobreproducir el mise en place "para no quedar corto"</li>
+        <li>Guardar sin rótulo ni fecha y luego botar por la duda</li>
+        <li>Botar recortes de verdura y espinas que sirven para fondos</li>
+        <li>Comprar de más porque "estaba en oferta" sin espacio ni rotación</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cuenta rápida:</b> si botas 3 kg de merma evitable al día a S/ 12 el kilo, son S/ 36 diarios, unos S/ 1,080 al mes. Esa plata paga medio sueldo o el recibo de luz. La merma no es "normal", es utilidad que se va al balde.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Segregación de residuos</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Segregar es separar cada residuo en su tacho desde que se genera. Bien hecho, la mitad del "desperdicio" deja de ser basura: se recicla, se composta o se entrega a un gestor. Mal hecho, todo termina contaminado y va al mismo camión.</p>
+    <table class="t" style="margin-bottom:12px">
+      <thead><tr><th>Color de tacho</th><th>Qué va</th><th>Ejemplos en el restaurante</th></tr></thead>
+      <tbody>
+        <tr><td><b>Verde</b> · orgánico</td><td>Restos de comida y vegetales</td><td>Cáscaras, recortes, sobras de plato, borra de café, restos de pan</td></tr>
+        <tr><td><b>Blanco</b> · reciclable</td><td>Plástico, vidrio, metal, papel limpio</td><td>Botellas PET, latas, envases limpios, cartón de insumos</td></tr>
+        <tr><td><b>Negro</b> · general</td><td>No reciclable ni orgánico</td><td>Servilletas sucias, sorbetes, film, guantes, colillas</td></tr>
+        <tr><td><b>Rojo</b> · peligroso</td><td>Residuo peligroso</td><td>Envases de químicos, pilas, fluorescentes, aceite usado (a su bidón)</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3">
+      <div class="tipo"><h3>Aceite usado aparte</h3><div class="d">El aceite de fritura jamás va al desagüe (tapa tuberías y contamina el agua). Se enfría, se cuela y se guarda en un bidón rotulado para entregar a un recolector autorizado, que muchas veces lo paga o lo canjea.</div><div class="s">// bidón, nunca caño</div></div>
+      <div class="tipo"><h3>Trampa de grasa</h3><div class="d">La trampa de grasa retiene la grasa antes del desagüe. Se limpia según cronograma (no cuando ya huele). Una trampa saturada genera olores, atrae plagas y puede clausurarte el local.</div><div class="s">// limpieza programada</div></div>
+      <div class="tipo"><h3>Cartón y vidrio</h3><div class="d">Desarma y aplasta las cajas de cartón para que ocupen menos; separa el vidrio de botellas del bar. Ambos tienen valor de reventa y liberan espacio en el cuarto de basura.</div><div class="s">// aplasta y separa</div></div>
+      <div class="tipo"><h3>Cuarto de residuos</h3><div class="d">Tachos con tapa y pedal, bolsa del color correcto, piso lavable y horario de recojo. Un cuarto ordenado y frío no huele ni atrae moscas ni roedores. Es la primera impresión de una inspección.</div><div class="s">// tapa, frío y orden</div></div>
+      <div class="tipo"><h3>Punto limpio en salón</h3><div class="d">Si el comensal separa (poco común en Perú), que al menos el mozo no mezcle: la borra del café y el limón exprimido van a orgánico, la botella al reciclable. La segregación empieza en el bus de mesa.</div><div class="s">// desde el busseo</div></div>
+      <div class="tipo"><h3>Manifiesto y gestor</h3><div class="d">Los residuos peligrosos y el aceite se entregan a una EO-RS autorizada con su comprobante. Guarda ese documento: es tu respaldo ante la municipalidad y una auditoría ambiental.</div><div class="s">// guarda el papel</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> un residuo reciclable contaminado con comida deja de ser reciclable. Botella con gaseosa a medias, cartón con grasa o papel mojado ya no valen. Vacía, escurre y, si se puede, enjuaga antes de echar al tacho blanco.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Rutina de segregación en 5 pasos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">No hace falta un experto: hace falta que cada quien separe bien su residuo en el momento. Esta es la secuencia para que la basura salga clasificada sin frenar el servicio.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🗑️</div><div><div class="t">Paso 1 · En la estación</div><h4>Separa en el origen</h4><p>Cada estación tiene su bowl o tacho pequeño: uno para orgánico (recortes) y otro para reciclable (envases). No acumules "una montañita" para separar después; sepáralo mientras trabajas.</p></div></div>
+      <div class="paso"><div class="ico">🫗</div><div><div class="t">Paso 2 · Líquidos y grasa</div><h4>Escurre antes de botar</h4><p>Vacía líquidos en el desagüe (menos aceite), escurre el envase y sacude la borra. Un residuo seco no gotea, no pesa de más ni contamina la bolsa de reciclaje.</p></div></div>
+      <div class="paso"><div class="ico">♻️</div><div><div class="t">Paso 3 · Al tacho correcto</div><h4>Cada cosa a su color</h4><p>Traslada a los tachos grandes por color: verde orgánico, blanco reciclable, negro general, rojo peligroso. Si dudas dónde va algo, pregunta; no lo tires "por si acaso" al negro.</p></div></div>
+      <div class="paso"><div class="ico">🛢️</div><div><div class="t">Paso 4 · Aceite y peligrosos</div><h4>Bidón y zona segura</h4><p>El aceite frío y colado va a su bidón rotulado. Envases de químicos, pilas y fluorescentes a la zona de peligrosos. Nunca al desagüe ni mezclados con lo demás.</p></div></div>
+      <div class="paso"><div class="ico">📋</div><div><div class="t">Paso 5 · Cierre de turno</div><h4>Saca, pesa y anota</h4><p>Al cierre, amarra las bolsas, llévalas al cuarto de residuos, pesa lo orgánico (si se lleva registro) y deja el punto limpio y desinfectado para el turno siguiente.</p></div></div>
+    </div>
+    <div class="callout"><b>Truco de línea:</b> el color de la bolsa manda. Si en el apuro no recuerdas la regla, mira de qué color es la bolsa del tacho que tienes al lado: bolsa verde = orgánico, bolsa blanca = reciclable. La duda se resuelve en un segundo.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Insumos y compras responsables</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La sostenibilidad empieza en la compra, no en el tacho. Elegir bien el insumo y el proveedor reduce merma, empaque y huella, y además cuenta una historia que el comensal valora. Comprar responsable también suele salir más barato a la larga.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>De temporada y local</h3><div class="d">La palta, el choclo o el mango en su estación están más baratos, más ricos y viajaron menos. Arma la carta siguiendo el calendario del mercado, no forzando un producto fuera de temporada que llega caro y flojo.</div><div class="s">// sigue la estación</div></div>
+      <div class="tipo"><h3>Proveedor cercano</h3><div class="d">Comprar al productor de Lurín, al pescador de Pucusana o a la huerta de Cieneguilla acorta la cadena, apoya la economía local y da trazabilidad. Menos intermediarios, más frescura y menos transporte.</div><div class="s">// del campo a la mesa</div></div>
+      <div class="tipo"><h3>Pesca responsable</h3><div class="d">Respeta tallas mínimas y vedas (anchoveta, pota, langostino). Prioriza especies abundantes del litoral peruano sobre las sobreexplotadas. Un pescado en veda no solo es ilegal, deja sin mañana al recurso.</div><div class="s">// talla y veda</div></div>
+      <div class="tipo"><h3>Menos empaque</h3><div class="d">Pide al proveedor entregas en javas retornables en vez de cajas de tecnopor y film. Compra a granel lo que rota mucho (arroz, menestras, harina). Menos empaque de entrada es menos basura de salida.</div><div class="s">// granel y retornable</div></div>
+      <div class="tipo"><h3>Compra según PAR</h3><div class="d">Compra contra el nivel PAR y la venta proyectada, no "por si viene gente". El sobrestock perece en cámara. Pedidos más chicos y frecuentes conservan mejor el producto perecible.</div><div class="s">// PAR, no corazonada</div></div>
+      <div class="tipo"><h3>Descartables conscientes</h3><div class="d">Para delivery y llevar, prefiere cartón, bagazo de caña o PLA sobre el tecnopor. Sorbete solo si lo piden. El empaque también es la marca: un buen empaque sostenible se fotografía y se comparte.</div><div class="s">// adiós tecnopor</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí prioriza</h4><ul>
+        <li>Productos de temporada del mercado mayorista y de productores locales</li>
+        <li>Proveedores que reciben de vuelta sus javas y bidones</li>
+        <li>Pescado de talla legal y especies no amenazadas</li>
+        <li>Compras a granel para lo de alta rotación</li>
+      </ul></div>
+      <div class="box no"><h4>No caigas en</h4><ul>
+        <li>Comprar de más por descuento sin espacio de cámara ni rotación</li>
+        <li>Insumos fuera de temporada solo por "figurar" en la carta</li>
+        <li>Tecnopor y film como opción por defecto para llevar</li>
+        <li>Aceptar todo el sobre-empaque del proveedor sin negociarlo</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Ahorro de agua y energía</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El agua y la luz son costo fijo que casi todos ignoran hasta que llega el recibo. En cocina y salón hay decenas de fugas de plata pequeñas que, sumadas, pesan. Son los hábitos de siempre, hechos con criterio.</p>
+    <table class="t" style="margin-bottom:12px">
+      <thead><tr><th>Punto</th><th>Desperdicio típico</th><th>Hábito que ahorra</th></tr></thead>
+      <tbody>
+        <tr><td>Lavado de vajilla</td><td>Caño abierto enjuagando plato por plato</td><td>Raspa el residuo primero, remoja en batea, enjuaga por tandas</td></tr>
+        <tr><td>Descongelado</td><td>Descongelar bajo chorro de agua</td><td>Bajar de congelador a refri la noche anterior (0 agua)</td></tr>
+        <tr><td>Cocina caliente</td><td>Hornillas y plancha prendidas sin uso</td><td>Encender escalonado según el servicio; apagar en valle</td></tr>
+        <tr><td>Cámaras y refris</td><td>Puertas abiertas, empaques rotos, sobrecarga</td><td>Cerrar rápido, revisar jebes, no tapar la ventilación</td></tr>
+        <tr><td>Iluminación</td><td>Luces de almacén y baños siempre prendidas</td><td>LED + apagar lo que no se usa; sensores donde se pueda</td></tr>
+        <tr><td>Extractores/AC</td><td>Campana y aire al máximo todo el día</td><td>Regular por carga de cocina y aforo real del salón</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3">
+      <div class="tipo"><h3>Caño que gotea</h3><div class="d">Un caño goteando pierde hasta 30 litros al día. Reporta la fuga apenas la veas: un empaque de S/ 3 evita metros cúbicos de agua facturada al mes. No lo dejes "para después".</div><div class="s">// reporta la fuga hoy</div></div>
+      <div class="tipo"><h3>Carga llena</h3><div class="d">El lavavajillas y la lavadora de mantelería se prenden con carga completa, no a media máquina. Cada ciclo gasta lo mismo lleno o vacío: aprovéchalo al máximo.</div><div class="s">// máquina llena</div></div>
+      <div class="tipo"><h3>Frío que se escapa</h3><div class="d">Cada segundo con la cámara abierta, el compresor trabaja de más. Ten claro qué vas a sacar antes de abrir, cierra rápido y no metas ollas calientes al refri: calientan todo y disparan el consumo.</div><div class="s">// abre, saca, cierra</div></div>
+      <div class="tipo"><h3>Hora punta vs valle</h3><div class="d">La energía en hora punta (18:00–23:00 aprox.) cuesta más. Programa lavados de mantelería y tareas pesadas fuera de ese rango. Mueve el consumo evitable al valle.</div><div class="s">// tareas pesadas al valle</div></div>
+      <div class="tipo"><h3>Mantenimiento</h3><div class="d">Filtros de campana limpios, empaques de cámara enteros, hornos calibrados: un equipo sucio o mal sellado consume 20–30% más para el mismo resultado. El mantenimiento se paga solo en el recibo.</div><div class="s">// limpio gasta menos</div></div>
+      <div class="tipo"><h3>Lee el recibo</h3><div class="d">Compara el consumo mes a mes. Si sube sin más ventas, algo falla: una fuga, un equipo viejo o un mal hábito nuevo. El recibo es un termómetro, no solo una factura para pagar.</div><div class="s">// compara y detecta</div></div>
+    </div>
+    <div class="callout"><b>Dato:</b> raspar los platos antes de lavar y descongelar en refri (no bajo el caño) son dos hábitos de cero costo que, en una cocina de servicio completo, pueden bajar el consumo de agua de forma notoria cada mes. Cero inversión, puro criterio.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cultura, medición y compromiso</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Ningún cartel salva el planeta ni el recibo: lo hace el equipo, todos los días, cuando nadie mira. Sostenibilidad es un hábito de casa, y se sostiene midiendo, comunicando y celebrando los avances.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Metas visibles</h3><div class="d">Ponle número a la meta: "bajar 15% la merma este mes" o "cero aceite al desagüe". Una meta clara y escrita en la pizarra del área moviliza más que un discurso sobre "cuidar el planeta".</div><div class="s">// meta con número</div></div>
+      <div class="tipo"><h3>Un responsable por área</h3><div class="d">Cocina, salón, bar y almacén tienen su referente de sostenibilidad que revisa tachos, reporta fugas y recuerda la rutina. No es trabajo extra: es un rol rotativo que mantiene el hábito vivo.</div><div class="s">// alguien lidera</div></div>
+      <div class="tipo"><h3>Mídelo semanal</h3><div class="d">Pesa la merma, cuenta los bidones de aceite entregados, mira el recibo de agua y luz. Sin datos, "creemos que mejoramos". Con datos, sabes qué área avanza y cuál necesita ayuda.</div><div class="s">// lo que se mide, mejora</div></div>
+      <div class="tipo"><h3>Cuéntalo bien</h3><div class="d">El comensal de nivel valora lo que haces: menú de temporada, pesca responsable, compost, cero tecnopor. Comunícalo con verdad en la carta y las redes, sin exagerar. Sostenibilidad real, no maquillaje.</div><div class="s">// sin greenwashing</div></div>
+      <div class="tipo"><h3>Onboarding verde</h3><div class="d">Cada persona nueva aprende la rutina de residuos en su primer día, junto con higiene y seguridad. Si entra sabiendo separar, nunca adquiere el mal hábito de mezclar todo.</div><div class="s">// se enseña desde el día 1</div></div>
+      <div class="tipo"><h3>Celebra el avance</h3><div class="d">Reconoce al turno que bajó la merma o al área con el cuarto de residuos impecable. Un buen hábito reconocido se repite. La cultura se construye premiando lo correcto, no solo señalando el error.</div><div class="s">// reconoce lo bueno</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Cultura que funciona</h4><ul>
+        <li>Metas escritas con número y plazo, visibles en cada área</li>
+        <li>Registro semanal de merma, aceite y consumo de servicios</li>
+        <li>Rutina enseñada desde el primer día a cada ingreso</li>
+        <li>Comunicar los logros reales al equipo y al comensal</li>
+      </ul></div>
+      <div class="box no"><h4>Cultura que fracasa</h4><ul>
+        <li>Un cartel de "cuida el agua" y nada más</li>
+        <li>Presumir de sostenible sin ninguna acción detrás</li>
+        <li>Dejar la sostenibilidad "para cuando haya tiempo"</li>
+        <li>Señalar solo los errores y nunca reconocer los aciertos</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La verdad simple:</b> la sostenibilidad no es un proyecto aparte, es la forma de trabajar bien. El mismo orden que hace que la cocina fluya en hora pico es el que evita merma, separa residuos y ahorra recursos. Trabajar limpio, ordenado y con criterio ya es trabajar sostenible.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Merma</b><span>Producto que se compró pero no llega a venderse: se pierde por daño, vencimiento, mala manipulación o sobras. Es utilidad que se va al tacho.</span></div>
+      <div class="gterm"><b>Segregación</b><span>Separar cada residuo en su tacho desde que se genera (orgánico, reciclable, general, peligroso) para que pueda reciclarse o compostarse.</span></div>
+      <div class="gterm"><b>PEPS / FIFO</b><span>"Primero entra, primero sale". Regla de rotación: se usa antes lo que llegó primero para que nada se venza en la parte de atrás.</span></div>
+      <div class="gterm"><b>Residuo orgánico</b><span>Restos de comida y vegetales (cáscaras, recortes, borra de café). Tacho verde. Puede ir a compost o a un gestor de orgánicos.</span></div>
+      <div class="gterm"><b>Residuo peligroso</b><span>Residuo que daña la salud o el ambiente: envases de químicos, pilas, fluorescentes, aceite usado. Tacho rojo y entrega a gestor autorizado.</span></div>
+      <div class="gterm"><b>Trampa de grasa</b><span>Dispositivo que retiene la grasa del agua de cocina antes del desagüe. Se limpia por cronograma para evitar olores, plagas y atoros.</span></div>
+      <div class="gterm"><b>Compost</b><span>Abono natural que resulta de descomponer residuos orgánicos de forma controlada. Convierte cáscaras y recortes en tierra fértil.</span></div>
+      <div class="gterm"><b>EO-RS</b><span>Empresa Operadora de Residuos Sólidos: gestor autorizado que recoge y dispone residuos peligrosos y aceite, entregando un comprobante.</span></div>
+      <div class="gterm"><b>Nivel PAR</b><span>Cantidad mínima de un insumo que debe existir siempre en stock. Se compra para llegar al PAR, evitando faltantes y sobrestock.</span></div>
+      <div class="gterm"><b>Producto de temporada</b><span>Insumo en su época natural de cosecha: más barato, más fresco y con menor huella de transporte que uno forzado fuera de estación.</span></div>
+      <div class="gterm"><b>Aprovechamiento total</b><span>Usar el insumo completo (tallo, cáscara, hueso, espina) en fondos, caldos o preparaciones, en vez de botar los recortes.</span></div>
+      <div class="gterm"><b>Huella de carbono</b><span>Cantidad de gases de efecto invernadero asociada a un producto o actividad. Comprar local y de temporada la reduce.</span></div>
+      <div class="gterm"><b>Hora punta</b><span>Franja de mayor demanda eléctrica (tarde-noche) donde la energía cuesta más. Conviene mover a ella lo menos posible del consumo evitable.</span></div>
+      <div class="gterm"><b>Greenwashing</b><span>Presumir de sostenible sin acciones reales detrás. Se evita comunicando solo lo que de verdad se hace, con datos.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Sostenibilidad · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Menos desperdicio</h4><ul>
+          <li>PEPS: lo viejo adelante, con fecha visible</li>
+          <li>Rotula todo con nombre y fecha al guardar</li>
+          <li>Gramaje estándar con balanza, no al ojo</li>
+          <li>Recortes y espinas → fondos y caldos</li>
+          <li>Anota lo que botas y por qué</li>
+        </ul></div>
+        <div class="op-box"><h4>Segrega bien</h4><ul>
+          <li>Verde orgánico · Blanco reciclable</li>
+          <li>Negro general · Rojo peligroso</li>
+          <li>Escurre y vacía antes de botar</li>
+          <li>Reciclable con comida = ya no recicla</li>
+          <li>La bolsa del color manda: ante la duda, mira el color</li>
+        </ul></div>
+        <div class="op-box"><h4>Aceite y grasa</h4><ul>
+          <li>Aceite frío y colado → bidón rotulado</li>
+          <li>Nunca al desagüe (atora y contamina)</li>
+          <li>Entrega a gestor autorizado, guarda el comprobante</li>
+          <li>Trampa de grasa: limpieza programada</li>
+        </ul></div>
+        <div class="op-box"><h4>Compra responsable</h4><ul>
+          <li>Temporada + local = mejor y más barato</li>
+          <li>Pescado con talla legal, respeta la veda</li>
+          <li>Compra contra el PAR, no "por si acaso"</li>
+          <li>Javas retornables y granel; menos tecnopor</li>
+        </ul></div>
+        <div class="op-box"><h4>Agua y energía</h4><ul>
+          <li>Raspa antes de lavar; enjuaga por tandas</li>
+          <li>Descongela en refri, no bajo el caño</li>
+          <li>Abre la cámara, saca y cierra rápido</li>
+          <li>Reporta fugas al toque; apaga lo que no se usa</li>
+        </ul></div>
+        <div class="op-box"><h4>Cultura de casa</h4><ul>
+          <li>Meta con número y plazo, a la vista</li>
+          <li>Un responsable por área, rotativo</li>
+          <li>Mide semanal: merma, aceite, recibos</li>
+          <li>Enseña la rutina desde el día 1</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Sostenibilidad y manejo de residuos · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Reclutamiento y onboarding · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23176b4a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Reclutamiento</span>
+    <nav class="nav">
+      <a href="#m1">Perfil</a><a href="#m2">Fuentes</a><a href="#m3">Entrevista</a><a href="#m4">Prueba</a><a href="#m5">Contrato</a><a href="#m6">Onboarding</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#176b4a">
+    <div class="k">Academia Prep! · Administración · Liderazgo</div>
+    <h1>Reclutamiento y onboarding</h1>
+    <p>Contratar bien es la decisión que más define tu operación. Este curso te da el método completo para un restaurante de nivel en Lima: cómo definir el perfil, dónde buscar, cómo entrevistar, cómo correr una prueba de piso, cómo contratar en regla en Perú y cómo recibir al nuevo para que se quede.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~55 min</span><span>🎯 Administrador</span><span>🇵🇪 Marco Perú</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una mala contratación cuesta más que un sueldo. Cuesta el reclutamiento repetido, el servicio flojo mientras aprende, los errores frente al invitado y la energía que drena del resto del equipo. Un proceso ordenado sube tu tasa de acierto de "a ver qué sale" a "sé a quién estoy contratando y por qué".</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>El perfil de puesto</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">No se puede contratar bien lo que no se ha definido bien. Antes de publicar una sola convocatoria, escribe qué necesitas de verdad. El perfil es tu regla para medir a todos por igual.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Misión del puesto</h3><div class="d">Una frase de para qué existe el rol. "El mozo hace que cada mesa de su rango se sienta cuidada y salga con ganas de volver, sirviendo rápido y sin errores."</div><div class="s">el norte</div></div>
+      <div class="tipo"><h3>Responsabilidades</h3><div class="d">5 a 8 tareas concretas y medibles. No "buena actitud": "monta su estación antes de las 12:00", "maneja hasta 5 mesas en hora pico".</div><div class="s">qué hará</div></div>
+      <div class="tipo"><h3>Imprescindibles</h3><div class="d">Lo que no se negocia. Carné de sanidad vigente, disponibilidad de fines de semana y feriados, experiencia mínima real en el rango de servicio.</div><div class="s">must have</div></div>
+      <div class="tipo"><h3>Deseables</h3><div class="d">Suma pero se puede enseñar: inglés conversacional, conocer vino, manejo de bandeja, experiencia previa en cocina italiana.</div><div class="s">nice to have</div></div>
+      <div class="tipo"><h3>Competencias blandas</h3><div class="d">Las que hacen o rompen el servicio: manejo de presión, trabajo en equipo, lectura de mesa, honestidad. Se evalúan en la prueba, no en el CV.</div><div class="s">actitud</div></div>
+      <div class="tipo"><h3>Condiciones</h3><div class="d">Rango salarial, tipo de contrato, turnos, propina, línea de reporte. Escríbelo antes: evita ofertas improvisadas que luego no puedes sostener.</div><div class="s">la oferta</div></div>
+    </div>
+    <div class="callout"><b>Ejemplo real:</b> para un <b>mozo de nivel</b> en un italiano de Miraflores, un imprescindible que muchos olvidan es "sabe describir un plato y sugerir un maridaje". Si el perfil no lo pide, terminas con alguien que anota comandas pero no vende. La venta sugestiva empieza en el perfil de puesto, no en la capacitación.</div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">Perfiles frecuentes en un restaurante de nivel y su gancho clave:</p>
+      <div style="overflow-x:auto"><table class="t"><thead><tr><th>Puesto</th><th>Imprescindible que no puede faltar</th><th>Señal verde en la prueba</th></tr></thead><tbody>
+      <tr><td>Anfitrión / Host</td><td>Trato cálido bajo presión, orden con la agenda de reservas</td><td>Recibe con nombre y sonrisa aun con lista de espera</td></tr>
+      <tr><td>Mozo</td><td>Experiencia real, carné de sanidad, aguante físico</td><td>Lleva 3 platos, describe la carta, no se traba en hora pico</td></tr>
+      <tr><td>Bartender</td><td>Recetario de clásicos, velocidad, control de merma</td><td>Arma 3 cócteles limpios y a tiempo, cuida el pour</td></tr>
+      <tr><td>Cocinero de línea</td><td>Punto de cocción, mise en place, higiene</td><td>Aguanta el pase sin cortar el ritmo ni ensuciar estación</td></tr>
+      <tr><td>Steward / Lavado</td><td>Constancia, higiene, trabajo sin supervisión</td><td>Mantiene el flujo de loza sin que la línea se quede sin platos</td></tr>
+      </tbody></table></div>
+    </div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Dónde buscar y cómo filtrar</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El mejor candidato casi nunca está buscando trabajo activamente. Combina fuentes, mueve tu red y filtra rápido para no perder días leyendo CVs que no calzan.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Referidos del equipo</h3><div class="d">Tu mejor fuente. Ofrece un bono por referido que se queda pasado el periodo de prueba. La gente buena conoce gente buena y no arriesga su nombre.</div><div class="s">fuente 01</div></div>
+      <div class="tipo"><h3>Bolsas y redes</h3><div class="d">Computrabajo y Bumeran para volumen; grupos de Facebook y WhatsApp del rubro gastronómico limeño para roles de servicio y cocina.</div><div class="s">fuente 02</div></div>
+      <div class="tipo"><h3>Institutos</h3><div class="d">Cenfotur, Le Cordon Bleu, D'Gallia, USIL, Columbia. Buenos para practicantes y primer empleo; avisa con tiempo antes de fin de ciclo.</div><div class="s">fuente 03</div></div>
+      <div class="tipo"><h3>Caza directa</h3><div class="d">¿Te atendieron increíble en otro local? Pide su contacto con respeto. El mejor talento de salón se recluta comiendo afuera.</div><div class="s">fuente 04</div></div>
+      <div class="tipo"><h3>Base propia</h3><div class="d">Guarda todo buen CV que llega aunque no haya vacante. Cuando se abra el puesto ya tienes a quién llamar el mismo día.</div><div class="s">fuente 05</div></div>
+      <div class="tipo"><h3>Prep! RRHH</h3><div class="d">Publica la convocatoria, recibe postulantes y mueve a cada candidato por el embudo desde el módulo RRHH. Todo el proceso en un solo lugar.</div><div class="s">/rrhh</div></div>
+    </div>
+    <div class="callout"><b>Regla de la respuesta rápida:</b> en gastronomía el buen candidato tiene tres ofertas a la vez. Si un CV te gusta, llámalo el mismo día. El local que responde primero suele ganar; el que "revisa la próxima semana" pierde al mejor.</div>
+    <p class="lead" style="margin-top:16px">Filtro de CV en 30 segundos: qué es señal verde y qué es señal roja.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Sigue adelante</h4><ul>
+        <li>Continuidad: 1 a 2 años por trabajo</li>
+        <li>Locales conocidos y de nivel parecido al tuyo</li>
+        <li>Vive o se moviliza fácil a la zona (turnos partidos)</li>
+        <li>Carné de sanidad vigente o dispuesto a sacarlo</li>
+        <li>CV cuidado, sin faltas, foto sobria</li>
+      </ul></div>
+      <div class="box no"><h4>Enciende la alerta</h4><ul>
+        <li>Salta de trabajo cada 2 o 3 meses sin explicación</li>
+        <li>Vacíos largos que no menciona</li>
+        <li>Pretensión salarial fuera de tu rango real</li>
+        <li>No contesta o llega tarde a la primera llamada</li>
+        <li>Solo habla de sueldo, nunca del oficio ni del servicio</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>La entrevista</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La entrevista no es un interrogatorio ni una charla amable: es una conversación estructurada para predecir cómo trabajará esta persona en tu piso. Pregunta por hechos del pasado, no por promesas del futuro.</p>
+    <div class="paso"><div class="ico">🤝</div><div><div class="t">MINUTO 0–3 · ROMPER EL HIELO</div><h4>Recíbelo como recibes a un invitado</h4><p>Ofrece agua, preséntate, explica cómo será la conversación. Cómo lo tratas dice tanto de ti como sus respuestas dicen de él. Alguien nervioso mal recibido rinde poco: no confundas nervios con falta de talento.</p></div></div>
+    <div class="paso"><div class="ico">📋</div><div><div class="t">MINUTO 3–10 · TRAYECTORIA</div><h4>Recorre su historia con foco</h4><p>"Cuéntame de tu último trabajo: qué hacías un viernes en hora pico." Busca detalle operativo real. El que vivió el piso lo describe con textura; el que exagera se queda en generalidades.</p></div></div>
+    <div class="paso"><div class="ico">🎯</div><div><div class="t">MINUTO 10–20 · PREGUNTAS DE CONDUCTA</div><h4>Pide ejemplos concretos, no opiniones</h4><p>"Cuéntame de una mesa difícil que atendiste y cómo la resolviste." "Un día que la cocina se atrasó, ¿qué hiciste?" El pasado predice el futuro mejor que cualquier "yo soy muy proactivo".</p></div></div>
+    <div class="paso"><div class="ico">💬</div><div><div class="t">MINUTO 20–27 · REALIDAD DEL PUESTO</div><h4>Pinta el trabajo tal cual es</h4><p>Turnos partidos, feriados, hora pico intensa, propina variable. Es mejor que se autodescarte hoy y no que renuncie en la segunda semana. La honestidad ahorra rotación.</p></div></div>
+    <div class="paso"><div class="ico">❓</div><div><div class="t">MINUTO 27–30 · SUS PREGUNTAS</div><h4>Deja que él pregunte y cierra claro</h4><p>Buenas preguntas ("¿cómo se reparte la propina?", "¿hay línea de carrera?") son señal de interés real. Cierra diciendo próximos pasos y fecha concreta de respuesta.</p></div></div>
+    <div class="callout"><b>Preguntas que revelan de verdad:</b> "¿Qué te enorgullece de tu oficio?" (pasión), "¿Por qué dejaste tu último trabajo?" (madurez y manejo del conflicto), "Si un invitado te dice que el plato está frío y tú sabes que salió caliente, ¿qué haces?" (juicio y trato). Escucha el <b>cómo</b> responde, no solo el qué.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Buenas prácticas de entrevista</h4><ul>
+        <li>Mismas preguntas base a todos los candidatos</li>
+        <li>Toma notas y punteo apenas termina, en frío</li>
+        <li>Escucha 70%, habla 30%</li>
+        <li>Involucra a un segundo evaluador (chef o jefe de salón)</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que sesgan</h4><ul>
+        <li>Contratar por "buena química" y nada más</li>
+        <li>Preguntas ilegales: edad, estado civil, embarazo, religión</li>
+        <li>Prometer sueldo o turnos que no puedes sostener</li>
+        <li>Decidir en los 2 primeros minutos y dejar de escuchar</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>La prueba de piso</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">En gastronomía la entrevista no basta: hay que verlo trabajar. La prueba práctica ("stage" o día de prueba) es donde el talento real aparece y las palabras se caen. Planifícala, no la improvises.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Duración justa</h3><div class="d">2 a 4 horas en un turno real, no una jornada completa gratis. Suficiente para ver hora pico; corto para respetar su tiempo y el tuyo.</div><div class="s">formato</div></div>
+      <div class="tipo"><h3>Tarea real</h3><div class="d">Mozo: que tome comandas con un mozo senior de sombra. Cocinero: que ejecute 2 o 3 platos de la carta. Bartender: que arme cócteles del recetario.</div><div class="s">el ejercicio</div></div>
+      <div class="tipo"><h3>Un padrino</h3><div class="d">Asigna a alguien de confianza que lo acompañe, le explique lo básico y luego te dé su lectura sincera. La cocina siempre sabe quién sirve.</div><div class="s">acompañante</div></div>
+      <div class="tipo"><h3>Paga la prueba</h3><div class="d">Reconoce el tiempo con un monto justo o propina del turno. Es lo correcto y proyecta el tipo de casa que eres desde el día cero.</div><div class="s">buena práctica</div></div>
+    </div>
+    <p class="lead" style="margin-top:16px">Qué observar según el rol. Puntúa en frío apenas termina el turno, no de memoria al día siguiente.</p>
+    <div style="overflow-x:auto"><table class="t"><thead><tr><th>Qué mirar</th><th>Señal verde</th><th>Señal roja</th></tr></thead><tbody>
+      <tr><td>Ritmo en hora pico</td><td>Mantiene la calma, prioriza, no se congela</td><td>Se bloquea, deja mesas o platos botados</td></tr>
+      <tr><td>Higiene y orden</td><td>Estación limpia, lavado de manos, mise en place</td><td>Toca comida sin cuidado, deja el desorden</td></tr>
+      <tr><td>Trato con el equipo</td><td>Pregunta, agradece, se integra</td><td>Aislado, cortante o a la defensiva</td></tr>
+      <tr><td>Actitud ante el error</td><td>Reconoce, corrige y sigue</td><td>Esconde el error o culpa a otros</td></tr>
+      <tr><td>Trato al invitado</td><td>Mira a los ojos, sonríe, es claro</td><td>Frío, apurado o inseguro frente a la mesa</td></tr>
+    </tbody></table></div>
+    <div class="callout"><b>La pregunta de oro al cierre:</b> antes de decidir, pregúntale a tu equipo <b>"¿trabajarías un viernes lleno al lado de esta persona?"</b>. Si el chef, el barman o el mozo senior dudan, escúchalos. Ellos vivirán el día a día con tu contratación; su lectura vale oro.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Contratar en regla · Perú</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Contratar en planilla protege al restaurante y al trabajador. Formaliza desde el día uno: un solo día en negro te expone a multas de Sunafil y a un juicio laboral. Este es el marco base del régimen general privado.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Contrato por escrito</h3><div class="d">Plazo fijo (sujeto a modalidad, ej. por inicio de actividad) o indeterminado. Firmado antes del primer turno. Registra el contrato modal en el sistema de Sunafil cuando corresponda.</div><div class="s">paso 1</div></div>
+      <div class="tipo"><h3>Periodo de prueba</h3><div class="d">3 meses por defecto. En ese lapso el vínculo puede terminar sin indemnización. Es tu red de seguridad: úsalo para confirmar lo que viste en la prueba de piso.</div><div class="s">paso 2</div></div>
+      <div class="tipo"><h3>Alta en T-Registro</h3><div class="d">Da de alta al trabajador en el T-Registro de SUNAT <b>el día que ingresa</b>, no después. El alta tardía es infracción. La planilla mensual va en el PLAME.</div><div class="s">paso 3</div></div>
+      <div class="tipo"><h3>Salud y pensión</h3><div class="d">Aféilialo a EsSalud (9% lo paga el empleador) y a un sistema de pensiones: ONP (13%) o una AFP (~10% + comisión + prima), a su elección.</div><div class="s">paso 4</div></div>
+      <div class="tipo"><h3>Beneficios de ley</h3><div class="d">Gratificaciones (julio y diciembre), CTS (mayo y noviembre), vacaciones (30 días/año), asignación familiar si tiene hijos menores. Prep! los calcula en planilla.</div><div class="s">paso 5</div></div>
+      <div class="tipo"><h3>Documentos del legajo</h3><div class="d">DNI, CV, certificados, carné de sanidad vigente, cuenta de haberes (CTS y sueldo), datos de pensión y de contacto de emergencia. Todo al legajo digital.</div><div class="s">paso 6</div></div>
+    </div>
+    <div class="callout"><b>Ojo con el carné de sanidad:</b> todo el que manipula alimentos (cocina, barra, mozos que llevan platos) necesita carné de sanidad vigente, exigible por la municipalidad y por DIGESA en una inspección. No dejes que nadie toque un plato sin él. Agéndalo en el onboarding del módulo 6.</div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">Costo real de una contratación (más allá del sueldo básico):</p>
+      <div style="overflow-x:auto"><table class="t"><thead><tr><th>Concepto</th><th>Referencia</th><th>Quién lo asume</th></tr></thead><tbody>
+        <tr><td>EsSalud</td><td>9% del sueldo</td><td>Empleador</td></tr>
+        <tr><td>Gratificaciones</td><td>~2 sueldos al año (jul + dic) + bono extraordinario 9%</td><td>Empleador</td></tr>
+        <tr><td>CTS</td><td>~1 sueldo al año (mayo + noviembre)</td><td>Empleador</td></tr>
+        <tr><td>Vacaciones</td><td>30 días pagados al año</td><td>Empleador</td></tr>
+        <tr><td>ONP o AFP</td><td>13% (ONP) o ~13% (AFP)</td><td>Se descuenta al trabajador</td></tr>
+      </tbody></table></div>
+      <p style="font-size:12px;opacity:.8;margin-top:8px">Regla práctica: el costo empresa de un trabajador ronda <b>1.4 a 1.5 veces</b> su sueldo bruto. Cotiza el puesto con ese factor antes de ofrecer.</p>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Onboarding del nuevo</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Contratar es la mitad; que se quede y rinda es la otra mitad. La mayoría de renuncias tempranas ocurre en las primeras dos semanas por un recibimiento flojo. Un buen onboarding retiene y acelera.</p>
+    <div class="paso"><div class="ico">📩</div><div><div class="t">ANTES DEL DÍA 1</div><h4>Que llegue esperado, no de sorpresa</h4><p>Envíale por WhatsApp la hora de llegada, a quién buscar, cómo vestir y qué traer (DNI, carné de sanidad, datos bancarios). Avisa al equipo que hay alguien nuevo y quién será su padrino.</p></div></div>
+    <div class="paso"><div class="ico">👋</div><div><div class="t">DÍA 1 · BIENVENIDA</div><h4>Tour, uniforme y presentaciones</h4><p>Recórrelo por cocina, barra, salón, baños, almacén y lockers. Preséntalo por su nombre a todo el equipo. Entrégale uniforme y crea su usuario en Prep!. Que el primer día se sienta parte, no un extra.</p></div></div>
+    <div class="paso"><div class="ico">📖</div><div><div class="t">DÍA 1–2 · LO ESENCIAL</div><h4>Reglas, cultura y la app</h4><p>Reglamento interno, horarios, cómo se reparte la propina, seguridad e higiene. Asígnale el curso de <b>Onboarding Prep!</b> en la Academia y enséñale a marcar asistencia y ver sus turnos en RRHH.</p></div></div>
+    <div class="paso"><div class="ico">🧑‍🏫</div><div><div class="t">SEMANA 1 · PADRINO Y SOMBRA</div><h4>Aprende haciendo, acompañado</h4><p>Que trabaje de sombra con un senior antes de tomar su rango o estación solo. El padrino resuelve dudas sin que tenga que interrumpirte a ti. Nadie debe sentirse tirado a la piscina en su primera semana.</p></div></div>
+    <div class="paso"><div class="ico">✅</div><div><div class="t">DÍA 30 · PRIMER CHECK-IN</div><h4>Conversación honesta de ida y vuelta</h4><p>Siéntate 15 minutos: ¿cómo te sientes?, ¿qué te falta?, ¿qué mejorarías? Dale retroalimentación concreta. Es el momento de corregir antes de que un pequeño problema se vuelva una renuncia.</p></div></div>
+    <div class="paso"><div class="ico">🎯</div><div><div class="t">DÍA 90 · CIERRE DE PRUEBA</div><h4>Decisión clara: confirmar o soltar</h4><p>Al cerrar el periodo de prueba, decide con datos: desempeño, actitud, asistencia y lectura del equipo. Si confirma, celébralo y traza su línea de carrera. Si no, agradece y cierra en buenos términos.</p></div></div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Onboarding que retiene</h4><ul>
+        <li>Uniforme y usuario listos el día 1</li>
+        <li>Un padrino asignado con nombre</li>
+        <li>Checklist claro de qué aprende cada día</li>
+        <li>Check-in a los 30 días sí o sí</li>
+        <li>Feedback específico, no "vas bien"</li>
+      </ul></div>
+      <div class="box no"><h4>Onboarding que expulsa</h4><ul>
+        <li>"Ponte a trabajar" sin presentar a nadie</li>
+        <li>Uniforme prestado y app sin acceso</li>
+        <li>Solo en su estación desde el minuto uno</li>
+        <li>Cero conversación hasta el problema</li>
+        <li>Enterarse del sueldo real recién en la boleta</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El costo de no hacerlo:</b> si un mozo renuncia a la semana dos, pierdes la búsqueda, la entrevista, la prueba, el alta en planilla y el tiempo del padrino, y vuelves a cero con el servicio flojo mientras rebuscas. Dos horas de buen onboarding cuestan menos que un mes de rotación.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Perfil de puesto</b><span>Documento que define misión, responsabilidades, imprescindibles y condiciones de un rol. Es la regla común para evaluar a todos los candidatos por igual.</span></div>
+      <div class="gterm"><b>Imprescindible (must have)</b><span>Requisito no negociable del puesto. Si el candidato no lo tiene, queda fuera aunque brille en lo demás.</span></div>
+      <div class="gterm"><b>Pregunta de conducta</b><span>Pregunta que pide un ejemplo real del pasado ("cuéntame de una vez que...") en vez de una opinión o promesa. Predice mejor el desempeño.</span></div>
+      <div class="gterm"><b>Prueba de piso / Stage</b><span>Turno de prueba pagado y corto en el que el candidato ejecuta tareas reales del puesto para verlo trabajar antes de contratar.</span></div>
+      <div class="gterm"><b>Padrino / Buddy</b><span>Compañero senior asignado para acompañar al nuevo en su prueba y en su primera semana, y dar una lectura honesta al administrador.</span></div>
+      <div class="gterm"><b>Periodo de prueba</b><span>Primeros 3 meses del vínculo laboral en Perú (régimen general). En ese lapso el contrato puede terminar sin indemnización.</span></div>
+      <div class="gterm"><b>T-Registro</b><span>Registro de SUNAT donde se da de alta al trabajador el día que ingresa. Omitirlo o hacerlo tarde es infracción laboral.</span></div>
+      <div class="gterm"><b>PLAME</b><span>Planilla Mensual de Pagos que se declara a SUNAT: sueldos, aportes de EsSalud, ONP/AFP y descuentos del mes.</span></div>
+      <div class="gterm"><b>EsSalud</b><span>Seguro de salud estatal. El empleador aporta el 9% del sueldo del trabajador para su cobertura y la de sus derechohabientes.</span></div>
+      <div class="gterm"><b>CTS</b><span>Compensación por Tiempo de Servicios: fondo de respaldo ante el desempleo que se deposita en mayo y noviembre.</span></div>
+      <div class="gterm"><b>ONP / AFP</b><span>Sistemas de pensiones. ONP es el estatal (13%); una AFP es privada (~10% + comisión + prima). El trabajador elige y se le descuenta.</span></div>
+      <div class="gterm"><b>Carné de sanidad</b><span>Documento obligatorio para quien manipula alimentos. Exigible por la municipalidad y DIGESA; sin él nadie debe tocar un plato.</span></div>
+      <div class="gterm"><b>Sunafil</b><span>Superintendencia de fiscalización laboral. Inspecciona y multa el trabajo informal y el incumplimiento de derechos.</span></div>
+      <div class="gterm"><b>Legajo</b><span>Carpeta (hoy digital, en RRHH de Prep!) con todos los documentos del trabajador: contrato, DNI, carné, datos de pensión y bancarios.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Reclutamiento y onboarding · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>1 · Perfil de puesto</h4><ul>
+          <li>Misión + 5-8 responsabilidades medibles</li>
+          <li>Separa imprescindibles de deseables</li>
+          <li>Define rango salarial y turnos ANTES de publicar</li>
+        </ul></div>
+        <div class="op-box"><h4>2 · Fuentes y filtro</h4><ul>
+          <li>Referidos primero (bono al pasar prueba)</li>
+          <li>Bolsas, institutos, caza directa y base propia</li>
+          <li>Llama el mismo día al buen CV</li>
+        </ul></div>
+        <div class="op-box"><h4>3 · Entrevista</h4><ul>
+          <li>Mismas preguntas a todos, estructurada</li>
+          <li>Pide ejemplos del pasado, no promesas</li>
+          <li>Pinta el trabajo real; nada de edad/religión</li>
+        </ul></div>
+        <div class="op-box"><h4>4 · Prueba de piso</h4><ul>
+          <li>2-4 h en turno real, pagada, con padrino</li>
+          <li>Mira ritmo, higiene, error y trato</li>
+          <li>"¿Trabajarías un viernes a su lado?"</li>
+        </ul></div>
+        <div class="op-box"><h4>5 · Contrato · Perú</h4><ul>
+          <li>Contrato firmado + prueba de 3 meses</li>
+          <li>Alta en T-Registro el día 1; EsSalud + ONP/AFP</li>
+          <li>Carné de sanidad vigente sí o sí</li>
+        </ul></div>
+        <div class="op-box"><h4>6 · Onboarding</h4><ul>
+          <li>Uniforme + usuario Prep! listos día 1</li>
+          <li>Padrino y sombra la primera semana</li>
+          <li>Check-in a los 30 y decisión a los 90</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Reclutamiento y onboarding · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

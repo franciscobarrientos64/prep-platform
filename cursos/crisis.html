@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Manejo de quejas y crisis (avanzado) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23a4133c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Quejas y crisis</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#a4133c">
+    <div class="k">Academia Prep! · Administración · Liderazgo</div>
+    <h1>Manejo de quejas y crisis (avanzado)</h1>
+    <p>Cualquiera atiende una mesa contenta. El líder se define en la mesa que gritó, en la reseña de 1 estrella que se hizo viral y en la noche que algo salió muy mal. Este curso te da el método para bajar la temperatura, decidir cortesías con criterio, contener una crisis en sala y proteger la reputación del restaurante sin perder la cabeza.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~50 min</span><span>🎯 Líderes</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un comensal muy molesto que se va escuchado y compensado suele volverse más fiel que uno que nunca tuvo un problema; ese mismo comensal, ignorado, escribe una reseña que te cuesta reservas durante semanas. En Perú además hay Libro de Reclamaciones e Indecopi de por medio: cómo manejas el momento no es solo servicio, es reputación y es ley.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Diagnóstico en caliente: no todo es lo mismo</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">El error del líder novato es tratar igual un "mi risotto vino frío" y "mi esposa está en el piso". Antes de reaccionar, clasifica en tres segundos: ¿esto es una queja de servicio, un comensal desbordado o una crisis? Cada uno tiene otro protocolo, otra velocidad y otra persona a cargo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Queja de servicio</h3><div class="d">Plato frío, demora, error en la comanda, cuenta mal sumada. Molesta pero es reparable en la mesa. La maneja el mozo o el capitán; tú supervisas.</div><div class="s">Nivel 1 · reparable en mesa</div></div>
+      <div class="tipo"><h3>Comensal desbordado</h3><div class="d">Ya no habla del plato: sube la voz, generaliza ("siempre lo mismo"), gesticula, involucra a su mesa. La emoción tapó el problema real. Aquí entra el líder.</div><div class="s">Nivel 2 · gestiona el líder</div></div>
+      <div class="tipo"><h3>Crisis</h3><div class="d">Hay riesgo: salud (posible alérgeno o intoxicación), seguridad (pelea, ebrio agresivo), o reputación (prensa, cámara grabando, amenaza de viralizar). Manda gerencia.</div><div class="s">Nivel 3 · protocolo + gerencia</div></div>
+      <div class="tipo"><h3>Lee el cuerpo, no solo las palabras</h3><div class="d">Mandíbula tensa, se paró de la silla, señala con el dedo, voz que sube: la persona está en modo defensa. Ningún argumento entra hasta que baje.</div><div class="s">Primero calma, después datos</div></div>
+      <div class="tipo"><h3>Detecta al "público"</h3><div class="d">¿Hay otras mesas mirando? ¿Alguien grabando? La molestia con audiencia escala rápido. Tu prioridad pasa a ser sacar la conversación de la vista de todos.</div><div class="s">Mover a privado gana tiempo</div></div>
+      <div class="tipo"><h3>El costo de subestimar</h3><div class="d">Tratar una crisis como queja simple ("le mando un postre y ya") enfurece más: la persona siente que no la tomas en serio. Subir de nivel a tiempo es media pelea ganada.</div><div class="s">Ante la duda, sube de nivel</div></div>
+    </div>
+    <div class="callout"><b>Regla de los 3 segundos:</b> antes de abrir la boca, decide en voz interna "esto es Nivel 1, 2 o 3". El nivel define quién va, qué tono usas y cuánto puedes ofrecer. Nunca improvises el nivel a mitad de la conversación.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>De-escalada: el comensal muy molesto</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Con un comensal en Nivel 2 tu objetivo no es "ganar la discusión" ni demostrar que el restaurante tiene razón. Es bajarle la temperatura para poder resolver. Sigue esta secuencia; funciona igual con el limeño que reclama fuerte que con el turista que escribe todo en su celular.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">directions_walk</span></div><div><div class="t">Paso 1 · 0–10 seg</div><h4>Acércate y preséntate por nombre y cargo</h4><p>"Buenas noches, soy Rodrigo, encargado del salón. Vine a atenderlo personalmente." Que sepa que ya no está con un mozo: subió a quien decide. Eso solo ya baja media raya.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">hearing</span></div><div><div class="t">Paso 2 · escucha total</div><h4>Deja que descargue sin interrumpir</h4><p>Mira a los ojos, asiente, no cruces los brazos. Aunque exagere, no lo corrijas todavía. Interrumpir para defenderte reinicia la furia. Deja que llegue al final de su frase.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">volunteer_activism</span></div><div><div class="t">Paso 3 · valida la emoción</div><h4>Reconoce antes de explicar</h4><p>"Entiendo su molestia y tiene toda la razón en estar así." No es admitir culpa legal, es reconocer el sentir. La persona necesita saber que la escuchaste antes de aceptar cualquier solución.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">lower_case</span></div><div><div class="t">Paso 4 · baja tú la voz</div><h4>Habla más lento y más bajo que él</h4><p>El volumen se contagia. Si tú bajas, la persona baja para escucharte. Da un paso al costado para sacar la charla del ángulo de las otras mesas.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">handshake</span></div><div><div class="t">Paso 5 · discúlpate y apropia</div><h4>Sin peros, sin culpar a cocina ni al mozo</h4><p>"Le pido disculpas, esto no debió pasar y es mi responsabilidad resolverlo." Nada de "es que el chico es nuevo" ni "es que hoy está lleno". El comensal no quiere tu excusa, quiere tu solución.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">build</span></div><div><div class="t">Paso 6 · propón y pregunta</div><h4>Ofrece una salida concreta y confirma</h4><p>"Le rehacemos el plato ahora mismo y va por cuenta de la casa. ¿Le parece bien o prefiere elegir otra cosa de la carta?" Dar opción devuelve control a quien lo perdió.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">done_all</span></div><div><div class="t">Paso 7 · cierra y verifica</div><h4>Vuelve a los 5 minutos a confirmar</h4><p>"¿Ahora sí quedó como esperaba?" Cerrar el círculo demuestra que no fue una promesa para sacártelo de encima. Ahí es donde un comensal molesto se vuelve fiel.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Usa el nombre del comensal si lo tienes en la reserva</li>
+        <li>Habla en singular: "yo lo resuelvo", "yo me encargo"</li>
+        <li>Toma nota delante de él: verte anotar valida su reclamo</li>
+        <li>Ofrece mover la charla a la barra o a un rincón discreto</li>
+        <li>Avisa a cocina y caja lo que prometiste, para que no falle</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>No digas "cálmese" ni "no es para tanto": echa gasolina</li>
+        <li>No discutas quién tiene razón delante de su mesa</li>
+        <li>No culpes al mozo, al nuevo, a cocina ni "al sistema"</li>
+        <li>No prometas algo que cocina o caja no puedan cumplir</li>
+        <li>No lo dejes con el mozo que originó el problema</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Frase ancla:</b> "Tiene razón, lo siento, yo lo resuelvo." Tres piezas: valido, me disculpo, me apropio. Si no sabes qué decir bajo presión, empieza siempre por ahí.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Cortesías y compensación con criterio</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Compensar no es regalar el local ni castigar la caja del turno. Es una herramienta con reglas. Un líder que da cortesías al azar enseña al equipo a improvisar y al comensal frecuente a reclamar por deporte. Usa una matriz: la gravedad manda el gesto, y el gesto manda quién autoriza.</p>
+    <table class="t">
+      <thead><tr><th>Situación</th><th>Gesto adecuado</th><th>Quién autoriza</th></tr></thead>
+      <tbody>
+        <tr><td>Demora leve de un plato (menos de 10 min sobre lo normal)</td><td>Disculpa + una copa de la casa o un piso de entrada</td><td>Mozo / capitán</td></tr>
+        <tr><td>Plato mal ejecutado o frío</td><td>Rehacer sin cargo + postre de cortesía</td><td>Capitán / encargado de salón</td></tr>
+        <tr><td>Error que arruinó la experiencia (mesa cambiada, reserva perdida, servicio caótico)</td><td>Descuento del 20–50% o quitar la comida de la cuenta</td><td>Encargado / administrador</td></tr>
+        <tr><td>Cabello, objeto extraño o falla de higiene en el plato</td><td>Retirar todo lo consumido + invitación de retorno con reserva a nombre</td><td>Administrador / gerente</td></tr>
+        <tr><td>Reacción alérgica, malestar, cobro indebido, cualquier tema legal o de salud</td><td>Cortesía total esa noche NO cierra el caso: activa protocolo (Módulo 4) y registra</td><td>Gerente (obligatorio)</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>El gesto va antes de la cuenta</h3><div class="d">La cortesía sorprende más si aparece durante la experiencia, no como descuento al pagar. Un postre que llega "de parte del chef" pesa más que 20% menos en la boleta.</div><div class="s">Recuperar &gt; descontar</div></div>
+      <div class="tipo"><h3>Personaliza, no tarifar</h3><div class="d">Al vegetariano no le regales el lomo. A quien vino por su aniversario, mándale una copa de espumante con una nota. El gesto que apunta a la persona vale el doble.</div><div class="s">Ajusta al comensal</div></div>
+      <div class="tipo"><h3>Registra siempre</h3><div class="d">Toda cortesía sobre S/ 50 se anota: mesa, motivo, monto, quién autorizó. En Prep! queda en el audit log del POS. Sin registro, hay fuga de caja y no aprendes del patrón.</div><div class="s">Cortesía sin registro = fuga</div></div>
+      <div class="tipo"><h3>La invitación de retorno</h3><div class="d">A veces el mejor gesto no es esta noche sino la próxima: "Quiero que vuelva y la deje bien. Su próxima cena la coordino yo." Recompras una segunda oportunidad, que es lo que de verdad quieres.</div><div class="s">Compra la próxima visita</div></div>
+      <div class="tipo"><h3>Cuidado con el reclamador serial</h3><div class="d">Hay quien reclama cada visita buscando gratis. Revisa el historial del comensal en el CRM. Se atiende con amabilidad, pero el patrón se anota y el gesto se acota.</div><div class="s">Amable, pero con memoria</div></div>
+      <div class="tipo"><h3>Propina del mozo, aparte</h3><div class="d">Si quitas un plato de la cuenta, cuida que la falla no le coma la propina a un mozo que sí hizo bien su parte. Compensación del restaurante ≠ castigo al equipo.</div><div class="s">No pagues cortesías con propinas</div></div>
+    </div>
+    <div class="callout"><b>Techo por rol:</b> define un monto que cada rol puede regalar sin pedir permiso (p. ej. mozo hasta S/ 40, encargado hasta S/ 150, gerente sin techo). Así el equipo resuelve rápido lo chico y solo escala lo grande. Un servicio que se traba esperando la firma del gerente para un postre ya perdió.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Crisis en sala: cuando hay riesgo real</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Aquí ya no manejas una molestia: manejas seguridad, salud o legal. La regla de oro es proteger primero a las personas, después la operación, después la reputación. Nunca al revés. Ten estos protocolos memorizados; en crisis no hay tiempo de improvisar.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">e911_emergency</span></div><div><div class="t">Reacción alérgica o intoxicación</div><h4>Salud manda todo lo demás</h4><p>No discutas la carta. Llama al SAMU (106) o a una ambulancia sin dudar, retira el plato y consérvalo aparte (evidencia), avisa a cocina para congelar el lote y anota qué comió y a qué hora. Acompaña a la persona, no la dejes sola. El gerente asume el caso y contacta a la familia. Registra todo por escrito esa misma noche.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">sentiment_very_dissatisfied</span></div><div><div class="t">Comensal ebrio o agresivo</div><h4>Corta el alcohol y baja el escenario</h4><p>Deja de servirle trago con discreción (agua y algo de comer "de la casa"). Habla con quien lo acompaña, que suele ser tu mejor aliado. Si hay riesgo físico, no lo enfrentes solo: junta a dos personas del equipo, ofrece llamarle un taxi y, si escala, seguridad o serenazgo. Jamás pongas las manos encima a un comensal.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">medical_services</span></div><div><div class="t">Accidente en sala</div><h4>Caída, quemadura, corte, vidrio roto</h4><p>Asegura la zona (nadie pisa el vidrio, seca el piso mojado), atiende a la persona con el botiquín, y si es serio llama ambulancia. Toma fotos del lugar y anota testigos. No admitas culpa ni firmes nada en caliente: "Lo importante ahora es que esté bien, del resto se encarga la administración." Reporta como incidente en El Libro.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">videocam</span></div><div><div class="t">Alguien está grabando la escena</div><h4>Compórtate como si todo saliera al aire</h4><p>Asume que el video se publica. Baja tu tono, sé impecablemente cortés, no manotees la cámara ni exijas que borre (empeora y viola su derecho a grabar en público). Invita a la persona a conversar en privado, lejos del lente. La calma filmada te defiende; la reacción filmada te hunde.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">menu_book</span></div><div><div class="t">Piden el Libro de Reclamaciones</div><h4>Entrégalo de inmediato, nunca lo niegues</h4><p>En Perú es obligatorio y negarlo es infracción sancionable por Indecopi. Entrégalo con calma (físico o virtual), no lo tomes como ataque personal y ofrece igual resolver el fondo. Escala al gerente para responder dentro del plazo legal. Muchas veces, atender bien evita que llegue a Indecopi.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups</span></div><div><div class="t">Evacuación (sismo, amago de incendio, corte grave)</div><h4>Personas fuera, cuenta después</h4><p>Sigue la ruta de evacuación, prioriza adultos mayores, embarazadas, niños y personas con discapacidad. Nadie cobra ni pide firmar cuentas: la comida se olvida. Punto de reunión definido, conteo de comensales y personal, y recién cuando todos estén a salvo, gerencia evalúa.</p></div></div>
+    </div>
+    <div class="callout"><b>Protege primero a las personas, luego la operación, luego la reputación.</b> Si dudas del orden, ese es el orden. Ningún plato, ninguna reseña y ninguna caja valen una persona lastimada.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Prensa y redes: cuidar la reputación</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Una crisis moderna casi siempre termina en pantalla: la reseña de 1 estrella, el tuit con foto, el video que circula, el periodista que llama. Aquí el líder deja de apagar el incendio de la mesa y empieza a cuidar cómo se cuenta la historia hacia afuera. La velocidad y el tono importan más que el argumento.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Una sola voz</h3><div class="d">Define quién responde en nombre del local (gerente o dueño). El mozo no comenta con prensa ni contesta reseñas por su cuenta. Voces múltiples = versiones cruzadas = más leña.</div><div class="s">Un vocero, un mensaje</div></div>
+      <div class="tipo"><h3>Responde reseñas en menos de 24 h</h3><div class="d">Google y TripAdvisor: agradece, reconoce, no discutas en público, e invita a resolver por privado o teléfono. Una respuesta serena convence más a quien la lee que al que la escribió.</div><div class="s">La respuesta es para los que leen</div></div>
+      <div class="tipo"><h3>Nunca pelees online</h3><div class="d">Responder a la defensiva, con sarcasmo o exponiendo datos del comensal es el error que vuelve viral lo que iba a morir solo. Cortés, breve, hacia el privado. Siempre.</div><div class="s">Público: cortés · privado: resolver</div></div>
+      <div class="tipo"><h3>Si llama la prensa</h3><div class="d">No improvises ni digas "sin comentarios" (suena a culpa). "Estamos atendiendo el caso con seriedad, la seguridad de nuestros comensales es la prioridad; les comparto una declaración hoy." Gana tiempo y coordina con el dueño.</div><div class="s">Frase puente + tiempo</div></div>
+      <div class="tipo"><h3>Guarda la evidencia</h3><div class="d">Capturas de la reseña, del video, del chat. Reportes de cámaras, comandas, hora, personal del turno. Si el caso escala, tu versión ordenada y con pruebas vale oro.</div><div class="s">Documenta desde el minuto uno</div></div>
+      <div class="tipo"><h3>Cierra el bucle público</h3><div class="d">Cuando resuelvas en privado, pide (sin exigir) actualizar la reseña: "Si sintió que lo atendimos bien, nos ayudaría muchísimo que lo cuente." Muchos suben la estrella; nunca compres reseñas.</div><div class="s">Resuelve, luego pide honesto</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — respuesta pública que suma</h4><ul>
+        <li>Agradece que lo comparta y reconoce lo que sintió</li>
+        <li>Menciona qué acción concreta tomaste puertas adentro</li>
+        <li>Da un canal directo: teléfono o correo del encargado</li>
+        <li>Firma con nombre y cargo real: humaniza la marca</li>
+        <li>Mantén el tono cálido aunque el reclamo sea injusto</li>
+      </ul></div>
+      <div class="box no"><h4>No — respuesta que empeora todo</h4><ul>
+        <li>No cuestiones si el comensal "de verdad estuvo ahí"</li>
+        <li>No expongas su nombre, consumo ni cuánto pagó</li>
+        <li>No copies y pegues la misma respuesta a todas</li>
+        <li>No borres comentarios negativos legítimos: se nota</li>
+        <li>No respondas en caliente; deja pasar unos minutos</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Plantilla de respuesta:</b> "Hola [nombre], gracias por escribirnos y lamentamos mucho lo que vivió. No es la experiencia que buscamos dar. Ya conversamos con el equipo del turno para que no se repita. Me gustaría atenderlo personalmente: escríbame a [contacto]. — [Tu nombre], encargado."</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Recuperación: cerrar bien y aprender</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La crisis no termina cuando el comensal se va: termina cuando cierras el caso, recuperas la relación y arreglas la causa para que no vuelva a pasar. Aquí es donde un buen líder convierte un mal rato en un cliente más leal y en un equipo más fuerte.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La paradoja de la recuperación</h3><div class="d">Un problema bien resuelto puede dejar al comensal MÁS satisfecho que si nunca hubiera fallado nada: vio cómo respondes. Por eso una queja es una oportunidad disfrazada, no una amenaza.</div><div class="s">Bien resuelto &gt; nunca falló</div></div>
+      <div class="tipo"><h3>Seguimiento al día siguiente</h3><div class="d">Un mensaje o llamada breve: "Ayer no quedó como quería y me quedé pensando. Quiero invitarlo a que vuelva y lo dejemos perfecto." Nadie espera esa llamada; por eso desarma.</div><div class="s">El día después define la lealtad</div></div>
+      <div class="tipo"><h3>Registra el caso completo</h3><div class="d">Qué pasó, qué se ofreció, cómo cerró, en el CRM del comensal y en la bitácora de El Libro. La próxima vez que venga, el equipo sabe la historia y lo recibe con contexto.</div><div class="s">Memoria del local, no del mozo</div></div>
+      <div class="tipo"><h3>Post-mortem sin cacería</h3><div class="d">En el briefing siguiente: ¿qué falló en el sistema, no en la persona? Buscar culpables congela al equipo; buscar causas lo mejora. "¿Cómo evitamos que se repita?" es la única pregunta que importa.</div><div class="s">Causa raíz, no chivo expiatorio</div></div>
+      <div class="tipo"><h3>Cuida a tu equipo</h3><div class="d">Atender a un comensal furioso desgasta. Después del turno, acércate al mozo que la pasó mal: "Lo manejaste bien, yo te respaldo." Un equipo respaldado no le teme a la próxima queja.</div><div class="s">El respaldo se devuelve en piso</div></div>
+      <div class="tipo"><h3>Convierte el caso en SOP</h3><div class="d">Si algo pasó una vez, puede repetirse. Vuelve el aprendizaje un procedimiento en El Libro: "Qué hacer si un comensal reacciona a un alérgeno". La crisis de hoy es el manual de mañana.</div><div class="s">Un incidente = un protocolo nuevo</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">fact_check</span></div><div><div class="t">Cierre · esa misma noche</div><h4>Registra el incidente antes de irte</h4><p>Mesa, hora, qué pasó, qué se hizo, monto de cortesía, quién autorizó. En frío se olvidan detalles que después importan.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">forward_to_inbox</span></div><div><div class="t">Recuperación · 24–48 h</div><h4>Contacta al comensal y ofrece el retorno</h4><p>Mensaje humano, no automático. Invitación concreta con reserva a tu nombre. Recuperas la relación, no solo compensas el plato.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups_2</span></div><div><div class="t">Aprendizaje · próximo briefing</div><h4>Post-mortem con el equipo y ajuste al SOP</h4><p>Causa raíz, no culpable. Si hace falta, nuevo procedimiento en El Libro para que el sistema —no la memoria de una persona— evite la repetición.</p></div></div>
+    </div>
+    <div class="callout"><b>El círculo se cierra afuera del restaurante.</b> El comensal recuerda menos el problema y más cómo lo trataste después. Un seguimiento al día siguiente convierte tu peor mesa de la semana en tu mejor historia de fidelización.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>De-escalada</b><span>Conjunto de técnicas para bajar la carga emocional de una persona alterada y volver la conversación resoluble.</span></div>
+      <div class="gterm"><b>Service recovery</b><span>El arte de recuperar la relación con un comensal después de una falla; bien hecho, aumenta la lealtad.</span></div>
+      <div class="gterm"><b>Paradoja de la recuperación</b><span>Fenómeno por el cual un cliente cuyo problema se resolvió excelente queda más satisfecho que uno que nunca tuvo problema.</span></div>
+      <div class="gterm"><b>Nivel 1 / 2 / 3</b><span>Clasificación rápida del incidente: queja reparable en mesa (1), comensal desbordado (2) o crisis con riesgo (3).</span></div>
+      <div class="gterm"><b>Cortesía / atención</b><span>Gesto sin cargo (plato, copa, descuento) que el restaurante ofrece para reparar una experiencia.</span></div>
+      <div class="gterm"><b>Techo de autorización</b><span>Monto máximo de cortesía que cada rol puede otorgar sin pedir permiso a un superior.</span></div>
+      <div class="gterm"><b>Libro de Reclamaciones</b><span>Registro obligatorio por ley en Perú (físico o virtual) donde el consumidor deja su queja; negarlo es infracción.</span></div>
+      <div class="gterm"><b>Indecopi</b><span>Organismo peruano que protege al consumidor; puede sancionar al restaurante ante quejas no atendidas.</span></div>
+      <div class="gterm"><b>SAMU (106)</b><span>Servicio de atención móvil de urgencias del Estado peruano; a llamar ante emergencia de salud en sala.</span></div>
+      <div class="gterm"><b>Vocero único</b><span>La única persona autorizada a hablar con prensa o responder públicamente en nombre del local.</span></div>
+      <div class="gterm"><b>Post-mortem</b><span>Revisión del incidente con el equipo, enfocada en la causa raíz del sistema y no en buscar culpables.</span></div>
+      <div class="gterm"><b>Reclamador serial</b><span>Comensal que reclama de forma recurrente buscando beneficios; se atiende con amabilidad pero con historial anotado.</span></div>
+      <div class="gterm"><b>Causa raíz</b><span>El motivo de fondo que originó la falla; arreglarla evita la repetición mejor que castigar a una persona.</span></div>
+      <div class="gterm"><b>SOP</b><span>Procedimiento operativo estándar; el paso a paso escrito en El Libro que vuelve repetible una buena respuesta.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Quejas y crisis · Chuleta del líder</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Clasifica en 3 segundos</h4><ul>
+          <li>Nivel 1: queja reparable en mesa → mozo/capitán</li>
+          <li>Nivel 2: comensal desbordado → líder</li>
+          <li>Nivel 3: riesgo de salud/seguridad/reputación → gerencia</li>
+          <li>Ante la duda, sube de nivel</li>
+        </ul></div>
+        <div class="op-box"><h4>De-escalar (7 pasos)</h4><ul>
+          <li>Preséntate por nombre y cargo</li>
+          <li>Escucha sin interrumpir · valida la emoción</li>
+          <li>Baja tu voz · discúlpate sin peros</li>
+          <li>Propón solución + opción · verifica a los 5 min</li>
+          <li>Ancla: "Tiene razón, lo siento, yo lo resuelvo"</li>
+        </ul></div>
+        <div class="op-box"><h4>Compensar con criterio</h4><ul>
+          <li>La gravedad manda el gesto; el gesto, quién firma</li>
+          <li>Gesto durante la experiencia &gt; descuento al pagar</li>
+          <li>Personaliza al comensal · registra toda cortesía &gt; S/ 50</li>
+          <li>A veces el mejor gesto es invitar la próxima visita</li>
+        </ul></div>
+        <div class="op-box"><h4>Crisis en sala</h4><ul>
+          <li>Personas → operación → reputación, en ese orden</li>
+          <li>Salud: SAMU 106, conserva evidencia, avisa gerencia</li>
+          <li>Ebrio/agresivo: corta trago, no lo enfrentes solo</li>
+          <li>Libro de Reclamaciones: entrégalo siempre, nunca lo niegues</li>
+        </ul></div>
+        <div class="op-box"><h4>Prensa y redes</h4><ul>
+          <li>Un solo vocero · responde reseñas en menos de 24 h</li>
+          <li>Público: cortés y breve · privado: resolver</li>
+          <li>Nunca pelees online ni expongas datos del comensal</li>
+          <li>Documenta evidencia desde el minuto uno</li>
+        </ul></div>
+        <div class="op-box"><h4>Recuperar y aprender</h4><ul>
+          <li>Registra el caso esa misma noche</li>
+          <li>Sigue al comensal en 24–48 h con un retorno</li>
+          <li>Post-mortem: causa raíz, no culpables</li>
+          <li>Un incidente nuevo = un SOP nuevo en El Libro</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Manejo de quejas y crisis (avanzado) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

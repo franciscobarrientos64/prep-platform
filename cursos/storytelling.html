@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Storytelling de platos y carta · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23a23b5e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Storytelling</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#a23b5e">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Storytelling de platos y carta</h1>
+    <p>La técnica de sala para contar de dónde viene un plato, quién lo hace y por qué es especial: convertir cada descripción en una razón para pedirlo y quererlo. Para meseros, capitanes y anfitriones que quieren vender con emoción, no con recitado.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Sala / FOH</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el comensal no paga solo por comida, paga por lo que va a sentir y a contar después. Una historia de 15 segundos bien dicha sube el ticket, hace que el plato "caro" parezca justo, reduce devoluciones ("no era lo que esperaba") y convierte al comensal en alguien que recomienda tu casa por su nombre.</div>
+
+  <!-- M1 -->
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Por qué la historia vende</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Vender con emoción no es adornar; es dar contexto para que el comensal entienda el valor. La descripción informa, la historia hace querer. Primero, cambia el chip: dejas de recitar la carta y empiezas a presentar cada plato.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Recitar vs. contar</h3><div class="d">"Tiradito de fondo de mar en leche de tigre" es recitar. "Pescado que llegó esta mañana de Sechura, curado al momento en leche de tigre de ají limo" es contar.</div><div class="s">Mismo plato, otro valor</div></div>
+      <div class="tipo"><h3>La emoción se recuerda</h3><div class="d">El comensal olvida el precio y los ingredientes exactos, pero recuerda cómo lo hiciste sentir. Esa memoria es la que trae la próxima reserva.</div><div class="s">Memoria &gt; dato</div></div>
+      <div class="tipo"><h3>Justifica el precio</h3><div class="d">Un cordero a S/ 68 sin historia parece caro. Con "cordero de leche de Cañete, cocido 12 horas a baja temperatura", el número se vuelve razonable.</div><div class="s">Valor percibido</div></div>
+      <div class="tipo"><h3>Baja la incertidumbre</h3><div class="d">Nombres poco conocidos (olluco, chita, cushuro) asustan. La historia los vuelve deseables y evita el "mejor pido lo de siempre".</div><div class="s">Menos miedo, más prueba</div></div>
+      <div class="tipo"><h3>Diferencia tu casa</h3><div class="d">El de al lado también tiene lomo saltado. Lo que no tiene es tu historia: tu ají, tu proveedor, la mano de tu chef. Eso no se copia.</div><div class="s">Ventaja que no se clona</div></div>
+      <div class="tipo"><h3>Convierte en embajador</h3><div class="d">Quien escucha una buena historia la repite en su mesa y en su casa. Vendes un plato y ganas quien lo cuenta por ti.</div><div class="s">Boca a boca</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> una historia se gana el derecho a existir solo si es verdadera. Nunca inventes un origen ni un productor. Si no sabes de dónde viene un ingrediente, ese es tu trabajo del pre-servicio: pregúntale al chef, no al comensal.</div>
+  </section>
+
+  <!-- M2 -->
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Las cuatro fuentes de una buena historia</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Todo plato tiene historia si sabes dónde buscarla. Hay cuatro pozos de los que sacar: el ingrediente, la técnica, la persona y el territorio. No uses los cuatro a la vez: elige el más fuerte para ese plato y esa mesa.</p>
+    <table class="t">
+      <thead><tr><th>Fuente</th><th>Qué contar</th><th>Ejemplo peruano real</th></tr></thead>
+      <tbody>
+        <tr><td><b>El ingrediente</b></td><td>Origen, temporada, quién lo cultiva o pesca, por qué ese y no otro</td><td>"Las papas nativas son de una comunidad de Huánuco, a 3.800 m; llegan siete variedades y cambian según la cosecha"</td></tr>
+        <tr><td><b>La técnica</b></td><td>El método, el tiempo, el trabajo que no se ve en el plato</td><td>"El pulpo se cocina 40 minutos y luego va a la brasa de algarrobo; por eso el borde ahumado"</td></tr>
+        <tr><td><b>La persona</b></td><td>El chef, la receta de familia, la mano detrás del plato</td><td>"Es el ají de gallina de la abuela del chef, de Chiclayo; el secreto es el pan remojado en leche, no en caldo"</td></tr>
+        <tr><td><b>El territorio</b></td><td>La región, el mar o el valle, la tradición del lugar</td><td>"Un plato del norte: chef lo probó en una picantería de Monsefú y lo trajo tal cual"</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Producto estrella</h3><div class="d">Cada casa tiene 2-3 productos con historia potente: el ají amarillo del valle, las conchas de Sechura, el cacao de San Martín, la sal de Maras, el café de Villa Rica. Conócelos de memoria.</div></div>
+      <div class="tipo"><h3>El detalle concreto</h3><div class="d">"Bien fresco" no dice nada. "Llegó hoy a las 6 a.m." sí. Los números, nombres de lugar y tiempos hacen la historia creíble.</div></div>
+      <div class="tipo"><h3>El porqué del chef</h3><div class="d">Por qué el chef puso ese plato en la carta suele ser la mejor historia: un viaje, un recuerdo, un productor que conoció. Pregúntaselo.</div></div>
+    </div>
+    <div class="callout"><b>Tarea del pre-servicio:</b> por cada plato nuevo, anota UNA frase de cada fuente en tu libreta. En el pase, el chef o el capitán dan el dato del día (qué pescado llegó, qué papa está en temporada). Sin esa data, improvisas y suena falso.</div>
+  </section>
+
+  <!-- M3 -->
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Anatomía de una historia de 15 segundos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">En sala no das una conferencia: das una cápsula corta y sabrosa mientras el comensal decide o mientras dejas el plato. Esta es la estructura de cuatro tiempos que cabe en 15-20 segundos.</p>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">bolt</span></div><div><div class="t">Tiempo 1 · 3 seg</div><h4>El gancho</h4><p>Empieza por lo más antojable o lo más raro. "Este es el plato que la gente vuelve a pedir" o "Este lleva un ingrediente que casi nadie conoce".</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">travel_explore</span></div><div><div class="t">Tiempo 2 · 5 seg</div><h4>La procedencia</h4><p>Un dato real de origen o de la persona. "El pescado es de Sechura, llegó hoy" o "Es la receta del abuelo del chef, de Arequipa".</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">restaurant</span></div><div><div class="t">Tiempo 3 · 5 seg</div><h4>El detalle sensorial</h4><p>Anticipa lo que va a sentir: textura, ahumado, acidez, punto. "Va crocante por fuera y jugoso adentro" o "La leche de tigre pica justo, no de más".</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">check_circle</span></div><div><div class="t">Tiempo 4 · 3 seg</div><h4>El cierre con recomendación</h4><p>Cierra guiando la decisión. "Yo lo pediría para empezar" o "Va perfecto para compartir entre dos".</p></div></div>
+    <div class="callout"><b>Ejemplo completo (causa):</b> "Esta es de las favoritas de la casa <i>(gancho)</i>. La papa amarilla es de la sierra de Lima y el chef la prensa a mano <i>(procedencia + persona)</i>. Queda cremosa, con el ají justo y el limón fresco encima <i>(sensorial)</i>. Es ideal para empezar y compartir <i>(cierre)</i>." Total: 16 segundos.</div>
+  </section>
+
+  <!-- M4 -->
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>El arte de contarla en mesa</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La misma historia puede sumar o incomodar según cómo y cuándo la digas. Contar bien es tanto leer a la mesa como saber el dato. Aquí está la diferencia entre un mesero que vende y uno que interrumpe.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Sí hace un buen relator</h4>
+        <ul>
+          <li>Cuenta la historia mientras deja el plato o cuando el comensal duda entre dos opciones</li>
+          <li>Lee la mesa: mesa apurada = versión corta; mesa curiosa = un poco más</li>
+          <li>Usa palabras simples y peruanas ("crocante", "jugoso", "picadito"), no tecnicismos de cocina</li>
+          <li>Cuenta solo lo que probó o sabe cierto, y lo dice con convicción</li>
+          <li>Menciona el productor o la región con orgullo, como algo tuyo</li>
+          <li>Deja que el plato hable: cuenta poco, invita a probar</li>
+        </ul>
+      </div>
+      <div class="box no"><h4>No hace un buen relator</h4>
+        <ul>
+          <li>Suelta el discurso completo a una mesa que solo quiere pedir rápido</li>
+          <li>Recita todos los ingredientes como lista de mercado</li>
+          <li>Usa jerga ("emulsión", "esferificación", "cocción sous-vide") sin traducir</li>
+          <li>Inventa un origen porque quedó bonito, y lo pillan</li>
+          <li>Cuenta la misma historia idéntica a las 12 mesas, en piloto automático</li>
+          <li>Interrumpe una conversación o cuenta la historia de espaldas, yéndose</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><b>Lectura de mesa rápida:</b> ¿Están conversando animados y preguntan? Dales historia. ¿Miran el reloj, celular en mano, "lo de siempre"? Una frase y a cocina. La peor venta es la que llega en mal momento.</div>
+  </section>
+
+  <!-- M5 -->
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Storytelling de la carta completa</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La carta también es un relato con inicio, desarrollo y final. Un buen capitán no vende platos sueltos: arma una experiencia que sube de a poco y termina alto. Piensa la mesa como una historia de una hora y media.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Abre con un ancla</h3><div class="d">Empieza recomendando un entrante con historia fuerte (un tiradito del día, una causa de la casa). Marca el nivel y da confianza para dejarse llevar el resto de la comida.</div><div class="s">Primer plato = tono</div></div>
+      <div class="tipo"><h3>Encadena las historias</h3><div class="d">Enlaza: "si les gustó lo fresco del tiradito, el arroz con conchas sigue esa línea del norte". La carta se siente pensada, no una lista al azar.</div><div class="s">Hilo conductor</div></div>
+      <div class="tipo"><h3>Marida con relato</h3><div class="d">El trago también tiene historia: "un pisco quebranta de Ica, para el cebiche" o "una chicha morada de la casa, sin azúcar de más". Sube ticket y experiencia.</div><div class="s">Bebida con origen</div></div>
+      <div class="tipo"><h3>Cuida los tiempos</h3><div class="d">No cuentes de todo de golpe. Guarda la historia del postre para cuando terminen el fondo; llega fresca y evita saturar al inicio.</div><div class="s">Dosifica</div></div>
+      <div class="tipo"><h3>Cierra alto</h3><div class="d">El postre es el último recuerdo. "Nuestro cacao es de San Martín, de una cooperativa; el chef lo trabaja al 70%." Un buen cierre define la propina y la reseña.</div><div class="s">Última impresión</div></div>
+      <div class="tipo"><h3>Reserva un secreto</h3><div class="d">Guarda un dato extra ("¿sabían que la sal es de Maras, de pozos de los incas?") para las mesas más enganchadas. Se sienten VIP y lo cuentan.</div><div class="s">Detalle premium</div></div>
+    </div>
+    <div class="callout"><b>Menú degustación:</b> si tu casa tiene degustación, cada paso ES una micro-historia y tú eres el narrador de toda la noche. Aprende el hilo del chef (¿es un viaje por el Perú? ¿un homenaje a un mercado?) y guíalos de principio a fin.</div>
+  </section>
+
+  <!-- M6 -->
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Práctica: arma y entrena tus guiones</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Nadie improvisa bien sin haber preparado. Estos son ejemplos reales listos para adaptar a tu carta y la rutina para que se vuelvan naturales, no recitados.</p>
+    <table class="t">
+      <thead><tr><th>Plato</th><th>Historia de 15 seg (ejemplo)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Cebiche del día</b></td><td>"El pescado es fresco del día, de Sechura. Lo curamos al momento en leche de tigre con ají limo. Va con camote dulce y choclo del valle. Fresco y con el pique justo: perfecto para empezar."</td></tr>
+        <tr><td><b>Lomo saltado</b></td><td>"El clásico que nunca falla. Res de corte tierno, salteada a fuego fuerte en wok para ese sabor ahumado que llamamos 'al aroma del wok'. Papas fritas a mano y arroz graneado. Para comerlo bien caliente."</td></tr>
+        <tr><td><b>Cordero norteño</b></td><td>"Cordero de leche de Cañete, cocido a baja temperatura ocho horas hasta que se deshace. Va con culantro y loche, como en el norte. Es el plato que más nos piden repetir."</td></tr>
+        <tr><td><b>Postre de cacao</b></td><td>"Cacao de San Martín, de una cooperativa amazónica, al 70%. El chef lo trabaja en tres texturas. Amargo justo, nada empalagoso. El mejor final si quieren algo de chocolate de verdad."</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Ficha por plato</h3><div class="d">Arma una tarjeta por cada plato clave con: gancho, origen, sensorial y cierre. Guárdala en El Libro y repásala antes del turno.</div></div>
+      <div class="tipo"><h3>Ensayo entre compañeros</h3><div class="d">En el briefing, uno hace de comensal y otro cuenta el plato del día en 15 seg. Se corrige y se rota. Cinco minutos, gran diferencia.</div></div>
+      <div class="tipo"><h3>Prueba y ajusta</h3><div class="d">Fíjate qué historia hace que más gente pida ese plato. La que funciona, se queda; la que no engancha, se cambia.</div></div>
+    </div>
+    <div class="paso" style="margin-top:8px"><div class="ico"><span class="material-symbols-outlined">local_fire_department</span></div><div><div class="t">Rutina diaria</div><h4>El dato del día en el pase</h4><p>Cada servicio, antes de abrir, el chef o capitán da la novedad: qué pescado llegó, qué producto está en su punto, qué plato hay que empujar. Esa es la munición fresca de tus historias de hoy.</p></div></div>
+  </section>
+
+  <!-- Glosario -->
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Storytelling</b><span>Contar la historia detrás de un plato (origen, técnica, persona, lugar) para venderlo con emoción, no solo describirlo.</span></div>
+      <div class="gterm"><b>Gancho</b><span>La primera frase que despierta interés y hace que el comensal quiera escuchar el resto.</span></div>
+      <div class="gterm"><b>Procedencia</b><span>De dónde viene el ingrediente o la receta: la región, el productor, el mar o el valle.</span></div>
+      <div class="gterm"><b>Detalle sensorial</b><span>Lo que el comensal va a sentir al comer: textura, temperatura, acidez, ahumado, punto de cocción.</span></div>
+      <div class="gterm"><b>Cierre</b><span>La frase final que guía la decisión: "yo lo pediría para empezar", "va perfecto para compartir".</span></div>
+      <div class="gterm"><b>Leer la mesa</b><span>Detectar si la mesa quiere historia (curiosa, conversando) o rapidez (apurada) y ajustar cuánto cuentas.</span></div>
+      <div class="gterm"><b>Venta con emoción</b><span>Mover la decisión desde el dato hacia el deseo y el recuerdo, sin presionar ni exagerar.</span></div>
+      <div class="gterm"><b>Producto estrella</b><span>Ingrediente insignia de la casa con historia potente (ají amarillo, conchas de Sechura, cacao de San Martín).</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Combinar un plato con una bebida que lo realza; también tiene su propia historia de origen.</span></div>
+      <div class="gterm"><b>Menú degustación</b><span>Secuencia de pasos pensada por el chef; cada plato es una micro-historia y el mesero narra toda la noche.</span></div>
+      <div class="gterm"><b>El dato del día</b><span>La novedad que el chef comparte en el pase (qué pescado llegó, qué producto está en su punto) para nutrir las historias del turno.</span></div>
+      <div class="gterm"><b>Leche de tigre</b><span>El jugo del cebiche (limón, ají, pescado, sal): un buen storyteller sabe explicar su acidez y su pique.</span></div>
+      <div class="gterm"><b>Loche</b><span>Zapallo aromático del norte del Perú, típico de guisos como el cordero; nombre poco conocido que la historia vuelve deseable.</span></div>
+      <div class="gterm"><b>Pase / briefing</b><span>Reunión previa al servicio donde se alinean novedades y guiones; el mejor momento para ensayar historias.</span></div>
+    </div>
+  </section>
+
+  <!-- One-pager -->
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Storytelling de platos · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>4 fuentes de historia</h4><ul><li><b>Ingrediente:</b> origen, temporada, productor</li><li><b>Técnica:</b> método, tiempo, el trabajo que no se ve</li><li><b>Persona:</b> el chef, la receta de familia</li><li><b>Territorio:</b> región, mar o valle, tradición</li></ul></div>
+        <div class="op-box"><h4>Historia de 15 seg</h4><ul><li>Gancho (3s): lo más antojable o raro</li><li>Procedencia (5s): un dato real de origen</li><li>Sensorial (5s): qué va a sentir</li><li>Cierre (3s): recomendación que guía</li></ul></div>
+        <div class="op-box"><h4>Sí</h4><ul><li>Cuenta al dejar el plato o si dudan</li><li>Lee la mesa: apurada = corto</li><li>Palabras simples, solo lo verdadero</li><li>Menciona productor con orgullo</li></ul></div>
+        <div class="op-box"><h4>No</h4><ul><li>Discurso a mesa apurada</li><li>Recitar ingredientes como lista</li><li>Jerga de cocina sin traducir</li><li>Inventar orígenes</li></ul></div>
+        <div class="op-box"><h4>La carta como relato</h4><ul><li>Abre con un ancla fuerte</li><li>Encadena historias con hilo</li><li>Marida con bebida y origen</li><li>Cierra alto con el postre</li></ul></div>
+        <div class="op-box"><h4>Antes del turno</h4><ul><li>Pide el dato del día en el pase</li><li>Repasa la ficha de tus platos clave</li><li>Ensaya 15 seg con un compañero</li><li>Nunca inventes: si no sabes, pregunta</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Storytelling de platos y carta · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

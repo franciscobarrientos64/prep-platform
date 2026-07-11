@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Briefing pre-servicio efectivo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d1560f'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Briefing pre-servicio</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#d1560f">
+    <div class="k">Academia Prep! · Administración · Liderazgo</div>
+    <h1>Briefing pre-servicio efectivo</h1>
+    <p>Quince minutos, de pie, antes de abrir puertas. El briefing es el momento en que conviertes a ocho personas cansadas de la tarde en un solo equipo que sabe qué mesas entran, qué se acabó, qué hay que vender y por qué vale la pena dar la noche. Este curso te da la estructura exacta para que ningún briefing sea improvisado.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Líderes de sala y cocina</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el comensal que reservó para su aniversario, la mesa VIP del crítico que llega a las 9, el lomo saltado que ya no hay y el mozo nuevo que no sabe nada de eso… todo se resuelve o se hunde en los 15 minutos previos. Un buen briefing evita el "no sabía" en pleno servicio, que es la frase que más plata y más propina cuesta en un restaurante.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La estructura de 15 minutos</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Un briefing no es "juntarse a ver qué pasa". Es una reunión con guion fijo, hora fija y duración fija. Cuando tiene estructura, dura 15 minutos y no se convierte en la charla eterna que a nadie le sirve. Memoriza este esqueleto: es el mismo todas las noches.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Hora y lugar sagrados</h3><div class="d">Siempre a la misma hora, ej. 6:45 p.m. para abrir 7:00. De pie, en el salón ya montado o en la puerta de cocina. Sentados y en la oficina se dispersa; de pie y en el piso, todos alertas.</div><div class="s">Mismo horario cada turno</div></div>
+      <div class="tipo"><h3>Todos, sin excepción</h3><div class="d">Mozos, runners, anfitriona, bartender, cocina caliente y fría, steward. El que llega tarde igual recibe el resumen: nadie entra al piso sin briefing. Un solo mensaje para todos evita el teléfono malogrado.</div><div class="s">Sala + cocina + bar juntos</div></div>
+      <div class="tipo"><h3>El líder conduce, no monologa</h3><div class="d">Tú marcas el ritmo, pero preguntas: "¿alguien tiene una mesa complicada hoy?". El briefing es de ida y vuelta, no un discurso. En 15 minutos hablas tú el 70% y el equipo el 30%.</div><div class="s">Dirige, no dictes cátedra</div></div>
+      <div class="tipo"><h3>El guion de 6 bloques</h3><div class="d">Números de la noche → reservas y VIP → agotados (86) → plato del día → foco del turno → cierre motivador. Siempre en ese orden. Cuando el orden es fijo, nadie olvida un bloque.</div><div class="s">6 bloques, mismo orden</div></div>
+      <div class="tipo"><h3>Con datos en mano</h3><div class="d">Abre Bienvenida y la Carta en Prep! antes de empezar: cubiertos, reservas, VIP, 86 del día. No improvises de memoria; el briefing se prepara 10 minutos antes de darlo.</div><div class="s">Prep! abierto, no de memoria</div></div>
+      <div class="tipo"><h3>Termina, no se diluye</h3><div class="d">Cierras con una frase de arranque y todos van a su estación. Nada de "ah, y otra cosa…" tres veces. Un cierre claro marca el paso de "reunión" a "servicio".</div><div class="s">Cierre firme, a la estación</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <table class="t">
+        <thead><tr><th>Bloque</th><th>Tiempo</th><th>Qué dices</th></tr></thead>
+        <tbody>
+          <tr><td>1 · La noche</td><td>~2 min</td><td>Cubiertos esperados, franjas pico, evento o grupo grande</td></tr>
+          <tr><td>2 · Reservas y VIP</td><td>~3 min</td><td>Quién llega, a qué hora, celebraciones, mesa del crítico o dueño</td></tr>
+          <tr><td>3 · Agotados (86)</td><td>~2 min</td><td>Qué no hay, qué queda poco, sustitutos listos</td></tr>
+          <tr><td>4 · Plato del día</td><td>~3 min</td><td>Qué empujar, cómo describirlo, precio, maridaje</td></tr>
+          <tr><td>5 · Foco del turno</td><td>~2 min</td><td>Un objetivo medible de la noche</td></tr>
+          <tr><td>6 · Cierre</td><td>~2 min</td><td>Reconocimiento + frase de arranque</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>Regla del reloj:</b> si tu briefing pasa de 15 minutos de forma habitual, no estás informando, estás resolviendo problemas que debiste resolver antes. Los quiebres operativos se arreglan uno a uno, no frente a todo el equipo parado.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Reservas y VIP: leer la noche antes de vivirla</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Este es el bloque que separa a un restaurante de nivel de una fonda con manteles. El equipo tiene que entrar sabiendo el nombre del comensal de la mesa 8, que la 12 es aniversario y que a las 9:15 llega el grupo de 10 que reservó el reservado. La sorpresa es enemiga del servicio fino.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">event</span></div><div><div class="t">Paso 1 · Lee el libro de reservas en voz alta</div><h4>Cubiertos, horas de entrada y ritmo de la noche</h4><p>Abre Bienvenida en Prep!: "Hoy 74 cubiertos, 41 reservados. Entrada floja hasta las 8, pico fuerte 8:30 a 10, dos mesas después de las 10:30." Que todos sepan cuándo viene la ola para no relajarse antes de tiempo.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">star</span></div><div><div class="t">Paso 2 · Nombra a los VIP y por qué lo son</div><h4>Habituales, prensa, dueño, influencer, gran cuenta</h4><p>"Mesa 6, 9:00, el Sr. Belmont: viene cada viernes, siempre pide su Malbec y mesa lejos de la puerta. Mesa 14, 9:30, periodista gastronómica: trato impecable, pero natural, sin encimarla." El VIP no es solo el famoso: es también el que gasta y vuelve.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">cake</span></div><div><div class="t">Paso 3 · Marca celebraciones y sus detalles</div><h4>Aniversarios, cumpleaños, pedidas de mano</h4><p>"Mesa 12, aniversario: postre con vela y mensaje en plato, avisa a cocina y a mí antes de sacarlo." Asigna quién ejecuta el detalle. Una celebración olvidada es una reseña de una estrella asegurada.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">warning</span></div><div><div class="t">Paso 4 · Alergias y restricciones registradas</div><h4>Lo que Prep! ya sabe del comensal</h4><p>"Mesa 8: alergia a mariscos confirmada, cocina ya está avisada, ojo con el arroz con mariscos y las fuentes compartidas." Léelo del CRM, no lo dejes a la memoria del mozo. Aquí no hay margen de error.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups_2</span></div><div><div class="t">Paso 5 · Grupos grandes y su logística</div><h4>Quién los toma, menú cerrado, tiempos</h4><p>"Grupo de 10 en el reservado, 9:15, menú corporativo de 3 tiempos ya cerrado. Lo toman Diego y Rosa juntos, sacan todo a la vez, cocina lo sabe." Un grupo mal coordinado tumba el ritmo de todo el salón.</p></div></div>
+    </div>
+    <div class="callout"><b>Truco de líder:</b> asigna a cada VIP y cada celebración un responsable con nombre en el briefing. "¿Quién tiene la mesa 6? Ya, Rosa, es tuya y del Sr. Belmont." Lo que tiene dueño, se hace; lo que es "de todos", no lo hace nadie.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Agotados (86): lo que hoy no hay</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Nada mata más rápido la confianza de una mesa que pedir un plato, esperar diez minutos y que el mozo vuelva con "disculpe, ya no tenemos". Ese bloque de 2 minutos donde cocina canta lo que se acabó vale oro. Regla de oro: se avisa antes de venderlo, no después.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Así se maneja un 86</h4>
+        <ul>
+          <li>Cocina canta la lista de agotados en voz alta y tú la repites</li>
+          <li>Cada mozo lo marca en la Carta de Prep! (queda en gris) al toque</li>
+          <li>Se nombra el sustituto: "no hay corvina, ofrece la chita del día"</li>
+          <li>Se avisa qué queda poco: "solo 4 raciones de pulpo, primero que pide, primero que lleva"</li>
+          <li>Si se acaba en pleno servicio, cocina avisa al líder y el líder al piso</li>
+        </ul>
+      </div>
+      <div class="box no"><h4>Así se pierde la mesa</h4>
+        <ul>
+          <li>El mozo se entera del 86 recién cuando la comanda rebota de cocina</li>
+          <li>Se sigue recomendando el plato estrella que ya no existe</li>
+          <li>Nadie sabe qué ofrecer en cambio y el comensal decide incómodo</li>
+          <li>El "poco stock" se vende como ilimitado y la 3ª mesa se queda sin</li>
+          <li>Cada mozo maneja su propia lista de memoria, distinta a la del otro</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <table class="t">
+        <thead><tr><th>Situación</th><th>Qué dice cocina en el briefing</th><th>Qué hace el mozo</th></tr></thead>
+        <tbody>
+          <tr><td>Agotado total</td><td>"86 pulpo al olivo, no hay reposición hoy"</td><td>Lo marca en la Carta y no lo ofrece</td></tr>
+          <tr><td>Stock limitado</td><td>"Quedan 6 ravioles de osobuco, cuando se acaben aviso"</td><td>Lo ofrece con prioridad, avisa si lo vende</td></tr>
+          <tr><td>Insumo clave caído</td><td>"No llegó la burrata, ensalada caprese fuera"</td><td>Recomienda la de rúcula y parmesano</td></tr>
+          <tr><td>Sustituto activo</td><td>"En vez de corvina, hoy chita a la brasa"</td><td>Vende la chita como plato del día</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>El 86 vive en Prep!, no en un papel:</b> cuando cocina marca un plato agotado en la Carta, se apaga para todos los mozos y para la carta digital del QR a la vez. El briefing lo anuncia; el sistema lo sostiene toda la noche. Papelitos pegados en la caja = ventas fantasma.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>El plato del día y qué empujar</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Todo turno tiene uno o dos platos que hay que vender: el pescado fresco que llegó hoy, la merma que no puede quedar para mañana, el margen alto que conviene mover. El briefing es donde el equipo aprende a describirlo de memoria para que la recomendación suene apetitosa y no a libreto.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Qué empujar hoy</h3><div class="d">Elige 1 o 2 platos: el de mejor margen, el de insumo perecible, o el nuevo que quieres posicionar. No cinco: si todo es prioridad, nada lo es.</div><div class="s">Máximo 2 focos de venta</div></div>
+      <div class="tipo"><h3>La descripción de 10 segundos</h3><div class="d">Enseña la frase exacta: "Hoy llegó corvina fresca del norte, la hacemos a la brasa con chimichurri de huacatay y puré de camote. Es el plato del chef esta noche." Que todos digan lo mismo, apetitoso y corto.</div><div class="s">Misma frase, todos</div></div>
+      <div class="tipo"><h3>El maridaje sugerido</h3><div class="d">Ata el plato a una bebida: "va perfecto con el Sauvignon Blanc de la casa" o "con un chilcano de maracuyá". Subes el ticket y el comensal siente asesoría, no venta.</div><div class="s">Plato + copa = más ticket</div></div>
+      <div class="tipo"><h3>El precio en la boca</h3><div class="d">Que el mozo sepa el precio sin dudar y sin pedir disculpas por él. "S/ 68" dicho con seguridad vende; dicho con vergüenza, espanta. El precio se dice completo, con naturalidad.</div><div class="s">Precio claro, sin titubear</div></div>
+      <div class="tipo"><h3>La razón para elegirlo</h3><div class="d">Dale al equipo el "por qué": es fresco de hoy, es receta original del chef, es lo que pide todo el mundo. Un mozo que cree en el plato lo vende; uno que no, lo recita.</div><div class="s">Vende quien cree</div></div>
+      <div class="tipo"><h3>La meta del plato</h3><div class="d">Pon número: "tenemos 15 raciones de corvina, la meta es venderlas todas antes de las 10." Un objetivo concreto convierte la recomendación en un pequeño reto de equipo.</div><div class="s">15 raciones, cero merma</div></div>
+    </div>
+    <div class="callout"><b>Ojo con el margen:</b> el plato del día no siempre es el más caro, es el que más conviene mover. A veces es el fondo de S/ 52 con 72% de margen y no la parrilla premium. Antes del briefing revisa en Recetas de Prep! qué plato deja más y qué insumo urge rotar; ese es tu foco de venta real.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>El foco del turno: un solo objetivo</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cada noche el equipo debe salir del briefing con una cosa concreta en la que mejorar. No diez, una. El foco es lo que hace que el turno de hoy sea distinto al de ayer y que el equipo sienta que va a algún lado, no que solo repite. Elige un foco medible y recuérdalo al cierre.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">target</span></div><div><div class="t">Paso 1 · Elige un foco medible</div><h4>Un número o comportamiento observable, no una frase bonita</h4><p>Mal foco: "hoy demos buen servicio". Buen foco: "hoy nadie espera más de 3 minutos para que le tomen el pedido" o "hoy ofrecemos postre en el 100% de las mesas". Si no se puede medir, no es un foco, es un deseo.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">trending_up</span></div><div><div class="t">Paso 2 · Conéctalo a un problema real</div><h4>El foco sale de lo que ayer no salió bien</h4><p>Si anoche los tiempos del segundo tiempo se descuadraron, el foco de hoy es "marchar segundos apenas se recoge la entrada". El foco no es aleatorio: ataca la debilidad más fresca del equipo.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">record_voice_over</span></div><div><div class="t">Paso 3 · Dilo simple y que lo repitan</div><h4>Una frase que quepa en la cabeza toda la noche</h4><p>"Foco de hoy: agua en la mesa antes de la carta, siempre." Pide que alguien la repita. Lo que el equipo dice con su boca, se le queda; lo que solo escucha, se le olvida al primer pedido.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">fact_check</span></div><div><div class="t">Paso 4 · Mídelo y ciérralo mañana</div><h4>El foco de hoy es el reconocimiento de mañana</h4><p>Al final del turno anota cómo salió y menciónalo en el siguiente briefing: "ayer el foco era el postre y subimos de 4 a 9 mesas con postre, bravo". El foco que no se revisa, el equipo aprende a ignorarlo.</p></div></div>
+    </div>
+    <div class="callout"><b>Rota los focos:</b> una semana la venta de postres, otra los tiempos de cocina, otra el "tocar la mesa" del líder, otra la limpieza de estaciones al cierre. Guarda cada foco y su resultado en El Libro de Prep!: en un mes tienes un mapa claro de en qué mejoró tu equipo y en qué falta insistir.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Motivación y cierre: encender el turno</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Los dos últimos minutos deciden con qué energía tu equipo cruza al piso. Un briefing que termina en lista de tareas apaga; uno que termina en reconocimiento y arranque, enciende. Aquí el líder deja de informar y empieza a inspirar, sin discursos largos ni frases de coach de manual.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Cierre que enciende</h4>
+        <ul>
+          <li>Reconoce algo del turno anterior con nombre: "ayer Diego salvó la mesa 9, gracias"</li>
+          <li>Recuerda el foco en una frase corta y clara</li>
+          <li>Proyecta la noche como un reto que se gana en equipo</li>
+          <li>Cierra con energía genuina, tuya, no actuada</li>
+          <li>Termina con un ritual de arranque del restaurante (un grito, un choque de manos)</li>
+        </ul>
+      </div>
+      <div class="box no"><h4>Cierre que apaga</h4>
+        <ul>
+          <li>Terminar regañando por lo de anoche frente a todos</li>
+          <li>Soltar diez pendientes de golpe al final, sin dueño</li>
+          <li>Cerrar con "ya, a trabajar" y darse la vuelta</li>
+          <li>Fingir una energía que tú no sientes; el equipo la huele</li>
+          <li>Nunca reconocer a nadie: solo se habla cuando algo sale mal</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Reconoce en público</h3><div class="d">Un elogio con nombre en el briefing vale más que un bono callado. Corrige en privado, felicita en público: es la regla que más lealtad construye en una sala.</div><div class="s">Elogia con nombre y hecho</div></div>
+      <div class="tipo"><h3>Da un "para qué"</h3><div class="d">"Esta noche entra el crítico que puede darnos una reseña que llene el salón por meses." El equipo se entrega cuando entiende qué está en juego, no cuando solo recibe órdenes.</div><div class="s">Explica lo que está en juego</div></div>
+      <div class="tipo"><h3>Cierra con un ritual</h3><div class="d">Un cierre fijo —"¡Buen servicio!" a coro, un choque de puños— marca el paso de reunión a acción. El ritual repetido crea identidad de equipo y saca a todos del modo pausa.</div><div class="s">Mismo cierre cada noche</div></div>
+    </div>
+    <div class="callout"><b>Tu energía es la de ellos:</b> el equipo no da más de lo que ve en su líder. Si cierras el briefing cansado y con desgano, así arranca la sala. Si cierras presente, claro y con ganas, esa noche vuela. No tienes que gritar ni actuar: basta con estar de verdad ahí, mirándolos a los ojos.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Briefing</b><span>Reunión corta de pie, antes de abrir, donde el líder alinea a todo el equipo sobre la noche que viene. También llamado line-up o pre-servicio.</span></div>
+      <div class="gterm"><b>Pre-servicio</b><span>La media hora antes de recibir al primer comensal: montaje de mesas, mise en place y briefing. Se gana o se pierde el turno aquí.</span></div>
+      <div class="gterm"><b>86 (agotado)</b><span>Código de cocina para "no hay". "86 el pulpo" significa que ese plato ya no está disponible. Se marca en la Carta de Prep! para que se apague en todos lados.</span></div>
+      <div class="gterm"><b>VIP</b><span>Comensal de trato prioritario: habitual fiel, prensa, dueño, gran cuenta o influencer. No siempre es el famoso; muchas veces es el que más vuelve y gasta.</span></div>
+      <div class="gterm"><b>Plato del día</b><span>El plato que el equipo empuja esta noche: por frescura, por margen o por insumo que hay que rotar antes de que se pierda.</span></div>
+      <div class="gterm"><b>Foco del turno</b><span>Un único objetivo medible para la noche (ej. "postre ofrecido en el 100% de las mesas"). Se elige, se recuerda y se revisa al día siguiente.</span></div>
+      <div class="gterm"><b>Cubiertos</b><span>Número de comensales esperados en el turno. "74 cubiertos" = 74 personas a atender. Base para dimensionar el ritmo y el refuerzo.</span></div>
+      <div class="gterm"><b>Franja pico</b><span>El tramo de horas donde entra la mayor cantidad de mesas (ej. 8:30 a 10 p.m.). Saberla evita relajarse antes de la ola.</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Bebida sugerida que acompaña un plato (una copa de vino, un chilcano). Bien recomendado, sube el ticket y mejora la experiencia.</span></div>
+      <div class="gterm"><b>Rango / estación</b><span>Grupo de mesas asignado a un mozo. Repartir rangos en el briefing evita que nadie pregunte "¿cuáles son mis mesas?" con gente ya sentada.</span></div>
+      <div class="gterm"><b>Marchar</b><span>Orden de empezar a preparar o sacar un tiempo. "Marchar segundos" = cocina arranca los platos de fondo. Coordinar el marchado es clave del ritmo.</span></div>
+      <div class="gterm"><b>Ticket promedio</b><span>Cuánto gasta en promedio cada comensal. El plato del día y el maridaje bien vendidos lo suben sin bajar la satisfacción.</span></div>
+      <div class="gterm"><b>Merma</b><span>Producto que se pierde o vence si no se vende a tiempo. El plato del día suele apuntar a rotar merma antes de que cueste plata.</span></div>
+      <div class="gterm"><b>Ritual de arranque</b><span>Cierre fijo del briefing (un grito, un choque de manos) que marca el salto de la reunión al servicio y crea identidad de equipo.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Briefing pre-servicio · Chuleta de 15 minutos</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>El guion de 6 bloques</h4><ul>
+          <li>1 · La noche: cubiertos y franjas pico</li>
+          <li>2 · Reservas y VIP: quién, cuándo, celebraciones</li>
+          <li>3 · Agotados (86): qué no hay y sustitutos</li>
+          <li>4 · Plato del día: qué empujar y cómo</li>
+          <li>5 · Foco del turno: un objetivo medible</li>
+          <li>6 · Cierre: reconocer y encender</li>
+        </ul></div>
+        <div class="op-box"><h4>Reservas y VIP</h4><ul>
+          <li>Lee el libro de Prep! en voz alta</li>
+          <li>Nombra VIP y por qué lo son</li>
+          <li>Marca celebraciones con responsable</li>
+          <li>Canta alergias del CRM, no de memoria</li>
+          <li>Coordina grupos grandes: quién y cómo</li>
+        </ul></div>
+        <div class="op-box"><h4>Agotados (86)</h4><ul>
+          <li>Cocina canta, tú repites</li>
+          <li>Cada mozo lo marca en la Carta</li>
+          <li>Nombra el sustituto del día</li>
+          <li>Avisa lo que queda poco</li>
+          <li>Se avisa antes de venderlo, no después</li>
+        </ul></div>
+        <div class="op-box"><h4>Plato del día</h4><ul>
+          <li>Máximo 1 o 2 focos de venta</li>
+          <li>Frase de 10 segundos, igual para todos</li>
+          <li>Maridaje sugerido para subir ticket</li>
+          <li>Precio dicho con seguridad</li>
+          <li>Meta en número de raciones</li>
+        </ul></div>
+        <div class="op-box"><h4>Foco del turno</h4><ul>
+          <li>Uno solo, medible y observable</li>
+          <li>Sale del error más fresco de ayer</li>
+          <li>Dilo simple y que lo repitan</li>
+          <li>Revísalo en el briefing siguiente</li>
+          <li>Guárdalo en El Libro de Prep!</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre que enciende</h4><ul>
+          <li>Reconoce con nombre y hecho</li>
+          <li>Recuerda el foco en una frase</li>
+          <li>Da un "para qué" a la noche</li>
+          <li>Energía genuina, no actuada</li>
+          <li>Termina con el ritual de arranque</li>
+        </ul></div>
+      </div>
+      <div class="callout" style="margin-top:14px"><b>Regla madre:</b> mismo horario, mismo orden, 15 minutos. Corrige en privado, felicita en público. Y nunca dejes que el equipo entre al piso con un "no sabía".</div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Briefing pre-servicio efectivo · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

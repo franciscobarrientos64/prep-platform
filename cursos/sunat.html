@@ -1,0 +1,305 @@
+<!-- Curso Academia Prep! · SUNAT, facturación y cumplimiento -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>SUNAT, facturación y cumplimiento · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f766e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · SUNAT & Facturación</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0f766e">
+    <div class="k">Academia Prep! · Administración / Liderazgo</div>
+    <h1>SUNAT, facturación y cumplimiento</h1>
+    <p>Todo lo que el administrador de un restaurante de nivel en Lima debe dominar sobre comprobantes electrónicos: cuándo va boleta y cuándo factura, cómo se emite bien, cómo se anula un error, qué impuestos carga el restaurante (IGV, ICBPER, Renta) y qué te pide SUNAT cada mes. Sin susto y sin tecnicismos.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~55 min</span><span>🎯 Administrador</span><span>🇵🇪 Normativa Perú</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un comprobante mal emitido o no emitido no es un descuido menor: es la infracción que más rápido cierra un local. No entregar boleta puede significar clausura temporal, y una factura mal hecha le vuela el crédito fiscal a tu comensal empresa, que no volverá. Además, cada boleta que no emites es venta que igual entra a caja pero no a tus libros: te desordena el arqueo, infla tu efectivo "fantasma" y te deja expuesto en una fiscalización. Dominar esto protege la caja, la reputación y la licencia del restaurante.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Boleta o factura: cuál va en cada venta</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La primera decisión de cada cobro es qué comprobante entregas. No es al gusto del mozo ni del comensal: la regla la define quién compra y qué necesita. Elegir mal cuesta re-emisiones, notas de crédito y comensales molestos en plena caja.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Boleta de venta electrónica</h3><div class="d">Va al consumidor final (una pareja, una familia, un turista). No da derecho a crédito fiscal ni sirve para sustentar gasto de empresa. Es lo que emites por defecto.</div><div class="s">Por defecto en el 90% de las mesas</div></div>
+      <div class="tipo"><h3>Factura electrónica</h3><div class="d">Va cuando el comensal la pide para su empresa. Necesita su RUC y razón social. Le permite usar el IGV como crédito fiscal y sustentar el gasto.</div><div class="s">Pídela ANTES de cobrar, nunca después</div></div>
+      <div class="tipo"><h3>Boleta con DNI obligatorio</h3><div class="d">Si la boleta es de S/ 700 o más, debes identificar al comprador con su nombre y número de DNI. Debajo de ese monto, la boleta puede ir sin datos.</div><div class="s">Umbral: S/ 700 → pide DNI</div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Situación en Casa Italia</th><th>Comprobante</th><th>Qué pides al comensal</th></tr></thead>
+      <tbody>
+        <tr><td>Cena de pareja, paga con Yape, consumo S/ 240</td><td>Boleta electrónica</td><td>Nada obligatorio (menos de S/ 700)</td></tr>
+        <tr><td>Cumpleaños de 8, cuenta de S/ 920, paga una persona</td><td>Boleta electrónica</td><td>Nombre + DNI (supera S/ 700)</td></tr>
+        <tr><td>Almuerzo de trabajo, la empresa reembolsa</td><td>Factura electrónica</td><td>RUC + razón social exactos</td></tr>
+        <tr><td>Evento privado facturado a una constructora</td><td>Factura electrónica</td><td>RUC, razón social, dirección fiscal</td></tr>
+        <tr><td>Delivery propio a un hogar</td><td>Boleta electrónica</td><td>Nombre si es S/ 700 o más</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla de oro:</b> la factura se decide antes de cerrar la cuenta, no después. Si el comensal ya pagó con boleta y luego pide factura por la misma venta, no puedes "convertirla": tienes que anular la boleta con nota de crédito y emitir la factura. Enseña al mozo a preguntar "¿boleta o factura?" al momento de pedir la cuenta.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Emitir el comprobante electrónico, paso a paso</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Desde 2022 casi todos los restaurantes están obligados a emisión electrónica: nada de talonarios de papel. El comprobante se genera en el sistema (POS de Prep! o el facturador), se firma, se manda a SUNAT o al OSE y se entrega al comensal. Estos son los pasos que no pueden fallar.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">Paso 1 · Tipo y datos</div><h4>Elige boleta o factura y captura los datos</h4><p>Si es factura, ingresa el RUC (11 dígitos) y verifica que la razón social se autocomplete correcta. Un RUC mal tipeado hace que el comprobante nazca inválido para tu comensal.</p></div></div>
+      <div class="paso"><div class="ico">🍝</div><div><div class="t">Paso 2 · Detalle</div><h4>Describe lo consumido y aplica el IGV</h4><p>El precio de carta ya incluye IGV 18%. El sistema separa la base y el impuesto solo. Si cobras recargo al consumo (10%), va como línea aparte e informada, nunca escondida.</p></div></div>
+      <div class="paso"><div class="ico">📤</div><div><div class="t">Paso 3 · Emite y envía</div><h4>Genera, firma y transmite a SUNAT/OSE</h4><p>Al confirmar, el comprobante se firma digitalmente y se envía. La factura debe transmitirse el mismo día o, a más tardar, al día calendario siguiente. Si sale rechazado, corrige y reenvía: no lo entregues hasta que esté aceptado.</p></div></div>
+      <div class="paso"><div class="ico">📲</div><div><div class="t">Paso 4 · Entrega</div><h4>Dale su comprobante al comensal</h4><p>Entrega el PDF/representación impresa o envíalo por correo/WhatsApp con el XML y el enlace de consulta. El comensal puede validar en el portal de SUNAT que su comprobante existe.</p></div></div>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>SEE-SOL (portal SUNAT)</h3><div class="d">Emites desde la web de SUNAT con tu Clave SOL. Gratis, ideal como respaldo si el sistema principal se cae.</div><div class="s">Plan B de contingencia</div></div>
+      <div class="tipo"><h3>OSE / PSE</h3><div class="d">Un operador (Nubefact, Efact, etc.) valida y transmite por ti. Es lo que integra Prep! para emitir sin salir del POS.</div><div class="s">Integrado al flujo de cobro</div></div>
+      <div class="tipo"><h3>Resumen diario de boletas</h3><div class="d">Las boletas se informan a SUNAT en un resumen diario. Con Prep! sale automático; revísalo para que no queden boletas sin declarar.</div><div class="s">Hasta 7 días calendario para enviarlo</div></div>
+    </div>
+    <div class="callout"><b>En Prep!:</b> el POS integra la facturación electrónica (feature CA-09) vía OSE. Al cerrar la cuenta eliges boleta o factura, se emite y se envía sola, y el resumen diario se arma solo. Tu trabajo de admin es revisar cada mañana que no haya comprobantes en estado "rechazado" o "pendiente".</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Errores, anulaciones y notas de crédito</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Un comprobante electrónico no se borra ni se rompe como el papel: una vez emitido, existe para SUNAT. Corregir un error tiene su procedimiento y sus plazos. Saber cuál usar evita que un simple RUC mal tipeado se vuelva un problema contable.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Nota de crédito</h3><div class="d">Anula o disminuye un comprobante ya emitido: cortesía olvidada, plato devuelto, RUC equivocado, boleta que debía ser factura. Referencia siempre al comprobante original.</div><div class="s">La herramienta que más usarás</div></div>
+      <div class="tipo"><h3>Nota de débito</h3><div class="d">Aumenta el monto de un comprobante ya emitido: un ítem que faltó cobrar, un recargo adicional pactado. Menos frecuente en restaurante.</div><div class="s">Para sumar, no para restar</div></div>
+      <div class="tipo"><h3>Comunicación de baja</h3><div class="d">Da de baja una factura con error grave dentro del plazo. Las boletas se anulan vía resumen diario marcándolas como anuladas.</div><div class="s">Facturas: baja · Boletas: resumen</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🔎</div><div><div class="t">Caso 1</div><h4>El comensal dio mal el RUC</h4><p>Emite una nota de crédito por "error en el RUC/dato del adquirente" que anula la factura mala y emite una nueva factura con el RUC correcto. No entregues la factura errada.</p></div></div>
+      <div class="paso"><div class="ico">↩️</div><div><div class="t">Caso 2</div><h4>Se devolvió un plato ya facturado</h4><p>Nota de crédito por "descuento/devolución" que rebaja el ítem devuelto. El total y el IGV se ajustan solos. Guarda el motivo en la nota.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Caso 3</div><h4>Pagó con boleta y ahora pide factura</h4><p>Nota de crédito que anula la boleta + factura nueva a nombre de la empresa. Hazlo el mismo día si puedes; explícale que no se puede "convertir" el comprobante.</p></div></div>
+      <div class="paso"><div class="ico">🚫</div><div><div class="t">Caso 4</div><h4>Se emitió doble por un clic repetido</h4><p>Da de baja la factura duplicada (comunicación de baja) o anula la boleta en el resumen diario. Documenta que fue duplicado para el arqueo del día.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Corregir el mismo día que detectas el error</li>
+        <li>Referenciar siempre el comprobante original en la nota</li>
+        <li>Escribir un motivo claro y real en cada nota de crédito</li>
+        <li>Verificar que la nota quedó aceptada por SUNAT</li>
+        <li>Registrar la anulación en el arqueo de caja del turno</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>"Romper" o botar la impresión creyendo que se anula</li>
+        <li>Emitir una segunda factura sin anular la primera</li>
+        <li>Dejar comprobantes rechazados sin corregir</li>
+        <li>Anular por fuera de plazo sin avisar al contador</li>
+        <li>Usar notas de crédito para "ajustar" ventas que sí ocurrieron</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Los impuestos que carga el restaurante</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">No hace falta ser contador, pero el administrador debe saber qué impuestos toca su operación cada día para que la caja cuadre y las cifras que ve el contador tengan sentido. Estos son los que aparecen en un restaurante de nivel en Lima.</p>
+    <table class="t">
+      <thead><tr><th>Impuesto</th><th>Tasa</th><th>Cómo aparece en el restaurante</th></tr></thead>
+      <tbody>
+        <tr><td>IGV (Impuesto General a las Ventas)</td><td>18%</td><td>Incluido en el precio de carta. De cada S/ 118 cobrados, ~S/ 18 son IGV que debes a SUNAT.</td></tr>
+        <tr><td>Impuesto a la Renta</td><td>Según régimen</td><td>Sobre la utilidad. En Régimen General se hacen pagos a cuenta mensuales y regularización anual.</td></tr>
+        <tr><td>ICBPER (bolsas plásticas)</td><td>S/ 0.50 por bolsa</td><td>Se cobra por cada bolsa de plástico entregada en delivery/para llevar. Va como línea aparte en el comprobante.</td></tr>
+        <tr><td>EsSalud (aporte del empleador)</td><td>9%</td><td>No es tributo de venta, pero lo paga el restaurante por su planilla. Se ve en Turnos & Planilla.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El IGV no es tuyo:</b> ese 18% que viene dentro del precio de carta lo cobras por cuenta de SUNAT. Contra ese IGV cobrado (débito fiscal) descuentas el IGV que pagaste a tus proveedores con factura válida (crédito fiscal); la diferencia es lo que declaras y pagas cada mes. Por eso pedir factura a tus proveedores no es un trámite: es dinero. Cada compra sin comprobante válido es IGV que pagas de más.</div>
+    <p class="lead" style="margin-top:14px">Y el régimen tributario define cuánto y cómo pagas Renta. Un restaurante de nivel casi siempre está en Régimen General o RMT.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>NRUS</h3><div class="d">Cuota fija mensual para negocios muy pequeños. No emite factura, solo boleta. Un restaurante de nivel se queda corto aquí.</div><div class="s">No sirve si necesitas facturar</div></div>
+      <div class="tipo"><h3>RER / RMT</h3><div class="d">Regímenes intermedios con topes de ingresos. El RMT permite factura y tiene tasa de Renta escalonada; útil mientras el volumen crece.</div><div class="s">Etapa de crecimiento</div></div>
+      <div class="tipo"><h3>Régimen General</h3><div class="d">Sin tope de ingresos, contabilidad completa, pagos a cuenta mensuales + declaración anual. Donde suele estar un restaurante consolidado.</div><div class="s">El más común en alta cocina</div></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Compras, crédito fiscal y libros electrónicos</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La otra mitad del cumplimiento no está en lo que vendes, sino en lo que compras. Cada factura de proveedor que guardas bien baja tu IGV a pagar y sustenta tu gasto. Cada comprobante informal es plata perdida y riesgo en fiscalización.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Comprobante que SÍ suma</h4><ul>
+        <li>Factura electrónica del proveedor con TU RUC correcto</li>
+        <li>Proveedor activo y habido en SUNAT</li>
+        <li>Detalle real de lo comprado (insumos, no "varios")</li>
+        <li>Recibido dentro del periodo para usar el crédito fiscal</li>
+        <li>Pago bancarizado si supera el monto de ley (bancarización)</li>
+      </ul></div>
+      <div class="box no"><h4>Comprobante que NO suma</h4><ul>
+        <li>Boleta a nombre del negocio (no da crédito fiscal)</li>
+        <li>Nota de pedido, proforma o "vale" del mercado</li>
+        <li>Factura de proveedor no habido o con RUC de baja</li>
+        <li>Comprobante sin detalle o con datos que no cuadran</li>
+        <li>Compra en efectivo alta sin sustento bancario</li>
+      </ul></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">📥</div><div><div class="t">Registro de Compras</div><h4>Toda factura de proveedor entra</h4><p>Verduras, carnes, vinos, gas, mantenimiento: cada factura válida se registra. En Prep!, Mercado captura la factura de compra (feature ME-10) y la deja lista para el contador.</p></div></div>
+      <div class="paso"><div class="ico">📈</div><div><div class="t">Registro de Ventas</div><h4>Todas tus boletas y facturas del mes</h4><p>Sale de lo que emitió el POS. Boletas por resumen diario y facturas una a una. Es la base de tu IGV cobrado del mes.</p></div></div>
+      <div class="paso"><div class="ico">🗂️</div><div><div class="t">SIRE (RVIE / RCE)</div><h4>Los libros ya viven en SUNAT</h4><p>SUNAT arma un borrador de tus registros de Ventas (RVIE) y Compras (RCE) con lo que se emitió electrónicamente. Tu contador lo revisa, ajusta y acepta cada mes.</p></div></div>
+      <div class="paso"><div class="ico">📅</div><div><div class="t">Declaración mensual</div><h4>IGV-Renta según cronograma</h4><p>Cada mes se declara y paga el IGV y el pago a cuenta de Renta, en la fecha que marca el último dígito del RUC. Perder el vencimiento genera multa e intereses.</p></div></div>
+    </div>
+    <div class="callout"><b>Tu rutina de admin:</b> que ninguna compra del restaurante entre sin factura a nombre del RUC. Cuando el proveedor "solo tiene boleta", esa compra te cuesta el IGV completo y no baja Renta. Vale la pena negociar factura o cambiar de proveedor: el ahorro fiscal suele superar cualquier descuento del informal.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cierre diario, contingencias y fiscalización</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El cumplimiento se gana en la operación de cada noche, no en la oficina del contador. Un cierre ordenado y saber reaccionar cuando algo falla es lo que te deja tranquilo si mañana toca la puerta un fedatario de SUNAT.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧮</div><div><div class="t">Cierre 1</div><h4>Cuadra ventas contra comprobantes</h4><p>Al cerrar caja, la venta total del turno debe igualar la suma de boletas + facturas emitidas. Si sobra efectivo, hay venta sin comprobante: encuéntrala antes de cerrar.</p></div></div>
+      <div class="paso"><div class="ico">📊</div><div><div class="t">Cierre 2</div><h4>Revisa estados de los comprobantes</h4><p>Ninguno debe quedar "rechazado" ni "pendiente de envío". Verifica que el resumen diario de boletas se transmitió y que las facturas del día están aceptadas.</p></div></div>
+      <div class="paso"><div class="ico">🛟</div><div><div class="t">Contingencia</div><h4>Si se cae internet o el OSE</h4><p>No dejes de entregar comprobante: emite por el portal SUNAT (SEE-SOL) desde el celular o registra en modo contingencia y regulariza apenas vuelva el servicio. Nunca cobres sin dar nada.</p></div></div>
+      <div class="paso"><div class="ico">🕵️</div><div><div class="t">Fiscalización</div><h4>Si llega un fedatario</h4><p>SUNAT hace compras de prueba para ver si entregas comprobante. Por eso el mozo entrega SIEMPRE, aunque el comensal diga "no lo necesito". Ten a la mano RUC, licencia y Clave SOL.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Entregar comprobante en el 100% de las ventas, siempre</li>
+        <li>Cerrar caja cuadrando efectivo, tarjetas y comprobantes</li>
+        <li>Tener un plan B de emisión escrito y probado</li>
+        <li>Archivar XML/PDF y facturas de compra de forma ordenada</li>
+        <li>Avisar al contador de anulaciones y casos raros del día</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Cobrar "sin boleta" a cambio de un descuento</li>
+        <li>Dejar comprobantes rechazados para "mañana"</li>
+        <li>Guardar el efectivo sobrante sin explicar de dónde salió</li>
+        <li>Improvisar cuando se cae el sistema en pleno servicio</li>
+        <li>Perder los vencimientos del cronograma mensual</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El hábito que te salva:</b> "sin comprobante no sale nada del local". Cada plato que sale de cocina y cada cuenta que se cobra tiene su boleta o factura detrás. Si eso es cultura de tu equipo, la fiscalización deja de ser una amenaza y pasa a ser un trámite.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>SUNAT</b><span>Superintendencia Nacional de Aduanas y de Administración Tributaria: el ente que recauda y fiscaliza impuestos en Perú.</span></div>
+      <div class="gterm"><b>Boleta de venta electrónica</b><span>Comprobante para el consumidor final. No da crédito fiscal. Requiere DNI del comprador si es S/ 700 o más.</span></div>
+      <div class="gterm"><b>Factura electrónica</b><span>Comprobante a nombre de una empresa (con RUC) que permite crédito fiscal y sustentar gasto.</span></div>
+      <div class="gterm"><b>RUC</b><span>Registro Único de Contribuyentes: número de 11 dígitos que identifica a una empresa o persona con negocio ante SUNAT.</span></div>
+      <div class="gterm"><b>IGV</b><span>Impuesto General a las Ventas, 18%. Va incluido en el precio de carta y lo cobras por cuenta de SUNAT.</span></div>
+      <div class="gterm"><b>Crédito fiscal</b><span>El IGV de tus compras con factura válida que descuentas del IGV que cobraste. Baja lo que pagas cada mes.</span></div>
+      <div class="gterm"><b>Débito fiscal</b><span>El IGV que cobraste en tus ventas del mes. Contra él aplicas el crédito fiscal.</span></div>
+      <div class="gterm"><b>Nota de crédito</b><span>Documento que anula o disminuye un comprobante ya emitido (devolución, error de RUC, cortesía).</span></div>
+      <div class="gterm"><b>Nota de débito</b><span>Documento que aumenta el monto de un comprobante ya emitido (cobro que faltó, recargo pactado).</span></div>
+      <div class="gterm"><b>OSE / PSE</b><span>Operador o Proveedor de Servicios Electrónicos que valida y transmite tus comprobantes a SUNAT (ej. Nubefact).</span></div>
+      <div class="gterm"><b>SEE-SOL</b><span>Sistema de Emisión Electrónica desde el portal de SUNAT con Clave SOL. Buen plan B de contingencia.</span></div>
+      <div class="gterm"><b>SIRE (RVIE / RCE)</b><span>Registro de Ventas e Ingresos (RVIE) y de Compras (RCE) que SUNAT genera y tu contador acepta cada mes.</span></div>
+      <div class="gterm"><b>ICBPER</b><span>Impuesto a las bolsas de plástico: S/ 0.50 por bolsa entregada, cobrado como línea aparte.</span></div>
+      <div class="gterm"><b>Resumen diario</b><span>Envío a SUNAT que informa todas las boletas (y sus anulaciones) del día.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>SUNAT & Facturación · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Boleta vs Factura</h4><ul>
+          <li>Consumidor final → boleta</li>
+          <li>Empresa que pide con RUC → factura</li>
+          <li>Boleta de S/ 700 o más → pide DNI</li>
+          <li>Decide ANTES de cobrar, nunca después</li>
+        </ul></div>
+        <div class="op-box"><h4>Al emitir</h4><ul>
+          <li>RUC de 11 dígitos, razón social correcta</li>
+          <li>Precio ya incluye IGV 18%</li>
+          <li>Factura: enviar a SUNAT el mismo día o el siguiente</li>
+          <li>Entrega el comprobante siempre</li>
+        </ul></div>
+        <div class="op-box"><h4>Corregir errores</h4><ul>
+          <li>RUC mal / devolución → nota de crédito</li>
+          <li>Boleta que era factura → anula y re-emite</li>
+          <li>Factura duplicada → comunicación de baja</li>
+          <li>Verifica que la nota quede aceptada</li>
+        </ul></div>
+        <div class="op-box"><h4>Impuestos clave</h4><ul>
+          <li>IGV 18% (no es tuyo, es de SUNAT)</li>
+          <li>Renta según régimen (General o RMT)</li>
+          <li>ICBPER S/ 0.50 por bolsa plástica</li>
+          <li>EsSalud 9% sobre la planilla</li>
+        </ul></div>
+        <div class="op-box"><h4>Compras</h4><ul>
+          <li>Toda compra con factura a tu RUC</li>
+          <li>Factura da crédito fiscal; boleta no</li>
+          <li>Proveedor activo y habido</li>
+          <li>Sin factura = IGV que pagas de más</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre y contingencia</h4><ul>
+          <li>Venta = boletas + facturas del turno</li>
+          <li>Cero comprobantes rechazados o pendientes</li>
+          <li>Se cae el sistema → emite por SEE-SOL</li>
+          <li>Sin comprobante no sale nada del local</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · SUNAT, facturación y cumplimiento · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

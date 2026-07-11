@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Caja y prevención de fraude · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235a2a82'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Caja &amp; Fraude</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#5a2a82">
+    <div class="k">Academia Prep! · Administración · Liderazgo</div>
+    <h1>Caja y prevención de fraude</h1>
+    <p>El efectivo es lo único que puede desaparecer sin dejar rastro, y casi todas las pérdidas silenciosas de un restaurante nacen en la caja. Aquí aprendes a montar un control que no depende de la buena voluntad de nadie: segregar funciones, hacer arqueos sorpresa, leer las señales de fraude antes de que crezcan, blindar las cortesías y anulaciones, cerrar a prueba de manos ajenas y usar la pista de auditoría de Prep! para revisar sin acusar. Controlar no es desconfiar: es cuidar la plata de todos.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Cajero / Administrador</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el fraude de caja casi nunca es un robo grande y único; es una fuga chica que se repite. Un cajero que anula tres cuentas ya cobradas por noche y se queda el efectivo puede sangrar miles de soles al mes sin que nadie lo note, porque cada movimiento parece normal. La única defensa real es un sistema donde nadie controla su propia caja solo, donde el arqueo llega sin avisar y donde cada cortesía, anulación y descuadre queda registrado con nombre y hora. Cuando el control es claro, el honesto trabaja tranquilo y el que quiere robar no encuentra por dónde.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Los seis controles que sostienen la caja</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La prevención de fraude no empieza con cámaras ni con desconfianza: empieza con reglas de diseño que hacen difícil robar y fácil detectar. Estos seis controles son la base. Si faltan, ninguna cámara los reemplaza; si están, el 90% del fraude de caja ni siquiera se intenta.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Segregación de funciones</h3><div class="d">Quien cobra no es quien arquea, y quien arquea no es quien deposita. Que una sola persona haga las tres cosas es la puerta abierta al fraude: puede maquillar su propio faltante. Reparte los roles aunque el equipo sea chico.</div><div class="s">nadie se audita solo</div></div>
+      <div class="tipo"><h3>Una gaveta, un responsable</h3><div class="d">Cada turno, una sola persona responde por una sola gaveta. Nada de "damos vuelto entre los dos". Si dos manos entran a la misma caja, el descuadre no tiene dueño y nadie responde.</div><div class="s">caja con nombre</div></div>
+      <div class="tipo"><h3>Fondo contado y sellado</h3><div class="d">El fondo fijo (sencillo) se cuenta con el gerente delante, se firma la entrega y queda declarado. Ese número es la línea de partida: sin fondo declarado no hay contra qué medir el cierre.</div><div class="s">firma la apertura</div></div>
+      <div class="tipo"><h3>Usuario personal, clave propia</h3><div class="d">Cada quien opera Prep! con su propio usuario y nunca presta la clave. La pista de auditoría registra quién hizo cada movimiento: si prestas tu clave, cargas con lo que otro haga bajo tu nombre.</div><div class="s">tu clave es tu firma</div></div>
+      <div class="tipo"><h3>Retiros de caja (skims)</h3><div class="d">Cuando la gaveta acumula mucho efectivo, se hace un retiro parcial hacia la bóveda, con conteo y firma. Menos plata suelta = menos tentación y menos pérdida si hay robo o asalto.</div><div class="s">no dejes que se llene</div></div>
+      <div class="tipo"><h3>Caja a la vista</h3><div class="d">La estación de caja queda bajo cámara y sin bolsos, celulares personales ni casacas encima de la gaveta. No es vigilar a la persona: es quitarle al fraude los rincones donde esconde el efectivo.</div><div class="s">nada encima de la gaveta</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> el control se diseña, no se improvisa. Si al final del turno una sola persona pudo cobrar, dar cortesías, anular y contar su propia caja sin que nadie más mirara, el sistema falló aunque esa noche nadie haya robado. Arregla el diseño, no esperes a la sorpresa.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Arqueos sorpresa a mitad de turno</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El arqueo de cierre es predecible: el cajero sabe que llega y puede "acomodar" la caja antes. El arqueo sorpresa, en cambio, cae sin aviso a media noche de servicio y muestra la caja tal como está en ese instante. Es la herramienta más poderosa del administrador contra el fraude de efectivo, y su fuerza está justamente en que no se anuncia.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">lock_clock</span></div>
+      <div><div class="t">Paso 1 · Congela la caja</div><h4>Detén los cobros por un momento, sin previo aviso</h4><p>Elige un momento cualquiera —viernes 9 p.m. con el local lleno funciona mejor que un lunes muerto— y pide al cajero pausar. No avises "mañana hacemos arqueo": eso le da tiempo de cuadrar. La sorpresa es el control.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">groups</span></div>
+      <div><div class="t">Paso 2 · Cuenten dos personas</div><h4>El administrador cuenta, el cajero acompaña</h4><p>Nunca un arqueo a solas: cuenta el administrador (o supervisor) con el cajero presente mirando. Cuenten el efectivo físico de la gaveta, separando mentalmente el fondo fijo de la venta acumulada del turno.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">difference</span></div>
+      <div><div class="t">Paso 3 · Saca la lectura parcial</div><h4>Compara con el reporte X de Prep!, sin cerrar el turno</h4><p>Genera la lectura parcial (reporte X) del sistema: te dice cuánto efectivo <b>debería</b> haber a esa hora sin cerrar la caja. Efectivo contado – fondo = venta en efectivo real; compáralo con lo que dice Prep!. La diferencia, sobrante o faltante, se anota al instante.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">history_edu</span></div>
+      <div><div class="t">Paso 4 · Documenta y rota</div><h4>Firma el acta y varía el día y la hora</h4><p>Registra monto contado, monto esperado, diferencia, hora y firmas de ambos. Guarda el acta. Y sobre todo: cambia el día y la hora cada vez. Un arqueo sorpresa que siempre cae el viernes a las 9 deja de ser sorpresa; hazlo impredecible.</p></div>
+    </div>
+    <div class="callout"><b>Lo que revela un arqueo sorpresa:</b> un faltante fuerte a media noche —cuando aún no hubo "cierre" para justificarlo— es la señal más honesta de que algo pasa. Un sobrante grande tampoco es buena noticia: suele ser plata retirada de la venta que el cajero aún no había "acomodado". En ambos casos, la sorpresa atrapó la caja tal cual estaba.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Señales de fraude: aprende a leerlas</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El fraude de caja deja huellas en los números mucho antes de que alguien lo confiese. No busques al ladrón: busca el patrón. Un dato aislado no acusa a nadie, pero cuando el mismo patrón se repite en el mismo cajero, semana tras semana, ahí hay que mirar de cerca.</p>
+    <table class="t">
+      <thead><tr><th>Señal en los números</th><th>Qué podría estar pasando</th><th>Qué revisar</th></tr></thead>
+      <tbody>
+        <tr><td>Un cajero anula muchas más cuentas que el resto</td><td>Anula ventas ya cobradas en efectivo y se queda la plata</td><td>Anulaciones por usuario en la pista de auditoría; ¿tienen aprobación y motivo?</td></tr>
+        <tr><td>Exceso de cortesías o descuentos en un mismo turno</td><td>Marca "cortesía" una cuenta que el comensal sí pagó, y bolsillar el efectivo</td><td>Cortesías vs. aprobador de gerente; ¿quién autorizó y por qué?</td></tr>
+        <tr><td>El mismo cajero descuadra seguido, siempre corto</td><td>Skimming: retira poco efectivo de forma repetida</td><td>Historial de descuadres por persona; faltantes chicos pero constantes</td></tr>
+        <tr><td>Muchas ventas en efectivo por montos redondos</td><td>Ventas "a ojo" sin registrar el detalle real</td><td>Ticket promedio en efectivo vs. tarjeta; comandas sin ítems detallados</td></tr>
+        <tr><td>Aperturas de cajón sin venta asociada (no-sale)</td><td>Abre la gaveta para dar cambio "por fuera" o sacar efectivo</td><td>Registro de no-sale en el audit log; ¿coinciden con la cámara?</td></tr>
+        <tr><td>Propinas de tarjeta anormalmente altas y luego editadas</td><td>Infla la propina en el voucher y la desvía</td><td>Propina capturada vs. voucher firmado por el comensal</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — así se investiga bien</h4><ul>
+        <li>Comparas a cada cajero contra el promedio del equipo, no contra tu corazonada</li>
+        <li>Buscas el patrón repetido, no el caso aislado de una noche</li>
+        <li>Cruzas el dato del sistema con la cámara y el acta de arqueo</li>
+        <li>Conversas en privado y con datos antes de sacar conclusiones</li>
+      </ul></div>
+      <div class="box no"><h4>No — así se rompe el equipo</h4><ul>
+        <li>Acusar en público por una sospecha sin números que la sostengan</li>
+        <li>Tratar un descuadre chico y único como si fuera un robo probado</li>
+        <li>Revisar solo a quien te cae mal y no a todo el equipo por igual</li>
+        <li>Guardar la sospecha meses sin actuar hasta que la fuga sea enorme</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La regla del patrón:</b> una anulación puede ser un error honesto. Diez anulaciones al mes del mismo cajero, siempre en efectivo y sin aprobación, son un patrón. El fraude vive en la repetición; tu ventaja es que Prep! guarda cada movimiento con nombre y hora, así que el patrón siempre aparece si te tomas el trabajo de mirarlo.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Cortesías, anulaciones y descuentos indebidos</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Aquí ocurre el fraude más frecuente y más difícil de ver, porque usa herramientas legítimas del sistema. La cortesía, la anulación y el descuento existen para servir bien al comensal; el que roba los convierte en la tapadera perfecta. La defensa no es prohibirlos, sino exigir que cada uno pase por una aprobación y deje un motivo escrito.</p>
+    <table class="t">
+      <thead><tr><th>Herramienta</th><th>El fraude típico</th><th>El control que lo bloquea</th></tr></thead>
+      <tbody>
+        <tr><td>Cortesía (comp)</td><td>Marcar como "cortesía" un plato que el comensal sí pagó, y quedarse el efectivo</td><td>Toda cortesía requiere aprobación de gerente y motivo (Prep! la registra con el aprobador)</td></tr>
+        <tr><td>Anulación (void)</td><td>Anular la cuenta <b>después</b> de cobrarla en efectivo, como si la venta nunca hubiera existido</td><td>La anulación va antes del cobro; anular una cuenta ya pagada exige nota de crédito y firma de gerente</td></tr>
+        <tr><td>Descuento</td><td>Aplicar un descuento fantasma y cobrar el precio completo, guardándose la diferencia</td><td>Descuentos con código, tope y motivo; nada de descuentos "a mano" sin registro</td></tr>
+        <tr><td>Reúso de pre-cuenta</td><td>Imprimir la pre-cuenta de una mesa y cobrarla otra vez a una mesa parecida sin registrar la segunda venta</td><td>Cada cuenta se cobra contra su propio pedido en el POS; la pre-cuenta no es comprobante de cobro</td></tr>
+      </tbody>
+    </table>
+    <div class="paso" style="margin-top:6px">
+      <div class="ico"><span class="material-symbols-outlined">verified_user</span></div>
+      <div><div class="t">El principio</div><h4>Ojo ajeno en toda excepción</h4><p>Cobrar es rutina y lo hace el cajero solo. Pero toda <b>excepción</b> a la venta normal —cortesía, anulación, descuento, devolución— necesita un segundo par de ojos: la aprobación del gerente. Ese simple requisito convierte el fraude fácil en un fraude que necesita cómplice, y eso ya lo frena casi siempre.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">edit_note</span></div>
+      <div><div class="t">El motivo</div><h4>Sin motivo escrito, no hay cortesía</h4><p>"Cortesía por demora en cocina", "descuento de cumpleaños autorizado por gerencia", "anulación por error de digitación antes de cobrar". El motivo obliga a pensar y deja rastro. Una cortesía sin razón anotada es una alerta por sí sola.</p></div>
+    </div>
+    <div class="callout"><b>El caso clásico peruano:</b> mesa de S/ 240 que paga en efectivo. El cajero cobra completo, guarda el billete, y minutos después anula la cuenta en el sistema como "error". El sistema queda cuadrado —esa venta "no existió"— y los S/ 240 salen de la gaveta al cierre como si fueran fondo. Se corta de raíz con una regla: <b>ninguna cuenta ya cobrada se anula sin gerente y nota de crédito.</b></div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Cierre de caja a prueba de fraude</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El cierre es donde el fraude se consuma o se descubre. Un cierre débil —el cajero cuenta solo, ve el monto esperado antes de contar y guarda la plata sin custodia— invita a "cuadrar" la caja a la medida. Un cierre blindado hace lo contrario: cuenta a ciegas, deposita bajo dos firmas y no deja efectivo suelto hasta mañana.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">visibility_off</span></div>
+      <div><div class="t">Paso 1 · Arqueo ciego</div><h4>Cuenta el efectivo sin ver primero cuánto "debería" haber</h4><p>El cajero cuenta y declara el total físico <b>antes</b> de que el sistema le muestre el esperado. Si primero ve el número objetivo, tiene la tentación de "hacer calzar" la cuenta. El conteo a ciegas obliga a que lo físico y lo esperado se comparen recién después, sin trampa.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">balance</span></div>
+      <div><div class="t">Paso 2 · Medio por medio</div><h4>Cada método cierra por su lado</h4><p>Efectivo contado vs. sistema; vouchers del datáfono vs. total tarjeta; abonos recibidos en el celular del negocio vs. total Yape/Plin. Nunca compenses un faltante de efectivo con un sobrante de tarjeta: esconder un descuadre dentro de otro es la forma más común de tapar un robo chico.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_atm</span></div>
+      <div><div class="t">Paso 3 · Separa el fondo y deposita</div><h4>El fondo queda; la venta va a sobre sellado</h4><p>Devuelve el fondo fijo tal como lo recibiste para el próximo turno. La venta en efectivo va a un sobre de depósito, cerrado, con el monto y la fecha escritos afuera. Nada de "me lo llevo y mañana lo deposito": el efectivo de venta no duerme suelto.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">handshake</span></div>
+      <div><div class="t">Paso 4 · Doble firma y custodia</div><h4>Cajero y gerente firman; la plata va a la bóveda</h4><p>El sobre y el reporte de cierre se firman por el cajero y por quien recibe (gerente o supervisor). El sobre va a la caja fuerte o bóveda, no a un cajón. Dos firmas significan que dos personas responden por el mismo monto: el fraude necesitaría dos cómplices, y eso lo hace raro.</p></div>
+    </div>
+    <div class="callout"><b>Descuadre = se reporta, nunca se rellena:</b> si al cierre falta, jamás pongas plata de tu bolsillo para "tapar" ni saques de un sobrante para calzar. Un cajero honesto reporta el faltante y ayuda a buscarlo; rellenar el hueco esconde el problema y, peor, entrena al equipo a que el descuadre "se arregla solo". Lo que no se ve, no se corrige.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Auditoría y pista de auditoría</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Todo lo anterior deja rastro, y ese rastro solo sirve si alguien lo revisa con método. Prep! guarda una pista de auditoría (audit log) que registra abrir y cancelar pedidos, cortesías con su aprobador, anulaciones y cobros, cada uno con usuario, fecha y hora. La auditoría es sentarse una vez por semana a leer esos números y actuar antes de que una fuga chica se vuelva grande.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Pista de auditoría (/audit)</h3><div class="d">El visor de Prep! muestra quién hizo qué y cuándo: abrir/cancelar pedido, agregar ítem, cortesía con aprobador y cobro. Es la memoria del sistema y no se puede borrar desde la caja.</div><div class="s">quién · qué · cuándo</div></div>
+      <div class="tipo"><h3>Revisión semanal</h3><div class="d">Aparta 20 minutos fijos por semana para leer: anulaciones y cortesías por cajero, descuadres del periodo, ventas por método. La constancia atrapa patrones que una revisión anual jamás vería.</div><div class="s">20 min, cada semana</div></div>
+      <div class="tipo"><h3>Indicadores clave</h3><div class="d">% de anulaciones sobre ventas, % de cortesías, descuadre acumulado por cajero, mezcla efectivo/tarjeta. Compara cada cajero contra el promedio del equipo: el que se sale del rango es el que se revisa.</div><div class="s">mide contra el promedio</div></div>
+      <div class="tipo"><h3>Escalar con datos</h3><div class="d">Cuando un patrón se repite, se conversa en privado con los números delante, no con acusaciones. Muchas veces es un mal hábito o un error de proceso; a veces no. Los datos deciden, no la sospecha.</div><div class="s">privado y con evidencia</div></div>
+      <div class="tipo"><h3>Rotación y descanso</h3><div class="d">Rota estaciones de caja y cubre las vacaciones de tus cajeros con otra persona. Un fraude sostenido suele necesitar que la misma persona controle siempre la misma caja; la rotación lo interrumpe solo.</div><div class="s">nadie es "dueño" de la caja</div></div>
+      <div class="tipo"><h3>Control ≠ desconfianza</h3><div class="d">Explica al equipo que el arqueo, la doble firma y el audit log protegen también al honesto: si algo falta, los números muestran que no fuiste tú. Un buen control da tranquilidad, no miedo.</div><div class="s">protege al que cumple</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Indicador</th><th>Rango sano (referencia)</th><th>Cuándo encender la alarma</th></tr></thead>
+      <tbody>
+        <tr><td>Anulaciones sobre ventas</td><td>Bajo y parejo entre cajeros</td><td>Un cajero muy por encima del resto de forma sostenida</td></tr>
+        <tr><td>Cortesías por turno</td><td>Pocas y siempre con aprobador</td><td>Cortesías sin motivo, sin aprobación o concentradas en una persona</td></tr>
+        <tr><td>Descuadre por cajero</td><td>Cercano a cero, con signos que varían</td><td>Faltantes chicos pero constantes en el mismo cajero</td></tr>
+        <tr><td>Mezcla efectivo / tarjeta</td><td>Estable de un periodo a otro</td><td>Un cajero con mucho más efectivo "redondo" que el promedio</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>La cultura cierra el círculo:</b> el mejor antifraude no es la cámara, es un equipo que sabe que todo se revisa y que el control es parejo para todos, del cajero nuevo al administrador. Cuando revisar la caja es rutina normal —no una cacería cuando ya faltó plata— el honesto trabaja tranquilo y el que quería robar entiende que no hay rincón sin luz.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Segregación de funciones</b><span>Separar quién cobra, quién arquea y quién deposita, para que nadie pueda controlar y encubrir su propia caja.</span></div>
+      <div class="gterm"><b>Arqueo sorpresa</b><span>Conteo de caja hecho a media operación, sin avisar, para ver la caja tal como está y no como el cajero la "acomoda" al cierre.</span></div>
+      <div class="gterm"><b>Arqueo ciego (blind count)</b><span>Contar el efectivo y declarar el total antes de ver cuánto debería haber, para que no se "haga calzar" la cuenta.</span></div>
+      <div class="gterm"><b>Reporte X (lectura parcial)</b><span>Lectura de ventas del turno sin cerrar la caja. Sirve para comparar contra lo contado en un arqueo sorpresa.</span></div>
+      <div class="gterm"><b>Reporte Z (cierre)</b><span>Cierre definitivo del turno en el sistema. Fija los totales por método contra los que se cuadra la caja.</span></div>
+      <div class="gterm"><b>Anulación (void)</b><span>Dejar sin efecto una venta en el sistema. El fraude aparece cuando se anula una cuenta ya cobrada en efectivo.</span></div>
+      <div class="gterm"><b>Cortesía (comp)</b><span>Ítem o cuenta que la casa no cobra. Debe llevar aprobación de gerente y motivo; si no, es una tapadera perfecta para robar.</span></div>
+      <div class="gterm"><b>No-sale</b><span>Apertura del cajón sin una venta asociada. Cada no-sale debe tener explicación: es una señal clásica de fuga de efectivo.</span></div>
+      <div class="gterm"><b>Skimming</b><span>Robo por goteo: retirar montos chicos de la venta de forma repetida. Suma mucho y es difícil de ver en un solo cierre.</span></div>
+      <div class="gterm"><b>Venta no ingresada</b><span>Cobrar al comensal pero no registrar la venta en el sistema, para quedarse el efectivo sin dejar rastro.</span></div>
+      <div class="gterm"><b>Pista de auditoría (audit log)</b><span>Registro que guarda quién hizo cada movimiento (abrir, anular, cortesía, cobro) con usuario, fecha y hora. En Prep!, visible en /audit.</span></div>
+      <div class="gterm"><b>Nota de crédito</b><span>Documento que anula o corrige un comprobante ya emitido. Reemplaza al "borrón": nada se elimina, se anula con firma.</span></div>
+      <div class="gterm"><b>Retiro de caja (skim autorizado)</b><span>Sacar efectivo excedente de la gaveta a la bóveda, con conteo y firma, para no acumular plata suelta.</span></div>
+      <div class="gterm"><b>Descuadre</b><span>Diferencia entre el efectivo físico y lo que dice el sistema. Puede ser faltante o sobrante; ambos se reportan, nunca se rellenan.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en administración</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Caja &amp; Fraude · Chuleta de control</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Los seis controles</h4><ul>
+          <li>Segrega: quien cobra no arquea ni deposita</li>
+          <li>Una gaveta, un responsable por turno</li>
+          <li>Fondo contado, firmado y declarado</li>
+          <li>Usuario y clave personales — nunca se prestan</li>
+          <li>Retira excedente a bóveda; caja a la vista</li>
+        </ul></div>
+        <div class="op-box"><h4>Arqueo sorpresa</h4><ul>
+          <li>Sin avisar, a media operación, día y hora variables</li>
+          <li>Cuentan dos: administrador cuenta, cajero acompaña</li>
+          <li>Efectivo – fondo = venta real vs. reporte X</li>
+          <li>Firma el acta con monto, esperado y diferencia</li>
+        </ul></div>
+        <div class="op-box"><h4>Señales de fraude</h4><ul>
+          <li>Un cajero con muchas más anulaciones que el resto</li>
+          <li>Cortesías sin aprobador ni motivo</li>
+          <li>Faltantes chicos pero constantes (skimming)</li>
+          <li>No-sale y efectivo "redondo" fuera del promedio</li>
+          <li>Busca el patrón repetido, no el caso aislado</li>
+        </ul></div>
+        <div class="op-box"><h4>Cortesías y anulaciones</h4><ul>
+          <li>Toda excepción necesita aprobación de gerente</li>
+          <li>Sin motivo escrito, no hay cortesía ni descuento</li>
+          <li>Anula antes de cobrar; nunca una cuenta ya pagada</li>
+          <li>Cuenta cobrada mal anulada = nota de crédito + firma</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre blindado</h4><ul>
+          <li>Arqueo ciego: cuenta antes de ver el esperado</li>
+          <li>Medio por medio; no compenses entre métodos</li>
+          <li>Venta a sobre sellado; el fondo queda para el turno</li>
+          <li>Doble firma y a la bóveda; descuadre se reporta</li>
+        </ul></div>
+        <div class="op-box"><h4>Auditoría semanal</h4><ul>
+          <li>Lee /audit: quién, qué y cuándo</li>
+          <li>Indicadores: % anulaciones, % cortesías, descuadre</li>
+          <li>Compara cada cajero contra el promedio del equipo</li>
+          <li>Escala en privado y con datos; rota estaciones</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Caja y prevención de fraude · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

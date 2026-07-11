@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Atención a VIP y protocolo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234c1d95'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Atención VIP</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#4c1d95">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Atención a VIP y protocolo</h1>
+    <p>Curso para sala y líderes de servicio. Aquí aprendes a reconocer al comensal VIP antes de que se siente, a atenderlo con un protocolo impecable, a cuidar su discreción, a personalizar sin invadir y a manejar celebridades, autoridades y prensa sin que la noche se salga de control. Un VIP no pide un trato distinto: espera que ya lo sepas.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Sala / líderes</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el crítico gastronómico que reseña tu carta, el embajador que vuelve con su delegación, la pareja que celebra 25 años, el futbolista que llena una mesa cada mes: todos deciden en su primera visita si tu casa es "de las suyas". Un VIP bien atendido se convierte en recurrencia, en boca a boca de alto valor y en reservas que ni siquiera aparecen en Google. Uno mal leído —al que trataste como mesa 12— no reclama: simplemente no vuelve, y se lo cuenta a la gente exacta que no quieres perder.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Reconocer al VIP</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">VIP no es solo el famoso de la tele. Es todo comensal cuyo paso por tu casa pesa más que un cubierto: por lo que gasta, por lo que influye, por lo que celebra o por lo que puede escribir de ti. Reconocerlo a tiempo es el 80% del trabajo; lo demás es ejecución.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>VIP de recurrencia</h3><div class="d">El habitual que viene cada semana, conoce al maître por su nombre y trae invitados. No es famoso, pero es tu mejor cliente. La ficha en Bienvenida lo marca como <b>habitual</b> o <b>VIP</b>.</div><div class="s">míralo en el CRM</div></div>
+      <div class="tipo"><h3>VIP de influencia</h3><div class="d">Crítico gastronómico, periodista, foodie con audiencia, chef invitado. Una línea suya en un medio o una story cambia tu semana. Trato impecable, cero aspavientos.</div><div class="s">reseña esta noche</div></div>
+      <div class="tipo"><h3>VIP de celebración</h3><div class="d">Aniversario, pedida de mano, cumpleaños redondo, cierre de negocio. No es famoso, pero esa noche es la más importante de su año. Tú eres el escenario.</div><div class="s">la noche de su vida</div></div>
+      <div class="tipo"><h3>VIP institucional</h3><div class="d">Embajador, ministro, ejecutivo de una marca aliada, dueño de otro restaurante. Suele llegar con protocolo propio y acompañantes. Discreción y jerarquía claras.</div><div class="s">autoridad / empresa</div></div>
+      <div class="tipo"><h3>VIP de gasto</h3><div class="d">La mesa que pide la carta de vinos alta, el maridaje completo, la botella de la cava. Alto ticket, expectativa alta. Su tiempo y su bolsillo merecen tu mejor mozo.</div><div class="s">ticket alto</div></div>
+      <div class="tipo"><h3>VIP silencioso</h3><div class="d">No avisó, no reservó a su nombre, no quiere que lo noten. Llega discreto y observa. El peor error es no reconocerlo; el segundo peor, delatarlo en voz alta.</div><div class="s">llegó de incógnito</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><b style="font-family:var(--font-display);font-weight:400;font-size:16px">Las 4 fuentes para detectarlo antes de que llegue</b>
+      <div style="margin-top:8px">
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">event_available</span></div><div><h4>1 · La reserva y la ficha</h4><p>Revisa el libro de reservas del día en el briefing. El anfitrión marca en Bienvenida quién es VIP, sus alergias, su mesa y bebida preferida, su ocasión. Si el nombre te suena, googléalo antes del servicio, no en la mesa.</p><div class="t">antes del turno</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">badge</span></div><div><h4>2 · Quién hizo la reserva</h4><p>"Reservo de parte del Dr. Vargas", "es para el equipo de la embajada", "viene el chef de …": la forma de reservar delata la importancia. La anfitriona lo escala al maître.</p><div class="t">lee la señal</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">visibility</span></div><div><h4>3 · La llegada</h4><p>Auto con chofer que espera, seguridad discreta, un rostro conocido, una pareja que evita las mesas del centro. El anfitrión de puerta es el primer radar de la casa.</p><div class="t">en la puerta</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">group</span></div><div><h4>4 · La red del equipo</h4><p>El bartender reconoce al enólogo, el mozo antiguo reconoce al habitual, el valet reconoce la placa. Se avisa en voz baja por el canal interno, nunca gritando "¡llegó fulano!".</p><div class="s"></div><div class="t">aviso silencioso</div></div></div>
+      </div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> ante la duda, trata a todos como VIP. El estándar de la casa debe ser tan alto que reconocer a un VIP solo agregue personalización, no calidad. Si tu servicio "normal" ya es excelente, nunca quedas mal por no haber reconocido a alguien.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>El protocolo de recepción y servicio</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El protocolo es la coreografía silenciosa que hace que todo parezca fácil. Con un VIP no improvisas: cada paso está pensado para que se sienta esperado, cuidado y en control de su tiempo.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">door_front</span></div><div><h4>Recepción por nombre</h4><p>"Buenas noches, Sr. Vargas, lo estábamos esperando." Reconocerlo por su apellido en la puerta vale más que cualquier plato. Si no sabes cómo prefiere que lo llamen, usa apellido con "señor/señora"; nunca tutees a un VIP sin permiso.</p><div class="t">0–30 seg</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">chair</span></div><div><h4>La mesa correcta</h4><p>El VIP casi siempre tiene lugar asignado: esquina con vista, lejos de la cocina y del baño, con la espalda a la pared si lo prefiere (los públicos suelen querer ver la puerta y no ser vistos). Nunca lo sientes en la mesa de paso.</p><div class="t">mesa reservada</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">local_bar</span></div><div><h4>El gesto de bienvenida</h4><p>Su bebida de siempre sin que la pida, una copa de espumante de la casa, el pan recién salido. Un detalle que diga "sabemos quién eres" sin cobrar por ello. El maître lo autoriza; el mozo lo ejecuta en menos de 3 minutos.</p><div class="t">&lt; 3 min</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">speed</span></div><div><h4>Lee y respeta su ritmo</h4><p>¿Vino a cerrar un negocio? Servicio ágil e invisible. ¿Vino a celebrar sin apuro? Sobremesa larga, nunca apures la cuenta. El error clásico es servir rápido a quien quiere calma, o hacer esperar a quien tiene reunión.</p><div class="t">su tiempo manda</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">record_voice_over</span></div><div><h4>Un solo mozo referente</h4><p>El VIP no debe repetir su historia a cinco personas. Se asigna un mozo líder que lo conoce, coordina con runners y bar, y es su único interlocutor. El maître pasa por la mesa una vez, sin robar protagonismo.</p><div class="t">un solo capitán</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">restaurant_menu</span></div><div><h4>Guía la carta, no la impongas</h4><p>Recomienda lo que sabes que le gusta o lo mejor de la noche. Si el chef quiere mandar un pase fuera de carta, se anuncia con elegancia. Nunca satures con demasiadas opciones ni presiones al plato más caro.</p><div class="t">sugiere con criterio</div></div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Momento</th><th>Estándar sala general</th><th>Estándar VIP</th></tr></thead>
+      <tbody>
+        <tr><td>Saludo</td><td>Bienvenida cálida</td><td>Por su nombre, "lo esperábamos"</td></tr>
+        <tr><td>Mesa</td><td>La disponible del rango</td><td>Asignada de antemano, la mejor</td></tr>
+        <tr><td>Primer contacto</td><td>&lt; 2 min a tomar bebida</td><td>Gesto de la casa ya en camino</td></tr>
+        <tr><td>Interlocutor</td><td>El mozo de estación</td><td>Mozo referente + maître 1 vez</td></tr>
+        <tr><td>Ritmo</td><td>Estándar del turno</td><td>El que marque el comensal</td></tr>
+        <tr><td>Cierre</td><td>Cuenta a pedido</td><td>Sin apuro, despedida en puerta</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Ojo con esto:</b> exagerar también incomoda. Un VIP experimentado detesta el servicio adulador, los "¡es un honor!" y la mesa rodeada de mozos mirándolo comer. El buen protocolo es presente cuando lo necesita e invisible cuando no. La meta es que se sienta en casa, no en un escenario.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Discreción y confidencialidad</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La discreción es la moneda con la que se paga la lealtad de un VIP. Un famoso, un político o un empresario elige tu casa porque confía en que lo que pasa en su mesa se queda en su mesa. Romper eso una sola vez te borra de su lista para siempre.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Haz esto</h4>
+        <ul>
+          <li>Aviso interno en voz baja o por el canal del equipo</li>
+          <li>Mesa que lo proteja de miradas si busca privacidad</li>
+          <li>Contén a los curiosos con amabilidad ("permítame")</li>
+          <li>Trata al acompañante con la misma discreción</li>
+          <li>Si preguntan por él, "no puedo confirmar reservas"</li>
+          <li>Lo que oíste en la mesa se olvida al salir</li>
+        </ul>
+      </div>
+      <div class="box no"><h4>Nunca hagas esto</h4>
+        <ul>
+          <li>Anunciar en voz alta "¡llegó tal persona!"</li>
+          <li>Pedirle foto o autógrafo tú o el equipo</li>
+          <li>Subir a redes que estuvo en tu casa</li>
+          <li>Contar qué pidió, con quién vino o qué habló</li>
+          <li>Dejar pasar a un "fan" o periodista a su mesa</li>
+          <li>Comentar su cuenta o su propina con nadie</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>El acompañante también cuenta</h3><div class="d">Con quién viene un VIP puede ser tan sensible como el VIP mismo. Nunca comentes, deduzcas ni insinúes nada sobre su acompañante. Tu memoria es una caja fuerte.</div><div class="s">cero deducciones</div></div>
+      <div class="tipo"><h3>El celular guardado</h3><div class="d">Nada de fotos disimuladas del salón, ni "para el grupo del trabajo". Una foto filtrada de un VIP en tu local es motivo de despedida y demanda. El teléfono no sale en el piso.</div><div class="s">sin cámara en piso</div></div>
+      <div class="tipo"><h3>La prensa se maneja arriba</h3><div class="d">Si un periodista pregunta o aparece, no confirmas ni niegas: derivas al gerente o encargado de turno. El staff de sala nunca declara sobre quién comió en la casa.</div><div class="s">deriva, no declares</div></div>
+    </div>
+    <div class="callout"><b>Frase de bolsillo:</b> cuando alguien insista por confirmar un nombre o pida acercarse a una mesa, tu respuesta es una sola: <i>"Con mucho gusto lo ayudo, pero no puedo dar información de nuestros invitados. ¿Le consigo una mesa?"</i>. Firme, cálida, sin negociación.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Personalización: el detalle que se recuerda</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La diferencia entre un buen restaurante y "su" restaurante está en la memoria. Personalizar es demostrar que recuerdas: su mesa, su copa, su alergia, la fecha que celebra. En Prep! esa memoria vive en la ficha del comensal (Bienvenida) para que no dependa de que esté tu mejor mozo esa noche.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La ficha es tu memoria</h3><div class="d">Antes del turno, revisa la ficha en Bienvenida: platos favoritos, "platos_no", bebida, zona y mozo preferido, dieta, aniversario. Todo lo que aprendas esta noche, se anota para la próxima.</div><div class="s">CRM del comensal</div></div>
+      <div class="tipo"><h3>Anticipa, no preguntes</h3><div class="d">Si su ficha dice que toma el café cortado sin azúcar, llévalo así. Preguntar "¿lo de siempre?" es bueno; traerlo sin preguntar es magia. La anticipación se siente como cariño.</div><div class="s">un paso adelante</div></div>
+      <div class="tipo"><h3>Celebra la fecha</h3><div class="d">Aniversario o cumpleaños en la ficha: postre con vela y mensaje escrito en el plato, tarjeta firmada por el chef, foto Polaroid de recuerdo. Coordina con cocina en el briefing, no en el momento.</div><div class="s">detalle preparado</div></div>
+      <div class="tipo"><h3>Respeta la dieta y la alergia</h3><div class="d">Vegetariano, celíaco, alérgico al maní: el sistema lo marca y el mozo lo confirma con cocina. Personalizar un menú a su restricción sin que lo pida es el detalle más valorado de todos.</div><div class="s">seguridad + cuidado</div></div>
+      <div class="tipo"><h3>Nombra a los suyos</h3><div class="d">Si sabes el nombre de su pareja o su asistente habitual, salúdalos también por su nombre. Que el VIP vea que su gente también es reconocida multiplica el efecto.</div><div class="s">extiende el trato</div></div>
+      <div class="tipo"><h3>El gesto proporcional</h3><div class="d">No todo detalle cuesta. A veces es cambiar la servilleta por una negra si viste de oscuro, acercar un banquito para la cartera, o recordar que odia el cilantro. Lo barato bien hecho vale más que lo caro genérico.</div><div class="s">pequeño y exacto</div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Lo que notas hoy</th><th>Cómo lo usas ahora</th><th>Qué anotas para la próxima</th></tr></thead>
+      <tbody>
+        <tr><td>Devolvió el vino muy frío</td><td>Ajustas la temperatura de servicio</td><td>"Tintos a temperatura ambiente"</td></tr>
+        <tr><td>Pidió sin cilantro</td><td>Avisas a cocina de inmediato</td><td>platos_no: cilantro</td></tr>
+        <tr><td>Mencionó su aniversario</td><td>Postre sorpresa esa noche</td><td>Fecha especial en la ficha</td></tr>
+        <tr><td>Se sentó de espaldas a la sala</td><td>Respetas su privacidad</td><td>Zona preferida: rincón / reservado</td></tr>
+        <tr><td>Elogió al mozo Luis</td><td>Luis lo atiende toda la noche</td><td>Mozo preferido: Luis</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Por qué importa:</b> personalizar de memoria no escala; personalizar con sistema sí. Cada dato que anotas en la ficha convierte a cualquier mozo del turno en "el que lo conoce de siempre". Esa continuidad es lo que hace que un VIP diga "en esta casa siempre me tratan igual de bien", incluso cuando el equipo rotó.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Celebridades, autoridades y prensa</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cuando el VIP es una figura pública, el reto ya no es solo atenderlo: es protegerlo del resto del salón sin apagar la energía de la noche. Aquí entran seguridad, jerarquía y sentido común bajo presión.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Celebridad / figura mediática</h3><div class="d">Quiere comer tranquilo, no ser un espectáculo. Mesa protegida, staff que no lo mira de más, cero fotos del equipo. Si otros comensales se acercan, los contienes con amabilidad antes de que lleguen.</div><div class="s">protégelo del salón</div></div>
+      <div class="tipo"><h3>Autoridad / político</h3><div class="d">Puede traer seguridad y protocolo propio. Coordina con su equipo la mesa, las entradas y salidas, y quién decide el menú. Trato neutral y respetuoso: la casa no toma partido de nada.</div><div class="s">neutral y coordinado</div></div>
+      <div class="tipo"><h3>Empresario / delegación</h3><div class="d">Jerarquía clara: identifica quién es el anfitrión de la mesa y a él le consultas y le llevas la cuenta. Sirve respetando la precedencia (invitado principal primero). Discreción con lo que se conversa.</div><div class="s">respeta la jerarquía</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><b style="font-family:var(--font-display);font-weight:400;font-size:16px">Protocolo cuando llega una figura pública</b>
+      <div style="margin-top:8px">
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">shield</span></div><div><h4>1 · Coordina con su seguridad</h4><p>Si trae equipo, pregunta discretamente por dónde entra, dónde se ubica su gente y si hay indicaciones. Ellos marcan; tú facilitas sin invadir la mesa.</p><div class="t">al llegar</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">block</span></div><div><h4>2 · Filtra acercamientos</h4><p>Fans, otros comensales o prensa que quieren "solo un saludo": interceptas con calidez antes de que lleguen. "Permítame, el señor está con su familia. ¿Le ayudo en algo?" El VIP decide si saluda, no el fan.</p><div class="t">antes de la mesa</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">no_photography</span></div><div><h4>3 · Cuida las fotos</h4><p>El equipo no toma fotos, punto. Si otro comensal fotografía descaradamente hacia su mesa, el maître se acerca y pide con amabilidad respetar la privacidad de todos. La casa protege a cada invitado por igual.</p><div class="t">sin cámara</div></div></div>
+        <div class="paso"><div class="ico"><span class="material-symbols-outlined">exit_to_app</span></div><div><h4>4 · Facilita la salida</h4><p>Ten lista la cuenta cuando la pidan, avisa al valet con tiempo, ofrece salida discreta si hay gente esperando afuera. Que la última imagen sea tan fluida como la primera.</p><div class="t">al cierre</div></div></div>
+      </div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Bajo presión, sí</h4>
+        <ul>
+          <li>Mantén la calma y el tono de siempre</li>
+          <li>Escala al gerente cualquier situación tensa</li>
+          <li>Protege por igual a los demás comensales</li>
+          <li>Deja que la figura marque el nivel de contacto</li>
+        </ul>
+      </div>
+      <div class="box no"><h4>Bajo presión, no</h4>
+        <ul>
+          <li>Improvisar reglas o discutir con seguridad</li>
+          <li>Tomar bando político o dar opiniones</li>
+          <li>Dejar a un curioso llegar "porque insistió"</li>
+          <li>Descuidar al resto del salón por la figura</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><b>Ojo con esto:</b> el resto de tus comensales también pagó por una buena noche. Un error común es volcar a todo el equipo sobre la mesa VIP y desatender las demás. El servicio de la casa no baja para nadie: la figura recibe protección extra, no atención robada al resto.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Coordinación del equipo y recuperación</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La atención VIP es un deporte de equipo. Todo lo impecable que se ve en la mesa se cocinó antes, en el briefing, y se sostiene con comunicación silenciosa durante el turno. Y cuando algo sale mal —porque a veces sale mal— la recuperación separa a los profesionales del resto.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups</span></div><div><h4>Briefing pre-turno</h4><p>El líder de sala repasa los VIP del día: quién viene, a qué hora, en qué mesa, con quién, su ficha y el gesto preparado. Cocina y bar saben de antemano el maridaje o el postre sorpresa. Nadie se entera del VIP recién en la mesa.</p><div class="t">antes de abrir</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">bolt</span></div><div><h4>Comunicación silenciosa</h4><p>Un código interno discreto ("mesa 8, cuidado especial"), gestos acordados, mensajes cortos por el canal del equipo. El comensal nunca escucha su nombre cruzar el salón. La coordinación se siente, no se ve.</p><div class="t">durante el turno</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">handshake</span></div><div><h4>Un solo dueño de la mesa</h4><p>El mozo referente coordina a runners, bar y cocina. Si necesita respaldo, el maître entra; si hay una decisión (cortesía, cambio de plato), la toma el líder de turno rápido, sin hacer esperar al VIP mientras "consultan".</p><div class="t">decisión ágil</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">healing</span></div><div><h4>Recuperación cuando algo falla</h4><p>Plato demorado, error en un pedido, vino picado: se reconoce rápido, se pide disculpa sincera y breve, se corrige y se compensa con un gesto (una copa, un postre, la atención del chef). Nunca discutas ni culpes a cocina delante del comensal.</p><div class="t">rápido y con la cara</div></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">edit_note</span></div><div><h4>Cierre y registro</h4><p>Al terminar, el líder actualiza la ficha en Bienvenida: qué le gustó, qué evitó, cómo prefiere el trato, si hubo un tropiezo y cómo se resolvió. Ese registro hace que la próxima visita empiece con ventaja.</p><div class="t">después del turno</div></div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Si pasa esto</th><th>Reacción correcta</th></tr></thead>
+      <tbody>
+        <tr><td>Se demora un plato del VIP</td><td>Avisas tú antes de que reclame + gesto de la casa mientras espera</td></tr>
+        <tr><td>Llega sin reserva y está lleno</td><td>Escalas al maître; se acomoda con dignidad o se ofrece la barra/espera con copa</td></tr>
+        <tr><td>Otro comensal reclama por el trato VIP</td><td>Elevas su experiencia también; nunca justificas diferencias en voz alta</td></tr>
+        <tr><td>El VIP se queja de algo</td><td>Escuchas completo, disculpa breve, solución inmediata, sin excusas</td></tr>
+        <tr><td>No reconociste a alguien importante</td><td>Elevas el trato desde ese momento con naturalidad, sin dramatizar el error</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla de oro:</b> un VIP no juzga que algo falle —eso pasa en todas las casas—; juzga cómo lo resuelves. Una recuperación rápida, honesta y generosa puede dejar mejor recuerdo que una noche sin errores. La diferencia la hace un equipo coordinado que se cubre las espaldas y nunca lava sus problemas frente a la mesa.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>VIP</b><span>"Very Important Person". Comensal cuyo paso pesa más de lo normal por su recurrencia, influencia, celebración, gasto o rango.</span></div>
+      <div class="gterm"><b>Protocolo</b><span>Conjunto de pasos y códigos de conducta que ordenan el servicio para que se vea impecable y sin improvisación.</span></div>
+      <div class="gterm"><b>Discreción</b><span>Cuidar que lo que pasa en la mesa —quién vino, qué pidió, qué habló— no salga de ella. La base de la confianza del VIP.</span></div>
+      <div class="gterm"><b>Precedencia</b><span>El orden de importancia en una mesa: a quién se sirve primero, a quién se consulta el menú, a quién se lleva la cuenta.</span></div>
+      <div class="gterm"><b>Anfitrión de mesa</b><span>La persona que invita y paga; a él o ella se le dirige la cuenta y las decisiones del grupo.</span></div>
+      <div class="gterm"><b>Mozo referente</b><span>El único interlocutor asignado al VIP, que coordina bar, cocina y runners para que no repita nada.</span></div>
+      <div class="gterm"><b>Gesto de la casa</b><span>Cortesía sin costo para el comensal (copa, pan, postre) que dice "sabemos quién eres" o compensa un tropiezo.</span></div>
+      <div class="gterm"><b>Ficha del comensal</b><span>Registro en Bienvenida con historial, preferencias, alergias, fechas y trato preferido. La memoria de la casa.</span></div>
+      <div class="gterm"><b>Briefing</b><span>Reunión previa al turno donde el líder repasa reservas, VIP del día y gestos preparados con todo el equipo.</span></div>
+      <div class="gterm"><b>Comunicación silenciosa</b><span>Códigos y gestos discretos para coordinar sin que el comensal escuche su nombre cruzar el salón.</span></div>
+      <div class="gterm"><b>Recuperación</b><span>La forma de reconocer, disculpar, corregir y compensar cuando algo falla en el servicio.</span></div>
+      <div class="gterm"><b>Incógnito</b><span>VIP que no quiere ser reconocido públicamente. Se le da trato alto sin delatarlo en voz alta.</span></div>
+      <div class="gterm"><b>Filtro de acercamiento</b><span>Contener con amabilidad a fans, prensa o curiosos antes de que lleguen a la mesa del VIP.</span></div>
+      <div class="gterm"><b>Crítico gastronómico</b><span>Periodista o reseñista cuya opinión publicada puede mover la reputación de la casa. Trato impecable, sin aspavientos.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Atención VIP · Chuleta de sala</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Reconoce al VIP</h4><ul>
+          <li>Recurrencia, influencia, celebración, rango, gasto</li>
+          <li>Revísalo en la ficha del briefing, no en la mesa</li>
+          <li>Lee la reserva, la llegada y avisa en voz baja</li>
+          <li>Ante la duda: trata a todos como VIP</li>
+        </ul></div>
+        <div class="op-box"><h4>Protocolo de servicio</h4><ul>
+          <li>Recíbelo por su nombre: "lo esperábamos"</li>
+          <li>Mesa asignada de antemano, la mejor</li>
+          <li>Gesto de la casa en menos de 3 minutos</li>
+          <li>Un solo mozo referente; respeta su ritmo</li>
+        </ul></div>
+        <div class="op-box"><h4>Discreción</h4><ul>
+          <li>Nunca anuncies su nombre en voz alta</li>
+          <li>Cero fotos, cero redes, cero comentarios</li>
+          <li>Prensa y curiosos: derivas al gerente</li>
+          <li>"No puedo dar información de nuestros invitados"</li>
+        </ul></div>
+        <div class="op-box"><h4>Personaliza con sistema</h4><ul>
+          <li>La ficha es tu memoria: úsala antes del turno</li>
+          <li>Anticipa (no preguntes) lo de siempre</li>
+          <li>Celebra la fecha con un detalle preparado</li>
+          <li>Anota hoy lo que aprendiste para la próxima</li>
+        </ul></div>
+        <div class="op-box"><h4>Figuras públicas</h4><ul>
+          <li>Coordina con su seguridad, no la invadas</li>
+          <li>Filtra acercamientos con calidez</li>
+          <li>Neutralidad total: la casa no toma partido</li>
+          <li>No descuides al resto del salón</li>
+        </ul></div>
+        <div class="op-box"><h4>Equipo y recuperación</h4><ul>
+          <li>Todo se cocina en el briefing pre-turno</li>
+          <li>Comunicación silenciosa durante el servicio</li>
+          <li>Si falla: reconoce, disculpa, corrige, compensa</li>
+          <li>Cierra actualizando la ficha del comensal</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Atención a VIP y protocolo · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

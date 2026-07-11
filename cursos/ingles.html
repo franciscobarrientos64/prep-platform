@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Inglés para restaurantes · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230e7490'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Inglés en sala</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0e7490">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Inglés para restaurantes</h1>
+    <p>Lima recibe turistas todos los días y muchos llegan directo del aeropuerto con hambre y sin una palabra de español. Este curso es para la sala: aquí memorizas las frases exactas para recibir, sentar, tomar la orden, describir un ceviche o un lomo saltado, resolver dudas de picante y alergias, cobrar y despedir —todo en inglés simple, correcto y cálido—. No necesitas ser bilingüe: necesitas veinte frases dichas con seguridad y una sonrisa.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Sala / FOH</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el turista extranjero deja mejor propina, escribe la mayoría de las reseñas en inglés en TripAdvisor y Google, y vuelve con amigos si se sintió entendido. Una mesa que no puede pedir lo que quiere se va incómoda y lo cuenta. Dominar estas frases sube el ticket, evita platos devueltos por un malentendido y convierte a tu restaurante en "the place where they actually speak English" —lo mejor que un limeño puede leer en un review.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Recibir y sentar en inglés</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Los primeros quince segundos deciden si el turista se relaja o se pone tenso. No hace falta un discurso: un saludo claro, preguntar cuántos son y llevarlos a la mesa con seguridad basta. Estas son las frases del primer contacto en la puerta.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Saluda y ofrece inglés</h3><div class="d">"Good evening! Welcome. Would you prefer English?" Ofrecer inglés de entrada baja la tensión del turista al instante: ya sabe que aquí lo van a entender.</div><div class="s">welcome / good evening</div></div>
+      <div class="tipo"><h3>Pregunta cuántos son</h3><div class="d">"How many are you?" o "Table for how many?" Para responder ellos dicen "Two", "Just the two of us", "A table for four, please".</div><div class="s">table for how many?</div></div>
+      <div class="tipo"><h3>¿Con reserva?</h3><div class="d">"Do you have a reservation?" Si sí: "Under what name?" (¿a nombre de quién?). Si no: "No problem, I have a table for you."</div><div class="s">under what name?</div></div>
+      <div class="tipo"><h3>Llévalos a la mesa</h3><div class="d">"Please, follow me. / Right this way." Caminas medio paso adelante, marcando el camino con la mano abierta, no señalando con el dedo.</div><div class="s">follow me / this way</div></div>
+      <div class="tipo"><h3>Ofrece elegir zona</h3><div class="d">"Would you like to sit inside or on the terrace?" Da opciones concretas: "by the window" (junto a la ventana), "a quieter table" (una más tranquila).</div><div class="s">inside or outside?</div></div>
+      <div class="tipo"><h3>Pide un momento</h3><div class="d">Si la mesa aún no está lista: "It will be just a few minutes. May I take your name?" Nunca los dejes parados sin decir nada.</div><div class="s">just a few minutes</div></div>
+    </div>
+    <div class="callout"><b>Truco de sala:</b> aunque tu inglés sea básico, di la frase completa y sonríe. "Welcome, follow me, please" dicho con seguridad vale más que un párrafo perfecto dicho con miedo. El turista no evalúa tu gramática: evalúa si se siente bienvenido.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Tomar la orden</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Aquí ocurre el 80% de la conversación de la noche. La orden en inglés es una secuencia predecible: bebidas primero, luego entradas y fondos, siempre confirmando al final. Sigue el orden y no te pierdes.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">💧</div><div><div class="t">Al sentarlos</div><h4>Ofrece agua y bebidas</h4><p>"Can I get you something to drink?" Para el agua: "Still or sparkling water?" (sin gas o con gas). Ojo: "tap water" es agua de caño; en Lima ofrece siempre embotellada.</p></div></div>
+      <div class="paso"><div class="ico">📖</div><div><div class="t">Da un respiro</div><h4>Deja que lean la carta</h4><p>"Take your time, I'll be right back." (Tómense su tiempo, ya vuelvo.) Vuelve en 2-3 minutos: "Are you ready to order?" (¿Listos para pedir?)</p></div></div>
+      <div class="paso"><div class="ico">🥘</div><div><div class="t">Toma el pedido</div><h4>"What can I get you?"</h4><p>Ellos dicen "I'll have the ceviche" o "I would like the lomo saltado". Confirma cada uno: "The ceviche, perfect." Anota por asiento para no confundir al servir.</p></div></div>
+      <div class="paso"><div class="ico">🔥</div><div><div class="t">Si piden carne</div><h4>Pregunta el término</h4><p>"How would you like it cooked?" Términos: rare (rojo), medium rare (jugoso), medium (término medio), well done (bien cocido). Repite el que eligieron.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Antes de irte</div><h4>Repite la orden completa</h4><p>"So that's one ceviche, one lomo saltado, and two pisco sours. Anything else?" Repetir evita el 90% de los errores y el turista se siente atendido.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>El comensal dice…</th><th>Significa</th><th>Tú respondes</th></tr></thead>
+      <tbody>
+        <tr><td>"I'll have the…"</td><td>Voy a pedir el…</td><td>"Great choice." / "Excellent."</td></tr>
+        <tr><td>"What do you recommend?"</td><td>¿Qué me recomiendas?</td><td>"The ceviche is our specialty."</td></tr>
+        <tr><td>"Can we share?"</td><td>¿Podemos compartir?</td><td>"Of course, I'll bring extra plates."</td></tr>
+        <tr><td>"Is it a big portion?"</td><td>¿Es una porción grande?</td><td>"It's for two to share." / "It's one person."</td></tr>
+        <tr><td>"We're not ready yet."</td><td>Aún no estamos listos.</td><td>"No problem, I'll come back."</td></tr>
+        <tr><td>"Just the check, please."</td><td>Solo la cuenta, por favor.</td><td>"Right away." (Enseguida.)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla de oro:</b> nunca respondas "yes" cuando no entendiste. Di "One moment, please" y trae a alguien, o pide "Could you repeat that, please?" Un "sí" a lo que no entendiste termina en un plato equivocado devuelto a cocina.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Describir la carta peruana</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Los platos peruanos no se traducen: se explican. Un turista no sabe qué es un ají amarillo ni un lomo saltado, y ahí es donde brillas. Aprende una frase corta por plato estrella: qué es, cómo sabe y con qué viene.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Ceviche</h3><div class="d">"Fresh raw fish cooked in lime juice, with onion, chili and sweet potato. Fresh and citrusy." No digas "raw fish" a secas: aclara que el limón lo "cocina".</div><div class="s">lime-cured fish</div></div>
+      <div class="tipo"><h3>Lomo saltado</h3><div class="d">"Stir-fried beef with onion, tomato and fries, served with rice. A Peruvian-Chinese classic." La palabra clave es stir-fried (salteado al wok).</div><div class="s">stir-fried beef</div></div>
+      <div class="tipo"><h3>Ají de gallina</h3><div class="d">"Shredded chicken in a creamy, mildly spicy yellow pepper sauce, with rice and potato." Aclara "mildly spicy" (poco picante) para que no se asusten.</div><div class="s">creamy chicken</div></div>
+      <div class="tipo"><h3>Causa</h3><div class="d">"Cold mashed yellow potato layered with chicken or avocado. Like a Peruvian terrine." Sirve "cold" (fría): avísalo para que no lo tomen por error.</div><div class="s">layered potato</div></div>
+      <div class="tipo"><h3>Anticuchos</h3><div class="d">"Grilled beef heart skewers, marinated and smoky. A street-food classic." Di "beef heart" con naturalidad; si dudan, ofrece "we also have chicken skewers".</div><div class="s">grilled skewers</div></div>
+      <div class="tipo"><h3>Pisco sour</h3><div class="d">"Peru's national cocktail: pisco, lime, egg white and a drop of bitters. Strong and foamy." Avisa del "egg white" por si alguien es alérgico o vegano.</div><div class="s">national cocktail</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Ingrediente / término</th><th>En inglés</th><th>Frase útil</th></tr></thead>
+      <tbody>
+        <tr><td>Ají / picante</td><td>chili / spicy</td><td>"It has a mild kick." (Pica un poquito.)</td></tr>
+        <tr><td>Camote</td><td>sweet potato</td><td>"It comes with sweet potato."</td></tr>
+        <tr><td>Choclo</td><td>Peruvian corn</td><td>"Big, soft corn kernels."</td></tr>
+        <tr><td>A la parrilla / frito</td><td>grilled / fried</td><td>"Would you like it grilled or fried?"</td></tr>
+        <tr><td>Guarnición</td><td>side dish</td><td>"It comes with a side of rice."</td></tr>
+        <tr><td>De la casa</td><td>house / signature</td><td>"It's our signature dish."</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Truco de sala:</b> termina cada descripción con una recomendación honesta. "The ceviche is our most popular dish —you'll love it." Al turista le encanta que el mozo tenga opinión; no quiere leer la carta, quiere que le cuenten qué pedir.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Resolver dudas, alergias y picante</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Las preguntas del turista casi siempre son las mismas cinco: ¿pica?, ¿tiene esto?, ¿es grande?, ¿es vegetariano?, ¿cuánto demora? Ten la respuesta lista. Y con las alergias, cero improvisación: si no estás seguro, verifica en cocina.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Frases que sí resuelven</h4><ul>
+        <li>"Is it spicy?" → "A little, but I can ask the kitchen to make it mild."</li>
+        <li>"I'm allergic to shellfish." → "Let me check with the chef right away."</li>
+        <li>"Do you have vegetarian options?" → "Yes, the causa and the quinoa salad."</li>
+        <li>"Does it contain nuts / gluten / dairy?" → "Let me confirm with the kitchen."</li>
+        <li>"How long will it take?" → "About fifteen minutes."</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que nunca haces con alergias</h4><ul>
+        <li>Adivinar si un plato "creo que no tiene" el alérgeno.</li>
+        <li>Decir "yes, it's fine" sin haber verificado en cocina.</li>
+        <li>Minimizar: "just a little bit" no existe en una alergia.</li>
+        <li>Olvidar avisar a la línea que la mesa X tiene alergia.</li>
+        <li>Confundir "allergy" (alergia, peligro real) con "I don't like it".</li>
+      </ul></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Alérgeno frecuente</th><th>En inglés</th><th>Dónde aparece en carta peruana</th></tr></thead>
+      <tbody>
+        <tr><td>Mariscos</td><td>shellfish</td><td>ceviche, jalea, arroz con mariscos, chupe</td></tr>
+        <tr><td>Pescado</td><td>fish</td><td>ceviche, tiradito, sudado</td></tr>
+        <tr><td>Huevo</td><td>egg</td><td>pisco sour (clara), causa, lomo con huevo</td></tr>
+        <tr><td>Lácteos</td><td>dairy</td><td>ají de gallina, huancaína, postres</td></tr>
+        <tr><td>Gluten</td><td>gluten</td><td>pan, chicha morada espesada, empanadas</td></tr>
+        <tr><td>Maní / frutos secos</td><td>peanuts / nuts</td><td>salsas de causa, algunos postres</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Puente con Prep!:</b> el POS te deja registrar la alergia por silla y la manda a la Línea (KDS) con la comanda. Cuando el turista dice "shellfish allergy", lo marcas ahí mismo: cocina lo ve en pantalla y nadie depende de tu memoria. En inglés confirma cerrando el círculo: "I've told the kitchen. Your dish will be safe."</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>La cuenta y el pago</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El momento del pago es donde más se enredan los idiomas: monedas, propina, tarjetas y comprobantes. En inglés se dice "the check" (EE. UU.) o "the bill" (Reino Unido); ambos valen. Aquí las frases para cobrar sin fricción y explicar la propina sin incomodar.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">Cuando la piden</div><h4>"Could we have the check?"</h4><p>Respondes: "Of course, I'll bring it right away." Trae la pre-cuenta al centro de la mesa, sin ponerla frente a nadie en particular.</p></div></div>
+      <div class="paso"><div class="ico">💳</div><div><div class="t">Medios de pago</div><h4>"How would you like to pay?"</h4><p>"Cash or card?" (efectivo o tarjeta). Si es tarjeta: "I'll bring the card machine to the table." Los turistas esperan pagar en la mesa, no que te lleves la tarjeta.</p></div></div>
+      <div class="paso"><div class="ico">💙</div><div><div class="t">Sobre la propina</div><h4>Explica el servicio con claridad</h4><p>Si la casa incluye 10%: "A 10% service charge is included." Si no: "Tip is not included, it's up to you." Nunca insinúes ni presiones por la propina.</p></div></div>
+      <div class="paso"><div class="ico">📄</div><div><div class="t">Comprobante</div><h4>"Do you need a receipt?"</h4><p>El turista casi siempre quiere su recibo. "Here's your receipt, thank you." Si pide factura con datos de empresa, pídelos antes de emitir.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Con el vuelto</div><h4>"Here's your change."</h4><p>Cuenta el vuelto a la vista y déjalo completo. Si te dicen "keep the change", es tu propina: "Thank you very much!"</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>El comensal dice…</th><th>Significa</th><th>Tú respondes</th></tr></thead>
+      <tbody>
+        <tr><td>"Can we split the bill?"</td><td>¿Podemos dividir la cuenta?</td><td>"Sure, by item or equally?"</td></tr>
+        <tr><td>"Do you take credit cards?"</td><td>¿Aceptan tarjeta de crédito?</td><td>"Yes, Visa and Mastercard."</td></tr>
+        <tr><td>"Keep the change."</td><td>Quédate con el vuelto.</td><td>"Thank you so much!"</td></tr>
+        <tr><td>"Is service included?"</td><td>¿Está incluido el servicio?</td><td>"Yes, 10%." / "No, it's optional."</td></tr>
+        <tr><td>"Can I get the receipt?"</td><td>¿Me das el recibo?</td><td>"Of course, one moment."</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Ojo cultural:</b> en EE. UU. la propina del 15–20% es obligatoria en su cultura y muchos turistas la dejan por costumbre; en Europa suelen redondear. No esperes ni exijas: solo deja claro qué incluye la cuenta. La transparencia es lo que hace que dejen más, no la presión.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Despedir e improvisar</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La despedida es la última impresión y la que termina en el review. Y cuando algo se traba —no entiendes, hay un problema, falta un plato— necesitas frases de rescate que te saquen del apuro con elegancia. Cierra fuerte y ten siempre un plan B.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Despedida cálida</h3><div class="d">"Thank you for coming! Have a great night." o "Enjoy the rest of your trip!" Míralos a los ojos: la despedida se dice de frente, no de espaldas.</div><div class="s">have a great night</div></div>
+      <div class="tipo"><h3>Invita a volver</h3><div class="d">"We hope to see you again." Si son turistas: "Enjoy Lima!" o "Safe travels!" Un cierre personal es lo que hace que te mencionen en la reseña.</div><div class="s">see you again</div></div>
+      <div class="tipo"><h3>Pide la reseña sin rogar</h3><div class="d">"If you enjoyed it, a review on Google really helps us." Dicho una vez, con naturalidad y solo si la mesa estuvo feliz. Nunca insistas.</div><div class="s">a review helps us</div></div>
+      <div class="tipo"><h3>Cuando no entiendes</h3><div class="d">"I'm sorry, could you repeat that slowly?" o "One moment, let me get someone who can help." Pedir ayuda es profesional, no un fracaso.</div><div class="s">could you repeat?</div></div>
+      <div class="tipo"><h3>Si hay un problema</h3><div class="d">"I'm so sorry about that. Let me fix it right away." Discúlpate, actúa rápido y avisa al gerente. La disculpa sincera desarma casi cualquier queja.</div><div class="s">let me fix it</div></div>
+      <div class="tipo"><h3>Ganar tiempo</h3><div class="d">"Let me check for you." (Déjame verificar.) Es la frase comodín cuando no sabes algo: nunca inventes, ve y averigua.</div><div class="s">let me check</div></div>
+    </div>
+    <div class="callout"><b>Frase salvavidas:</b> si todo falla, sonríe y di "One moment, please —I'll get help." No hay nada de malo en llamar a un compañero con mejor inglés. Lo imperdonable no es no saber una palabra: es dejar al turista varado sin respuesta. Un mozo que consigue ayuda rápido se ve más profesional que uno que finge entender.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>The check / the bill</b><span>La cuenta. "Check" es EE. UU., "bill" es Reino Unido; ambos se usan.</span></div>
+      <div class="gterm"><b>Still / sparkling water</b><span>Agua sin gas / con gas. La pregunta estándar al ofrecer agua embotellada.</span></div>
+      <div class="gterm"><b>Starter / main course</b><span>Entrada / plato de fondo. También "appetizer" para la entrada.</span></div>
+      <div class="gterm"><b>Rare · medium · well done</b><span>Términos de cocción de la carne: rojo, medio, bien cocido.</span></div>
+      <div class="gterm"><b>Spicy / mild</b><span>Picante / suave. "A little kick" = pica un poquito.</span></div>
+      <div class="gterm"><b>Allergy</b><span>Alergia. Señal de peligro real: siempre verifica en cocina, nunca adivines.</span></div>
+      <div class="gterm"><b>Shellfish</b><span>Mariscos. El alérgeno más común en la carta peruana (ceviche, jalea, chupe).</span></div>
+      <div class="gterm"><b>Vegetarian / vegan</b><span>Vegetariano (sin carne) / vegano (sin ningún producto animal, ni huevo ni lácteos).</span></div>
+      <div class="gterm"><b>Side dish</b><span>Guarnición. "It comes with a side of rice" = viene con arroz.</span></div>
+      <div class="gterm"><b>Service charge / tip</b><span>Cargo por servicio (incluido) / propina (voluntaria). No los mezcles al explicar.</span></div>
+      <div class="gterm"><b>Receipt</b><span>Recibo o comprobante. Distinto de "bill": el recibo es la constancia del pago.</span></div>
+      <div class="gterm"><b>To split the bill</b><span>Dividir la cuenta. "Equally" (por partes iguales) o "by item" (por ítem).</span></div>
+      <div class="gterm"><b>Signature dish</b><span>Plato de la casa, el más representativo. Úsalo para recomendar.</span></div>
+      <div class="gterm"><b>Keep the change</b><span>"Quédate con el vuelto." Es propina para ti; agradece con calidez.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Inglés en sala · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Recibir</h4><ul>
+          <li>"Good evening! Welcome."</li>
+          <li>"Table for how many?"</li>
+          <li>"Do you have a reservation?"</li>
+          <li>"Follow me / right this way."</li>
+        </ul></div>
+        <div class="op-box"><h4>Tomar la orden</h4><ul>
+          <li>"Something to drink? Still or sparkling?"</li>
+          <li>"Are you ready to order?"</li>
+          <li>"How would you like it cooked?"</li>
+          <li>Repite todo: "So that's… Anything else?"</li>
+        </ul></div>
+        <div class="op-box"><h4>Describir platos</h4><ul>
+          <li>Ceviche → "lime-cured fresh fish."</li>
+          <li>Lomo saltado → "stir-fried beef with fries."</li>
+          <li>Pisco sour → "our national cocktail."</li>
+          <li>Cierra: "It's our signature dish."</li>
+        </ul></div>
+        <div class="op-box"><h4>Dudas y alergias</h4><ul>
+          <li>"Is it spicy?" → "A little, I can make it mild."</li>
+          <li>Alergia → "Let me check with the chef."</li>
+          <li>Nunca adivines; verifica en cocina.</li>
+          <li>Márcala en el POS por silla.</li>
+        </ul></div>
+        <div class="op-box"><h4>Pagar</h4><ul>
+          <li>"Cash or card?"</li>
+          <li>"I'll bring the card machine."</li>
+          <li>"Service is included / it's optional."</li>
+          <li>"Here's your receipt / your change."</li>
+        </ul></div>
+        <div class="op-box"><h4>Despedir y rescate</h4><ul>
+          <li>"Thank you for coming! Enjoy Lima!"</li>
+          <li>"We hope to see you again."</li>
+          <li>Comodín: "Let me check for you."</li>
+          <li>Si trabas: "One moment, I'll get help."</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Inglés para restaurantes · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!-- Curso: Mixología avanzada (bartender senior) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Mixología avanzada · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234a2b5e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Mixología</span>
+    <nav class="nav">
+      <a href="#m1">1 · Laboratorio</a><a href="#m2">2 · Clarificados</a><a href="#m3">3 · Infusiones</a><a href="#m4">4 · Ahumados</a><a href="#m5">5 · Balance y carta</a><a href="#m6">6 · Costeo y relato</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#4a2b5e">
+    <div class="k">Academia Prep! · Especialización</div>
+    <h1>Mixología avanzada</h1>
+    <p>Ya sabes montar la barra y sacar los clásicos iguales cada noche. Este curso es el siguiente nivel: convertir tu barra en un laboratorio donde clarificas, infusionas y ahúmas con criterio, mides el balance con números, y construyes una carta de autor que se sostiene por sabor, costo y relato. Menos "a ojo", más ficha, báscula y decisión.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~55 min</span><span>🎯 Bartender senior</span><span>🧪 Bar</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un cóctel de autor bien hecho es el ítem de mayor margen de toda la carta y lo que diferencia a tu bar de la bodega de la esquina. Pero las técnicas avanzadas mal aplicadas queman producto caro, arman inconsistencia y, peor, riesgo sanitario. Dominarlas con método significa tragos que la gente pide por su nombre, food cost bajo control y una barra que se puede replicar aunque tú libres.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La barra como laboratorio: medición y estándares</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La coctelería avanzada no es magia, es precisión repetible. La diferencia entre un bar de autor y uno que "a veces sale rico" está en que aquí se pesa, se mide el azúcar y la acidez, y cada preparación tiene una ficha con rendimiento y vencimiento. Antes de tocar una técnica nueva, montas el laboratorio.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Báscula de gramos</h3><div class="d">Para batching y preparaciones grandes pesa en gramos, no en ml: es más exacto y más rápido que llenar jiggers 20 veces. Una báscula de 0.1 g es tu instrumento #1. Anota densidades: 1 ml de jarabe simple ≈ 1,25 g, de agua ≈ 1 g.</div></div>
+      <div class="tipo"><h3>Refractómetro (°Brix)</h3><div class="d">Mide azúcar disuelta. Te deja estandarizar jarabes y purés de fruta que cambian de dulzor según la temporada: un maracuyá de enero no es el de julio. Ajustas al mismo °Brix y el trago sale igual todo el año.</div></div>
+      <div class="tipo"><h3>Tiras/medidor de pH</h3><div class="d">Mide acidez. Clave para clarificados con leche (la reacción necesita pH ácido) y para estandarizar la "corrección ácida" de purés. Un sour de autor equilibrado suele vivir entre pH 3,3 y 3,7.</div></div>
+      <div class="tipo"><h3>Ficha técnica del trago</h3><div class="d">Cada preparación (jarabe, infusión, clarificado, cordial) con receta en gramos, rendimiento, fecha y vencimiento. Sin ficha, la técnica avanzada es un accidente que no repites mañana ni puede replicar tu equipo.</div></div>
+      <div class="tipo"><h3>Cadena de frío e higiene</h3><div class="d">Purés, milk wash e infusiones frescas son alimentos: refrigeración a ≤5 °C, envases rotulados con fecha, y descarte según vida útil. Una infusión de leche fuera de frío es un cultivo de bacterias, no un ingrediente de autor.</div></div>
+      <div class="tipo"><h3>Batching (pre-batido)</h3><div class="d">Pre-mezcla la parte estable del trago (destilado + azúcar + agua de dilución + cordial) en botella rotulada. En servicio solo agregas lo perecible (cítrico fresco, clara). Sacas 60 tragos por hora iguales y sin trabarte.</div></div>
+    </div>
+    <div class="callout"><b>Regla del cuaderno:</b> toda técnica nueva se prueba, se anota y se calibra antes de ponerla en carta. Si no puedes escribir la receta en gramos y explicársela a tu ayudante en dos minutos, todavía no está lista para venderse. La consistencia es un sistema, no un talento.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Clarificados y control de textura</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Clarificar es quitarle turbidez y partículas a un líquido para dejarlo cristalino, sedoso y más estable, sin perder sabor. Un pisco sour clarificado se ve como agua de oro, se sirve sin espuma que se cae y aguanta mejor el batching. Son técnicas de paciencia, no de show: se hacen en mise en place, nunca frente al invitado.</p>
+    <div class="paso"><div class="ico">🥛</div><div><div class="t">MÉTODO 1</div><h4>Milk wash (clarificado con leche)</h4><p>El más usado en barra. Vierte tu mezcla ácida (trago + cítrico) sobre leche entera tibia (nunca al revés): la acidez corta la leche y la caseína atrapa las partículas. Reposa en frío 1–2 h, cuela por filtro de café o malla fina. Resultado: líquido translúcido, textura de seda y vida útil larga. Ideal para "punch" embotellado de la casa.</p></div></div>
+    <div class="paso"><div class="ico">🧫</div><div><div class="t">MÉTODO 2</div><h4>Clarificado con agar (gel-cold)</h4><p>Sin lácteos. Disuelve agar-agar (2 g por litro) hirviendo una parte del líquido, mézclalo con el resto, deja gelificar en frío y luego rompe el gel y déjalo escurrir por malla sobre un bowl (o congela y descongela: el "cryo-clarification"). Sale un líquido limpísimo. Sirve para jugos difíciles como el de fresa o aguaymanto.</p></div></div>
+    <div class="paso"><div class="ico">⏱️</div><div><div class="t">MÉTODO 3</div><h4>Sedimentación y filtrado</h4><p>La versión de bajo costo: deja reposar el jugo turbio en frío, la pulpa baja, y decantas el líquido claro de arriba. Termina pasándolo por filtro de café. Lento pero cero equipo. Funciona para chicha morada reducida o jugos de rotación media.</p></div></div>
+    <div class="paso"><div class="ico">🥄</div><div><div class="t">MÉTODO 4</div><h4>Textura sin clara: aquafaba y gomas</h4><p>Para dar cuerpo y "espuma" sin huevo (útil para veganos o para evitar el riesgo del huevo crudo): aquafaba (líquido de garbanzo) 15 ml por trago, o goma xantana en dosis mínima (una punta de cuchara por litro) para dar sedosidad sin espesar de más. Se monta con dry shake igual que la clara.</p></div></div>
+    <div class="card" style="overflow-x:auto;margin-top:14px">
+    <table class="t">
+      <thead><tr><th>Técnica</th><th>Qué logra</th><th>Tiempo</th><th>Cuándo usarla en carta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Milk wash</b></td><td>Cristalino, sedoso, estable para embotellar</td><td>1–2 h + colado</td><td>Punch de la casa, sours batcheados, trago insignia</td></tr>
+        <tr><td><b>Agar / cryo</b></td><td>Limpieza total sin lácteos</td><td>3–4 h</td><td>Jugos de fruta difícil, tragos veganos claros</td></tr>
+        <tr><td><b>Sedimentación</b></td><td>Claridad media, costo cero</td><td>12–24 h</td><td>Volumen medio, bares sin equipo</td></tr>
+        <tr><td><b>Aquafaba / xantana</b></td><td>Cuerpo y espuma sin huevo</td><td>Al momento</td><td>Sours sin riesgo de huevo crudo, opción vegana</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>Ejemplo de la casa — "Sour Blanco":</b> pisco quebranta + limón + jarabe, clarificado en milk wash, embotellado y refrigerado. En servicio se sirve directo sobre hielo grande: cristalino, sin batir, sin espuma que se caiga, listo en 8 segundos. Un pisco sour "de laboratorio" que se vende como especialidad y sale más rápido que el clásico en hora pico.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Infusiones, maceraciones y cordiales</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Infusionar es meterle sabor a un destilado o a un jarabe de forma controlada y dosificable. Es la vía más rentable de crear identidad: con muña, hoja de coca, ají o algarrobina conviertes un pisco común en un ingrediente único de la casa, con costo de centavos. La clave es controlar tiempo, temperatura y cantidad para que salga igual siempre.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Maceración en frío</h3><div class="d">Destilado + botánico en frasco cerrado, a temperatura ambiente o refrigerado. Lento (horas a días) pero limpio y sin calor que evapore alcohol. Ají amarillo sin venas en pisco: 2–3 h y colar; muña: 30–40 min basta. Prueba cada tanto: si te pasas, amarga.</div></div>
+      <div class="tipo"><h3>Sous-vide (baño María)</h3><div class="d">Bolsa sellada con destilado + botánico a 55–60 °C por 1–2 h. Extrae rápido, parejo y sin perder alcohol (tapado). Perfecto para infusiones de fruta o especias que en frío tardan días. Requiere termómetro y control: el alcohol no debe hervir.</div></div>
+      <div class="tipo"><h3>Fat-wash (lavado graso)</h3><div class="d">Infusionar un destilado con una grasa sabrosa (mantequilla dorada, aceite de sacha inchi, tocino) y luego congelar para retirar la grasa solidificada. Deja un pisco o ron con textura y sabor a esa grasa, sin turbidez. Umami y redondez para tragos spirit-forward.</div></div>
+      <div class="tipo"><h3>Cordiales y shrubs</h3><div class="d">Cordial = jugo cítrico + azúcar + ácido cítrico/málico estabilizado (dura semanas). Shrub = fruta macerada en azúcar y vinagre. Ambos te dan acidez y sabor dosificables y estables, sin depender del limón fresco del día para tragos batcheados.</div></div>
+      <div class="tipo"><h3>Tinturas y bitters de casa</h3><div class="d">Alcohol alto grado + botánico concentrado (cáscara de cacao, muña, ají, café) por 1–2 semanas: unas gotas perfuman un trago entero. Tu firma aromática de la casa, a costo casi nulo. Rotula con fecha y grado.</div></div>
+      <div class="tipo"><h3>Oleo saccharum</h3><div class="d">Cáscaras de cítrico maceradas en azúcar: el azúcar extrae el aceite esencial y forma un jarabe intensamente aromático. Base clásica del punch. Aprovecha las cáscaras que ya botas del garnish: cero desperdicio, máximo aroma.</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Pesar el botánico y cronometrar cada infusión</li>
+        <li>Probar y colar apenas llega al punto (no "de más por si acaso")</li>
+        <li>Retirar venas y pepas del ají antes de macerar</li>
+        <li>Rotular frasco con nombre, fecha y vencimiento</li>
+        <li>Estandarizar el jarabe/puré a °Brix fijo</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Dejar la infusión "hasta que me acuerde": amarga y astringe</li>
+        <li>Calentar el destilado destapado (evapora alcohol y aroma)</li>
+        <li>Reusar botánico ya agotado esperando más sabor</li>
+        <li>Guardar infusiones frescas fuera de refrigeración</li>
+        <li>Poner en carta una infusión sin ficha ni rendimiento</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco de rentabilidad:</b> una botella de pisco de S/ 45 infusionada con ají amarillo (que cuesta céntimos) se vuelve un ingrediente exclusivo que no se compra en ningún lado. Ese "Pisco de la casa" justifica un precio de carta más alto sin subir tu costo real. La infusión es margen puro con relato incluido.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Ahumados y aromatización</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El aroma llega antes que el sabor: un trago que humea al llegar a la mesa vende el doble. El ahumado da profundidad, notas tostadas y un componente teatral que justifica el ticket. Pero es la técnica más fácil de sobrecargar: bien hecho aporta complejidad, mal hecho el trago sabe a cenicero. Menos humo, más intención.</p>
+    <div class="paso"><div class="ico">💨</div><div><div class="t">MÉTODO 1</div><h4>Ahumado con pistola de humo</h4><p>La smoking gun con astillas de madera (roble, cerezo, quebracho). Atrapa el humo en una campana, frasco o dentro de la copa tapada 30–60 seg antes de servir. Controla la intensidad: más tiempo de contacto = más humo. Ideal para negronis, old fashioned de la casa y tragos con whisky o pisco mosto verde.</p></div></div>
+    <div class="paso"><div class="ico">🪵</div><div><div class="t">MÉTODO 2</div><h4>Copa/tabla marcada</h4><p>Quema brevemente una viruta o una tablita hasta que humee y voltea la copa encima para "vestirla" de humo antes de verter. O sirve el trago sobre una tabla ahumada bajo una campana de vidrio que se levanta en la mesa. Efecto visual fuerte con equipo mínimo.</p></div></div>
+    <div class="paso"><div class="ico">🧊</div><div><div class="t">MÉTODO 3</div><h4>Ingredientes ahumados</h4><p>En vez de ahumar el trago, ahúma el ingrediente: jarabe ahumado, sal ahumada en el borde, hielo hecho con agua ahumada, o piña/ají grillado antes de infusionar. Da la nota tostada de forma estable y dosificable, sin depender del show de último minuto.</p></div></div>
+    <div class="paso"><div class="ico">🌿</div><div><div class="t">MÉTODO 4</div><h4>Expresión aromática y flameado</h4><p>Aromatiza sin humo: exprime el aceite de un twist de naranja sobre la superficie, palmea una hoja de hierbaluisa o muña para liberar su aroma, o flamea la cáscara de naranja con un fósforo para caramelizar sus aceites. El aroma correcto en el borde de la copa condiciona todo el trago.</p></div></div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Ahumar como acento: 30–60 seg, no más</li>
+        <li>Elegir madera según el destilado (roble a whisky, cerezo a frutales)</li>
+        <li>Presentar el humo en mesa para el momento "wow"</li>
+        <li>Estandarizar con ingrediente ahumado cuando el volumen sube</li>
+        <li>Ventilar la estación: el humo se acumula</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Sobre-ahumar hasta que sepa a cenicero</li>
+        <li>Ahumar todo trago "porque impresiona": pierde valor</li>
+        <li>Usar maderas tratadas o barnizadas (tóxicas)</li>
+        <li>Trabajar cerca de detectores de humo o extractores débiles</li>
+        <li>Dejar la campana de humo mucho rato: amarga y ensucia el vidrio</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Ejemplo de la casa — "Humo del Sur":</b> pisco mosto verde + vermut + oleo saccharum de naranja, refrescado, servido en rocks con cubo grande y ahumado 40 seg con astilla de quebracho bajo campana que se levanta frente al invitado. La foto se hace sola: es de los tragos más pedidos y más compartidos en redes de la casa.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Balance avanzado y creación de carta</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Crear un trago de autor que se vende no es "inventar rico": es diseñar con criterio de sabor, de operación y de negocio. Un buen menú de bar tiene variedad real (no cinco sours disfrazados), tragos que se preparan rápido en hora pico y una estrella que la gente viene a buscar. Aquí pasas del paladar a los números y a la carta completa.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Ratio ácido/dulce medido</h3><div class="d">El balance de un sour se puede leer en números, no solo probando: apunta a un dulzor de referencia (≈8–9 °Brix en el trago final) y una acidez agradable (pH ~3,4). Con refractómetro y pHmetro afinas la receta una vez y la clonas para siempre, sin depender del ánimo del día.</div></div>
+      <div class="tipo"><h3>Estructura de una carta</h3><div class="d">Cubre ejes: un refrescante largo, un cítrico/sour, un spirit-forward, uno con burbuja, uno sin alcohol serio y la estrella de la casa. Cada trago debe justificar su lugar: si dos se parecen demasiado, sobra uno. Variedad de sabor, base y ocasión.</div></div>
+      <div class="tipo"><h3>Ingeniería de menú del bar</h3><div class="d">Cruza margen y popularidad: estrellas (rentan y venden — dales el mejor lugar), caballos (venden pero rentan poco — sube precio o baja costo), incógnitas (rentan pero no venden — promuévelas), y perros (ni-ni — fuera de carta). Revisa con los datos del POS.</div></div>
+      <div class="tipo"><h3>Diseñado para la operación</h3><div class="d">Un trago de 9 pasos muere en hora pico. Diseña pensando en el batching: la estrella pre-batcheada sale en segundos. Limita las garnish frescas complejas a 1–2 tragos. Si tu barra no lo puede sacar 40 veces una noche llena, no va en carta.</div></div>
+      <div class="tipo"><h3>El trago sin alcohol serio</h3><div class="d">Cada vez más invitados no toman: un "sin alcohol" bien construido (shrub, cordial, infusión, técnica) se vende al mismo precio y con altísimo margen. No es una limonada: es coctelería real sin destilado. Hoy es imprescindible en toda carta de nivel.</div></div>
+      <div class="tipo"><h3>Estacionalidad y despensa peruana</h3><div class="d">Rota la carta con lo que está en punto: aguaymanto, lúcuma, chirimoya, tumbo, camu camu, tuna, sauco. Producto de estación cuesta menos y sabe mejor. Un menú que cambia da razones para volver y te conecta con la cocina.</div></div>
+    </div>
+    <div class="card" style="overflow-x:auto;margin-top:14px">
+    <table class="t">
+      <thead><tr><th>Rol en la carta</th><th>Qué aporta</th><th>Técnica típica</th><th>Ejemplo con producto peruano</th></tr></thead>
+      <tbody>
+        <tr><td><b>La estrella</b></td><td>Identidad, foto, el trago que piden por nombre</td><td>Clarificado o ahumado + batching</td><td>"Sour Blanco" (pisco clarificado)</td></tr>
+        <tr><td><b>El refrescante</b></td><td>Alta rotación, fácil, para todo público</td><td>Highball / build</td><td>Gin + tónica + cordial de hierbaluisa</td></tr>
+        <tr><td><b>El cítrico</b></td><td>Ácido, alegre, gancho seguro</td><td>Sour batcheado</td><td>Sour de maracuyá con pisco acholado</td></tr>
+        <tr><td><b>El spirit-forward</b></td><td>Complejo, ticket alto, para el conocedor</td><td>Refrescado + infusión / ahumado</td><td>Negroni con pisco fat-wash de cacao</td></tr>
+        <tr><td><b>El sin alcohol</b></td><td>Inclusivo, margen altísimo</td><td>Shrub / cordial / infusión</td><td>Shrub de aguaymanto + soda + muña</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>Prueba de fuego antes de poner un trago en carta:</b> ¿tiene un sabor que no está en otro de la lista? ¿lo puedo sacar 40 veces una noche llena? ¿su food cost me deja margen? ¿tiene un nombre y un motivo para pedirlo? Si alguna respuesta es no, todavía no está listo. Un menú corto y afilado vende más que uno largo y confuso.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Costeo y storytelling del trago</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Un trago de autor no se cobra por lo que costó, sino por lo que vale para el invitado — pero solo puedes fijar el precio con criterio si conoces tu costo real. Y solo se vende de verdad si el mozo sabe contarlo. Costeo y relato son las dos mitades que convierten una buena receta en un producto rentable.</p>
+    <div class="paso"><div class="ico">🧮</div><div><div class="t">PASO 1</div><h4>Costea cada componente, incluida la merma</h4><p>Suma el costo real de cada ml servido: destilado (precio botella ÷ 700 ml × ml usados), cítrico, jarabe, la parte proporcional de la infusión o clarificado (incluye el destilado y el botánico que van al lote), garnish y hielo. No olvides la merma: la fruta que descartas al colar también cuesta. Registra la ficha en Recetas de Prep! y el costeo sale solo.</p></div></div>
+    <div class="paso"><div class="ico">📊</div><div><div class="t">PASO 2</div><h4>Fija precio por food cost, no por corazonada</h4><p>Apunta a un food cost de bar del 18–25% (los tragos rinden mejor que la cocina). Si tu trago cuesta S/ 6 y buscas 20%, el precio base es S/ 30. Ajusta según posicionamiento: la estrella y el ahumado teatral aguantan más; el refrescante de alta rotación, un poco menos. El pour cost es tu semáforo.</p></div></div>
+    <div class="paso"><div class="ico">⚖️</div><div><div class="t">PASO 3</div><h4>Controla el pour: la fuga silenciosa</h4><p>Servir "generoso a ojo" es la fuga #1 del margen de barra: 15 ml de más por trago, 40 tragos por noche, es una botella regalada cada dos días. Jigger siempre, batching medido y conteo de botellas contra ventas del POS. El costeo perfecto no sirve si el pour real no se respeta.</p></div></div>
+    <div class="paso"><div class="ico">📖</div><div><div class="t">PASO 4</div><h4>Construye el relato del trago</h4><p>Todo trago de autor necesita una historia de una frase: de dónde viene el producto (el aguaymanto de la sierra, la muña andina), qué técnica lo hace especial (clarificado, ahumado con quebracho) y a qué sabe. "Es un pisco sour que clarificamos con leche para que sea sedoso y sin espuma" vende más que "sour de la casa".</p></div></div>
+    <div class="paso"><div class="ico">🗣️</div><div><div class="t">PASO 5</div><h4>Entrena a la sala para venderlo</h4><p>El mejor trago no se vende solo si el mozo no lo entiende. Dale a la sala la carta con el relato de una línea por trago, para qué momento va y con qué plato marida. Un "¿probaste nuestro Humo del Sur? es pisco ahumado en mesa, el más pedido" convierte más que cualquier menú impreso.</p></div></div>
+    <div class="callout"><b>El círculo completo:</b> ficha en Recetas → costeo y food cost → precio con margen → pour controlado → relato claro → sala que lo vende. Cuando los seis eslabones están, un cóctel de autor deja más margen que casi cualquier plato de la carta y se convierte en la razón por la que la gente elige tu bar. Ahí es donde la mixología avanzada paga sus cuentas.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Clarificar</b><span>Quitar turbidez y partículas de un líquido para dejarlo cristalino, sedoso y más estable, conservando el sabor.</span></div>
+      <div class="gterm"><b>Milk wash</b><span>Clarificado con leche: la acidez del trago corta la leche y la caseína atrapa las partículas. Se cuela y queda translúcido.</span></div>
+      <div class="gterm"><b>Agar / cryo-clarification</b><span>Clarificar gelificando con agar-agar y dejando escurrir el gel (o congelando y descongelando). Sin lácteos, limpieza total.</span></div>
+      <div class="gterm"><b>Batching</b><span>Pre-mezclar la parte estable del trago en botella rotulada para servir rápido e igual en hora pico. Solo lo perecible se agrega al momento.</span></div>
+      <div class="gterm"><b>°Brix</b><span>Medida de azúcar disuelta, se lee con refractómetro. Sirve para estandarizar jarabes y purés que cambian de dulzor con la temporada.</span></div>
+      <div class="gterm"><b>pH</b><span>Medida de acidez. Clave para que un milk wash corte bien y para clonar el balance ácido de un sour (suele vivir en pH 3,3–3,7).</span></div>
+      <div class="gterm"><b>Maceración</b><span>Infusionar un destilado o jarabe con un botánico en frío, controlando tiempo y cantidad para que salga dosificable e igual siempre.</span></div>
+      <div class="gterm"><b>Sous-vide</b><span>Infusión en bolsa sellada a baja temperatura (55–60 °C) en baño María: extrae rápido y parejo sin perder alcohol.</span></div>
+      <div class="gterm"><b>Fat-wash</b><span>Lavar un destilado con una grasa sabrosa y luego congelar para retirarla: deja sabor y textura sin turbidez (umami, redondez).</span></div>
+      <div class="gterm"><b>Cordial</b><span>Jugo cítrico estabilizado con azúcar y ácido; aporta acidez y sabor dosificables y duraderos, sin depender del limón del día.</span></div>
+      <div class="gterm"><b>Shrub</b><span>Jarabe agridulce de fruta macerada en azúcar y vinagre. Da acidez y sabor a la vez; base ideal de tragos sin alcohol.</span></div>
+      <div class="gterm"><b>Oleo saccharum</b><span>Jarabe aromático que se forma cuando el azúcar extrae el aceite esencial de cáscaras de cítrico. Aprovecha las cáscaras del garnish.</span></div>
+      <div class="gterm"><b>Pour cost</b><span>Costo del líquido servido dividido por su precio de venta. El semáforo del margen de barra; controlarlo evita regalar botellas.</span></div>
+      <div class="gterm"><b>Ingeniería de menú</b><span>Cruzar margen y popularidad de cada trago (estrella, caballo, incógnita, perro) para decidir precio, lugar en carta y qué sacar.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Mixología avanzada · Chuleta de laboratorio</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Monta el laboratorio</h4><ul>
+          <li>Báscula 0,1 g, refractómetro (°Brix) y medidor de pH</li>
+          <li>Ficha en gramos + rendimiento + fecha de vencimiento</li>
+          <li>Cadena de frío y rótulo en toda infusión/puré fresco</li>
+          <li>Batching: pre-mezcla lo estable, agrega lo perecible al momento</li>
+        </ul></div>
+        <div class="op-box"><h4>Clarificados</h4><ul>
+          <li>Milk wash: trago ácido sobre leche tibia, reposar en frío, colar</li>
+          <li>Agar/cryo: gelifica y escurre; sin lácteos, limpieza total</li>
+          <li>Sedimentación: costo cero, para volumen medio</li>
+          <li>Aquafaba/xantana: cuerpo y espuma sin huevo crudo</li>
+        </ul></div>
+        <div class="op-box"><h4>Infusiones</h4><ul>
+          <li>Frío: limpio y lento · Sous-vide 55–60 °C: rápido y parejo</li>
+          <li>Fat-wash: sabor y textura de una grasa, sin turbidez</li>
+          <li>Cordial y shrub: acidez estable sin depender del limón del día</li>
+          <li>Pesa, cronometra, prueba y cuela al punto; rotula con fecha</li>
+        </ul></div>
+        <div class="op-box"><h4>Ahumados</h4><ul>
+          <li>Acento, no protagonista: 30–60 seg, nunca a cenicero</li>
+          <li>Madera según base (roble a whisky, cerezo a frutales)</li>
+          <li>Volumen alto → ingrediente ahumado (jarabe, sal, hielo)</li>
+          <li>Presenta el humo en mesa para el momento "wow"</li>
+        </ul></div>
+        <div class="op-box"><h4>Balance y carta</h4><ul>
+          <li>Sour de autor ≈ 8–9 °Brix y pH ~3,4, medido y clonado</li>
+          <li>Cubre ejes: largo, sour, spirit-forward, burbuja, sin alcohol, estrella</li>
+          <li>Ingeniería: estrella / caballo / incógnita / perro (datos del POS)</li>
+          <li>Si no lo sacas 40 veces en noche llena, no va en carta</li>
+        </ul></div>
+        <div class="op-box"><h4>Costeo y relato</h4><ul>
+          <li>Costea cada ml + infusión + garnish + merma en Recetas</li>
+          <li>Food cost de bar 18–25%; fija precio, no corazonada</li>
+          <li>Jigger siempre: 15 ml de más = una botella regalada</li>
+          <li>Relato de una línea + sala entrenada para venderlo</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Mixología avanzada · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>
