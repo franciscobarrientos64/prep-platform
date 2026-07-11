@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Reglamento interno y conducta · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23334878'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Reglamento</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#334878">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Reglamento interno y conducta</h1>
+    <p>Las reglas de la casa, contadas sin letra chica. Puntualidad, faltas y sanciones, celular, propinas, confidencialidad y convivencia: lo que todos debemos saber para que el turno sea justo, ordenado y de confianza. No son reglas para castigar, son el acuerdo que nos deja trabajar tranquilos.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un restaurante son 15 o 20 personas moviéndose rápido, con dinero, comida y datos de comensales en las manos. Sin reglas claras y parejas para todos, aparecen los abusos, los "por qué él sí y yo no" y los problemas legales. Conocer el reglamento te protege a ti tanto como al negocio.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Puntualidad y asistencia</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">En un restaurante llegar tarde no es un detalle personal: es carga que cae sobre tus compañeros. Si el mise en place no está listo, la primera mesa sufre. La puntualidad es la forma más simple de respeto al equipo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Marcar es entrar listo</h3><div class="d">La hora de ingreso es la hora en que ya estás con uniforme, fichado y en tu estación, no la hora en que cruzas la puerta a cambiarte.</div><div class="s">Uniforme puesto = hora de inicio</div></div>
+      <div class="tipo"><h3>Llega 10 minutos antes</h3><div class="d">El estándar de la casa: llegar con margen para cambiarte, revisar el briefing y montar tu estación sin correr.</div><div class="s">Margen, no justo a la hora</div></div>
+      <div class="tipo"><h3>Tolerancia de 5 minutos</h3><div class="d">Hay 5 minutos de gracia para imprevistos reales. Pasados, cuenta como tardanza y se registra. No es "colchón" para usar todos los días.</div><div class="s">Gracia, no costumbre</div></div>
+      <div class="tipo"><h3>Avisa apenas sepas</h3><div class="d">¿El tráfico o una emergencia te va a retrasar? Escribe al grupo o al jefe de turno de inmediato, no cuando ya llegaste tarde.</div><div class="s">Un aviso a tiempo cambia todo</div></div>
+      <div class="tipo"><h3>Fichar es solo tuyo</h3><div class="d">Nadie ficha por otro. Marcar la asistencia de un compañero es una falta grave para los dos: es fraude, no un favor.</div><div class="s">Tu marca, tu responsabilidad</div></div>
+      <div class="tipo"><h3>El descanso semanal se respeta</h3><div class="d">Tienes derecho a 24 horas seguidas de descanso a la semana. El horario se publica con anticipación en El Libro; los cambios se piden, no se dan por hechos.</div><div class="s">Horario publicado = acuerdo</div></div>
+    </div>
+    <div class="callout"><b>Cómo se registra:</b> tu asistencia se marca con selfie y geolocalización en el módulo de RRHH de Prep!. No hay "yo llegué temprano pero olvidé marcar": lo que no está fichado, no ocurrió para la planilla. Marca al entrar y al salir, siempre.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Faltas y sanciones: reglas parejas para todos</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Las sanciones existen para corregir, no para humillar. Se aplican de forma gradual, proporcional y por escrito, siguiendo lo que manda la ley peruana. Aquí no hay sanciones "en caliente" ni castigos inventados: hay un proceso claro que también te protege a ti.</p>
+    <table class="t">
+      <thead><tr><th>Nivel</th><th>Cuándo aplica</th><th>Qué implica</th></tr></thead>
+      <tbody>
+        <tr><td><b>Amonestación verbal</b></td><td>Falta leve y primera vez: una tardanza aislada, olvidar un paso del checklist.</td><td>El jefe de turno conversa contigo en privado. Queda anotado como antecedente.</td></tr>
+        <tr><td><b>Amonestación escrita</b></td><td>Falta que se repite o de mayor peso: tardanzas reiteradas, descuido de la estación.</td><td>Memorándum firmado. Se te da copia. Tienes derecho a dejar tu descargo por escrito.</td></tr>
+        <tr><td><b>Suspensión</b></td><td>Falta seria o reincidencia tras amonestaciones: incumplir un procedimiento crítico.</td><td>Días sin trabajar y sin pago, según la gravedad. Siempre notificada por escrito.</td></tr>
+        <tr><td><b>Falta grave / despido</b></td><td>Conductas que rompen la confianza: robo, agresión, faltar sin avisar, adulterar el marcado.</td><td>Proceso de despido conforme a ley, con carta de preaviso y derecho a descargo.</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">visibility</span></div><div><div class="t">Paso 1 · Se observa el hecho</div><h4>Un hecho concreto, no un rumor</h4><p>La sanción parte de algo verificable: un registro de tardanza, un faltante de caja, un reporte firmado. No de "me dijeron que".</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">record_voice_over</span></div><div><div class="t">Paso 2 · Tu descargo</div><h4>Siempre te escuchan antes</h4><p>Tienes derecho a explicar tu versión, verbal o por escrito, antes de cualquier sanción de peso. Nadie es sancionado sin poder responder.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">balance</span></div><div><div class="t">Paso 3 · Proporción</div><h4>El castigo va acorde a la falta</h4><p>Una tardanza no se suspende de golpe; un robo no se amonesta con una charla. La medida es proporcional y respeta la gradualidad.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">description</span></div><div><div class="t">Paso 4 · Queda por escrito</div><h4>Con copia para ti</h4><p>Toda sanción formal se documenta y se archiva en tu ficha de RRHH. Tú recibes una copia. La transparencia protege a ambas partes.</p></div></div>
+    </div>
+    <div class="callout"><b>Sin sanciones prohibidas:</b> la ley no permite descontar de tu sueldo como "multa", ni bajarte de categoría por castigo, ni sanciones dobles por la misma falta. Si algo así ocurre, acude a RRHH: el reglamento está para cuidarte, no para exprimirte.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Uso del celular y dispositivos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El celular es la distracción número uno del turno y la que más rápido lee un comensal. Nadie paga por cenar mirando cómo el mozo revisa WhatsApp. La regla es simple: en piso y en línea, el teléfono guardado.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Así sí</h4><ul>
+        <li>Guardas el celular en el locker o en el bolsillo, en silencio, durante todo el turno.</li>
+        <li>Usas el equipo del restaurante (tablet POS, comandera) para lo del trabajo.</li>
+        <li>Revisas tu teléfono en tu break, en zona de personal, nunca en piso.</li>
+        <li>Si esperas una emergencia familiar, lo avisas al jefe de turno al inicio.</li>
+        <li>Pides permiso antes de tomar una foto del plato o del local para redes.</li>
+      </ul></div>
+      <div class="box no"><h4>Así no</h4><ul>
+        <li>Contestar mensajes personales frente a una mesa o en plena línea.</li>
+        <li>Grabar o fotografiar a comensales sin su permiso: es una falta seria.</li>
+        <li>Poner música desde tu teléfono en zonas de comensales.</li>
+        <li>Cargar el celular enchufado en la estación o en la cocina.</li>
+        <li>Subir a tus redes quejas, chismes o fotos internas del restaurante.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El caso de la foto:</b> un comensal famoso llega a cenar. Tomarle una foto a escondidas y subirla es motivo de despido: viola su privacidad y la confianza de la casa. Si quieres una foto del ambiente para tus redes, pídela al gerente y cuida que no salga ningún invitado sin permiso.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Propinas: reglas claras y reparto justo</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La propina la deja el comensal por un buen servicio y es del equipo, no de la empresa. Para que no haya sospechas ni peleas, el reparto se hace con reglas escritas y a la vista de todos. Dinero claro conserva amistades.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Es voluntaria</h3><div class="d">En Perú la propina no es obligatoria ni es parte del precio. Nunca se presiona ni se hace sentir mal al comensal por no dejarla.</div><div class="s">La deja quien quiere</div></div>
+      <div class="tipo"><h3>Va al pozo común</h3><div class="d">Las propinas (efectivo y tarjeta) entran a un pozo. No se guardan "por mesa" en el bolsillo: eso rompe el equipo.</div><div class="s">Todo al pozo, sin excepción</div></div>
+      <div class="tipo"><h3>Reparto por reglas</h3><div class="d">Se reparte según un criterio conocido: puntos por puesto y horas trabajadas del turno. Cocina también participa según lo acordado.</div><div class="s">Puntos + horas, no favoritismo</div></div>
+      <div class="tipo"><h3>Registro transparente</h3><div class="d">El total del turno y el cálculo del reparto quedan registrados. Cualquiera puede pedir ver cómo se hizo su cuenta.</div><div class="s">Cuentas a la vista</div></div>
+      <div class="tipo"><h3>Propina de tarjeta</h3><div class="d">La que llega por tarjeta se suma al pozo y se paga junto con el reparto acordado. No se pierde ni se queda la empresa con ella.</div><div class="s">Tarjeta = misma regla</div></div>
+      <div class="tipo"><h3>Cero "arreglos" aparte</h3><div class="d">Nada de acuerdos por debajo, quedarse el vuelto "de propina" o cobrar propina no dejada. Es una falta grave de honestidad.</div><div class="s">Sin trampas con el dinero</div></div>
+    </div>
+    <div class="callout"><b>Ejemplo del reparto:</b> un turno junta S/ 400 de propina entre efectivo y tarjeta. Se divide por el sistema de puntos del pozo (mozos, runners, barra y cocina según lo acordado), ponderado por las horas que cada uno trabajó esa noche. El cálculo se anota y queda disponible. Nadie se lleva "su" mesa aparte: el buen servicio de una mesa lo hizo posible todo el equipo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Confidencialidad y datos</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">En el restaurante manejas información que no es tuya: recetas de la casa, datos de comensales, cifras de venta, secretos de proveedores. Cuidarla es parte del trabajo y, en el caso de los datos personales, es una obligación de ley en Perú (Ley 29733).</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Datos del comensal</h3><div class="d">Teléfono, alergias, celebraciones o su tarjeta son solo para atenderlo mejor. No se comparten, no se usan para escribirle a título personal.</div><div class="s">Se usan solo para el servicio</div></div>
+      <div class="tipo"><h3>Recetas y costos</h3><div class="d">La ficha técnica, los gramajes, los proveedores y los precios de compra son secreto de la casa. No salen del restaurante.</div><div class="s">El know-how se queda adentro</div></div>
+      <div class="tipo"><h3>Ventas y cifras</h3><div class="d">Cuánto se vendió, cuánto se pagó a cada quien, los números del negocio: información reservada, no tema de conversación en la calle.</div><div class="s">Los números no se comentan afuera</div></div>
+      <div class="tipo"><h3>Nada de capturas</h3><div class="d">No se fotografían pantallas de Prep! con datos de comensales o ventas, ni se descargan listas de clientes a tu teléfono.</div><div class="s">La data no se copia a lo personal</div></div>
+      <div class="tipo"><h3>Discreción con la vida ajena</h3><div class="d">Lo que ves de un comensal (con quién vino, qué celebró, qué habló) no se cuenta ni se convierte en chisme.</div><div class="s">Lo que pasa en la mesa, se queda</div></div>
+      <div class="tipo"><h3>Sigue después de irte</h3><div class="d">La confidencialidad no termina cuando dejas el trabajo. Llevarte la base de clientes o las recetas es una falta grave y puede tener consecuencias legales.</div><div class="s">El deber sigue tras la salida</div></div>
+    </div>
+    <div class="callout"><b>La Ley 29733 en simple:</b> los datos de un comensal se guardaron para atenderlo, con su consentimiento. Usarlos para otra cosa, pasárselos a un tercero o llevártelos al cambiar de trabajo está prohibido por ley y puede multar al restaurante. Ante la duda sobre qué puedes compartir, la respuesta segura es: no lo compartas y pregunta al gerente.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Convivencia, presentación y conducta</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Pasamos más horas con el equipo que con casi cualquier persona. Un buen clima no se decreta: se construye con respeto diario, presentación impecable y cero tolerancia a lo que daña a otro. Estas son las conductas que hacen que la gente quiera venir a trabajar.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">checkroom</span></div><div><div class="t">Presentación</div><h4>Uniforme completo, limpio y aseo impecable</h4><p>Uniforme sin manchas, calzado cerrado y antideslizante, cabello recogido, uñas cortas y limpias, mínimo perfume y accesorios. Tu imagen es la de la casa frente al comensal.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">handshake</span></div><div><div class="t">Respeto</div><h4>Trato cordial a todos, sin excepción</h4><p>Del lavaplatos al sommelier, del practicante al gerente: mismo respeto. Nada de gritos, apodos, ni tratar mal a proveedores o comensales, por difíciles que sean.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">block</span></div><div><div class="t">Tolerancia cero</div><h4>Acoso y discriminación no tienen lugar</h4><p>Cero acoso sexual, cero burlas por género, origen, edad o apariencia, cero bullying al nuevo. Son faltas graves y se actúa de inmediato, sin importar quién lo haga.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">no_drinks</span></div><div><div class="t">Estado apto</div><h4>Se trabaja sobrio y en condiciones</h4><p>Prohibido presentarse o trabajar bajo efectos de alcohol o drogas. En un lugar con cuchillos, fuego y platos calientes, esto es seguridad de todos, no solo tuya.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">cleaning_services</span></div><div><div class="t">Espacios comunes</div><h4>Dejas todo como te gustaría encontrarlo</h4><p>Locker ordenado, comedor de personal limpio, tu estación entregada impecable al siguiente turno. El desorden de uno es la carga del que sigue.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">report_problem</span></div><div><div class="t">Canal de reporte</div><h4>Si algo te incomoda, dilo</h4><p>Ante un abuso o una situación injusta, habla con tu jefe de turno, RRHH o usa el canal de El Libro. Reportar de buena fe nunca se sanciona: se agradece.</p></div></div>
+    </div>
+    <div class="callout"><b>La conducta también fuera del salón:</b> hablar mal del restaurante o de un compañero en redes, filtrar chismes o generar mal ambiente en el grupo de WhatsApp también cuenta. Somos un equipo dentro y fuera del turno. El respeto no tiene horario de salida.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Reglamento Interno de Trabajo (RIT)</b><span>Documento oficial con las normas de convivencia y disciplina del restaurante. Este curso es su versión práctica.</span></div>
+      <div class="gterm"><b>Tolerancia</b><span>Minutos de gracia (5) tras la hora de ingreso antes de que cuente como tardanza. No es un permiso diario.</span></div>
+      <div class="gterm"><b>Fichar / Marcar</b><span>Registrar tu entrada y salida (selfie + geolocalización en RRHH de Prep!). Solo lo haces tú, por ti.</span></div>
+      <div class="gterm"><b>Amonestación</b><span>Llamada de atención por una falta. Puede ser verbal (leve) o escrita (memorándum firmado).</span></div>
+      <div class="gterm"><b>Descargo</b><span>Tu derecho a explicar tu versión, verbal o por escrito, antes de recibir una sanción de peso.</span></div>
+      <div class="gterm"><b>Suspensión</b><span>Días sin trabajar y sin pago por una falta seria o reincidencia. Siempre se notifica por escrito.</span></div>
+      <div class="gterm"><b>Falta grave</b><span>Conducta que rompe la confianza (robo, agresión, adulterar el marcado, abandono). Puede llevar al despido conforme a ley.</span></div>
+      <div class="gterm"><b>Gradualidad</b><span>Principio de que las sanciones van de menor a mayor y son proporcionales a la falta cometida.</span></div>
+      <div class="gterm"><b>Pozo de propinas</b><span>Fondo común donde entran todas las propinas del turno (efectivo y tarjeta) antes de repartirse por reglas.</span></div>
+      <div class="gterm"><b>Reparto por puntos</b><span>Método para dividir el pozo según el puesto y las horas trabajadas de cada persona en el turno.</span></div>
+      <div class="gterm"><b>Confidencialidad</b><span>Deber de no divulgar información de la casa: datos de comensales, recetas, costos y ventas. Sigue tras tu salida.</span></div>
+      <div class="gterm"><b>Ley 29733</b><span>Ley peruana de Protección de Datos Personales. Obliga a usar los datos del comensal solo para lo que consintió.</span></div>
+      <div class="gterm"><b>Descanso semanal</b><span>Derecho a 24 horas seguidas de descanso a la semana. El horario se publica con anticipación.</span></div>
+      <div class="gterm"><b>Canal de reporte</b><span>Vía para comunicar abusos o situaciones injustas (jefe de turno, RRHH o El Libro). Reportar de buena fe no se sanciona.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Reglamento y conducta · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Puntualidad</h4><ul><li>Llega 10 min antes, ya con uniforme</li><li>Tolerancia de 5 min, no es colchón diario</li><li>Ficha solo tú; avisa apenas te retrases</li></ul></div>
+        <div class="op-box"><h4>Faltas y sanciones</h4><ul><li>Verbal → escrita → suspensión → despido</li><li>Siempre gradual, proporcional y por escrito</li><li>Tienes derecho a tu descargo antes</li></ul></div>
+        <div class="op-box"><h4>Celular</h4><ul><li>Guardado y en silencio en piso y línea</li><li>Se revisa en el break, en zona de personal</li><li>Nada de fotos a comensales sin permiso</li></ul></div>
+        <div class="op-box"><h4>Propinas</h4><ul><li>Voluntarias y del equipo, no de la empresa</li><li>Todo al pozo: efectivo y tarjeta</li><li>Reparto por puntos + horas, registrado</li></ul></div>
+        <div class="op-box"><h4>Confidencialidad</h4><ul><li>Datos, recetas, costos y ventas: reservados</li><li>Ley 29733: la data solo para el servicio</li><li>El deber sigue tras dejar el trabajo</li></ul></div>
+        <div class="op-box"><h4>Convivencia</h4><ul><li>Uniforme impecable y respeto a todos</li><li>Tolerancia cero al acoso y discriminación</li><li>Sobrio en el turno; reportar no se castiga</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Reglamento interno y conducta · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

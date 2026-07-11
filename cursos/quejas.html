@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Manejo de quejas (LAST) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23a83246'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Manejo de quejas</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#a83246">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Manejo de quejas (LAST)</h1>
+    <p>Una queja bien resuelta fideliza más que una noche perfecta. Este curso es para meseros y jefes de sala: aquí aprendes el protocolo LAST —Escuchar, Disculparse, Solucionar, Agradecer—, por qué nunca se discute con el invitado, cuándo escalar al gerente y cómo recuperar el servicio cuando algo sale mal.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Mesero / Jefe de sala</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> por cada invitado que reclama hay muchos que se van molestos sin decir nada y no vuelven. El que sí te reclama te está regalando la oportunidad de arreglarlo. Un plato mal salido que resuelves con calma deja mejor propina y mejor reseña que una mesa donde nada falló. No es el error lo que se recuerda: es cómo reaccionaste.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>El protocolo LAST, de un vistazo</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">LAST son cuatro pasos en orden fijo para cualquier queja, del pisco sour flojo a la reserva que se perdió. No es un guion rígido: es un mapa para no bloquearte. La regla mayor es que el orden importa —primero se escucha y se lamenta, recién después se soluciona. Saltar al "arreglo" antes de escuchar es el error más común.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>L — Listen · Escuchar</h3><div class="d">Dejas que el invitado suelte todo sin interrumpir. Muestras que entiendes el problema y cómo se siente, no solo el hecho técnico.</div><div class="s">primero: entender</div></div>
+      <div class="tipo"><h3>A — Apologize · Disculparse</h3><div class="d">Una disculpa sincera y sin excusas: "Lamento mucho que esto haya pasado". No hace falta que sea tu culpa para lamentarlo.</div><div class="s">segundo: lamentar</div></div>
+      <div class="tipo"><h3>S — Solve · Solucionar</h3><div class="d">Ofreces una solución concreta y rápida, y la cumples. Cambiar el plato, corregir la cuenta, traer al gerente. Acción, no promesas vagas.</div><div class="s">tercero: resolver</div></div>
+      <div class="tipo"><h3>T — Thank · Agradecer</h3><div class="d">Agradeces que te lo dijeran: "Gracias por avisarme, así lo pude arreglar". Cierras el bucle y confirmas que quedó bien.</div><div class="s">cuarto: agradecer</div></div>
+      <div class="tipo"><h3>La secuencia es sagrada</h3><div class="d">Escuchar antes de disculpar, disculpar antes de solucionar. Si arrancas con "le cambio el plato" sin escuchar, el invitado siente que lo despachas, no que lo atiendes.</div><div class="s">el orden es el método</div></div>
+      <div class="tipo"><h3>Aplica a toda queja</h3><div class="d">Cocina, servicio, demora, ruido, cuenta, temperatura del ambiente. El mismo protocolo sirve para el reclamo chico y el grande. Escala cuando toca (Módulo 6).</div><div class="s">un solo método</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Paso</th><th>Lo que haces</th><th>Frase modelo (español neutro)</th></tr></thead>
+      <tbody>
+        <tr><td><b>L</b> Escuchar</td><td>Frenas, miras a los ojos, dejas hablar</td><td>"Cuénteme qué pasó, lo escucho."</td></tr>
+        <tr><td><b>A</b> Disculparse</td><td>Lamentas sin poner excusas</td><td>"Lamento mucho esto, tiene toda la razón."</td></tr>
+        <tr><td><b>S</b> Solucionar</td><td>Propones y ejecutas el arreglo</td><td>"Se lo cambio ahora mismo, deme dos minutos."</td></tr>
+        <tr><td><b>T</b> Agradecer</td><td>Agradeces el aviso y confirmas</td><td>"Gracias por decírmelo. ¿Ahora sí quedó bien?"</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>La regla de los 4 minutos:</b> el 90% de las quejas de mesa se resuelven en el sitio, sin gerente y sin cortesía, si aplicas LAST rápido. Lo que convierte una queja en desastre no es el problema: es el silencio, la excusa o la demora en reaccionar.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>L — Escuchar de verdad</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Escuchar no es esperar tu turno para hablar. El invitado molesto necesita, antes que la solución, sentir que alguien lo entendió. Si lo interrumpes para defender a la cocina, subes la temperatura. Estos son los pasos para escuchar de forma que el reclamo baje de tono solo.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🛑</div><div><div class="t">Al instante</div><h4>Frena lo que estás haciendo</h4><p>Deja la bandeja, gira el cuerpo hacia el invitado y baja a su altura si está sentado. Escuchar a medias mientras miras otra mesa se nota y ofende. Tu atención completa ya es media disculpa.</p></div></div>
+      <div class="paso"><div class="ico">👂</div><div><div class="t">Mientras habla</div><h4>No interrumpas ni te defiendas</h4><p>Déjalo terminar la frase entera aunque ya sepas la respuesta. Nada de "sí, pero…". El "pero" borra todo lo que dijiste antes. Asiente, mantén contacto visual y deja que suelte la molestia completa.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Al terminar</div><h4>Parafrasea para confirmar</h4><p>Repite el problema con tus palabras: "Entonces el lomo llegó frío y además tardó bastante, ¿es así?". Esto demuestra que escuchaste y te asegura de arreglar lo correcto, no lo que supusiste.</p></div></div>
+      <div class="paso"><div class="ico">❤️</div><div><div class="t">Siempre</div><h4>Valida cómo se siente</h4><p>Reconoce la emoción, no solo el hecho: "Entiendo la molestia, esperar tanto con hambre fastidia a cualquiera". El invitado quiere sentirse comprendido antes que compensado.</p></div></div>
+      <div class="paso"><div class="ico">🤫</div><div><div class="t">Todo el tiempo</div><h4>Cuida tu lenguaje corporal</h4><p>Nada de brazos cruzados, suspiros, sonrisita nerviosa o mirar el reloj. Cuerpo abierto, tono calmado, volumen bajo. Si tú te mantienes tranquilo, la mesa se calma contigo.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Escuchar que desactiva</h4><ul>
+        <li>Frenas, te giras y dejas que termine sin cortarlo.</li>
+        <li>"Déjeme ver si entendí: el pescado salió salado y frío."</li>
+        <li>"Entiendo, con toda la razón se siente incómodo."</li>
+        <li>Bajas la voz y el tono para que la mesa vecina no se entere.</li>
+      </ul></div>
+      <div class="box no"><h4>Escuchar que enciende</h4><ul>
+        <li>"Sí, pero la cocina está llena hoy, entienda usted."</li>
+        <li>Interrumpir a la mitad para explicar por qué pasó.</li>
+        <li>Escuchar de reojo mientras sigues llevando platos.</li>
+        <li>Reír de nervios o poner cara de "otra vez este reclamo".</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco de sala:</b> cuando alguien está muy molesto, tu primer objetivo no es resolver, es bajar la temperatura. Un "cuénteme, lo escucho" dicho con calma y sin apuro hace que la persona sienta que tiene tu tiempo. Casi siempre, mientras habla, el enojo ya empieza a ceder solo.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>A — Disculparse sin excusas</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La disculpa es el paso que más se hace mal. O no se pide (se salta directo a la solución), o viene envenenada con un "pero" que la anula. Una buena disculpa es corta, sincera, sin buscar culpables y sin prometer lo que no puedes cumplir. Te disculpas en nombre de la casa, no admites una demanda.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Lamenta, aunque no sea tu culpa</h3><div class="d">"Lamento mucho que esto haya pasado" no es admitir culpa: es cuidar a tu invitado. La empatía no cuesta y desarma. Da igual si fue la cocina, el proveedor o el sistema.</div><div class="s">empatía ≠ culpa</div></div>
+      <div class="tipo"><h3>Cero excusas ni "peros"</h3><div class="d">"Perdón, pero…" borra el perdón. Al invitado no le importa que estén sin un cocinero o que el delivery se atrasó. Le importa su noche. Guárdate el motivo interno.</div><div class="s">el "pero" anula</div></div>
+      <div class="tipo"><h3>Sé específico</h3><div class="d">"Disculpe la demora del segundo" pega más que un "disculpe" genérico. Nombra lo que salió mal: demuestra que escuchaste y que te haces cargo de eso puntual.</div><div class="s">nombra el error</div></div>
+      <div class="tipo"><h3>No culpes a un compañero</h3><div class="d">Nunca "es que el mozo anterior no anotó" ni "la cocina siempre se demora". Frente al invitado, el restaurante es uno solo. Tirar a un compañero te hace ver peor a ti.</div><div class="s">un solo equipo</div></div>
+      <div class="tipo"><h3>Tono, no solo palabras</h3><div class="d">Una disculpa dicha rápido y de memoria suena falsa. Míralo, baja el ritmo, que el tono acompañe. El invitado detecta al toque si es sincera o de trámite.</div><div class="s">se siente, no se recita</div></div>
+      <div class="tipo"><h3>No prometas de más</h3><div class="d">No ofrezcas lo que no puedes dar ("le invito toda la cena") sin autorización. Disculpa y pasa a la solución que sí está en tu mano; lo demás lo decide el gerente.</div><div class="s">promete lo que cumples</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Disculpas que suman</h4><ul>
+        <li>"Lamento mucho la demora, tiene toda la razón."</li>
+        <li>"Disculpe, el punto de la carne no salió como lo pidió."</li>
+        <li>"Perdón por esto, me hago cargo y lo soluciono ya."</li>
+        <li>"Siento que su noche empezara así, déjeme arreglarlo."</li>
+      </ul></div>
+      <div class="box no"><h4>Disculpas que restan</h4><ul>
+        <li>"Perdón, pero es que hoy está lleno el restaurante."</li>
+        <li>"Yo no fui, fue el mozo del turno anterior."</li>
+        <li>"Es política de la casa, no puedo hacer nada."</li>
+        <li>"Ay, discúlpeme" dicho de pasada, sin mirarlo.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> la disculpa que funciona es <b>específica, sincera y sin peros</b>. Compara "disculpe" con "lamento mucho que su lomo llegara frío después de tanta espera, me hago cargo". La segunda le dice al invitado que lo escuchaste de verdad y que la casa responde. Esa frase vale más que cualquier cortesía.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>S — Solucionar y recuperar el servicio</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Ya escuchaste y te disculpaste; ahora hay que arreglarlo, rápido y de verdad. Recuperación del servicio ("service recovery") es el arte de convertir a un invitado molesto en uno leal. La clave: soluciones concretas, en tiempos cortos, y cerrar el bucle verificando que el arreglo dejó satisfecho a quien reclamó.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">⚡</div><div><div class="t">Primero</div><h4>Ofrece una solución concreta, ya</h4><p>Nada de "voy a ver qué puedo hacer". Propón algo claro: "Se lo cambio ahora mismo y lo priorizo en cocina". Si hay opciones, deja que el invitado elija: "¿Prefiere que se lo cambie o que le traiga otra cosa de la carta?".</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">Con tiempo real</div><h4>Da un plazo y cúmplelo</h4><p>"En cinco minutos se lo traigo" y que sean cinco. Marca el reemplazo como urgente en el POS y avisa a cocina que es una recuperación. Un plazo cumplido reconstruye la confianza que se rompió.</p></div></div>
+      <div class="paso"><div class="ico">🙋</div><div><div class="t">Cuando toca</div><h4>Escala si supera tu autoridad</h4><p>Cortesías, descuentos, un invitado muy molesto o una alergia: llama al gerente sin dramatizar. "Permítame un momento, llamo a mi jefe de sala para resolverlo mejor". Escalar bien no es fallar, es cuidar al invitado (Módulo 6).</p></div></div>
+      <div class="paso"><div class="ico">🍮</div><div><div class="t">Según el caso</div><h4>El gesto de recuperación</h4><p>Un detalle sincero cierra la herida: una copa de vino, un postre de la casa, no cobrar el plato del problema. Sale del gerente, no lo inventes tú. El gesto correcto es proporcional al error, no una lluvia de regalos.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Al final</div><h4>Cierra el bucle: verifica</h4><p>Vuelve a los dos bocados del plato nuevo: "¿Ahora sí quedó como lo esperaba?". El invitado tiene que sentir que su queja se tomó en serio hasta el final. Un arreglo sin verificación queda a medias.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Queja típica</th><th>Solución en tu mano</th><th>Recuperación (con gerente)</th></tr></thead>
+      <tbody>
+        <tr><td>Lomo saltado llegó frío</td><td>Cambio urgente, priorizado en cocina</td><td>No cobrar ese plato o un postre de cortesía</td></tr>
+        <tr><td>Pisco sour flojo o mal cargado</td><td>Que barra lo rehaga al momento</td><td>La segunda copa va por cuenta de la casa</td></tr>
+        <tr><td>Demora larga del segundo</td><td>Averiguar tiempo real y avisar con sinceridad</td><td>Una entrada o piqueo para la espera</td></tr>
+        <tr><td>Error en la cuenta</td><td>Corregir al instante y mostrar el detalle</td><td>Disculpa formal; nunca discutir el monto</td></tr>
+        <tr><td>Plato con un ingrediente que pidieron sin</td><td>Retirar de una y rehacer bien, avisar cocina</td><td>Si hay alergia: escalar de inmediato (Mód. 6)</td></tr>
+        <tr><td>Reserva que no aparece en el sistema</td><td>Ubicar mesa lo antes posible, ofrecer barra</td><td>Bebida de bienvenida mientras se acomoda</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>La paradoja de la recuperación:</b> un invitado al que le fallaste y luego resolviste bien suele quedar <b>más</b> leal que uno al que nunca le falló nada. Recordará que la casa respondió. Por eso una queja no es una amenaza: es tu mejor oportunidad de crear un cliente fiel. Pero solo funciona si el arreglo es rápido y sincero, no si se arrastra.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>T — Agradecer y cerrar el bucle</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El paso que casi todos olvidan. Después de resolver, agradece que te lo hayan dicho. Suena raro —agradecer una queja— pero es lo que sella la recuperación: le dices al invitado que su reclamo fue un favor, no una molestia. Y termina de convertir un mal momento en una razón para volver.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Agradece el aviso, en serio</h3><div class="d">"Gracias por decírmelo, así lo pude arreglar a tiempo." Le confirmas que hizo bien en hablar y que en esta casa reclamar sirve para algo.</div><div class="s">la queja es un regalo</div></div>
+      <div class="tipo"><h3>Confirma que quedó resuelto</h3><div class="d">No asumas que sí. Pregunta directo: "¿Ahora sí quedó a su gusto?". Si aún no está del todo bien, es tu última ventana para corregir antes de que se vaya.</div><div class="s">no supongas, pregunta</div></div>
+      <div class="tipo"><h3>Redondea el final</h3><div class="d">Retoma el servicio normal con calidez, sin recordarle el problema a cada rato. Un chequeo extra discreto basta; no lo satures pidiendo perdón de nuevo.</div><div class="s">vuelve a la normalidad</div></div>
+      <div class="tipo"><h3>Deja la puerta abierta</h3><div class="d">En la despedida: "Ojalá nos den otra oportunidad, la próxima queremos que todo salga redondo." Invitas a volver a pesar del tropiezo. Muchos vuelven solo por cómo cerraste.</div><div class="s">invita a volver</div></div>
+      <div class="tipo"><h3>Registra lo que pasó</h3><div class="d">Anota la incidencia (en Prep!, en la bitácora de El Libro o la ficha del comensal): qué falló y cómo se resolvió. Sirve para no repetirlo y para recibir mejor a esa persona la próxima vez.</div><div class="s">que quede registrado</div></div>
+      <div class="tipo"><h3>Avisa a tu jefe de sala</h3><div class="d">Aunque lo resolvieras solo, cuéntalo al cierre. El gerente necesita ver patrones (un plato que falla seguido, una demora recurrente) para atacar la causa, no solo el síntoma.</div><div class="s">sube la información</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Cierre que fideliza</h4><ul>
+        <li>"Gracias por avisarme, de verdad; así lo arreglamos."</li>
+        <li>Verificas que el plato nuevo quedó bien antes de retirarte.</li>
+        <li>Despides con calidez e invitas a volver sin recordar la falla.</li>
+        <li>Registras la incidencia y se la comentas al jefe de sala.</li>
+      </ul></div>
+      <div class="box no"><h4>Cierre que deja mal sabor</h4><ul>
+        <li>Resolver y desaparecer, sin verificar ni agradecer.</li>
+        <li>Recordarle el problema tres veces "para que vea que le importó".</li>
+        <li>Poner cara de fastidio como si el reclamo fuera su culpa.</li>
+        <li>No contarle a nadie, así el mismo error se repite mañana.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Por qué agradecer:</b> por cada persona que reclama, muchas otras se fueron calladas y no volverán jamás. Quien te dice "esto está mal" te está dando datos gratis y una segunda oportunidad. Tratar la queja como un regalo —y decirlo en voz alta— es lo que separa a un restaurante que aprende de uno que repite sus errores.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>No discutir y cuándo escalar</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Dos reglas cierran el curso. Primera: con el invitado no se discute, nunca, aunque no tenga razón. Segunda: hay situaciones que superan tu autoridad y toca pasarlas al gerente de inmediato. Saber cuándo escalar no es debilidad: es proteger al invitado, a la casa y a ti mismo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Nunca ganes la discusión</h3><div class="d">Aunque tengas toda la razón, "ganarle" al invitado es perderlo. No es un debate. Baja la voz, no subas la apuesta. Tener razón no paga la cuenta ni escribe la reseña.</div><div class="s">razón ≠ objetivo</div></div>
+      <div class="tipo"><h3>No lo contradigas en público</h3><div class="d">Corregir a un invitado delante de su mesa lo humilla. Si algo no cuadra (dice que no pidió lo que pidió), asúmelo con gracia: "Con gusto lo corrijo", sin dejarlo en ridículo.</div><div class="s">cuida su cara</div></div>
+      <div class="tipo"><h3>Mantén la calma tú</h3><div class="d">Si el invitado alza la voz, tú bajas la tuya. Respira, tono parejo, cuerpo abierto. Tu calma es contagiosa; tu nervio también. No lo tomes personal, es con la situación, no contigo.</div><div class="s">tú marcas el tono</div></div>
+      <div class="tipo"><h3>Escala sin dramatizar</h3><div class="d">"Permítame que llamo a mi jefe de sala para atenderlo mejor." Presentar al gerente sube el nivel de atención y le da al invitado la sensación de que la casa lo toma en serio.</div><div class="s">el gerente suma</div></div>
+      <div class="tipo"><h3>Alergias: escala siempre</h3><div class="d">Sospecha de reacción alérgica o un plato servido con el alérgeno que pidieron evitar: para todo, avisa al gerente y a cocina de inmediato. Aquí no se improvisa ni se minimiza.</div><div class="s">seguridad primero</div></div>
+      <div class="tipo"><h3>Protégete a ti también</h3><div class="d">Si un invitado te falta el respeto, se pone agresivo o llega alterado, no lo enfrentes solo. Da un paso atrás y busca al gerente. Tu seguridad no se negocia por una mesa.</div><div class="s">no estás solo</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Situación</th><th>¿Escalas al gerente?</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Plato frío, punto de carne, bebida floja</td><td>No, resuélvelo tú con LAST</td><td>Está en tu autoridad; escalar todo satura al gerente</td></tr>
+        <tr><td>El invitado pide un descuento o cortesía</td><td>Sí, siempre</td><td>Solo el gerente autoriza descuentos y cortesías (POS con aprobación)</td></tr>
+        <tr><td>Sospecha de reacción alérgica</td><td>Sí, de inmediato</td><td>Es un tema de salud, prima la seguridad</td></tr>
+        <tr><td>Invitado muy molesto o gritando</td><td>Sí</td><td>El gerente absorbe la tensión y libera al mozo</td></tr>
+        <tr><td>Queja sobre un compañero</td><td>Sí</td><td>No te toca a ti juzgar; lo maneja el jefe de sala</td></tr>
+        <tr><td>Amenaza con dejar mala reseña o llamar a prensa</td><td>Sí</td><td>Manejo de reputación es del gerente, no del piso</td></tr>
+        <tr><td>Falta de respeto o conducta agresiva hacia ti</td><td>Sí</td><td>Tu integridad primero; no lo enfrentes solo</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Manejo firme y cálido</h4><ul>
+        <li>Bajas la voz cuando el invitado la sube.</li>
+        <li>"Con gusto lo corrijo" en vez de "usted sí lo pidió".</li>
+        <li>Llamas al gerente ante una cortesía o una alergia.</li>
+        <li>Das un paso atrás si alguien se pone agresivo.</li>
+      </ul></div>
+      <div class="box no"><h4>Manejo que agrava</h4><ul>
+        <li>Discutir para demostrar que tú tienes la razón.</li>
+        <li>Contradecir al invitado delante de sus acompañantes.</li>
+        <li>Prometer un descuento sin preguntar al gerente.</li>
+        <li>Aguantar solo a un invitado agresivo por orgullo.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La frase que salva:</b> cuando no sepas qué hacer o la cosa se caliente, gana tiempo con dignidad: "Permítame un momento, ya lo resuelvo". Te da segundos para pensar, buscar al gerente o consultar, sin dejar al invitado en el aire. Nunca prometas lo que no puedes cumplir, y nunca, nunca discutas para ganar.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>LAST</b><span>Protocolo de cuatro pasos para manejar quejas: Listen (Escuchar), Apologize (Disculparse), Solve (Solucionar), Thank (Agradecer). Se aplica en ese orden.</span></div>
+      <div class="gterm"><b>Recuperación del servicio</b><span>"Service recovery": el conjunto de acciones para reparar una mala experiencia y, si es posible, convertir al invitado molesto en uno leal.</span></div>
+      <div class="gterm"><b>Paradoja de la recuperación</b><span>Fenómeno por el cual un invitado al que se le falló y luego se le resolvió bien suele quedar más satisfecho que uno al que nunca le falló nada.</span></div>
+      <div class="gterm"><b>Parafrasear</b><span>Repetir la queja con tus propias palabras para confirmar que entendiste bien y demostrarle al invitado que lo escuchaste.</span></div>
+      <div class="gterm"><b>Validar la emoción</b><span>Reconocer cómo se siente la persona ("entiendo la molestia"), no solo el hecho. Baja la tensión antes de resolver.</span></div>
+      <div class="gterm"><b>Disculpa sin "pero"</b><span>Lamentar lo ocurrido sin agregar excusas ni motivos internos. El "pero" borra la disculpa que lo antecede.</span></div>
+      <div class="gterm"><b>Escalar</b><span>Pasar una queja al gerente o jefe de sala cuando supera tu autoridad (cortesías, alergias, invitados muy alterados o agresivos).</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Ítem o consumo que la casa decide no cobrar como gesto. Solo el gerente la autoriza; en el POS de Prep! queda con aprobación registrada.</span></div>
+      <div class="gterm"><b>Gesto de recuperación</b><span>Detalle sincero (copa, postre, no cobrar el plato) proporcional al error, para cerrar bien una queja. Lo decide el gerente.</span></div>
+      <div class="gterm"><b>Cerrar el bucle</b><span>Verificar, después de resolver, que el arreglo dejó satisfecho al invitado antes de dar por terminada la queja.</span></div>
+      <div class="gterm"><b>Chequeo a los dos bocados</b><span>Volver ~2 min después de servir un plato (incluido el de reemplazo) para confirmar que quedó bien mientras aún se puede corregir.</span></div>
+      <div class="gterm"><b>Queja silenciosa</b><span>El invitado insatisfecho que no reclama y simplemente no vuelve. Es la más peligrosa porque no da oportunidad de arreglar.</span></div>
+      <div class="gterm"><b>Bitácora / incidencia</b><span>Registro de lo que falló y cómo se resolvió (en El Libro o la ficha del comensal en Prep!), para no repetir el error.</span></div>
+      <div class="gterm"><b>86</b><span>Código de cocina para "se acabó" un ítem. Avisar a tiempo evita una queja: nunca vendas lo que ya no hay.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Manejo de quejas (LAST) · Chuleta de sala</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>El protocolo LAST</h4><ul>
+          <li>L — Escuchar: frena y deja hablar</li>
+          <li>A — Disculparse: lamenta, sin "pero"</li>
+          <li>S — Solucionar: arreglo concreto y ya</li>
+          <li>T — Agradecer: "gracias por avisar"</li>
+          <li>El orden importa: nunca al revés</li>
+        </ul></div>
+        <div class="op-box"><h4>Escuchar (L)</h4><ul>
+          <li>Frena y gira el cuerpo, atención total</li>
+          <li>No interrumpas ni te defiendas</li>
+          <li>Parafrasea: "déjeme ver si entendí…"</li>
+          <li>Valida la emoción, no solo el hecho</li>
+          <li>Baja tu voz para que baje la de él</li>
+        </ul></div>
+        <div class="op-box"><h4>Disculparse (A)</h4><ul>
+          <li>"Lamento mucho esto" (no admites culpa)</li>
+          <li>Cero excusas: el "pero" anula el perdón</li>
+          <li>Nombra el error, sé específico</li>
+          <li>No culpes a un compañero ni a cocina</li>
+          <li>No prometas lo que no puedes cumplir</li>
+        </ul></div>
+        <div class="op-box"><h4>Solucionar (S)</h4><ul>
+          <li>Solución concreta, ya, no "voy a ver"</li>
+          <li>Da un plazo real y cúmplelo</li>
+          <li>Marca el reemplazo urgente en el POS</li>
+          <li>Cortesía o descuento = solo el gerente</li>
+          <li>Verifica a los 2 bocados del plato nuevo</li>
+        </ul></div>
+        <div class="op-box"><h4>Agradecer y cerrar (T)</h4><ul>
+          <li>"Gracias por decírmelo, así lo arreglé"</li>
+          <li>Confirma que quedó resuelto</li>
+          <li>Despide con calidez, invita a volver</li>
+          <li>Registra la incidencia</li>
+          <li>Cuéntaselo a tu jefe de sala</li>
+        </ul></div>
+        <div class="op-box"><h4>No discutir · Escalar</h4><ul>
+          <li>Nunca "ganes" la discusión</li>
+          <li>No contradigas al invitado en público</li>
+          <li>Tú mantienes la calma siempre</li>
+          <li>Escala: cortesía, alergia, muy molesto, agresivo</li>
+          <li>"Permítame un momento, ya lo resuelvo"</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Manejo de quejas (LAST) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

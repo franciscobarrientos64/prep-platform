@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Floor plan y asignación de mesas · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f766e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Floor plan</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0f766e">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Floor plan y asignación de mesas</h1>
+    <p>El plano de sala es el tablero de ajedrez del anfitrión. Saber leerlo, rotarlo y repartirlo bien es lo que separa una noche fluida de una noche con la puerta llena y mesas vacías al fondo. Este curso es para anfitriones y jefes de sala que quieren dominar el sentado.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Anfitrión / Jefe de sala</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el anfitrión decide, sin darse cuenta, cuánto vende la noche. Un mal sentado deja mesas ociosas mientras la lista de espera crece, sobrecarga a un mozo y hunde a otro, y hace que un cumpleaños termine pegado al baño. El plano bien manejado sube la rotación, equilibra las propinas del equipo y hace que el comensal sienta que lo esperaban a él.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Leer el plano como un mapa</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de sentar a nadie tienes que ver la sala completa de un vistazo: qué mesa es qué, cuántos entran, qué está pasando en cada una. El plano no es una decoración: es información en vivo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Numeración fija</h3><div class="d">Cada mesa tiene un número que nunca cambia (M1, M6, Barra 3). Todo el equipo la llama igual. "La 6 pide la cuenta" tiene que significar lo mismo para ti, para el mozo y para el pase.</div><div class="s">un solo idioma en sala</div></div>
+      <div class="tipo"><h3>Capacidad y flex</h3><div class="d">Una mesa de 2 (deuce) no es una de 4. Anota cuáles se juntan: dos deuces hacen un 4-top, la larga del reservado estira de 8 a 12. Conocer el "flex" es tu as bajo la manga.</div><div class="s">deuce · 4-top · larga</div></div>
+      <div class="tipo"><h3>Zonas de la sala</h3><div class="d">Salón, terraza, reservado y barra tienen ambiente y ritmo distintos. La terraza es lenta y romántica; la barra es rápida y social. Manda a cada comensal a la zona que pidió su visita.</div><div class="s">cada zona vende distinto</div></div>
+      <div class="tipo"><h3>Estados en vivo</h3><div class="d">Libre, sentada, comiendo, postre, cuenta pedida, por limpiar. En el mapa del POS cada estado tiene su color. Leerlos te dice qué mesa se libera en 5 minutos y cuál recién arranca.</div><div class="s">el color te habla</div></div>
+      <div class="tipo"><h3>Mesas buenas y malas</h3><div class="d">La del ventanal vende sola; la pegada a la puerta del baño o al pase de cocina cuesta. Sé honesto sobre cuáles son tus "malas" para no quemarlas con el cliente equivocado.</div><div class="s">no todas valen igual</div></div>
+      <div class="tipo"><h3>Circulación</h3><div class="d">Los pasillos por donde entran los platos y pasa la gente. Nunca sientes un coche de bebé o una silla de ruedas en un cuello de botella. El plano también es seguridad.</div><div class="s">deja respirar la sala</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <table class="t">
+        <thead><tr><th>Color en el mapa</th><th>Estado de la mesa</th><th>Qué hago como anfitrión</th></tr></thead>
+        <tbody>
+          <tr><td>Gris / vacío</td><td>Libre y limpia</td><td>Disponible ya. Es tu primera opción para sentar.</td></tr>
+          <tr><td>Verde</td><td>Recién sentada / ordenando</td><td>No la toques. Arranca su tiempo de vida.</td></tr>
+          <tr><td>Azul</td><td>Comiendo fondos</td><td>A mitad de camino. Estímala para tu próxima ola.</td></tr>
+          <tr><td>Amarillo</td><td>Postre o cuenta pedida</td><td>Se libera pronto. Prepárala en tu lista de espera.</td></tr>
+          <tr><td>Rojo</td><td>Se fueron, por limpiar (bus)</td><td>Avisa a busser. Cuenta los minutos: mesa sucia = mesa que no vende.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>Rutina de apertura:</b> antes del servicio camina la sala con el plano en la mano. Verifica que cada mesa esté montada, nivelada (nada de mesas cojas) y que la numeración del piso coincida con la del POS. Un plano mal cuadrado a las 12:30 es un caos a las 14:00.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Rangos de mozo y balanceo</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Cada mozo tiene un rango: el grupo de mesas de las que es responsable. Tú repartes la sala en rangos y luego sientas de forma que ningún rango se ahogue ni se quede dormido. Ese equilibrio es tu trabajo silencioso.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🗺️</div><div><div class="t">Antes de abrir</div><h4>Arma las estaciones del turno</h4><p>Divide la sala en rangos de tamaño parejo (típico: 3 a 5 mesas por mozo según nivel del servicio). En un restaurante de alta cocina un mozo lleva menos mesas porque el servicio es más detallado. Deja siempre claro quién cubre la barra y el reservado.</p></div></div>
+      <div class="paso"><div class="ico">⚖️</div><div><div class="t">Al sentar</div><h4>Reparte en rotación justa</h4><p>No cargues tres grupos seguidos al mismo mozo solo porque su mesa está cerca de la puerta. Rota: una a Diego, la siguiente a Lucía, la siguiente a Marco. La regla de oro es "round-robin", como repartir cartas.</p></div></div>
+      <div class="paso"><div class="ico">👀</div><div><div class="t">Durante el servicio</div><h4>Lee la carga real, no solo el número</h4><p>Un rango con una mesa de 12 puede estar más ahogado que otro con cuatro deuces. Mira quién está "en la weeds" (bajo agua): si un mozo no da abasto, sáltalo en la siguiente ronda de sentado.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Cuando entra un grupo grande</div><h4>Avisa antes de soltar la bomba</h4><p>Nunca sientes una mesa de 10 sin avisar al mozo y a cocina. Un grupo grande golpea cocina y al rango entero. Coordínalo: quizá va con apoyo de un segundo mozo (back waiter).</p></div></div>
+      <div class="paso"><div class="ico">🤝</div><div><div class="t">Cierre</div><h4>Cuadra que las propinas queden parejas</h4><p>Un sentado justo se nota al final del turno: los rangos vendieron parecido. Si ves que uno vendió el triple, el problema fue tuyo al repartir, no del mozo. Ajusta mañana.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Balanceo sano</h4><ul>
+        <li>Alternas rangos aunque la mesa cercana sea más cómoda de sentar.</li>
+        <li>Cuentas cubiertos, no solo mesas: una de 8 pesa como dos de 4.</li>
+        <li>Le das un respiro al mozo que acaba de recibir un grupo grande.</li>
+        <li>Avisas al rango cuando le entra una mesa nueva.</li>
+      </ul></div>
+      <div class="box no"><h4>Sentado que rompe al equipo</h4><ul>
+        <li>Cargar al mozo de la puerta con todo lo que llega primero.</li>
+        <li>Sentar cuatro mesas al mismo rango en cinco minutos.</li>
+        <li>Mandar el grupo de 12 sin avisar a nadie.</li>
+        <li>Dejar un rango entero vacío mientras otro se hunde.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco del jefe de sala:</b> lleva mentalmente (o en el POS) un contador de "última mesa sentada por rango". Siempre sienta en el rango que hace más rato no recibe. Así el round-robin se cuida solo.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Rotación y turn-time</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Rotar una mesa es volver a venderla en la misma noche. Cada asiento tiene un tiempo de vida (turn-time). Si lo conoces, puedes prometer una hora real a la lista de espera y llenar la sala dos y tres veces sin apurar a nadie.</p>
+    <table class="t">
+      <thead><tr><th>Tipo de servicio</th><th>Turn-time típico</th><th>Cómo lo planifico</th></tr></thead>
+      <tbody>
+        <tr><td>Almuerzo ejecutivo (menú)</td><td>45 – 60 min</td><td>Rotación rápida. Puedo dar una hora exacta de "seat again".</td></tr>
+        <tr><td>Almuerzo a la carta</td><td>75 – 90 min</td><td>Doble sentada mediodía: 13:00 y ~14:30.</td></tr>
+        <tr><td>Cena a la carta</td><td>105 – 120 min</td><td>Dos turnos: 20:00 y 22:00. Reserva con ventana.</td></tr>
+        <tr><td>Cena de degustación</td><td>150 – 180 min</td><td>Una sola sentada. Esa mesa no rota; se vende una vez.</td></tr>
+        <tr><td>Barra / aperitivo</td><td>30 – 50 min</td><td>Alta rotación. Ideal para la espera de walk-ins.</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:14px">
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">Al sentar</div><h4>Registra la hora de sentado</h4><p>El reloj arranca cuando la mesa se sienta, no cuando ordena. En el mapa del POS el color va cambiando solo; esa es tu bola de cristal para saber qué se libera.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">A mitad</div><h4>Lee las señales de avance</h4><p>Platos de fondo servidos = van por la mitad. Postre o café pedido = 15-20 min para liberar. Cuenta pedida = próxima en tu lista. No adivines: mira el estado real.</p></div></div>
+      <div class="paso"><div class="ico">🧹</div><div><div class="t">Al pararse</div><h4>Marca "bus" y persíguelo</h4><p>El minuto más caro de la noche es la mesa vacía y sucia. En cuanto se paran, avísale al busser y ten la mesa lista en menos de 3-4 minutos. Turn-around veloz = una sentada más.</p></div></div>
+      <div class="paso"><div class="ico">🚫</div><div><div class="t">Nunca</div><h4>No apures al comensal para rotar</h4><p>Rotar es de logística, no de presión. Jamás traigas la cuenta sin que la pidan ni levantes platos "para apurar". En alta cocina, un comensal apurado no vuelve. Rota con el plano, no empujando gente.</p></div></div>
+    </div>
+    <div class="callout"><b>La doble sentada:</b> si una reserva de las 20:00 promete liberar a las 22:00, puedes vender esa misma mesa a un segundo turno de 22:15. Deja 15 min de colchón para el bus y para que el primer grupo no se sienta empujado. Promete siempre con margen: es mejor sorprender antes que llegar tarde.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Asignar por preferencia del comensal</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Sentar bien no es solo "hay lugar". Es poner a cada quien donde su visita funciona: la propuesta de matrimonio no va al lado del baño y la reunión de trabajo no va en la mesa más ruidosa. Aquí es donde el anfitrión demuestra oficio.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La ocasión manda</h3><div class="d">Pregunta o deduce: ¿aniversario, negocio, familia, primera cita? Un aniversario quiere el ventanal; un negocio quiere silencio y distancia. La ocasión define la mesa antes que el tamaño.</div><div class="s">lee la intención</div></div>
+      <div class="tipo"><h3>Grupos grandes al fondo</h3><div class="d">Las mesas ruidosas (cumpleaños, celebraciones) van al reservado o al fondo, no en el centro donde molestan a las parejas. Aísla el ruido, protege la calma del resto.</div><div class="s">contén el volumen</div></div>
+      <div class="tipo"><h3>Accesibilidad primero</h3><div class="d">Adulto mayor, embarazada, coche de bebé o silla de ruedas: mesa cerca de la entrada, en pasillo ancho, sin escalones. Es prioridad obligatoria, no un favor.</div><div class="s">acceso sin obstáculos</div></div>
+      <div class="tipo"><h3>Alergias y cocina</h3><div class="d">Si la ficha marca alergia grave, avisa al mozo y al pase al sentar, no cuando ordenen. La info de Bienvenida viaja contigo: úsala apenas asignas la mesa.</div><div class="s">seguridad = anticipación</div></div>
+      <div class="tipo"><h3>VIP y habituales</h3><div class="d">El cliente que viene cada semana tiene "su mesa". Respétala. Reconocerlo por nombre y sentarlo donde le gusta vale más que cualquier cortesía.</div><div class="s">memoria que fideliza</div></div>
+      <div class="tipo"><h3>Nunca sala vacía</h3><div class="d">Con la sala vacía, siembra a los primeros cerca del ventanal, no dispersos. Una sala con vida se ve llena; una con gente regada se ve muerta. Piensa en cómo te ve quien pasa por la calle.</div><div class="s">crea sensación de lleno</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <table class="t">
+        <thead><tr><th>Perfil del comensal</th><th>Dónde lo siento</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>Pareja / aniversario</td><td>Ventanal, esquina, terraza</td><td>Intimidad, buena luz, foto bonita.</td></tr>
+          <tr><td>Reunión de negocios</td><td>Mesa aislada, lejos del bar</td><td>Silencio para hablar, distancia entre mesas.</td></tr>
+          <tr><td>Cumpleaños / grupo festivo</td><td>Reservado o fondo</td><td>Contiene el ruido, deja soplar la vela sin invadir.</td></tr>
+          <tr><td>Familia con niños</td><td>Cerca de acceso, esquina amplia</td><td>Espacio para coche, salida rápida, menos vecinos molestos.</td></tr>
+          <tr><td>Adulto mayor / movilidad</td><td>Entrada, pasillo ancho, sin escalón</td><td>Prioridad de accesibilidad y comodidad.</td></tr>
+          <tr><td>Solo diner / walk-in rápido</td><td>Barra</td><td>Social, atención ágil, libera mesas para grupos.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> cuando dudes, pregunta con elegancia: "¿Prefieren una mesa más tranquila o cerca de la ventana?". Dar a elegir se siente como lujo y te evita el error de adivinar mal.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>La coreografía del sentado</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Sentar es un ritual de 90 segundos que marca el tono de toda la visita. Se hace igual siempre, con o sin reserva. Esta es la secuencia que un anfitrión de nivel ejecuta sin pensarlo.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🙋</div><div><div class="t">Llegada · 0-15 s</div><h4>Recibe con contacto visual y nombre</h4><p>"Buenas noches, bienvenidos." Sonríe, mira a los ojos. Si hay reserva, usa el apellido: "¿Familia Rossi? Los estábamos esperando." Pregunta el número de comensales aunque creas saberlo.</p></div></div>
+      <div class="paso"><div class="ico">🧭</div><div><div class="t">Decisión · 15-30 s</div><h4>Elige la mesa en tu cabeza</h4><p>Cruza en un segundo: tamaño del grupo, ocasión, rango que toca por rotación, preferencia si la conoces. No camines a la sala sin haber decidido; dudar frente al comensal se nota y resta.</p></div></div>
+      <div class="paso"><div class="ico">🚶</div><div><div class="t">Traslado · 30-60 s</div><h4>Guía, no mandes</h4><p>"Síganme, por favor" y camina medio paso adelante, girándote para no perderlos. Marca el ritmo del más lento del grupo. Lleva las cartas contigo, una por comensal.</p></div></div>
+      <div class="paso"><div class="ico">🪑</div><div><div class="t">Sentado · 60-80 s</div><h4>Presenta la mesa y ubica bien</h4><p>Retira la silla de quien lo agradezca (dama, adulto mayor). Ofrece la mejor vista al invitado de honor. Entrega la carta abierta o al menos con las dos manos. "Su mozo será Diego, los atiende en un momento."</p></div></div>
+      <div class="paso"><div class="ico">📲</div><div><div class="t">Cierre · 80-90 s</div><h4>Marca la mesa y avisa al rango</h4><p>Registra el sentado en el POS (mesa, cubiertos, hora, alergias/VIP si aplica). Da un pase de voz o gesto al mozo del rango: "Diego, entró tu 6, cuatro personas, una alergia al maní." Recién ahí tu trabajo con esa mesa terminó.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sentado de nivel</h4><ul>
+        <li>Ya tienes la mesa decidida antes de caminar.</li>
+        <li>Marcas cubiertos exactos y hora en el POS.</li>
+        <li>Le pasas la info clave (alergia, VIP) al mozo al toque.</li>
+        <li>Adaptas el ritmo al comensal más lento.</li>
+      </ul></div>
+      <div class="box no"><h4>Sentado que resta</h4><ul>
+        <li>Caminar dudando y cambiar de mesa a medio camino.</li>
+        <li>Dejar el grupo parado mientras "buscas" dónde ponerlos.</li>
+        <li>Soltar las cartas de golpe sobre la mesa y volar.</li>
+        <li>No avisarle al mozo que le entró mesa nueva.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Si hay que esperar:</b> nunca digas solo "no hay mesa". Da un tiempo real ("unos 15 minutos, se les libera la del ventanal"), toma nombre y celular para la waitlist, y ofrece la barra para un aperitivo. Una espera bien manejada se recuerda mejor que una mesa inmediata mal dada.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Picos, errores y cómo recuperar</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La sala se pone difícil cuando la puerta está llena, cocina va lenta y todo pasa a la vez. Ahí el anfitrión no improvisa: sigue reglas. Estos son los líos más comunes y cómo salir bien parado.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Reserva no llegó (no-show)</h3><div class="d">Espera la ventana de gracia (típico 15 min), intenta llamar, y recién libera la mesa a la waitlist. No la sueltes antes ni la retengas media hora vacía.</div><div class="s">15 min y a la lista</div></div>
+      <div class="tipo"><h3>Grupo llegó incompleto</h3><div class="d">Reserva para 6, llegaron 3. No los sientes en la de 6 y bloquees cubiertos: siéntalos en una acorde y guarda la grande para quien la llene. Avisa que faltan sillas por venir.</div><div class="s">no bloquees capacidad</div></div>
+      <div class="tipo"><h3>Cocina en la weeds</h3><div class="d">Si el pase está saturado, frena el ritmo de sentado (haz "pacing"). Mejor que la puerta espere 10 min a que 5 mesas nuevas revienten una cocina ahogada.</div><div class="s">controla el flujo</div></div>
+      <div class="tipo"><h3>Mesa equivocada dada</h3><div class="d">Si sentaste al grupo festivo junto a la pareja romántica, no lo dejes así: discúlpate y reubica con elegancia apenas se libere algo mejor. Reconocer y mover es de profesional.</div><div class="s">corrige, no aguantes</div></div>
+      <div class="tipo"><h3>Se alargó la mesa</h3><div class="d">Tu doble sentada de las 22:00 sigue ocupada 22:30. Nunca apures: reacomoda al que espera en la barra con una copa de cortesía si aplica, y comunica con honestidad el nuevo tiempo.</div><div class="s">honestidad + barra</div></div>
+      <div class="tipo"><h3>Overbooking</h3><div class="d">Se cruzaron dos reservas por la misma mesa. Respira, revisa el plano por flex (juntar deuces), usa la barra o el reservado, y si nada calza, discúlpate de verdad y compensa. Nunca discutas frente al comensal.</div><div class="s">calma y solución</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Bajo presión, sí</h4><ul>
+        <li>Mantén el plano actualizado en el POS aunque estés corriendo.</li>
+        <li>Comunica tiempos reales a la lista de espera, no optimismo.</li>
+        <li>Frena el sentado si cocina te lo pide (pacing).</li>
+        <li>Escala al gerente lo que cuesta plata o rompe una promesa.</li>
+      </ul></div>
+      <div class="box no"><h4>Bajo presión, no</h4><ul>
+        <li>Sentar por sentar y reventar el rango y la cocina.</li>
+        <li>Prometer "5 minutos" sabiendo que son 25.</li>
+        <li>Discutir con el equipo o con el comensal en plena sala.</li>
+        <li>Dejar mesas sucias sin avisar a busser mientras crece la cola.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La actitud lo es todo:</b> en el pico, el equipo copia tu energía. Si el anfitrión mantiene la calma, la voz baja y el plano al día, la sala entera se ordena sola. Si te desbordas, se desborda todo. Respira, prioriza, y sienta la siguiente bien.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Floor plan / plano de sala</b><span>Mapa de todas las mesas del restaurante con su número, capacidad y ubicación. Tu tablero de trabajo.</span></div>
+      <div class="gterm"><b>Rango / estación</b><span>Grupo de mesas del que es responsable un mismo mozo durante el turno.</span></div>
+      <div class="gterm"><b>Turn-time</b><span>Tiempo de vida de una mesa: desde que se sienta hasta que se libera. Define cuántas veces la vendes.</span></div>
+      <div class="gterm"><b>Rotación</b><span>Volver a vender la misma mesa en la misma noche a un nuevo grupo.</span></div>
+      <div class="gterm"><b>Doble sentada</b><span>Vender una mesa a dos turnos en el mismo servicio (ej. 20:00 y 22:15).</span></div>
+      <div class="gterm"><b>Cubiertos / covers</b><span>Número de comensales. Una mesa de 8 son 8 cubiertos: mide carga real, no solo mesas.</span></div>
+      <div class="gterm"><b>Deuce / 4-top</b><span>Mesa de 2 y mesa de 4 personas. El "top" indica cuántos asientos tiene.</span></div>
+      <div class="gterm"><b>Flex</b><span>Mesas que se juntan o estiran para cambiar de capacidad (dos deuces = un 4-top).</span></div>
+      <div class="gterm"><b>Round-robin</b><span>Repartir el sentado por turnos entre los rangos, como dar cartas, para equilibrar la carga.</span></div>
+      <div class="gterm"><b>En la weeds / bajo agua</b><span>Un mozo o la cocina saturados, sin dar abasto. Señal para dejar de cargarles.</span></div>
+      <div class="gterm"><b>Pacing</b><span>Regular la velocidad a la que sientas para no ahogar a cocina ni a un rango.</span></div>
+      <div class="gterm"><b>Bus / busser</b><span>Limpiar y remontar la mesa después de que se van (bus) y la persona que lo hace (busser).</span></div>
+      <div class="gterm"><b>Walk-in</b><span>Comensal que llega sin reserva. Se sienta si hay lugar o va a la waitlist.</span></div>
+      <div class="gterm"><b>No-show</b><span>Reserva que no se presenta. Se libera tras la ventana de gracia (típico 15 min).</span></div>
+      <div class="gterm"><b>Waitlist</b><span>Lista de espera con nombre, celular y tiempo estimado para sentar cuando se libere mesa.</span></div>
+      <div class="gterm"><b>Overbooking</b><span>Más reservas que capacidad para el mismo horario. Se resuelve con flex, barra y honestidad.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en recepción</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Floor plan y sentado · Chuleta del anfitrión</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Lee el plano</h4><ul>
+          <li>Número fijo por mesa: un solo idioma en sala.</li>
+          <li>Conoce capacidad y flex (deuces que se juntan).</li>
+          <li>Color = estado: verde recién, azul comiendo, amarillo libera pronto, rojo por limpiar.</li>
+          <li>Ten claras tus mesas buenas y malas.</li>
+        </ul></div>
+        <div class="op-box"><h4>Reparte por rango</h4><ul>
+          <li>Round-robin: la próxima al rango que hace más rato no recibe.</li>
+          <li>Cuenta cubiertos, no solo mesas.</li>
+          <li>Da respiro al que recibió grupo grande.</li>
+          <li>Avisa siempre al mozo cuando le entra mesa.</li>
+        </ul></div>
+        <div class="op-box"><h4>Rota con cabeza</h4><ul>
+          <li>El reloj arranca al sentar, no al ordenar.</li>
+          <li>Doble sentada con 15 min de colchón para el bus.</li>
+          <li>Mesa sucia = mesa que no vende: persigue al busser.</li>
+          <li>Nunca apures al comensal para rotar.</li>
+        </ul></div>
+        <div class="op-box"><h4>Sienta por perfil</h4><ul>
+          <li>Pareja → ventanal. Negocio → aislado. Grupo → fondo.</li>
+          <li>Accesibilidad (mayor, coche, silla) = prioridad, cerca del acceso.</li>
+          <li>Alergia/VIP: pásalo al mozo al sentar, no después.</li>
+          <li>Duda: pregunta "¿tranquila o cerca de la ventana?".</li>
+        </ul></div>
+        <div class="op-box"><h4>Coreografía (90 s)</h4><ul>
+          <li>Recibe con nombre y contacto visual.</li>
+          <li>Decide la mesa antes de caminar; guía medio paso adelante.</li>
+          <li>Ubica al invitado de honor con la mejor vista.</li>
+          <li>Marca en POS + pase de voz al rango.</li>
+        </ul></div>
+        <div class="op-box"><h4>Bajo presión</h4><ul>
+          <li>No-show: 15 min y a la waitlist.</li>
+          <li>Cocina en la weeds → frena el sentado (pacing).</li>
+          <li>Tiempos reales a la espera, nunca optimismo.</li>
+          <li>Calma: la sala copia tu energía.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Floor plan y asignación de mesas · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

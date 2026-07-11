@@ -1,0 +1,299 @@
+<!-- Curso Academia Prep! · Atención al cliente de delivery -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Atención al cliente de delivery · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e0562d'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Delivery</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#e0562d">
+    <div class="k">Academia Prep! · Delivery</div>
+    <h1>Atención al cliente de delivery</h1>
+    <p>El comensal de delivery no te ve la cara ni escucha tu tono: solo lee lo que escribes y prueba lo que llega. Este curso es para el equipo de delivery —quien toma pedidos, coordina con el motorizado y responde el chat—. Aprendes a comunicarte por WhatsApp y apps, a manejar reclamos de pedidos fríos, incompletos o demorados, cuándo reponer o compensar, y cómo responder reseñas para que Casa Italia suba de estrellas en vez de bajar.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Equipo de delivery</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> en salón, una sonrisa arregla medio problema; en delivery no tienes sonrisa, solo palabras y tiempos. Un mensaje seco, un "no sé dónde está su pedido" o un chat sin responder se convierten en una estrella y en un comensal que no vuelve. La cocina puede salir perfecta, pero si la comunicación falla, la experiencia falla. Tú eres la única cara del restaurante que el comensal a distancia llega a "ver".</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Comunicar sin cara ni tono</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">A distancia, el comensal completa con su imaginación lo que tú no le das. Si escribes "ok", él lee "le da igual". Si demoras en contestar, él imagina lo peor. En delivery tu trabajo es dar certeza: que sepa que su pedido existe, dónde va y cuándo llega. Estos son los principios que cambian un chat frío por uno que tranquiliza.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Escribe con calidez</h3><div class="d">Saluda por el nombre, usa "tú", agradece. "Hola Andrea, ¡gracias por tu pedido!" pesa mil veces más que un "recibido".</div><div class="s">el texto es tu tono de voz</div></div>
+      <div class="tipo"><h3>Responde rápido</h3><div class="d">Meta: contestar el chat en menos de 2 minutos. El silencio se lee como abandono. Si estás en el pico, al menos un "Ya te reviso, un momento 🙏".</div><div class="s">la velocidad calma</div></div>
+      <div class="tipo"><h3>Da certeza, no promesas vagas</h3><div class="d">"Sale en 25-30 min" es mejor que "ya sale". Un rango real que se cumple genera más confianza que un "rapidito" que se incumple.</div><div class="s">tiempos concretos</div></div>
+      <div class="tipo"><h3>Adelántate al problema</h3><div class="d">Si la cocina está saturada, avisa TÚ antes de que él pregunte: "Hoy tenemos alta demanda, tu pedido tardará ~15 min más, gracias por tu paciencia".</div><div class="s">avisar > que reclamen</div></div>
+      <div class="tipo"><h3>Un emoji, no diez</h3><div class="d">Un 🙌 o 🛵 humaniza y suaviza. Pero un chat lleno de emojis se ve poco serio. Uno por mensaje, bien puesto, basta.</div><div class="s">calidez, no informalidad</div></div>
+      <div class="tipo"><h3>Cierra siempre el bucle</h3><div class="d">No dejes mensajes en visto. Todo pedido termina con un "¡Que lo disfrutes! Cualquier cosa, aquí estoy 🍝". El comensal debe sentir que hay alguien detrás.</div><div class="s">nunca dejar en visto</div></div>
+    </div>
+    <div class="callout"><b>La regla de oro del texto:</b> lee tu mensaje en voz alta antes de enviarlo. Si sonara cortante dicho en persona, reescríbelo. En pantalla, "no hay" suena a portazo; "justo se nos acabó, ¿te ofrezco algo parecido?" suena a que te importa. La misma información, distinta experiencia.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Los mensajes de cada etapa del pedido</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Un pedido de delivery pasa por etapas y cada una necesita su mensaje. No se trata de bombardear al comensal, sino de acompañarlo en los momentos que importan: cuando confirma, cuando sale de cocina y cuando el motorizado está por llegar. Estos son los pasos y las plantillas listas para copiar en el canal propio (WhatsApp) de Casa Italia.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Al recibir el pedido</div><h4>Confirma con datos y tiempo</h4><p>Repite el pedido para evitar errores y da el tiempo estimado. "¡Hola Marco! Confirmamos tu pedido: 1 Lasagna Bolognesa + 1 Tiramisú. Total S/ 68 con delivery. Llega en 35-40 min a Av. Pardo 480. ¿Todo correcto? 🛵"</p></div></div>
+      <div class="paso"><div class="ico">💳</div><div><div class="t">Antes de cocinar</div><h4>Cierra el pago sin fricción</h4><p>Confirma método: "El pago es por Yape al 999-888-777 o en efectivo al motorizado. Si yapeas, mándame la captura y arrancamos 🙌". Nunca inicies cocina de un pedido grande sin pago o compromiso claro.</p></div></div>
+      <div class="paso"><div class="ico">🍳</div><div><div class="t">En preparación</div><h4>Avisa que ya está en cocina</h4><p>Un mensaje corto da tranquilidad: "Tu pedido ya está en cocina 👨‍🍳". Si va a demorar más de lo dicho, es AQUÍ donde avisas del retraso, no cuando ya se pasó la hora.</p></div></div>
+      <div class="paso"><div class="ico">🛵</div><div><div class="t">Al despachar</div><h4>Avisa que salió y con quién</h4><p>"¡Tu pedido salió! Lo lleva Luis en moto, llega en ~15 min. Ten listo el vuelto de S/ 100 si pagas en efectivo 💵". Dar el nombre del repartidor genera confianza y reduce el "¿dónde está mi pedido?".</p></div></div>
+      <div class="paso"><div class="ico">📍</div><div><div class="t">Por llegar</div><h4>Confirma la entrega y referencia</h4><p>"El motorizado está a 2 cuadras. ¿Confirmas que es la reja negra al lado de la farmacia? 🚪". Confirmar la referencia exacta evita vueltas y comida que se enfría en la puerta equivocada.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">Tras entregar</div><h4>Cierra con calidez y abre la puerta</h4><p>"¡Listo, que lo disfrutes! 🍝 Si algo no llegó perfecto, escríbeme y lo resolvemos. ¡Gracias por pedir a Casa Italia!" Este mensaje reduce reseñas negativas: el molesto te escribe a ti antes que a Rappi.</p></div></div>
+    </div>
+    <div class="callout"><b>El pedido sin respuesta:</b> si el comensal no confirma en 5-10 min un pedido que aún no está en cocina, escribe una vez: "Andrea, ¿seguimos con tu pedido? Lo tengo listo para arrancar 😊". No coordines ni cocines pedidos grandes sin confirmación: los "pedidos fantasma" son pérdida directa de insumo.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Manejo de reclamos a distancia</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Todo reclamo de delivery se maneja igual: escuchas, te disculpas, resuelves y agradeces —sin discutir y sin echar culpas al motorizado o a la app delante del comensal. La diferencia con el salón es que aquí no puedes ver el problema, así que primero pides evidencia (foto), luego actúas. Nunca respondas un reclamo a la defensiva.</p>
+    <table class="t">
+      <thead><tr><th>Situación</th><th>Qué NO decir</th><th>Qué decir (español neutro)</th></tr></thead>
+      <tbody>
+        <tr><td>Pedido incompleto (faltó un ítem)</td><td>"Imposible, acá lo empacamos completo"</td><td>"Lamento mucho el faltante, Marco. ¿Me mandas una foto de lo que recibiste? Te repongo el Tiramisú de inmediato o te lo devuelvo a tu Yape, tú eliges."</td></tr>
+        <tr><td>Comida fría o volteada</td><td>"El motorizado maneja rápido, no es culpa nuestra"</td><td>"Qué pena que llegó así 🙏 Eso no es lo que ofrecemos. Cuéntame qué prefieres: te reponemos el plato o hacemos la devolución. Ya lo estoy resolviendo."</td></tr>
+        <tr><td>Demora larga</td><td>"Es que hay mucho pedido hoy"</td><td>"Tienes toda la razón, se demoró más de lo prometido y lo siento. Ya está en camino con Luis, llega en 10 min, y por la espera te va un postre de cortesía 🍰."</td></tr>
+        <tr><td>Plato equivocado</td><td>"¿Seguro que pediste otra cosa?"</td><td>"Nos equivocamos y lo lamento. Te mando el plato correcto ahora mismo; el que llegó, quédatelo, va por la casa. En 20 min lo tienes."</td></tr>
+        <tr><td>Nunca llegó el pedido</td><td>"Nosotros ya lo despachamos, reclama a Rappi"</td><td>"Voy a rastrearlo ahora mismo y te doy respuesta en 5 min. No te preocupes, esto lo resuelvo yo: o te llega o te devolvemos todo."</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:14px">
+      <div class="paso"><div class="ico">👂</div><div><div class="t">Paso 1</div><h4>Escucha y valida sin excusas</h4><p>Deja que explique todo. Primera respuesta siempre empieza lamentando: "Lamento mucho lo que pasó". No importa si fue la app, el motorizado o la cocina: para el comensal, todo es Casa Italia.</p></div></div>
+      <div class="paso"><div class="ico">📸</div><div><div class="t">Paso 2</div><h4>Pide evidencia con tacto</h4><p>"¿Me compartes una foto? Así lo reporto y lo arreglo mejor." La foto no es para desconfiar, es para resolver y para el registro. Pídela amable, nunca como acusación.</p></div></div>
+      <div class="paso"><div class="ico">🔧</div><div><div class="t">Paso 3</div><h4>Ofrece la solución y deja elegir</h4><p>Reposición o devolución, que el comensal elija. Dar la opción devuelve el control a quien se sintió pasado a llevar. Da un plazo concreto y cúmplelo.</p></div></div>
+      <div class="paso"><div class="ico">🙏</div><div><div class="t">Paso 4</div><h4>Agradece y registra</h4><p>"Gracias por avisarme, así lo pude arreglar." Luego registra el caso en el módulo Delivery de Prep! (motivo + solución) para detectar si un motorizado o un plato falla seguido.</p></div></div>
+    </div>
+    <div class="callout"><b>Nunca frente al comensal:</b> jamás culpes al repartidor, a la cocina o a "el sistema de Rappi". El comensal no quiere saber de quién fue la falla, quiere su solución. Los problemas internos se hablan puertas adentro con el gerente, nunca en el chat.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Reposiciones y compensaciones</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Reponer bien recupera al comensal; reponer mal (tarde, a medias o con mala cara escrita) lo pierde igual. Aquí aprendes cuándo repones, cuándo devuelves plata y cuándo sumas una cortesía —y hasta dónde puedes decidir tú sin llamar al gerente. La compensación se ofrece rápido y con generosidad razonable: tacañear en una disculpa sale más caro que el plato.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Reposición</h3><div class="d">El plato salió mal (frío, equivocado, incompleto). Mandas el correcto de nuevo. Es la solución preferida: el comensal quería comer eso, no que le devuelvan la plata.</div><div class="s">falla del producto</div></div>
+      <div class="tipo"><h3>Devolución</h3><div class="d">Cuando ya no tiene sentido reponer (es tarde, ya comió otra cosa, no quiere esperar). Se devuelve a su Yape/Plin o se anula el cobro en la app. Rápido y sin drama.</div><div class="s">cuando reponer no sirve</div></div>
+      <div class="tipo"><h3>Cortesía extra</h3><div class="d">Un postre, una bebida o un cupón para la próxima. Va ADEMÁS de arreglar el problema, para compensar la molestia. Convierte un mal rato en un "qué bien lo resolvieron".</div><div class="s">el gesto que fideliza</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Qué pasó</th><th>Respuesta correcta</th><th>¿Necesitas al gerente?</th></tr></thead>
+      <tbody>
+        <tr><td>Faltó un ítem o llegó frío</td><td>Reponer o devolver ese ítem + disculpa</td><td>No, decides tú</td></tr>
+        <tr><td>Demora de 15-30 min sobre lo prometido</td><td>Cortesía (postre/bebida) en el mismo pedido</td><td>No, decides tú</td></tr>
+        <tr><td>Plato equivocado completo</td><td>Reponer el correcto; regalar el errado</td><td>No, avisa al cerrar turno</td></tr>
+        <tr><td>Pedido perdido / motorizado no llegó</td><td>Devolución total + reenvío si aún lo quiere</td><td>Sí, coordinar con gerente</td></tr>
+        <tr><td>Comensal exige devolución de todo por 1 ítem</td><td>Escuchar, ofrecer reponer; escalar si insiste</td><td>Sí, gerente aprueba</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Compensar que recupera</h4><ul>
+        <li>Ofreces la solución en el primer o segundo mensaje.</li>
+        <li>Dejas que el comensal elija reponer o devolver.</li>
+        <li>Sumas una cortesía cuando la molestia fue grande.</li>
+        <li>Cumples el plazo que prometiste y avisas cuando sale.</li>
+        <li>Registras el caso en Prep! para no repetir el error.</li>
+      </ul></div>
+      <div class="box no"><h4>Compensar que pierde</h4><ul>
+        <li>Regateas: "solo le puedo devolver la mitad".</li>
+        <li>Haces esperar días la devolución del Yape.</li>
+        <li>Prometes cortesía "para la próxima" y nadie la registra.</li>
+        <li>Pides que él te persiga para que cumplas.</li>
+        <li>Repones el mismo plato con el mismo error.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La cuenta que importa:</b> reponer un Tiramisú cuesta unos soles de insumo. Una reseña de 1 estrella en Google o PedidosYa te cuesta decenas de pedidos futuros que nunca ves llegar. Sé generoso al resolver: casi siempre el plato repuesto es más barato que el daño de un comensal furioso escribiendo en público.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Reseñas de delivery</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">En delivery, la reseña es el boca a boca. Un comensal de salón felizmente atendido quizá no reseña; el de delivery molesto casi siempre sí. Tu trabajo tiene dos frentes: provocar reseñas buenas de los contentos y responder TODAS las malas con temple para que el próximo que lee vea un restaurante que se hace cargo. En Rappi, PedidosYa y Google, la respuesta la lee todo el que va a pedir.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">⭐</div><div><div class="t">Pedir la buena</div><h4>Invita a reseñar cuando todo salió bien</h4><p>En el mensaje de cierre de un pedido perfecto: "¡Nos alegra que te gustara! Si tienes un minuto, una reseña en Google nos ayuda muchísimo 🙏 [link]". Pide justo cuando la satisfacción está caliente, no días después.</p></div></div>
+      <div class="paso"><div class="ico">⚡</div><div><div class="t">Responder rápido</div><h4>Toda reseña negativa se responde en menos de 24 h</h4><p>Una reseña mala sin responder grita "no les importa". Una respuesta a tiempo dice "aquí hay gente que escucha". El módulo Voz del Cliente de Prep! te avisa de las reseñas sin responder.</p></div></div>
+      <div class="paso"><div class="ico">🤝</div><div><div class="t">Responder con temple</div><h4>Agradece, lamenta, invita a resolver en privado</h4><p>Nunca discutas en público ni contradigas al comensal aunque exagere. Reconoce, ofrece arreglarlo y pasa la conversación al chat privado. Quien lee valora la actitud, no quién "tenía razón".</p></div></div>
+      <div class="paso"><div class="ico">🌟</div><div><div class="t">Responder las buenas también</div><h4>Agradece las reseñas de 5 estrellas por nombre</h4><p>"¡Gracias, Andrea! Nos encanta que la lasagna te llegara perfecta 🍝 Te esperamos pronto." Responder las buenas fideliza y muestra a los demás que hay un equipo atento, no un buzón vacío.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Reseña recibida</th><th>Respuesta pública modelo</th></tr></thead>
+      <tbody>
+        <tr><td>⭐ "Llegó frío y tarde, pésimo"</td><td>"Marco, lamentamos mucho la experiencia, no es lo que ofrecemos. Ya estamos revisando qué pasó con la entrega. Escríbenos por interno para compensarte como corresponde. Gracias por avisarnos."</td></tr>
+        <tr><td>⭐⭐ "Faltó mi postre"</td><td>"Lamentamos el faltante, Ana. Eso no debió pasar y queremos resolverlo. Por favor escríbenos por interno con tu N° de pedido y te lo reponemos. Gracias por la paciencia."</td></tr>
+        <tr><td>⭐⭐⭐⭐⭐ "Todo perfecto, riquísimo"</td><td>"¡Mil gracias, Andrea! 🍝 Nos alegra un montón que lo disfrutaras. Te esperamos en tu próximo pedido."</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Nunca respondas caliente:</b> si una reseña es injusta o hiriente, no contestes en el momento. Respira, cuéntaselo al gerente y responde recién cuando tengas temple. Una respuesta a la defensiva o irónica en público hace más daño que la reseña original: la ven todos los que van a pedir.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Casos difíciles y cuándo escalar</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La mayoría de casos los resuelves tú siguiendo los módulos anteriores. Pero hay situaciones que te superan y donde insistir empeora todo: es momento de pasar la posta al gerente sin sentirlo como fracaso. Escalar a tiempo es parte de atender bien. Aquí aprendes a reconocer esos casos y a manejar los comensales más complicados sin perder la calma escrita.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Pide devolución total repetidas veces</h3><div class="d">Reclama todo el pedido por una falla menor y no acepta reponer. Escucha, ofrece una vez, y si insiste, pasa al gerente con el historial del chat.</div><div class="s">escalar</div></div>
+      <div class="tipo"><h3>Amenaza con "los reviento en redes"</h3><div class="d">No cedas por miedo ni te pelees. Mantén el tono profesional, ofrece la solución justa y avisa al gerente. La amenaza no cambia lo que corresponde hacer.</div><div class="s">escalar, sin ceder al chantaje</div></div>
+      <div class="tipo"><h3>Falta la dirección o no contesta</h3><div class="d">El motorizado no encuentra al comensal y no responde llamadas. Intenta chat + llamada; si en 10 min no hay respuesta, coordina con gerente el protocolo de no-entrega.</div><div class="s">documentar y escalar</div></div>
+      <div class="tipo"><h3>Insultos o falta de respeto</h3><div class="d">Nadie tiene que aguantar maltrato. Responde una vez con firmeza amable ("Estoy aquí para ayudarte, resolvámoslo con respeto") y deriva al gerente.</div><div class="s">escalar</div></div>
+      <div class="tipo"><h3>Reclamo por app (Rappi/PedidosYa)</h3><div class="d">Cuando la falla es del repartidor de la app, igual respondes con calidez, pero el reembolso lo gestiona la plataforma. Guía al comensal y reporta el caso.</div><div class="s">coordinar con la plataforma</div></div>
+      <div class="tipo"><h3>Sospecha de fraude</h3><div class="d">"Nunca llegó" en cada pedido, o captura de Yape falsa. No acuses; verifica con calma (rastreo, comprobante) y pásalo al gerente. Nunca decides tú solo bloquear.</div><div class="s">verificar y escalar</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Escalar bien</h4><ul>
+        <li>Avisas al gerente con el chat y el N° de pedido a la mano.</li>
+        <li>Le dices al comensal: "Déjame coordinarlo con mi jefe para darte la mejor solución".</li>
+        <li>Mantienes el tono calmado hasta entregar la posta.</li>
+        <li>Registras el caso en el módulo Delivery de Prep!.</li>
+      </ul></div>
+      <div class="box no"><h4>Escalar mal</h4><ul>
+        <li>Discutes hasta que el comensal explota antes de pedir ayuda.</li>
+        <li>Prometes algo que no puedes cumplir para salir del paso.</li>
+        <li>Le dices "eso no es mi problema, habla con el gerente".</li>
+        <li>Cedes a chantajes por miedo a una mala reseña.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Escalar no es rendirse:</b> pasar un caso al gerente a tiempo, con el contexto ordenado, es señal de buen criterio. Lo que se ve mal es dejar que un caso se pudra en tus manos hasta que el comensal ya está furioso. Ante la duda de si te corresponde decidir, escala: mejor preguntar que romper la relación con el comensal.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Canal propio</b><span>Delivery del restaurante sin intermediario (WhatsApp, web /pedir de Casa Italia). No paga comisión y tú controlas toda la comunicación.</span></div>
+      <div class="gterm"><b>Marketplace / app</b><span>Rappi, PedidosYa y similares. Traen pedidos pero cobran comisión y limitan tu contacto con el comensal; el reembolso lo gestiona la plataforma.</span></div>
+      <div class="gterm"><b>Motorizado / repartidor</b><span>Quien lleva el pedido en moto. Es la última cara física del restaurante; su trato también es tu reputación.</span></div>
+      <div class="gterm"><b>Tiempo estimado (ETA)</b><span>El rango que le prometes al comensal para que llegue su pedido (ej. 35-40 min). Se da con realismo y se cumple.</span></div>
+      <div class="gterm"><b>Reposición</b><span>Volver a mandar el plato que salió mal (frío, equivocado, incompleto). Es la solución preferida cuando el comensal aún quiere comer.</span></div>
+      <div class="gterm"><b>Devolución</b><span>Regresar el dinero (a Yape/Plin o anulando el cobro) cuando reponer ya no tiene sentido.</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Un extra gratis (postre, bebida, cupón) que va además de resolver el problema, para compensar la molestia.</span></div>
+      <div class="gterm"><b>Pedido fantasma</b><span>Pedido que se cocina o coordina sin confirmación ni pago del comensal y termina sin entregar. Pérdida directa de insumo.</span></div>
+      <div class="gterm"><b>Yape / Plin</b><span>Billeteras móviles peruanas para cobrar y devolver al instante. Pide siempre la captura del pago antes de despachar.</span></div>
+      <div class="gterm"><b>Referencia</b><span>La seña que ayuda a ubicar la puerta exacta ("reja negra al lado de la farmacia"). Confirmarla evita que la comida se enfríe buscando.</span></div>
+      <div class="gterm"><b>Reseña</b><span>Calificación pública (Google, Rappi, PedidosYa). El boca a boca del delivery: la lee todo el que va a pedir.</span></div>
+      <div class="gterm"><b>Escalar</b><span>Pasar un caso al gerente cuando te supera. No es fracaso: es buen criterio hecho a tiempo.</span></div>
+      <div class="gterm"><b>Dejar en visto</b><span>Leer el mensaje del comensal y no responder. En delivery se lee como abandono; nunca se hace.</span></div>
+      <div class="gterm"><b>Voz del Cliente</b><span>Módulo de Prep! que monitorea reseñas de Google y apps y avisa las que faltan responder.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en delivery</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Delivery · Chuleta de atención</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Comunicar a distancia</h4><ul>
+          <li>Saluda por su nombre, usa "tú", agradece.</li>
+          <li>Responde el chat en menos de 2 min.</li>
+          <li>Da tiempos reales, no "rapidito".</li>
+          <li>Avisa TÚ del retraso antes de que pregunten.</li>
+          <li>Nunca dejes en visto: cierra el bucle.</li>
+        </ul></div>
+        <div class="op-box"><h4>Mensajes por etapa</h4><ul>
+          <li>Recibir: confirma pedido + total + ETA.</li>
+          <li>Pago: pide captura de Yape antes de cocinar.</li>
+          <li>Despacho: "Salió, lo lleva Luis, ~15 min".</li>
+          <li>Por llegar: confirma la referencia exacta.</li>
+          <li>Cierre: "¡Que lo disfrutes! Cualquier cosa, aquí estoy".</li>
+        </ul></div>
+        <div class="op-box"><h4>Reclamos (Escucha–Disculpa–Resuelve–Agradece)</h4><ul>
+          <li>Empieza lamentando, sin excusas ni culpas.</li>
+          <li>Pide foto con tacto, para resolver.</li>
+          <li>Ofrece reponer o devolver: deja elegir.</li>
+          <li>Nunca culpes al motorizado ni a la app.</li>
+          <li>Registra el caso en el módulo Delivery.</li>
+        </ul></div>
+        <div class="op-box"><h4>Reponer / compensar</h4><ul>
+          <li>Falla de plato o demora: decides tú, rápido.</li>
+          <li>Molestia grande: suma una cortesía.</li>
+          <li>Devuelve el Yape al instante, sin regatear.</li>
+          <li>Pedido perdido o exige todo: escala al gerente.</li>
+          <li>El plato repuesto es más barato que 1 estrella.</li>
+        </ul></div>
+        <div class="op-box"><h4>Reseñas</h4><ul>
+          <li>Pide la buena en el cierre de un pedido perfecto.</li>
+          <li>Responde toda reseña negativa en menos de 24 h.</li>
+          <li>Agradece, lamenta, pasa a privado. No discutas.</li>
+          <li>Responde también las de 5 estrellas, por nombre.</li>
+          <li>Nunca respondas caliente: primero temple.</li>
+        </ul></div>
+        <div class="op-box"><h4>Cuándo escalar</h4><ul>
+          <li>Exige devolución total y no acepta reponer.</li>
+          <li>Amenaza, insulta o falta el respeto.</li>
+          <li>Pedido perdido / sospecha de fraude.</li>
+          <li>Di: "Déjame coordinarlo con mi jefe".</li>
+          <li>Escalar a tiempo es buen criterio, no fracaso.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Atención al cliente de delivery · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

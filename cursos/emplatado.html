@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Emplatado y presentación · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c2410c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Emplatado</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c2410c">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Emplatado y presentación</h1>
+    <p>El plato es lo primero que come el invitado — con los ojos, antes del primer bocado. Aquí aprendes a montar con estándar: altura, color, salsa limpia y el mismo plato idéntico la primera y la número cien de la noche.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~32 min</span><span>🎯 Cocina</span><span>📄 One-pager imprimible</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el invitado paga por una experiencia completa y la primera prueba de esa experiencia entra por los ojos. Un ceviche perfecto de sabor pero con la leche de tigre corriendo hasta el borde, o un lomo saltado amontonado sin altura, se leen como "cocina que no cuida el detalle" antes de probarse. En un restaurante de nivel el plato también se fotografía y se sube a Instagram: tu montaje es marketing gratis o una reseña tibia. Emplatar bien no toma más tiempo, toma más criterio.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>El estándar del plato</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Emplatar no es "poner bonito": es cumplir un estándar repetible que ya está definido en la ficha del plato. Estas son las reglas base que aplican a cada montaje que sale del pase.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El plato es un producto terminado</h3><div class="d">Sale del pase igual que sale un auto de fábrica: con un estándar fijo. No es una obra de arte distinta cada vez; es el mismo montaje, ejecutado limpio, plato tras plato.</div><div class="s">Estándar, no inspiración</div></div>
+      <div class="tipo"><h3>Plato tibio, comida a temperatura</h3><div class="d">Plato caliente para fondos (sale de la torre calentadora), plato frío para tiradito y postre. Un plato tibio con leche de tigre helada arruina el contraste. La temperatura es parte del montaje.</div><div class="s">Nunca montes en plato frío un fondo</div></div>
+      <div class="tipo"><h3>Regla del reloj: 6 en punto</h3><div class="d">La proteína o el elemento principal va hacia el invitado, en la posición de las 6. Guarnición y salsa detrás. Así el comensal lee el plato correcto sin girarlo.</div><div class="s">Lo principal mira al invitado</div></div>
+      <div class="tipo"><h3>Deja respirar el plato</h3><div class="d">No llenes el borde. La loza vacía enmarca la comida y la hace ver más cuidada y de mayor valor. Amontonar hasta el filo se lee como menú de fonda, no de carta.</div><div class="s">El borde limpio es parte del diseño</div></div>
+      <div class="tipo"><h3>Número impar y grupos</h3><div class="d">Tres langostinos se ven mejor que dos o cuatro; tres quenelles de causa, mejor que un bloque. El ojo prefiere impares y elementos agrupados, no dispersos al azar.</div><div class="s">3 se ve mejor que 4</div></div>
+      <div class="tipo"><h3>Cada cosa se come</h3><div class="d">Todo lo que va en el plato es comestible y tiene una razón. Nada de hojas decorativas que el invitado tiene que apartar ni flores que no se comen. Si no aporta sabor o textura, no va.</div><div class="s">Sin adornos que se descartan</div></div>
+    </div>
+    <div class="callout"><b>En una frase:</b> el estándar no lo decides tú en el momento — está en la ficha técnica y en la foto de referencia. Tu trabajo es reproducirlo idéntico bajo presión, no reinventarlo.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Altura, volumen y punto focal</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Un plato plano y desparramado se ve "poco". La altura da presencia, valor percibido y un punto donde el ojo se detiene. Así se construye de abajo hacia arriba.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">looks_one</span></div><div><div class="t">Base</div><h4>Empieza por la cama, no por la estrella</h4><p>Primero lo que va abajo: la crema de ají de gallina, el puré de pallares, el risotto, la cama de arroz. Se coloca al centro y se le da forma con la parte de atrás de la cuchara, dejando espacio limpio alrededor.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">looks_two</span></div><div><div class="t">Ancla</div><h4>Apoya la proteína, no la aplastes</h4><p>El elemento principal se apoya recostado o inclinado sobre la base para ganar altura: el magret en abanico apoyado sobre el puré, el pulpo al olivo cruzado sobre la papa. Inclinado se ve más alto que echado plano.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">looks_3</span></div><div><div class="t">Volumen</div><h4>Construye hacia arriba con la guarnición</h4><p>La guarnición se monta apoyada contra la proteína, hacia arriba, no esparcida al lado. Un manojo de brotes o unos espárragos parados dan una diagonal que sube. Buscas una silueta con un punto alto, no una alfombra pareja.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">center_focus_strong</span></div><div><div class="t">Punto focal</div><h4>Un solo elemento manda</h4><p>Todo plato tiene una estrella: la quenelle de causa coronada, el langostino grillado arriba del todo, la yema curada. El punto focal va ligeramente descentrado (regla de tercios) y es lo primero que el ojo ve. No compitan dos protagonistas.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">architecture</span></div><div><div class="t">Acabado</div><h4>El toque final va arriba y liviano</h4><p>Brotes, láminas de rabanito, una tuile, hojas de culantro o aceite: se colocan al final, arriba, con pinza, sin aplastar el volumen que construiste. Corona, no entierres.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Recostar la proteína sobre la base para ganar altura</li>
+        <li>Un único punto focal claro, descentrado según tercios</li>
+        <li>Guarnición agrupada y hacia arriba, con una diagonal</li>
+        <li>Brotes y crocantes colocados al final con pinza</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Extender todo plano hasta cubrir el plato como pizza</li>
+        <li>Dos elementos grandes peleando por ser el centro</li>
+        <li>Repartir la guarnición en montoncitos simétricos y aburridos</li>
+        <li>Aplastar los brotes bajo la proteína al montar</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Prueba rápida:</b> mira el plato de perfil, a la altura de la mesa. Si es una silueta plana, súbelo. Si tiene un punto alto claro y una diagonal, está bien construido.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Color y contraste</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La cocina peruana tiene color de sobra — úsalo. El contraste hace que la comida se vea fresca y apetecible; un plato monótono (todo marrón, todo beige) se ve sin vida aunque esté delicioso.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El plato marrón necesita un aliado</h3><div class="d">Lomo saltado, seco de cordero, adobo: sabrosos pero de un solo tono. Rescátalos con un verde vivo (culantro, cebollita china fresca), el rojo de un rocoto o el amarillo de un choclo. Un solo golpe de color cambia todo.</div><div class="s">Marrón + 1 color vivo</div></div>
+      <div class="tipo"><h3>Loza que hace contraste</h3><div class="d">Plato blanco mate para resaltar salsas oscuras y colores; plato de piedra o negro para tiraditos claros y cebiches. El color del plato es el fondo del cuadro: elige el que haga saltar la comida, no el que la esconda.</div><div class="s">La loza es el lienzo</div></div>
+      <div class="tipo"><h3>Colores que abren el apetito</h3><div class="d">Rojos, naranjas y amarillos (rocoto, ají amarillo, zapallo, camote) invitan a comer. Verdes frescos dan sensación de limpio. El azul y el gris no existen en comida rica: evita que el plato tire a apagado.</div><div class="s">Cálidos = apetito</div></div>
+      <div class="tipo"><h3>Contraste de textura, también</h3><div class="d">El ojo lee brillo y mate, crocante y cremoso. Un cancha tostada sobre una crema, una tuile sobre un helado, cebolla crocante sobre un puré: el contraste de textura se ve, no solo se siente en boca.</div><div class="s">Brillo + mate, crocante + suave</div></div>
+      <div class="tipo"><h3>El verde va al final</h3><div class="d">Hierbas y brotes se oxidan y se marchitan con el calor. El culantro, la huacatay o los brotes se colocan al último, sobre lo caliente, no antes. Verde mustio = plato que esperó en el pase.</div><div class="s">Nunca calientes el brote</div></div>
+      <div class="tipo"><h3>Menos colores, pero intencionales</h3><div class="d">No busques arcoíris. Dos o tres colores bien puestos se ven de nivel; cinco colores al azar se ven de menú infantil. Elige una paleta por plato y respétala en toda la noche.</div><div class="s">2–3 colores, no un arcoíris</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Plato</th><th>Base de color</th><th>Golpe de contraste</th><th>Acabado final</th></tr></thead>
+      <tbody>
+        <tr><td>Ceviche clásico</td><td>Blanco del pescado, leche de tigre</td><td>Camote naranja, choclo amarillo, cebolla morada</td><td>Culantro fino, canchita tostada aparte</td></tr>
+        <tr><td>Lomo saltado</td><td>Marrón de la carne y la papa frita</td><td>Rojo del tomate, verde de cebollita china</td><td>Culantro y un hilo de su jugo, no ahogado</td></tr>
+        <tr><td>Ají de gallina</td><td>Amarillo cremoso</td><td>Aceituna negra, huevo, papa blanca</td><td>Pecana partida, perejil crocante</td></tr>
+        <tr><td>Causa de langostinos</td><td>Amarillo intenso del ají</td><td>Rosado del langostino, verde palta</td><td>Brote, huevo de codorniz, gota de ají</td></tr>
+        <tr><td>Tiradito nikkei</td><td>Blanco del pescado sobre plato oscuro</td><td>Naranja del ají amarillo, rojo del rocoto</td><td>Cebollín, ajonjolí, aceite de sésamo</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Salsas, aceites y trazos limpios</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La salsa hace o rompe un plato de nivel. Un espejo bien puesto o un trazo firme se ven caros; una salsa corrida y con burbujas se ve descuidada. Así se manejan salsas, aceites y puntos.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">opacity</span></div><div><div class="t">Punto</div><h4>Corrige la densidad antes de salsear</h4><p>Una salsa muy líquida corre y moja el borde; una muy espesa se ve pegote y no brilla. Debe caer del cucharón en hilo continuo y napar (cubrir el dorso de la cuchara). Si está aguada, redúcela; si está espesa, aflójala con fondo. Esto se corrige antes de que llegue el plato, no encima.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">gradient</span></div><div><div class="t">Espejo</div><h4>La salsa primero, la comida encima</h4><p>Para un espejo (salsa que cubre el fondo), se pone la salsa en el plato tibio y se gira con muñeca para que se asiente pareja; recién entonces se apoya la proteína. Nunca salsees encima de la proteína crocante: la ablandas y pierdes el contraste.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">draw</span></div><div><div class="t">Trazo</div><h4>Un gesto firme, no muchos tímidos</h4><p>Un trazo de crema (con cuchara arrastrada o biberón) sale de un solo movimiento decidido. Dudar deja un trazo tembloroso. Practica el gesto en la tabla antes del servicio. Una lágrima, tres puntos o una línea: elige el patrón de la ficha y repítelo igual.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">water_drop</span></div><div><div class="t">Aceites</div><h4>Gotas de aceite: pocas y parejas</h4><p>Aceite de culantro, de rocoto o de olivo: en gotas del mismo tamaño y espaciadas, con biberón o cuchara. Van sobre la salsa o el caldo (flotan y dan brillo y color), nunca chorreadas. Tres gotas iguales se ven de nivel; un chorro se ve de accidente.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">cleaning_services</span></div><div><div class="t">Limpieza</div><h4>Salsea y luego revisa el borde</h4><p>Toda gota fuera de lugar se limpia (ver Módulo 5). Si el biberón gotea al levantarlo, límpialo con un giro de muñeca sobre el recipiente, no sobre el plato. La salsa vive dentro del cuadro que dejaste, nunca en el borde.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Recurso</th><th>Herramienta</th><th>Cuándo</th><th>Error a evitar</th></tr></thead>
+      <tbody>
+        <tr><td>Espejo de salsa</td><td>Cucharón + giro de plato</td><td>Primero, antes de la proteína</td><td>Que toque el borde o quede disparejo</td></tr>
+        <tr><td>Trazo / lágrima</td><td>Cuchara arrastrada o biberón</td><td>Al inicio, como base gráfica</td><td>Trazo tembloroso por dudar</td></tr>
+        <tr><td>Puntos de crema</td><td>Biberón fino</td><td>Como acento, tamaño parejo</td><td>Puntos de distinto tamaño</td></tr>
+        <tr><td>Gotas de aceite</td><td>Biberón o cucharita</td><td>Al final, sobre salsa o caldo</td><td>Chorro que se esparce</td></tr>
+        <tr><td>Reducción / demi</td><td>Cuchara, en hilo</td><td>Sobre la carne o al lado</td><td>Ahogar la proteína crocante</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla del biberón:</b> tenlo boca abajo listo y purga la primera gota en un cuenco antes de tocar el plato. La primera gota siempre sale mal — que salga en el cuenco, no en el montaje.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Limpieza del plato y acabado</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Un plato bien montado con el borde sucio pierde todo su nivel. La limpieza del plato es el paso que separa "casero" de "restaurante de nivel", y toma diez segundos.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Limpiar el borde con paño limpio humedecido y otro seco antes de mandar</li>
+        <li>Tener un paño exclusivo de pase, sin usarlo para otra cosa</li>
+        <li>Revisar el plato a la luz: huellas, salpicaduras, gotas secas</li>
+        <li>Coger el plato por el borde, con paño, para no dejar huellas</li>
+        <li>Cambiar el plato si tiene un cascado, mancha fija o falla de vidriado</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Mandar el plato con salpicaduras de salsa en el borde</li>
+        <li>Limpiar con el mismo paño con que secas las manos o la tabla</li>
+        <li>Dejar huellas de dedos grasosas en el filo blanco</li>
+        <li>Soplar o limpiar con el dedo sobre la comida</li>
+        <li>Servir en loza cascada, rayada o con el logo despintado</li>
+      </ul></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">pan_tool</span></div><div><div class="t">Manos</div><h4>Toca el plato solo por el borde</h4><p>Una vez montado, el plato se coge por el filo con el paño de pase. Nada de pulgar apoyado dentro del plato ni dedos sobre la salsa. Las huellas grasosas en el blanco se ven muchísimo bajo la luz de la mesa.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">wash</span></div><div><div class="t">Borde</div><h4>Vuelta completa al aro del plato</h4><p>Con el paño humedecido, una vuelta completa al borde interior y al filo. Luego una pasada con paño seco. Presta atención a las 6 (donde salpica la salsa) y debajo, donde la comida a veces asoma por el canto.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">visibility</span></div><div><div class="t">Control</div><h4>Última mirada bajo la luz del pase</h4><p>Antes de decir "corre", inclina el plato hacia la luz: brillos de grasa, gotas secas, un brote fuera de lugar, un pelo. Este vistazo de dos segundos es responsabilidad de quien monta y del que expedita en el pase.</p></div></div>
+    </div>
+    <div class="callout"><b>El estándar del pase:</b> ningún plato cruza a sala con el borde sucio. Si sale mal, vuelve — es más barato retenerlo diez segundos que perder una reseña por una foto con el borde manchado.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Consistencia y foto de referencia</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El plato número cien de la noche debe verse igual que el primero, lo monte quien lo monte. La foto de referencia y unos hábitos de estación son las herramientas que garantizan que así sea.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">photo_camera</span></div><div><div class="t">Referencia</div><h4>La foto manda, no la memoria</h4><p>Cada plato de la carta tiene su foto de referencia (en la ficha técnica y pegada en la estación). Muestra el montaje exacto: qué plato, cuántas piezas, dónde va cada elemento, el patrón de salsa. Ante la duda, se mira la foto — no se improvisa "como me acuerdo".</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">scale</span></div><div><div class="t">Gramaje</div><h4>Pesa y cuenta, no calcules a ojo</h4><p>La consistencia empieza en el gramaje: 180 g de proteína, 3 langostinos, 60 g de guarnición. Porciones a ojo hacen que un invitado reciba el doble que la mesa de al lado. Balanza en la estación y porciones pre-pesadas en el mise en place.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">grid_view</span></div><div><div class="t">Mise en place</div><h4>Estación ordenada = montaje repetible</h4><p>Brotes en agua, salsas en biberón rotulado, guarniciones porcionadas, plato correcto a mano. Si tienes que buscar la pinza o rellenar el biberón en pleno pase, el montaje sale distinto y lento. El orden de la estación es lo que hace posible repetir.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups</span></div><div><div class="t">Equipo</div><h4>Mismo plato, lo monte quien lo monte</h4><p>En un turno el mismo plato lo puede armar el chef de partida o el ayudante. Todos siguen la misma foto y el mismo gramaje. La consistencia es del restaurante, no del talento de una persona. Si alguien "mejora" el montaje por su cuenta, rompe el estándar.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">update</span></div><div><div class="t">Actualización</div><h4>Si cambia el plato, cambia la foto</h4><p>Cuando el chef ajusta un montaje, se actualiza la foto de referencia y se avisa a toda la brigada el mismo día. Una foto vieja pegada en la estación genera platos inconsistentes. La referencia es un documento vivo.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Elemento del estándar</th><th>Cómo se controla</th><th>Quién lo revisa</th></tr></thead>
+      <tbody>
+        <tr><td>Cantidad de piezas y gramaje</td><td>Balanza + porciones pre-pesadas</td><td>Chef de partida</td></tr>
+        <tr><td>Ubicación de cada elemento</td><td>Foto de referencia en la estación</td><td>Quien monta</td></tr>
+        <tr><td>Patrón de salsa y acabado</td><td>Foto + biberón rotulado</td><td>Quien monta</td></tr>
+        <tr><td>Borde limpio y loza correcta</td><td>Control en el pase</td><td>Expedidor / chef de pase</td></tr>
+        <tr><td>Coherencia entre platos de una misma mesa</td><td>Montar la mesa completa junta</td><td>Expedidor</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Truco de nivel:</b> monta y limpia la mesa completa antes de mandarla. Cuatro platos de la misma mesa deben verse hermanos — misma altura, mismo patrón de salsa — porque el invitado los ve juntos, lado a lado, y ahí se nota cualquier diferencia.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Emplatar</b><span>Montar la comida en el plato siguiendo un estándar definido, listo para servir al invitado.</span></div>
+      <div class="gterm"><b>Punto focal</b><span>El elemento estrella del plato hacia donde el ojo va primero; se ubica descentrado según la regla de tercios.</span></div>
+      <div class="gterm"><b>Napar</b><span>Cubrir un elemento o el dorso de la cuchara con una capa pareja de salsa; indica el punto justo de densidad.</span></div>
+      <div class="gterm"><b>Espejo (de salsa)</b><span>Capa lisa de salsa que cubre el fondo del plato; se coloca antes de la proteína y da un fondo brillante y parejo.</span></div>
+      <div class="gterm"><b>Quenelle</b><span>Porción ovalada y lisa que se forma con dos cucharas; se usa para causa, helados, purés y cremas.</span></div>
+      <div class="gterm"><b>Regla del reloj</b><span>Convención de ubicar el elemento principal en la posición de las 6 (hacia el invitado) para que lea el plato correcto.</span></div>
+      <div class="gterm"><b>Regla de tercios</b><span>Dividir el plato en una grilla imaginaria de 3×3 y ubicar el punto focal en una intersección, no en el centro exacto.</span></div>
+      <div class="gterm"><b>Biberón</b><span>Frasco flexible de punta fina para dosificar salsas, aceites o cremas en trazos, puntos y gotas precisas.</span></div>
+      <div class="gterm"><b>Tuile</b><span>Lámina crocante y fina (dulce o salada) que aporta altura, textura y un elemento gráfico al montaje.</span></div>
+      <div class="gterm"><b>Brote / microgreen</b><span>Germinado tierno que se coloca al final como acabado fresco; nunca se expone al calor porque se marchita.</span></div>
+      <div class="gterm"><b>Foto de referencia</b><span>Imagen del montaje exacto de un plato, pegada en la estación y en la ficha técnica; es la fuente de verdad del emplatado.</span></div>
+      <div class="gterm"><b>Gramaje</b><span>Peso exacto de cada componente de una porción; base de la consistencia y del control de costos.</span></div>
+      <div class="gterm"><b>Expedidor / pase</b><span>Puesto que controla que cada plato salga completo, correcto, limpio y a tiempo antes de cruzar a sala.</span></div>
+      <div class="gterm"><b>Mise en place</b><span>Todo listo y en su sitio antes del servicio; en emplatado, salsas, brotes, loza y porciones a la mano.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la estación</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Emplatado · Chuleta de pase</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes de montar</h4><ul>
+          <li>Plato correcto y a temperatura (caliente / frío)</li>
+          <li>Loza sin cascados, rayas ni logo despintado</li>
+          <li>Salsas en biberón rotulado, brotes frescos, porciones pesadas</li>
+          <li>Foto de referencia a la vista</li>
+        </ul></div>
+        <div class="op-box"><h4>Construcción</h4><ul>
+          <li>Base al centro → proteína recostada → guarnición hacia arriba</li>
+          <li>Un solo punto focal, descentrado (tercios)</li>
+          <li>Altura y diagonal, no todo plano</li>
+          <li>Principal a las 6, mirando al invitado</li>
+        </ul></div>
+        <div class="op-box"><h4>Color y salsa</h4><ul>
+          <li>Marrón + 1 color vivo; 2–3 colores intencionales</li>
+          <li>Espejo primero, proteína encima (no ahogar lo crocante)</li>
+          <li>Trazo firme de un gesto; gotas parejas</li>
+          <li>Verde y brotes SIEMPRE al final</li>
+        </ul></div>
+        <div class="op-box"><h4>Limpieza y salida</h4><ul>
+          <li>Borde con vuelta completa: paño húmedo + seco</li>
+          <li>Coger por el filo, sin huellas</li>
+          <li>Mirada final bajo la luz del pase</li>
+          <li>Mesa completa montada y hermana antes de "corre"</li>
+        </ul></div>
+        <div class="op-box"><h4>Consistencia</h4><ul>
+          <li>La foto manda, no la memoria</li>
+          <li>Pesa y cuenta las piezas, no a ojo</li>
+          <li>Plato #100 = plato #1, lo monte quien lo monte</li>
+          <li>Cambia el montaje → cambia la foto y avisa</li>
+        </ul></div>
+        <div class="op-box"><h4>Los 6 no negociables</h4><ul>
+          <li>Estándar de la ficha, no improvisación</li>
+          <li>Altura y punto focal claro</li>
+          <li>Contraste de color y textura</li>
+          <li>Salsa limpia, borde impecable</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Emplatado y presentación · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

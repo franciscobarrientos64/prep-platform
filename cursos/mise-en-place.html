@@ -1,0 +1,303 @@
+<!-- Curso Academia Prep! · Mise en place y organización -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Mise en place y organización · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c2410c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Mise en place</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c2410c">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Mise en place y organización</h1>
+    <p>Todo listo antes de que entre la primera comanda. Este curso te enseña a preparar tu estación, armar tus listas de prep, rotular con criterio y trabajar limpio para que el servicio fluya sin quiebres.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Cocina</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un plato de fondos que en servicio debería salir en 8 minutos sale en 3 si la mise en place está lista. Sin ella, la estación se atora, los tiempos se disparan y el Pase empieza a cantar comandas atrasadas. La mise en place es la diferencia entre un servicio tranquilo y una noche de gritos.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es la mise en place</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">"Mise en place" (MEP) significa "todo en su lugar". Es preparar cada ingrediente, herramienta y salsa <b>antes</b> del servicio, para que en la línea solo montes y cocines, nunca busques o cortes. En cocina de nivel, la MEP no es una tarea: es una forma de pensar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>MEP de producción</h3><div class="d">Lo que preparas en la mañana para toda la operación: fondos, salsas madre, soffritto, blanqueados, porcionado de proteínas.</div><div class="s">// dura días, se rota</div></div>
+      <div class="tipo"><h3>MEP de línea</h3><div class="d">Lo que armas en tu estación 30 min antes de abrir: gastronorms cargados, botellas de aceite, sal, herramientas al alcance.</div><div class="s">// dura un turno</div></div>
+      <div class="tipo"><h3>El "todo listo"</h3><div class="d">Cuando el jefe pregunta "¿estás?", significa: ¿tu estación puede aguantar el rush sin frenar? Si dudas, no estás.</div><div class="s">// respuesta binaria</div></div>
+      <div class="tipo"><h3>Mentalidad</h3><div class="d">Preparas para el peor escenario, no para el promedio. Un viernes lleno se gana el martes en la tarde.</div><div class="s">// prevé, no reacciones</div></div>
+      <div class="tipo"><h3>Mise en place mental</h3><div class="d">Antes de cortar, ordena tu cabeza: qué platos llevan qué, cuál es la secuencia, dónde están los cuellos de botella.</div><div class="s">// pausa 2 min</div></div>
+      <div class="tipo"><h3>Estándar, no versión</h3><div class="d">Tu MEP se hace igual la haga quien la haga. La receta y el gramaje mandan, no el "ojo" del cocinero de turno.</div><div class="s">// ficha técnica</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> si en pleno servicio tienes que ir a la cámara a buscar algo o parar a cortar una cebolla, tu mise en place falló. Anótalo y prepáralo mejor mañana.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>La lista de prep y el pedido de producción</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">La lista de prep (prep list) es tu mapa del día. Se arma leyendo el pronóstico de cubiertos, el nivel de tus gastronorms y lo que dejó el turno anterior. Sin lista, preparas de más (merma) o de menos (quiebre en servicio).</p>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">inventory_2</span></div><div><div class="t">Paso 1 · 10 min</div><h4>Levanta el estado real de tu estación</h4><p>Revisa cada insumo: pesa o mide lo que queda. "Salsa pomodoro: queda 1/3 de gastronorm. Leche de tigre: vacía. Camote sancochado: 2 kg." No confíes en la memoria, mira y anota.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">calendar_month</span></div><div><div class="t">Paso 2 · 5 min</div><h4>Lee el pronóstico de hoy</h4><p>Mira los cubiertos proyectados y las reservas. Un jueves con 120 cubiertos y un evento de 30 no se prepara igual que un lunes de 40. Ajusta cantidades al día que viene, no al de ayer.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">checklist</span></div><div><div class="t">Paso 3 · 5 min</div><h4>Calcula el PAR y escribe la lista</h4><p>PAR = cantidad objetivo para aguantar el turno con colchón. Preparas la diferencia entre PAR y lo que queda. Ej: PAR de leche de tigre = 4 L, quedan 0 → preparo 4 L. Escribe cantidades exactas, no "harto".</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">low_priority</span></div><div><div class="t">Paso 4 · continuo</div><h4>Ordena por prioridad y tiempo</h4><p>Primero lo que tarda o necesita reposo: fondos (2-3 h), masa que leuda, marinados. Al final lo que se oxida o pierde textura: paltas, hierbas picadas, cítricos exprimidos. Cocina en paralelo: mientras el fondo reduce, cortas.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">task_alt</span></div><div><div class="t">Paso 5 · al cerrar cada ítem</div><h4>Tacha y rotula al terminar</h4><p>Cada preparación terminada se rotula y se guarda a temperatura. Tachar en la lista da control: sabes qué falta de un vistazo y el jefe también.</p></div></div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Insumo / preparación</th><th>PAR (turno)</th><th>Queda</th><th>Preparar hoy</th><th>Tiempo</th></tr></thead>
+      <tbody>
+        <tr><td>Fondo oscuro de res</td><td>6 L</td><td>1 L</td><td>5 L</td><td>3 h</td></tr>
+        <tr><td>Salsa pomodoro base</td><td>8 L</td><td>3 L</td><td>5 L</td><td>45 min</td></tr>
+        <tr><td>Soffritto (base risotto)</td><td>2 kg</td><td>0</td><td>2 kg</td><td>30 min</td></tr>
+        <tr><td>Leche de tigre</td><td>4 L</td><td>0</td><td>4 L</td><td>20 min</td></tr>
+        <tr><td>Lomo porcionado 180 g</td><td>25 u</td><td>8 u</td><td>17 u</td><td>25 min</td></tr>
+        <tr><td>Palta en cubos (fría)</td><td>1.5 kg</td><td>—</td><td>al abrir</td><td>10 min</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Truco del oficio:</b> lo que se oxida o marchita (palta, culantro picado, limón exprimido) va al final de la lista y se prepara lo más cerca posible del servicio, o se corta en tandas. Nunca "adelantes" una palta a las 10 a.m. para un servicio de la noche.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Montaje de la estación: orden y ergonomía</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Una estación bien montada se opera sin mirar. Todo tiene un lugar fijo y se devuelve a ese lugar. La regla es "un brazo de distancia": lo que más usas, más cerca; lo que pesa o gotea, abajo y al fondo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Zona de corte</h3><div class="d">Tabla estable (paño húmedo debajo), cuchillo afilado, bowl de merma a la izquierda, gastronorm de producto limpio a la derecha.</div></div>
+      <div class="tipo"><h3>Línea fría / caliente</h3><div class="d">Gastronorms en orden de uso según los platos más pedidos. Los toppings del plato estrella, al centro y a la mano.</div></div>
+      <div class="tipo"><h3>Trío base</h3><div class="d">Aceite, sal y papel siempre en el mismo punto. Un cocinero debe encontrarlos con los ojos cerrados.</div></div>
+      <div class="tipo"><h3>Herramientas</h3><div class="d">Pinzas, cuchara saucier, espátula y termómetro colgados o en un mismo recipiente, nunca sueltos en la mesa.</div></div>
+      <div class="tipo"><h3>Paños codificados</h3><div class="d">Uno seco para agarrar caliente, uno húmedo sanitizado para limpiar. Nunca el mismo, nunca en el hombro.</div></div>
+      <div class="tipo"><h3>Basura y merma</h3><div class="d">Tacho al alcance del pie, no del brazo. Cuentas de merma separadas para pesar al cierre.</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Estación lista</h4><ul>
+        <li>Todo rotulado y a temperatura correcta</li>
+        <li>Herramientas en su punto fijo, secas</li>
+        <li>Cuchillo afilado y con chaira a la mano</li>
+        <li>Superficie despejada para trabajar</li>
+        <li>Paño húmedo bajo la tabla (no resbala)</li>
+        <li>Reposición (backup) lista en la cámara</li>
+      </ul></div>
+      <div class="box no"><h4>Estación que te va a fallar</h4><ul>
+        <li>Gastronorms a medio llenar sin backup</li>
+        <li>Herramientas mezcladas con la merma</li>
+        <li>Botellas sin rotular, salsas sin fecha</li>
+        <li>Tabla resbalando, cuchillo sin filo</li>
+        <li>Cosas "prestadas" de otra estación</li>
+        <li>Producto caliente y frío en el mismo hueco</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Ergonomía real:</b> cada paso que das en servicio es tiempo perdido y un plato que se enfría. Si armas bien la estación en la tarde, en la noche montas 40 platos sin mover los pies de tu cuadro.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Rotulado y trazabilidad (FEFO)</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Un rótulo no es burocracia: es lo que evita que sirvas algo vencido, que se pierda producto y que Sanidad te observe. Regla FEFO: <b>primero vence, primero sale</b>. Todo lo que entra a cámara o congelador va rotulado, sin excepción.</p>
+    <table class="t">
+      <thead><tr><th>Campo del rótulo</th><th>Qué escribir</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Producto</td><td>Nombre claro, sin abreviaturas raras</td><td>Salsa pomodoro base</td></tr>
+        <tr><td>Fecha de elaboración</td><td>Día que se preparó</td><td>Elab: 10/07</td></tr>
+        <tr><td>Fecha de vencimiento</td><td>Según vida útil del producto</td><td>Vence: 13/07</td></tr>
+        <tr><td>Responsable</td><td>Iniciales de quien lo hizo</td><td>Resp: J.Q.</td></tr>
+        <tr><td>Lote / cantidad</td><td>Si aplica, para trazar</td><td>5 L · GN 1/1</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px"><b>Colores de etiqueta (código de día):</b> muchas cocinas usan cinta de color por día de la semana (ej. lunes verde, martes amarillo). De un vistazo sabes qué es lo más viejo en la cámara sin leer fechas. Lo más antiguo va siempre adelante.</div>
+    <p class="lead" style="margin-top:16px">Vida útil orientativa (siempre confirma con tu ficha y con Sanidad de tu local):</p>
+    <table class="t">
+      <thead><tr><th>Preparación</th><th>Conservación</th><th>Vida útil</th></tr></thead>
+      <tbody>
+        <tr><td>Fondos y salsas madre</td><td>Refrigerado 0–4 °C</td><td>3–4 días</td></tr>
+        <tr><td>Leche de tigre / cítricos exprimidos</td><td>Refrigerado 0–4 °C</td><td>24 h (calidad cae rápido)</td></tr>
+        <tr><td>Proteína cruda porcionada</td><td>Refrigerado 0–2 °C</td><td>1–2 días</td></tr>
+        <tr><td>Vegetales cortados / blanqueados</td><td>Refrigerado 0–4 °C</td><td>2–3 días</td></tr>
+        <tr><td>Salsas emulsionadas (mayo casera)</td><td>Refrigerado 0–4 °C</td><td>24–48 h</td></tr>
+        <tr><td>Congelados porcionados</td><td>Congelado ≤ −18 °C</td><td>Según producto, rotular</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Nunca:</b> guardar sin rótulo "porque me acuerdo", tapar un gastronorm caliente antes de enfriarlo (condensa y contamina), ni reetiquetar con fecha nueva algo viejo. El rótulo dice la verdad, aunque nos cueste botar producto.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Orden y limpieza: clean as you go</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">"Clean as you go" (limpiar sobre la marcha) es la única forma de terminar el turno sin un desastre. Una estación sucia esconde riesgos: contaminación cruzada, resbalones, producto que se pierde bajo el mise. Limpio es rápido, y rápido es seguro.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Hazlo así</h4><ul>
+        <li>Sanitiza la tabla al cambiar de producto (crudo → listo)</li>
+        <li>Guarda lo que dejas de usar apenas terminas</li>
+        <li>Balde de sanitizante con paño siempre a mano</li>
+        <li>Barre y trapea derrames al instante (piso seco)</li>
+        <li>Tablas por color: roja crudo, verde vegetal, etc.</li>
+        <li>Manos y mandil limpios antes de tocar producto listo</li>
+      </ul></div>
+      <div class="box no"><h4>Evita esto</h4><ul>
+        <li>Acumular ollas "para el final del turno"</li>
+        <li>Cortar pollo crudo y luego palta en la misma tabla</li>
+        <li>Paño sucio arrastrado por toda la línea</li>
+        <li>Dejar cajas y jabas en el piso de circulación</li>
+        <li>Probar con el dedo o con la misma cuchara</li>
+        <li>Guardar producto en envases de químicos o al revés</li>
+      </ul></div>
+    </div>
+    <div class="paso" style="margin-top:14px"><div class="ico"><span class="material-symbols-outlined">wash</span></div><div><div class="t">Micro-hábito 1</div><h4>Una mano trabaja, la otra ordena</h4><p>Mientras montas, con la otra mano devuelves el gastronorm a su hueco, tapas el aceite, tiras el descarte. El orden no es un momento, es continuo.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">restart_alt</span></div><div><div class="t">Micro-hábito 2</div><h4>Cada 30 minutos, reset de estación</h4><p>En una pausa del rush: limpia la tabla, repón lo que baja, seca el piso. 60 segundos que evitan que la estación colapse a las 9 p.m.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">local_fire_department</span></div><div><div class="t">Micro-hábito 3</div><h4>Enfría antes de guardar</h4><p>Nada caliente entra tapado a la cámara. Baño maría inverso (bowl sobre hielo) o abatidor. Guardar caliente sube la temperatura de toda la cámara y arruina lo demás.</p></div></div>
+    <div class="callout"><b>Contaminación cruzada, el enemigo silencioso:</b> el error más caro no se ve. Un cuchillo que pasó de pollo crudo a la guarnición lista puede enfermar a un comensal y cerrar el restaurante. Separa crudo de listo con tablas, tiempos y manos limpias, siempre.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cierre y entrega de turno</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Cómo dejas la estación es cómo la encuentra el siguiente turno, y cómo la encuentras tú mañana. Un buen cierre es media mise en place adelantada. La entrega es un traspaso de información, no solo de limpieza.</p>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">inventory</span></div><div><div class="t">1 · Inventario de MEP</div><h4>Cuenta y anota lo que queda</h4><p>Deja escrito el nivel real de cada preparación en la pizarra o en El Libro. El turno mañana arranca su lista de prep con datos, no adivinando.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">label</span></div><div><div class="t">2 · Rótulos al día</div><h4>Verifica fechas y rota (FEFO)</h4><p>Lo que vence mañana va adelante. Bota lo vencido y regístralo como merma con motivo. No heredes producto dudoso al siguiente.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">cleaning_services</span></div><div><div class="t">3 · Limpieza profunda</div><h4>Plancha, campana y pisos</h4><p>Desarma gastronorms, limpia la línea a fondo, desengrasa plancha y filtros según el rol de limpieza. Estación entregada = estación impecable.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">thermostat</span></div><div><div class="t">4 · Temperaturas y cierre</div><h4>Registra cámaras y apaga equipos</h4><p>Anota temperaturas de cámara y congelador en la bitácora (HACCP). Verifica que todo lo perecible esté guardado y a temperatura antes de apagar.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">forum</span></div><div><div class="t">5 · Handoff</div><h4>Reporta 86 y pendientes</h4><p>Deja claro qué se agotó (lista de "86"), qué falta pedir a Mercado y qué quedó a medio preparar. Un handoff de 2 minutos ahorra media hora al día siguiente.</p></div></div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Ítem de cierre</th><th>Estándar</th><th>✔</th></tr></thead>
+      <tbody>
+        <tr><td>MEP contada y anotada</td><td>Niveles reales en El Libro</td><td>☐</td></tr>
+        <tr><td>Todo rotulado y rotado</td><td>FEFO, nada sin fecha</td><td>☐</td></tr>
+        <tr><td>Línea y plancha limpias</td><td>Desengrasado, sanitizado</td><td>☐</td></tr>
+        <tr><td>Temperaturas registradas</td><td>Cámara ≤4 °C, congelador ≤−18 °C</td><td>☐</td></tr>
+        <tr><td>Lista de 86 y pedidos</td><td>Comunicada al jefe / Mercado</td><td>☐</td></tr>
+        <tr><td>Piso seco y basura fuera</td><td>Sin cajas en circulación</td><td>☐</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>La prueba final:</b> antes de colgar el mandil, pregúntate: "¿podría el que abre mañana empezar a cocinar sin llamarme?". Si la respuesta es sí, cerraste bien.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Mise en place (MEP)</b><span>"Todo en su lugar": la preparación completa de ingredientes y herramientas antes del servicio.</span></div>
+      <div class="gterm"><b>Prep list</b><span>Lista de todo lo que hay que preparar en el turno, con cantidades y prioridad.</span></div>
+      <div class="gterm"><b>PAR</b><span>Cantidad objetivo de una preparación para aguantar el turno con un colchón de seguridad.</span></div>
+      <div class="gterm"><b>FEFO</b><span>"First Expired, First Out": lo que vence primero se usa primero. Rige la rotación en cámara.</span></div>
+      <div class="gterm"><b>PEPS / FIFO</b><span>"Primero en entrar, primero en salir": rota el stock por orden de llegada.</span></div>
+      <div class="gterm"><b>Gastronorm (GN)</b><span>Recipiente metálico estándar (1/1, 1/2, 1/6…) para guardar y servir la mise en place.</span></div>
+      <div class="gterm"><b>Soffritto</b><span>Base aromática de cebolla, apio y zanahoria en brunoise, punto de partida de salsas y risottos.</span></div>
+      <div class="gterm"><b>Leche de tigre</b><span>Jugo de marinado del ceviche (limón, ají, pescado, culantro); pierde calidad rápido, se prepara al día.</span></div>
+      <div class="gterm"><b>Brunoise</b><span>Corte en cubos pequeños y parejos (2–3 mm). El corte parejo cocina parejo.</span></div>
+      <div class="gterm"><b>Clean as you go</b><span>Limpiar sobre la marcha en lugar de acumular todo para el final.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Paso de microorganismos de un alimento crudo a uno listo, vía manos, tablas o utensilios.</span></div>
+      <div class="gterm"><b>86</b><span>Código de cocina para "agotado / no disponible": el plato o insumo ya no se puede vender.</span></div>
+      <div class="gterm"><b>Handoff</b><span>Entrega de turno: traspaso de estación, información y pendientes al siguiente equipo.</span></div>
+      <div class="gterm"><b>Abatidor</b><span>Equipo que baja la temperatura de un alimento rápidamente para guardarlo seguro.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en cocina</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Mise en place · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes del turno</h4><ul>
+          <li>Levanta el estado real: pesa y mide lo que queda</li>
+          <li>Lee cubiertos + reservas de HOY</li>
+          <li>Prepara la diferencia (PAR − lo que queda)</li>
+          <li>Primero lo lento; al final lo que se oxida</li>
+        </ul></div>
+        <div class="op-box"><h4>Estación lista</h4><ul>
+          <li>Un brazo de distancia: lo más usado, más cerca</li>
+          <li>Trío base: aceite, sal, papel en punto fijo</li>
+          <li>Cuchillo afilado, tabla que no resbala</li>
+          <li>Backup en cámara antes de abrir</li>
+        </ul></div>
+        <div class="op-box"><h4>Rótulo (todo, sin excepción)</h4><ul>
+          <li>Producto · Elab · Vence · Responsable</li>
+          <li>FEFO: lo que vence primero, adelante</li>
+          <li>Enfría antes de tapar y guardar</li>
+          <li>Sin rótulo = no existe = se bota</li>
+        </ul></div>
+        <div class="op-box"><h4>Limpio y seguro</h4><ul>
+          <li>Clean as you go: una mano cocina, otra ordena</li>
+          <li>Sanitiza al pasar de crudo a listo</li>
+          <li>Reset de estación cada 30 min</li>
+          <li>Piso seco, tablas por color</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre / handoff</h4><ul>
+          <li>Cuenta la MEP y anótala en El Libro</li>
+          <li>Registra temperaturas (HACCP)</li>
+          <li>Lista de 86 y pedidos a Mercado</li>
+          <li>Entrega impecable = MEP adelantada</li>
+        </ul></div>
+        <div class="op-box"><h4>La prueba final</h4><ul>
+          <li>"¿Aguanta mi estación el rush sin frenar?"</li>
+          <li>"¿El que abre mañana arranca sin llamarme?"</li>
+          <li>Si dudas, no estás listo. Prepáralo mejor.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Mise en place y organización · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Estaciones de línea y el pase · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c0491d'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Línea y pase</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c0491d">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Estaciones de línea y el pase</h1>
+    <p>La línea es una orquesta y el pase es su director. Aquí aprendes a montar tu estación, a cantar y responder en el idioma del pase, a marchar los tiempos para que toda la mesa salga junta y caliente, y a hablar con el mozo sin que se pierda un solo plato.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Línea / Expedidor</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un plato que sale frío, uno que llega antes que la entrada o una mesa de 6 que sale de a uno arruinan una noche entera de trabajo. La diferencia entre una cocina que "cocina rico" y una que ejecuta a nivel es el pase: quien sincroniza, canta y controla la ventana.</div>
+
+  <!-- ==================== MÓDULO 1 ==================== -->
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Anatomía de la línea: cada estación y su rol</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La línea no es "la cocina": es un conjunto de estaciones, cada una con un dueño, un rango de platos y una velocidad distinta. Entender quién hace qué y cuánto demora es la base para sincronizar. En Casa Italia la línea tiene seis estaciones.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Caliente (fondos)</h3><div class="d">Salteados, risotti, pastas al momento, carnes a la plancha y salsas. Es la estación reina y casi siempre el cuello de botella: un risotto no se apura, tarda sus 16-18 min sí o sí.</div><div class="s">Ritmo lento · marca el tiempo de la mesa</div></div>
+      <div class="tipo"><h3>Fría / Antipasti</h3><div class="d">Entradas frías, ensaladas, carpaccios, tablas y postres emplatados en frío. Salen rápido, por eso hay que retenerlas para no adelantar a la mesa.</div><div class="s">Ritmo rápido · 3-6 min</div></div>
+      <div class="tipo"><h3>Forno / Pizza</h3><div class="d">Pizzas al horno de leña y focaccias. Tiene su propio reloj: el horno cocina en 90 seg y no espera. Coordinar el forno con caliente es lo más difícil del pase.</div><div class="s">Ritmo propio · el horno manda</div></div>
+      <div class="tipo"><h3>Dolci (postres)</h3><div class="d">Tiramisú, panna cotta, semifreddo, postres calientes al momento. Entra recién cuando el mozo canta "marchando postres": jamás se adelanta.</div><div class="s">Ritmo bajo demanda</div></div>
+      <div class="tipo"><h3>Garde manger / mise</h3><div class="d">No emplata al invitado, pero surte a toda la línea: porciona, arma bases, repone. Si el garde manger falla, todas las estaciones se quedan sin insumo a media noche.</div><div class="s">Soporte · invisible pero crítico</div></div>
+      <div class="tipo"><h3>Pase / Expedidor</h3><div class="d">No cocina: lee las comandas, canta los tiempos, controla la ventana, revisa cada plato y lo entrega al mozo. Es el único que ve la foto completa del servicio.</div><div class="s">El director de orquesta</div></div>
+    </div>
+    <div class="callout"><b>Regla de la línea:</b> tú no cocinas solo tu plato, cocinas para la mesa. Un cocinero de caliente que termina su lomo y lo suelta al pase sin avisar a fría deja media mesa esperando. Cada estación trabaja al ritmo de la comanda, no al suyo.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 2 ==================== -->
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Monta tu estación: el mise en place antes del fuego</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El 80% de la velocidad de una estación se decide antes de que entre la primera comanda. Una estación bien montada permite emplatar sin dar un paso; una desordenada obliga a buscar cada cosa en pleno rush. Este es el orden de montaje.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">counter_1</span></div>
+      <div><div class="t">Paso 1 · Refri y gastronorm</div><h4>Todo porcionado y a la mano</h4><p>Insumos porcionados en gastronorm rotulados con fecha (FEFO: lo que vence primero, adelante). Nada de bolsas sin marcar. Si tienes que abrir una bolsa nueva a media comanda, ya perdiste 40 segundos.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">counter_2</span></div>
+      <div><div class="t">Paso 2 · Zona de trabajo limpia</div><h4>La tabla al centro, todo a un brazo</h4><p>Tabla al centro, sal y pimienta a la derecha, aceite y mantequilla arriba, paños limpios y el basurero de merma abajo. Regla del brazo: todo lo que usas seguido debe alcanzarse sin mover los pies.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">counter_3</span></div>
+      <div><div class="t">Paso 3 · Equipo caliente listo</div><h4>Plancha, sartenes y agua de pasta al punto</h4><p>Plancha a temperatura, sartenes en la ratonera, agua de pasta hirviendo y salada, aceite caliente. Prende el equipo con tiempo: una plancha fría en la primera comanda te retrasa toda la primera tanda.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">counter_4</span></div>
+      <div><div class="t">Paso 4 · Platos y utensilios en la ventana</div><h4>Loza caliente, pinzas y cucharas de emplatado</h4><p>Platos precalentados apilados junto al pase (un plato frío enfría el fondo en segundos), pinzas, cucharas de salsear y sopletes listos. Emplatar en loza fría es un error que el invitado sí nota.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">counter_5</span></div>
+      <div><div class="t">Paso 5 · Repaso de 86 y especiales</div><h4>Qué hay, qué falta y qué es el plato del día</h4><p>Antes de abrir, el chef canta los 86 (agotados) y el especial. Anótalos en tu estación. No puedes empezar a montar sin saber qué NO puedes vender esta noche.</p></div>
+    </div>
+    <div class="callout"><b>Prueba de los 30 segundos:</b> párate en tu estación y pídete a ti mismo el plato más pedido. Si no puedes emplatarlo mentalmente sin mover los pies ni buscar nada, tu mise en place no está listo. Corrígelo antes de que entre la primera comanda.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 3 ==================== -->
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>El idioma del pase: cantar y responder</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La línea funciona por voz, no por adivinanza. El pase canta, la estación responde. Si nadie responde, el pase no sabe si lo escucharon y el servicio se cae en silencio. En Prep! usamos el mismo lenguaje que en el sistema: <b>Oído</b>, <b>En fuego</b>, <b>Servido</b>.</p>
+    <table class="t">
+      <thead><tr><th>Canta el pase</th><th>Significa</th><th>Responde la línea</th></tr></thead>
+      <tbody>
+        <tr><td><b>"Va comanda"</b> / "Oído"</td><td>Entra una comanda nueva, escuchen los platos</td><td>"¡Oído!" (toda la estación)</td></tr>
+        <tr><td><b>"Marchando" / "En fuego"</b></td><td>Empiecen a cocinar YA ese plato o ese tiempo</td><td>"¡En fuego!"</td></tr>
+        <tr><td><b>"Retén" / "Wait"</b></td><td>No suelten ese plato todavía, la mesa no está lista</td><td>"¡Reteniendo!"</td></tr>
+        <tr><td><b>"¿Tiempos?"</b></td><td>¿Cuántos minutos te falta para ese plato?</td><td>"¡Dos minutos!" (número exacto)</td></tr>
+        <tr><td><b>"Corriendo" / "All day"</b></td><td>Total acumulado de un ítem en todas las comandas</td><td>"¡Cinco lomos corriendo!"</td></tr>
+        <tr><td><b>"Vendido" / "Servido"</b></td><td>Ese plato salió al comedor, bájalo de la lista</td><td>"¡Servido, mesa 7!"</td></tr>
+        <tr><td><b>"86 [plato]"</b></td><td>Se acabó ese producto, ya no se vende</td><td>"¡86 pulpo, oído!"</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Cómo se canta bien</h4><ul>
+        <li>Fuerte y claro, mirando a la estación</li>
+        <li>Número de mesa + plato + tiempo: "Mesa 4, dos ravioli, marchando"</li>
+        <li>Siempre esperas el "¡Oído!" de vuelta</li>
+        <li>Repites la comanda completa al final ("recapitulo")</li>
+        <li>Un solo pase canta: nadie más da órdenes</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que rompe la línea</h4><ul>
+        <li>Cantar de espaldas o entre dientes</li>
+        <li>Suponer que escucharon sin respuesta</li>
+        <li>Dos personas cantando órdenes distintas</li>
+        <li>Decir "esa comanda" sin número de mesa</li>
+        <li>Guardarse un 86 y que se venda un plato muerto</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La respuesta no es opcional:</b> cuando el pase canta y nadie contesta "¡Oído!", el pase tiene que volver a cantar y pierde 5 segundos. Multiplica eso por un viernes de 120 cubiertos. Responder en voz alta es lo que hace que una cocina suene viva y no caótica.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 4 ==================== -->
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Sincronía de tiempos: marchar para que salga junto</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El arte del pase es hacer que platos que tardan distinto lleguen a la ventana al mismo tiempo. Esto se llama <b>marchar</b>: no lanzar todo a la vez, sino disparar cada estación en el momento justo para que converjan. Trabajas hacia atrás desde el plato más lento.</p>
+    <table class="t">
+      <thead><tr><th>Plato</th><th>Estación</th><th>Tiempo aprox.</th><th>Cuándo marchar (para salir juntos)</th></tr></thead>
+      <tbody>
+        <tr><td>Risotto ai funghi</td><td>Caliente</td><td>17 min</td><td>Primero de todos: T-0</td></tr>
+        <tr><td>Osso buco</td><td>Caliente</td><td>10 min (regenera)</td><td>A los 7 min (T+7)</td></tr>
+        <tr><td>Ravioli burro e salvia</td><td>Caliente</td><td>7 min</td><td>A los 10 min (T+10)</td></tr>
+        <tr><td>Pizza margherita</td><td>Forno</td><td>2 min</td><td>A los 15 min (T+15)</td></tr>
+        <tr><td>Insalata / carpaccio</td><td>Fría</td><td>4 min</td><td>A los 13 min (T+13)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="background:var(--wine-soft);color:var(--wine)"><b>Regla del plato más lento:</b> mira la comanda completa, identifica el que más tarda (aquí el risotto, 17 min), márchalo primero y calcula el resto hacia atrás para que todos crucen la ventana en el minuto 17. Nunca marches primero lo rápido: se enfría esperando.</div>
+    <p class="lead" style="margin-top:16px">Tres conceptos que el expedidor domina para no descuadrar la mesa:</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Tiempos (cursos)</h3><div class="d">Entradas → fondos → postres. El pase retiene los fondos hasta que el mozo levanta los platos de la entrada y canta "marchando segundos". Nunca salen fondos con la entrada aún en la mesa.</div><div class="s">Levantar → marchar el siguiente tiempo</div></div>
+      <div class="tipo"><h3>Mesa completa</h3><div class="d">Todos los platos de un tiempo salen JUNTOS. Si de una mesa de 4 hay 3 listos y 1 en 2 minutos, se retienen los 3. Nadie come mientras su acompañante mira el plato vacío.</div><div class="s">Todo junto o nada sale</div></div>
+      <div class="tipo"><h3>Fire / retener</h3><div class="d">"Fire mesa 6" = arranca ese tiempo ahora. "Retén mesa 6" = frena, la mesa se demoró con el vino. El pase ajusta en vivo según cómo va comiendo el comedor.</div><div class="s">Ajuste en tiempo real</div></div>
+    </div>
+    <div class="callout"><b>Ejemplo real:</b> mesa de 6 un viernes, piden 2 risotti, 2 pizzas, 1 osso buco y 1 ravioli. Si el forno lanza las pizzas apenas entra la comanda, cuando el risotto esté listo las pizzas llevan 15 min muertas y frías. El pase marcha el risotto a T-0 y recién canta "¡forno, dos pizzas en fuego!" a los 15 minutos. Salen las 6 juntas y calientes.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 5 ==================== -->
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>La ventana: control de calidad antes de soltar</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La ventana (el pase físico) es la última frontera antes del comedor. Nada sale sin que el expedidor lo revise. Un plato que cruza la ventana con un error ya no se puede corregir: llegó al invitado. Este es el checklist de cada plato en el pase.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">thermostat</span></div>
+      <div><div class="t">Chequeo 1 · Temperatura</div><h4>Caliente que queme, frío que enfríe</h4><p>Toca el borde del plato: la loza debe estar caliente en los fondos. Si el plato está tibio, no sale: regresa. El invitado perdona un minuto de espera, no perdona una pasta fría.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">restaurant</span></div>
+      <div><div class="t">Chequeo 2 · Estándar de emplatado</div><h4>Se ve como la ficha, siempre igual</h4><p>Compara con la foto de la ficha técnica: cantidad de salsa, posición de la proteína, guarnición, altura. El plato 200 de la noche se ve igual que el plato 1. Sin dedazos ni salpicaduras en el borde: limpia el aro con un paño.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">fact_check</span></div>
+      <div><div class="t">Chequeo 3 · Coincide con la comanda</div><h4>Lo que pidieron es lo que sale</h4><p>Lee la comanda contra el plato: término de la carne, sin cebolla, cambio de guarnición, la alergia anotada. Un plato perfecto pero equivocado es un plato regresado. La modificación manda sobre la receta.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">health_and_safety</span></div>
+      <div><div class="t">Chequeo 4 · Alérgenos y cortesías</div><h4>El plato del alérgico va marcado y aparte</h4><p>Si la mesa tiene una alergia (gluten, frutos secos, mariscos), ese plato se emplata con utensilios limpios, se marca con un pick de color y el pase se lo canta al mozo por nombre: "el sin gluten es de la silla 3". Nunca se asume.</p></div>
+    </div>
+    <div class="do2" style="margin-top:6px">
+      <div class="box yes"><h4>La ventana limpia</h4><ul>
+        <li>Bordes de plato impecables</li>
+        <li>Cada plato sale con su cubierto/salsa aparte listos</li>
+        <li>El pase canta mesa y silla al mozo</li>
+        <li>Loza caliente y comida al punto</li>
+        <li>El alérgeno va identificado y separado</li>
+      </ul></div>
+      <div class="box no"><h4>Motivos para regresar un plato</h4><ul>
+        <li>Plato tibio o guarnición fría</li>
+        <li>Borde sucio, salpicado o con huella</li>
+        <li>Falta un componente de la ficha</li>
+        <li>No coincide con la modificación pedida</li>
+        <li>Porción visiblemente corta o pasada</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Autoridad del pase:</b> el expedidor puede regresar un plato al cocinero más veterano si no cumple. No es personal, es el estándar. Un plato regresado en la ventana cuesta 2 minutos; el mismo plato regresado desde la mesa cuesta la propina, la reseña y la confianza del invitado.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 6 ==================== -->
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Pase y mozo: la conversación BOH–FOH</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El pase es la bisagra entre la cocina y el salón. Un buen expedidor conoce a los mozos por nombre, sabe qué mesas están apuradas y le da al mozo la información justa para que el plato llegue bien contado y a la persona correcta. Sin esta conversación, el mejor plato se sirve mal.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cantar la salida</h3><div class="d">El pase avisa antes de que el plato esté listo: "¡corre a alguien para la 12, salen fondos en un minuto!". El mozo no puede estar en la barra cuando la comida cruza la ventana y se enfría.</div><div class="s">Runner disponible = plato caliente</div></div>
+      <div class="tipo"><h3>Contar el plato</h3><div class="d">Al entregar, el pase dice a quién va cada plato por silla: "el osso buco es de la 2, el risotto de la 4, el sin gluten de la 1". El mozo no adivina en la mesa ni pregunta "¿de quién era el lomo?".</div><div class="s">Por silla, no por mesa</div></div>
+      <div class="tipo"><h3>Recibir el "levantado"</h3><div class="d">El mozo avisa al pase cuando recogió los platos de un tiempo: "mesa 8, levantado". Recién ahí el pase marcha el siguiente curso. La cocina no adivina el ritmo de la mesa: lo escucha del mozo.</div><div class="s">Levantar → marchar siguiente</div></div>
+      <div class="tipo"><h3>Modificaciones y devoluciones</h3><div class="d">Si un invitado quiere el término más hecho o devuelve un plato, el mozo se lo canta directo al pase, no a un cocinero suelto. El pase lo prioriza ("re-fire mesa 5") y avisa el tiempo real.</div><div class="s">Todo pasa por el pase</div></div>
+      <div class="tipo"><h3>Traducir demoras</h3><div class="d">Si un plato demora, el pase le da al mozo un número real: "el risotto de la 7 sale en 4 minutos". El mozo puede gestionar la mesa con la verdad, no con un "ya sale" vacío que quema la confianza.</div><div class="s">Tiempo exacto, no "ya casi"</div></div>
+      <div class="tipo"><h3>Cerrar la mesa</h3><div class="d">Cuando salen los postres, el pase avisa "mesa 3 completa, ya no sale nada más". El mozo sabe que puede ofrecer digestivos y armar la cuenta sin miedo a que falte un plato.</div><div class="s">Mesa cerrada = FOH puede cobrar</div></div>
+    </div>
+    <div class="callout"><b>Un solo canal:</b> cuando cinco mozos le hablan a cinco cocineros distintos, la línea se vuelve un mercado. Toda comunicación FOH–BOH pasa por el pase: el mozo le canta al pase, el pase le canta a la estación. Un canal, una voz, cero platos perdidos.</div>
+  </section>
+
+  <!-- ==================== GLOSARIO ==================== -->
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Pase / Ventana</b><span>El mostrador donde la cocina entrega los platos al mozo. También el rol de quien los canta, revisa y despacha (expedidor).</span></div>
+      <div class="gterm"><b>Expedidor</b><span>Quien dirige la línea: lee comandas, canta tiempos, controla calidad y entrega. No cocina, coordina.</span></div>
+      <div class="gterm"><b>Estación</b><span>Puesto de trabajo especializado dentro de la línea (caliente, fría, forno, dolci). Cada una con su dueño y sus platos.</span></div>
+      <div class="gterm"><b>Marchar / Fire</b><span>Dar la orden de empezar a cocinar un plato o un tiempo en ese momento exacto.</span></div>
+      <div class="gterm"><b>Retener / Wait</b><span>Frenar un plato listo o casi listo porque la mesa aún no está lista para recibirlo.</span></div>
+      <div class="gterm"><b>Tiempo / Curso</b><span>Cada etapa de la comida: entradas, fondos, postres. Se sirven en secuencia, nunca encimados.</span></div>
+      <div class="gterm"><b>Corriendo / All day</b><span>Total acumulado de un ítem sumando todas las comandas activas. "Cinco lomos corriendo" = cinco lomos en total.</span></div>
+      <div class="gterm"><b>86</b><span>Producto agotado o que ya no se puede vender. "86 pulpo" = se acabó el pulpo.</span></div>
+      <div class="gterm"><b>Mise en place</b><span>Todo el montaje y preparación previa de la estación antes del servicio. "Todo en su lugar".</span></div>
+      <div class="gterm"><b>Levantar</b><span>Cuando el mozo retira los platos de un tiempo de la mesa. Señal para que el pase marche el siguiente curso.</span></div>
+      <div class="gterm"><b>FEFO</b><span>First Expired, First Out: usar primero lo que vence antes. Ordena el refri de la estación.</span></div>
+      <div class="gterm"><b>Regresar un plato</b><span>Devolver un plato a la estación porque no cumple el estándar (frío, sucio, incompleto o equivocado).</span></div>
+      <div class="gterm"><b>En el weeds</b><span>Estar saturado, con más comandas de las que se pueden ejecutar. Requiere pedir ayuda y priorizar.</span></div>
+      <div class="gterm"><b>Garde manger</b><span>Estación de soporte que porciona, arma bases y surte al resto de la línea. Invisible pero crítica.</span></div>
+    </div>
+  </section>
+
+  <!-- ==================== ONE-PAGER ==================== -->
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la línea</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Línea y pase · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes del servicio</h4><ul>
+          <li>Mise en place: porcionado, rotulado (FEFO)</li>
+          <li>Zona limpia, todo a un brazo</li>
+          <li>Equipo caliente y platos precalentados</li>
+          <li>Anota los 86 y el especial del día</li>
+        </ul></div>
+        <div class="op-box"><h4>El idioma del pase</h4><ul>
+          <li>Oído = escuché la comanda</li>
+          <li>En fuego / marchando = cocina ya</li>
+          <li>Retén = frena, no sueltes</li>
+          <li>Servido = salió al comedor</li>
+          <li>Siempre respondes en voz alta</li>
+        </ul></div>
+        <div class="op-box"><h4>Sincronía de tiempos</h4><ul>
+          <li>Marcha primero el plato más lento</li>
+          <li>Calcula el resto hacia atrás</li>
+          <li>La mesa sale junta o no sale</li>
+          <li>Levantaron → marcha el siguiente curso</li>
+        </ul></div>
+        <div class="op-box"><h4>Ventana: revisa antes de soltar</h4><ul>
+          <li>Temperatura: caliente que queme</li>
+          <li>Se ve como la ficha, borde limpio</li>
+          <li>Coincide con la comanda y la modificación</li>
+          <li>Alérgeno marcado y aparte</li>
+        </ul></div>
+        <div class="op-box"><h4>Con el mozo</h4><ul>
+          <li>Canta la salida: ten un runner listo</li>
+          <li>Cuenta el plato por silla, no por mesa</li>
+          <li>Da tiempos reales, no "ya sale"</li>
+          <li>Avisa cuando la mesa está completa</li>
+        </ul></div>
+        <div class="op-box"><h4>Regla de oro</h4><ul>
+          <li>Un solo canal: todo pasa por el pase</li>
+          <li>Cocinas para la mesa, no para tu plato</li>
+          <li>Nada cruza la ventana sin revisión</li>
+          <li>El 86 se canta al instante</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Estaciones de línea y el pase · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

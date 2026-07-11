@@ -1,0 +1,345 @@
+<!-- Curso Academia Prep! · Pastelería y postres -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Pastelería y postres · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23be185d'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Pastelería</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#be185d">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Pastelería y postres</h1>
+    <p>La pastelería es cocina de precisión: se pesa, no se calcula a ojo. Técnicas base, control de temperatura, montaje limpio, conservación segura y una presentación que venda el postre antes del primer bocado. Lo que sostiene la carta de dulces de una casa de nivel.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Pastelero de partida</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el postre es lo último que prueba el comensal y lo que más recuerda. Una crema pastelera cortada, un merengue que llora, una mousse que no cuaja o un ganache granulado arruinan una cena perfecta y no se pueden "arreglar" en el pase. En pastelería el error se paga entero: por eso se pesa al gramo, se controla la temperatura y se respeta el orden. Dominarlo te hace el pastelero en quien el chef confía la carta de dolci.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Precisión: la pastelería se pesa</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">En cocina salada "un chorro" o "una pizca" funcionan. En pastelería no: la masa, la leudada y la textura dependen de proporciones exactas. Aquí se trabaja con balanza al gramo, con porcentajes y con mise en place completo antes de encender el horno.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Pesa todo, hasta los líquidos</h3><div class="d">La leche, el agua y los huevos van a la balanza, no a la jarra. 1 g de agua = 1 ml, pero la miel, la crema y la clara no. Pesar elimina el error de la medición por volumen.</div><div class="s">Balanza en gramos, tara entre ingredientes</div></div>
+      <div class="tipo"><h3>Porcentaje panadero</h3><div class="d">La harina siempre es 100%; el resto se expresa como % de la harina. Así escalas una receta de 1 a 40 tortas sin perder proporción y detectas de un vistazo si una fórmula está balanceada.</div><div class="s">Harina = 100%, todo lo demás relativo</div></div>
+      <div class="tipo"><h3>Temperatura de ingredientes</h3><div class="d">La mantequilla "pomada" (16–18 °C) cremaa; fría no. Los huevos a temperatura ambiente emulsionan mejor. Saca lo que necesites con anticipación, no lo uses recién salido de la cámara.</div><div class="s">Ni muy frío ni derretido: en su punto</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">⚖️</div><div><div class="t">Cero improvisación</div><h4>1. Pesa y separa todo antes de empezar</h4><p>Mise en place total: cada ingrediente pesado en su bowl, tamizados los secos, la mantequilla en punto. Una masa no espera mientras buscas el polvo de hornear. En pastelería, parar a mitad arruina el batido.</p></div></div>
+      <div class="paso"><div class="ico">📏</div><div><div class="t">Escalar sin errores</div><h4>2. Trabaja con la fórmula, no con la receta suelta</h4><p>Anota gramos y porcentajes. Para duplicar, multiplica todo por el mismo factor, incluidos sal, leudante y esencia. El error clásico es duplicar la harina y "calcular a ojo" el resto: la torta sale seca o no sube.</p></div></div>
+      <div class="paso"><div class="ico">🌡️</div><div><div class="t">Constancia</div><h4>3. Calibra balanza, horno y timer</h4><p>Verifica la balanza con un peso conocido, revisa el horno con termómetro (suelen marcar 15–20 °C de menos) y usa timer siempre. La memoria falla en el pico; el timer no.</p></div></div>
+      <div class="paso"><div class="ico">📝</div><div><div class="t">Documenta</div><h4>4. Registra el batch: rinde, merma y notas</h4><p>Cuántas unidades salieron, cuánto sobró, si subió parejo. Ese registro estandariza el postre entre pasteleros y sostiene el food cost. La receta de la casa es la que sale igual con cualquiera que la haga.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Precisión de pastelero</h4><ul>
+        <li>Balanza en gramos y tara entre cada ingrediente</li>
+        <li>Secos tamizados y pesados antes de empezar</li>
+        <li>Mantequilla y huevos a la temperatura que pide la receta</li>
+        <li>Timer en cada horneado y cada cuajado</li>
+        <li>Fórmula escrita en gramos y porcentajes</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que quiebra un postre</h4><ul>
+        <li>Medir harina por tazas o "puñados"</li>
+        <li>Duplicar la receta calculando a ojo</li>
+        <li>Usar mantequilla derretida donde pide pomada</li>
+        <li>Hornear sin timer y confiar en la nariz</li>
+        <li>Cambiar de marca de chocolate sin ajustar la fórmula</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de oro del obrador:</b> "En pastelería no se cocina, se ejecuta una fórmula." La creatividad va en el diseño del postre; en la producción manda la exactitud. Pesa, no calcules; sigue el orden, no lo improvises. El postre que sale idéntico todos los días es el que construye la reputación de la casa.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Técnicas base: masas, cremas y merengues</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Casi toda la carta de postres se arma con un puñado de preparaciones madre. Domínalas y podrás construir decenas de postres: una crema pastelera bien hecha es relleno de milhojas, base de crema diplomática y corazón de un profiterol.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cremado</h3><div class="d">Batir mantequilla pomada con azúcar hasta blanquear e incorporar aire. Es la base de queques y galletas. El aire atrapado aquí es parte de la subida: si la mantequilla está fría o caliente, no cremaa.</div><div class="s">Mantequilla pomada + azúcar, hasta pálido</div></div>
+      <div class="tipo"><h3>Batido de claras</h3><div class="d">Claras sin rastro de grasa ni yema montan a punto de nieve. Picos suaves para incorporar, picos firmes y brillantes para merengue. Un bowl engrasado arruina el montado.</div><div class="s">Bowl limpio, claras sin yema</div></div>
+      <div class="tipo"><h3>Emulsión</h3><div class="d">Unir grasa y líquido en una mezcla estable y sedosa: ganache, crema de mantequilla, lemon curd. Se corta si agregas frío de golpe o bate en exceso. Temperatura y paciencia.</div><div class="s">Grasa + líquido, sin cortar</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Las preparaciones madre que un pastelero de partida arma de memoria:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Preparación</th><th>Qué es</th><th>Postre de la casa</th></tr></thead>
+      <tbody>
+        <tr><td>Crema pastelera</td><td>Leche, yema, azúcar y almidón cocidos hasta espesar</td><td>Milhojas, relleno de suspiro, base de tartaletas de fruta</td></tr>
+        <tr><td>Crema chantilly</td><td>Crema de leche fría montada con azúcar</td><td>Cobertura de torta, acompañamiento de pie de limón</td></tr>
+        <tr><td>Merengue (3 tipos)</td><td>Claras + azúcar: francés, italiano (jarabe) o suizo (a baño maría)</td><td>Suspiro a la limeña, tapa de pie de limón, macarons</td></tr>
+        <tr><td>Ganache</td><td>Chocolate emulsionado con crema caliente</td><td>Relleno de trufas, cobertura espejo, tartaleta de chocolate</td></tr>
+        <tr><td>Genoise / bizcocho</td><td>Batido de huevo y azúcar aireado, con harina en envolvente</td><td>Base de tres leches, planchas de torta enrollada</td></tr>
+        <tr><td>Masa quebrada (sablée)</td><td>Harina, mantequilla y azúcar arenada, sin desarrollar gluten</td><td>Base de tartaletas, galletas de la vitrina</td></tr>
+        <tr><td>Pâte à choux</td><td>Masa escaldada de agua, mantequilla, harina y huevo</td><td>Profiteroles, éclairs, churros de carta</td></tr>
+      </tbody>
+    </table></div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🥛</div><div><div class="t">Crema pastelera sin grumos</div><h4>1. Temperar la yema antes de cocer</h4><p>Blanquea yema, azúcar y almidón. Vierte un poco de leche caliente sobre la yema batiendo (temperar) para no cocerla de golpe, regresa todo a la olla y cocina sin dejar de batir hasta que hierva 1–2 min: ahí el almidón cuaja y no sabe a crudo.</p></div></div>
+      <div class="paso"><div class="ico">🍬</div><div><div class="t">Merengue que no llora</div><h4>2. Azúcar de a pocos sobre clara ya espumosa</h4><p>Empieza a batir la clara, y cuando espume agrega el azúcar en hilo. De golpe pesa la clara y no monta. Para el suspiro y el pie, el italiano (con jarabe a 118 °C) es el más estable: aguanta la vitrina sin soltar agua.</p></div></div>
+      <div class="paso"><div class="ico">🍫</div><div><div class="t">Ganache brillante</div><h4>3. Crema caliente sobre chocolate, emulsión desde el centro</h4><p>Pica el chocolate, vierte la crema caliente encima, espera 1 min y bate desde el centro hacia afuera con espátula hasta un núcleo brillante y elástico. Si se corta, unas gotas de leche tibia y sigue batiendo.</p></div></div>
+      <div class="paso"><div class="ico">🥚</div><div><div class="t">Envolvente que no baja</div><h4>4. Integrar aireado con movimiento suave</h4><p>Al unir claras o batido de huevo con los secos, usa espátula en movimiento envolvente (de abajo hacia arriba), no batidor. Cortar y girar el bowl mantiene el aire; batir fuerte lo desinfla y el bizcocho sale chato.</p></div></div>
+    </div>
+    <div class="callout"><b>Enfría siempre a piel:</b> tapa la crema pastelera y el curd con film tocando la superficie (film a piel) apenas terminas de cocer. Así evitas que se forme la costra dura y la condensación que la aguarían. Enfría rápido en cámara y úsala fría; nunca dejes crema a temperatura ambiente más de 2 horas: es un cultivo perfecto de bacterias.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Temperaturas: horno, azúcar y chocolate</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La pastelería es termodinámica aplicada. El azúcar cambia de estado según el grado exacto, el chocolate solo brilla si se templa, y el horno cocina distinto según la masa. El termómetro no es opcional: es la herramienta que separa el resultado profesional del casero.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Termómetro siempre</h3><div class="d">De sonda para azúcar y cremas, láser para superficies y chocolate. El "punto de bolita" a ojo falla; 118 °C exactos hacen el merengue italiano y 121 °C el caramelo blando. Mide, no adivines.</div><div class="s">Sonda + láser, calibrados</div></div>
+      <div class="tipo"><h3>Templado del chocolate</h3><div class="d">Fundir, bajar y volver a subir la temperatura para alinear los cristales de manteca de cacao. Solo así queda brillante, cruje y se despega del molde. Sin templar sale opaco, blando y con vetas blancas (fat bloom).</div><div class="s">Curva de temperatura, no solo derretir</div></div>
+      <div class="tipo"><h3>El horno miente</h3><div class="d">La perilla y la realidad rara vez coinciden. Termómetro dentro del horno, precalienta de verdad (20–30 min) y conoce tus puntos fríos. Abrir la puerta a media subida baja 20 °C y hunde un soufflé o un queque.</div><div class="s">Precalienta, verifica, no abras de más</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Los puntos del azúcar, la referencia que se usa a diario en el obrador:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Punto</th><th>Temperatura</th><th>Para qué se usa</th></tr></thead>
+      <tbody>
+        <tr><td>Jarabe / almíbar</td><td>100–105 °C</td><td>Emborrachar bizcochos, almíbar de tres leches</td></tr>
+        <tr><td>Hilo / hebra</td><td>110–112 °C</td><td>Glaseados, fondant básico</td></tr>
+        <tr><td>Bolita blanda</td><td>116–120 °C</td><td>Merengue italiano (jarabe a 118 °C), buttercream</td></tr>
+        <tr><td>Bolita dura</td><td>121–130 °C</td><td>Marshmallow, turrón</td></tr>
+        <tr><td>Caramelo claro</td><td>150–160 °C</td><td>Hilos de caramelo, crocante, decoración</td></tr>
+        <tr><td>Caramelo oscuro</td><td>165–180 °C</td><td>Base de flan, salsa de caramelo, tocino de cielo</td></tr>
+      </tbody>
+    </table></div>
+    <p class="lead" style="margin-top:14px">Curva de templado según el tipo de chocolate (método sembrado):</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Chocolate</th><th>Fundir a</th><th>Bajar a</th><th>Trabajar a</th></tr></thead>
+      <tbody>
+        <tr><td>Amargo / bitter</td><td>50–55 °C</td><td>28–29 °C</td><td>31–32 °C</td></tr>
+        <tr><td>De leche</td><td>45–50 °C</td><td>27–28 °C</td><td>29–30 °C</td></tr>
+        <tr><td>Blanco</td><td>40–45 °C</td><td>26–27 °C</td><td>28–29 °C</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>Cuidado con el agua en el chocolate:</b> una sola gota de agua o vapor hace que el chocolate fundido se "agarrote" (seize) y quede pastoso e inservible para bañar. Seca perfectamente bowls y espátulas, y nunca tapes chocolate caliente (la condensación cae dentro). Si se agarrota, no se recupera para templar: reserva ese chocolate para un ganache o un brownie.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Montaje de postres</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Montar es ensamblar los componentes en el orden y la temperatura correctos para que el postre tenga estructura, capas limpias y aguante hasta el pase. Un montaje apurado o en caliente colapsa la torta y mezcla los sabores. Se monta en frío, por capas y con paciencia.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">Todo frío</div><h4>1. Componentes a temperatura antes de ensamblar</h4><p>Bizcocho frío, cremas frías, mousse a punto de cuajar. Montar en caliente derrite la crema y desliza las capas. Un bizcocho tibio "chupa" la crema y se vuelve un mazacote. Enfría cada parte antes de armar.</p></div></div>
+      <div class="paso"><div class="ico">🍶</div><div><div class="t">Base primero</div><h4>2. Emborracha y sella la base</h4><p>Pincela el bizcocho con almíbar para que no quede seco (sin encharcar) y, en tartaletas, sella la base horneada con una capa fina de chocolate o clara para impermeabilizar. Así la fruta o la crema no la humedecen y no se rompe al cortar.</p></div></div>
+      <div class="paso"><div class="ico">🎂</div><div><div class="t">Capas parejas</div><h4>3. Dosifica con manga y nivela</h4><p>Rellena con manga en espiral desde el centro para lograr grosor uniforme; nivela con espátula. A ojo, una capa gruesa de un lado inclina la torta. En vasos y postres emplatados, marca la altura de cada capa para que todos salgan iguales.</p></div></div>
+      <div class="paso"><div class="ico">❄️</div><div><div class="t">Reposo entre capas</div><h4>4. Enfría entre montajes y antes de glasear</h4><p>Deja cuajar cada capa en cámara antes de la siguiente y congela ligeramente el postre antes del glaseado espejo: sobre superficie muy fría el glaseado se fija parejo y no chorrea. La prisa aquí se ve en la vitrina.</p></div></div>
+      <div class="paso"><div class="ico">🍓</div><div><div class="t">Decoración al final</div><h4>5. Fruta y crocantes justo antes de servir</h4><p>La fruta fresca, el crocante, el caramelo y el macaron se ponen lo más tarde posible: la humedad los ablanda y opaca. Un crocante puesto de mañana llega blando a la noche. Reserva y termina al pase.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Montaje que aguanta el servicio</h4><ul>
+        <li>Componentes fríos y cuajados antes de ensamblar</li>
+        <li>Aro o molde para capas rectas y limpias</li>
+        <li>Almíbar para humedad, sin encharcar</li>
+        <li>Reposo en cámara entre capa y capa</li>
+        <li>Fruta y crocantes al final, en el pase</li>
+      </ul></div>
+      <div class="box no"><h4>Montaje que colapsa</h4><ul>
+        <li>Armar con bizcocho o crema tibios</li>
+        <li>Capas a ojo, desniveladas</li>
+        <li>Glasear sobre postre a temperatura ambiente</li>
+        <li>Fruta puesta horas antes: suelta agua</li>
+        <li>Cortar sin cuchillo caliente y limpio entre corte y corte</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El corte también es montaje:</b> para porcionar torta o cheesecake, usa cuchillo de hoja lisa calentado en agua caliente y secado, y límpialo entre cada corte. Así la porción sale limpia, con las capas definidas, y no arrastra crema. Un buen postre mal cortado pierde la mitad de su valor en el plato del comensal.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Conservación y vida útil</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Los postres llevan huevo, leche y crema: son de alto riesgo sanitario y se degradan rápido. Conservar bien es seguridad alimentaria y también food cost, porque cada postre botado por mal manejo es dinero perdido. FEFO, frío correcto y rotulado son la base.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Enfriado rápido</h3><div class="d">Cruzar la zona de peligro (5–60 °C) lo más rápido posible. Extiende cremas en bandeja, usa baño de hielo o abatidor. Una crema que pasa horas templada es riesgo directo de intoxicación.</div><div class="s">De 60 °C a 5 °C sin demora</div></div>
+      <div class="tipo"><h3>Rotula y aplica FEFO</h3><div class="d">Cada preparación con nombre, fecha de elaboración y de vencimiento. Lo que vence primero se usa primero. Sin etiqueta no se sabe la edad: se descarta. La vitrina rota, no acumula.</div><div class="s">Etiqueta o descarte</div></div>
+      <div class="tipo"><h3>Tapado y separado</h3><div class="d">Todo cubierto con film o táper: el frío reseca y los aromas viajan (una mousse junto a la cebolla sabe a cebolla). Postres arriba, crudos abajo en la cámara para evitar goteo contaminante.</div><div class="s">Cubierto, sin contaminación cruzada</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Vida útil orientativa en refrigeración (0–4 °C), bien tapado:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Preparación</th><th>Refrigerado</th><th>Congelado</th><th>Nota clave</th></tr></thead>
+      <tbody>
+        <tr><td>Crema pastelera / curd</td><td>2–3 días</td><td>No congela bien (se corta)</td><td>Film a piel, huele antes de usar</td></tr>
+        <tr><td>Chantilly montada</td><td>Uso el mismo día</td><td>No</td><td>Se baja rápido; monta al pase</td></tr>
+        <tr><td>Mousse / bavarois</td><td>2–3 días</td><td>2–3 semanas</td><td>Descongela en cámara, nunca a temperatura ambiente</td></tr>
+        <tr><td>Bizcocho / genoise</td><td>3–4 días</td><td>1–2 meses</td><td>Envuelto doble para no resecar</td></tr>
+        <tr><td>Ganache</td><td>5–7 días</td><td>1 mes</td><td>Atempera antes de usar como cobertura</td></tr>
+        <tr><td>Masa de tartaleta cruda</td><td>2–3 días</td><td>1 mes</td><td>Congela en el molde, hornea desde congelado</td></tr>
+        <tr><td>Merengue seco / suspiros</td><td>Hermético, ambiente seco</td><td>No aplica</td><td>La humedad de Lima lo ablanda: recipiente sellado</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>Ojo con el clima de Lima:</b> la humedad alta ablanda merengues, crocantes y caramelo en horas, y acelera el crecimiento bacteriano en cremas. Guarda lo seco en herméticos con sílica y no dejes postres con crema fuera de la cámara durante el servicio: usa vitrina refrigerada. La regla de las 2 horas fuera del frío es la línea que no se cruza; con más de 30 °C de ambiente, es 1 hora.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Presentación y emplatado</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El postre se come primero con los ojos. En una casa de nivel, el emplatado debe ser limpio, intencional y repetible: el mismo postre sale idéntico plato tras plato. Menos es más; cada elemento debe aportar sabor o textura, nunca solo relleno visual.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Un punto focal</h3><div class="d">Define el protagonista (la porción, el quenelle de helado) y ordena todo alrededor. Un plato con tres protagonistas confunde. Altura y un solo héroe dan elegancia.</div><div class="s">Un héroe, el resto acompaña</div></div>
+      <div class="tipo"><h3>Contraste de texturas</h3><div class="d">Cremoso + crocante + fresco en cada bocado: la mousse con un crocante y fruta ácida. El comensal recuerda el contraste. Un postre todo blando aburre aunque esté rico.</div><div class="s">Cremoso, crujiente, ácido</div></div>
+      <div class="tipo"><h3>Plato limpio</h3><div class="d">Bordes impecables, sin huellas ni goteos. Un paño y un hisopo antes del pase. Un chorreón de coulis en el borde grita descuido, por muy bueno que esté el postre.</div><div class="s">Limpia el borde siempre</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">El lienzo</div><h4>1. Elige el plato y su temperatura</h4><p>Plato acorde al postre: oscuro para resaltar, blanco para limpieza. Enfría el plato si lleva helado, atempéralo si lleva algo tibio como un volcán de chocolate. Un helado sobre plato caliente se derrite antes de llegar a la mesa.</p></div></div>
+      <div class="paso"><div class="ico">🎨</div><div><div class="t">Salsear con intención</div><h4>2. Coulis y salsas con técnica, no al azar</h4><p>Un punto barrido con cuchara, tres lágrimas parejas o un espejo bajo la porción. Usa biberón para controlar la cantidad. La salsa acompaña el bocado; no ahogues el postre ni pintes toda la loza.</p></div></div>
+      <div class="paso"><div class="ico">🥄</div><div><div class="t">Quenelle y alturas</div><h4>3. Trabaja el volumen</h4><p>Un quenelle de helado o crema con dos cucharas calientes da elegancia inmediata. Juega alturas: algo alto, algo bajo, un crocante parado. El plato plano se ve casero; el volumen se ve de restaurante.</p></div></div>
+      <div class="paso"><div class="ico">🌿</div><div><div class="t">Terminar</div><h4>4. Detalle final comestible y foto mental</h4><p>Un brote de menta, ralladura, polvo de cacao con plantilla, unas hojas de oro si la casa lo usa. Todo comestible y que aporte. Ten una foto de referencia del plato estándar para que salga igual en cada turno.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Emplatado de nivel</h4><ul>
+        <li>Un punto focal claro y con altura</li>
+        <li>Contraste de temperatura y textura en el bocado</li>
+        <li>Salsa dosificada con biberón, con intención</li>
+        <li>Bordes del plato limpios antes de mandar</li>
+        <li>Postre estándar fotografiado como referencia</li>
+      </ul></div>
+      <div class="box no"><h4>Presentación que resta</h4><ul>
+        <li>Plato recargado, sin protagonista</li>
+        <li>Guarniciones no comestibles solo de adorno</li>
+        <li>Coulis chorreado por todo el borde</li>
+        <li>Helado sobre plato tibio: llega derretido</li>
+        <li>Cada pastelero lo emplata "a su manera"</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Consistencia sobre creatividad en el pase:</b> el comensal de la mesa 4 y el de la mesa 12 deben recibir el mismo postre. Estandariza el emplatado con una foto y una guía de porciones y salsas por plato. La creatividad se decide al diseñar la carta; en el servicio, la meta es que cada plato salga tan perfecto como el de la foto, todas las veces.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Porcentaje panadero</b><span>Sistema donde la harina es 100% y el resto se expresa como % de la harina. Permite escalar fórmulas sin perder proporción.</span></div>
+      <div class="gterm"><b>Cremar</b><span>Batir mantequilla pomada con azúcar hasta blanquear e incorporar aire. Base de queques y galletas.</span></div>
+      <div class="gterm"><b>Temperar</b><span>Subir la temperatura de una yema poco a poco con líquido caliente para que no se cocine de golpe y forme grumos.</span></div>
+      <div class="gterm"><b>Crema pastelera</b><span>Leche, yema, azúcar y almidón cocidos hasta espesar. Relleno base de milhojas, tartaletas y suspiros.</span></div>
+      <div class="gterm"><b>Merengue italiano</b><span>Claras montadas con jarabe de azúcar a 118 °C. El más estable: aguanta la vitrina sin soltar agua.</span></div>
+      <div class="gterm"><b>Ganache</b><span>Chocolate emulsionado con crema caliente. Relleno de trufas, cobertura o base de tartaleta.</span></div>
+      <div class="gterm"><b>Genoise</b><span>Bizcocho aireado a base de huevo y azúcar batidos, con harina en envolvente. Base de tres leches y brazos.</span></div>
+      <div class="gterm"><b>Pâte à choux</b><span>Masa escaldada de agua, mantequilla, harina y huevo. Se usa para profiteroles, éclairs y churros.</span></div>
+      <div class="gterm"><b>Templado</b><span>Curva de temperatura que alinea los cristales del chocolate para que quede brillante, crujiente y se desmolde.</span></div>
+      <div class="gterm"><b>Punto de bolita</b><span>Estado del azúcar a ~116–120 °C; una gota en agua fría forma una bolita blanda. Punto del merengue italiano.</span></div>
+      <div class="gterm"><b>Film a piel</b><span>Cubrir una crema con film tocando su superficie para evitar costra y condensación al enfriar.</span></div>
+      <div class="gterm"><b>Envolvente</b><span>Movimiento suave con espátula, de abajo hacia arriba, para integrar aireados sin desinflarlos.</span></div>
+      <div class="gterm"><b>FEFO</b><span>"First Expired, First Out": lo que vence primero se usa primero. Regla de rotación de la vitrina y la cámara.</span></div>
+      <div class="gterm"><b>Quenelle</b><span>Porción ovalada de helado o crema formada con dos cucharas calientes. Da volumen y elegancia al plato.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en el obrador</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Pastelería y postres · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Precisión</h4><ul>
+          <li>Pesa todo en gramos, hasta los líquidos</li>
+          <li>Harina = 100% (porcentaje panadero)</li>
+          <li>Mantequilla pomada 16–18 °C, huevos a ambiente</li>
+          <li>Mise en place total antes de encender el horno</li>
+          <li>Timer y balanza calibrados; registra el batch</li>
+        </ul></div>
+        <div class="op-box"><h4>Técnicas base</h4><ul>
+          <li>Pastelera: temperar yema, hervir 1–2 min, film a piel</li>
+          <li>Merengue: azúcar de a pocos; italiano = el más estable</li>
+          <li>Ganache: crema caliente sobre chocolate, batir del centro</li>
+          <li>Envolvente para no desinflar bizcochos</li>
+          <li>Crema y curd: frías, máximo 2 h fuera del frío</li>
+        </ul></div>
+        <div class="op-box"><h4>Temperaturas</h4><ul>
+          <li>Merengue italiano: jarabe a 118 °C</li>
+          <li>Caramelo claro 150–160 °C · oscuro 165–180 °C</li>
+          <li>Templar bitter: fundir 50 · bajar 28 · trabajar 31 °C</li>
+          <li>Horno miente: termómetro dentro, precalienta 20 min</li>
+          <li>Ni una gota de agua en el chocolate (seize)</li>
+        </ul></div>
+        <div class="op-box"><h4>Montaje</h4><ul>
+          <li>Todo frío y cuajado antes de ensamblar</li>
+          <li>Almíbar para humedad, sin encharcar</li>
+          <li>Capas parejas con manga y aro; reposo entre capas</li>
+          <li>Glasea sobre postre casi congelado</li>
+          <li>Fruta y crocantes al final; cuchillo caliente al cortar</li>
+        </ul></div>
+        <div class="op-box"><h4>Conservación</h4><ul>
+          <li>Enfría rápido: de 60 °C a 5 °C sin demora</li>
+          <li>Rotula y aplica FEFO; sin etiqueta se descarta</li>
+          <li>Tapado a piel; postres arriba, crudos abajo</li>
+          <li>Pastelera 2–3 días · mousse congela · chantilly al día</li>
+          <li>Lima húmeda: herméticos y regla de las 2 horas</li>
+        </ul></div>
+        <div class="op-box"><h4>Presentación</h4><ul>
+          <li>Un punto focal con altura</li>
+          <li>Contraste: cremoso + crocante + fresco</li>
+          <li>Salsa con biberón, dosificada, con intención</li>
+          <li>Bordes del plato limpios antes del pase</li>
+          <li>Foto estándar: sale igual todas las veces</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Pastelería y postres · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

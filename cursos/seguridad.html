@@ -1,0 +1,353 @@
+<!-- CURSO · Academia Prep! — Seguridad en el trabajo
+  Head/header/style copiados EXACTO de docs/course-template.html. Sin tocar el CSS. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Seguridad en el trabajo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e0492c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Seguridad</span>
+    <nav class="nav">
+      <a href="#m1">Prevención</a><a href="#m2">Pisos y caídas</a><a href="#m3">Cortes y quemaduras</a><a href="#m4">Extintores</a><a href="#m5">Botiquín</a><a href="#m6">Sismo e incendio</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#e0492c">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Seguridad en el trabajo</h1>
+    <p>La casa cuida a quien la hace funcionar. Este curso te enseña a moverte seguro entre cocina, salón y almacén: prevenir accidentes, actuar en un corte o quemadura, usar el extintor y el botiquín, y salir bien parado de un sismo o un incendio. Aplica a mozos, cocina, bar, anfitrión, limpieza y administración.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~30 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el 80% de los accidentes en un restaurante (resbalones, cortes, quemaduras) se evitan con orden y hábitos simples. Un equipo que sabe reaccionar pierde segundos, no vidas: en un sismo o un amago de incendio, esos segundos son todo. Servir bien empieza por trabajar seguro.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Prevención de accidentes</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La seguridad no es un cartel en la pared: es cómo caminas, cómo cargas, cómo dejas tu estación. La mayoría de accidentes pasa por apuro y desorden, justo en la hora pico.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>EPP básico</h3><div class="d">Cocina: zapato antideslizante cerrado, mandil, guante de malla al fetear, jebe para químicos. Salón: calzado cerrado con suela de goma. Nunca sandalias ni suela lisa.</div><div class="s">// tu primer escudo</div></div>
+      <div class="tipo"><h3>Cargar bien</h3><div class="d">Dobla las rodillas, no la espalda. Una caja de agua o un saco de harina se levanta con las piernas. Si pesa más de lo que puedes, pide ayuda: no seas el héroe con lumbago.</div><div class="s">// espalda recta</div></div>
+      <div class="tipo"><h3>Cuello de botella</h3><div class="d">La puerta batiente entre cocina y salón es zona de choques. Avisa siempre "¡voy!" o "¡detrás!" al pasar con bandeja o sartén. Se sale por la derecha, se entra por la derecha.</div><div class="s">// voz alta y clara</div></div>
+      <div class="tipo"><h3>Orden = seguridad</h3><div class="d">Mise en place también es seguridad: cuchillos con filo hacia adentro, cables recogidos, cajas fuera del paso, nada en las escaleras. Un piso despejado no te tumba.</div><div class="s">// clean as you go</div></div>
+      <div class="tipo"><h3>Químicos rotulados</h3><div class="d">Desengrasante, lejía y desincrustante nunca se mezclan (la lejía + ácido genera gas tóxico). Cada envase rotulado, jamás en botella de gaseosa. Guantes y ventilación al usarlos.</div><div class="s">// nunca reenvasar sin rótulo</div></div>
+      <div class="tipo"><h3>Reporta el "casi"</h3><div class="d">Si casi te resbalas o casi te cortas, avísalo. Ese "casi accidente" es la pista para arreglar el problema antes de que lastime a alguien de verdad.</div><div class="s">// hoy casi, mañana no</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí haz esto</h4><ul>
+        <li>Camina, no corras, incluso en el ajetreo del servicio</li>
+        <li>Avisa "¡caliente!", "¡detrás!", "¡voy!" al moverte</li>
+        <li>Deja tu estación limpia y despejada al terminar el turno</li>
+        <li>Usa la escalera de tijera para alcanzar lo alto, nunca una silla</li>
+      </ul></div>
+      <div class="box no"><h4>No hagas esto</h4><ul>
+        <li>Cargar tres cajas para "no ir dos veces"</li>
+        <li>Dejar cuchillos sueltos en el lavadero lleno de agua</li>
+        <li>Usar el celular mientras cargas o caminas con bandeja</li>
+        <li>Trepar a la repisa o a la caja de gaseosas para alcanzar algo</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de la casa:</b> el que ve un peligro, lo arregla o lo reporta en el acto. Nadie "pasa de largo" frente a un charco, un cable suelto o un cuchillo mal puesto. La seguridad es de todos, no del supervisor.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Pisos mojados y caídas</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El resbalón es el accidente número uno en restaurantes. Grasa en el piso de cocina, agua junto al lavavajillas, un vaso roto en el salón: todo se resuelve rápido si sabes qué hacer.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">warning</span></div>
+      <div><div class="t">Paso 1 · Aísla</div><h4>Señaliza de inmediato</h4><p>Pon el cono amarillo "piso mojado" apenas veas o generes el derrame. Si no hay cono a mano, quédate parado cuidando la zona y pide que traigan uno. Nunca dejes un charco sin avisar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">cleaning_services</span></div>
+      <div><div class="t">Paso 2 · Limpia</div><h4>Seca de una vez, no "después"</h4><p>Agua con papel o trapero; grasa con desengrasante y luego seco. Un piso "un poco húmedo" ya resbala. En cocina, la grasa se seca hasta que el piso deje de brillar de mojado.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">broken_image</span></div>
+      <div><div class="t">Paso 3 · Vidrio roto</div><h4>Nunca con la mano</h4><p>Copa o plato roto: recoge con escoba y recogedor, los trozos chicos con papel toalla húmedo. Va a un contenedor rígido rotulado "vidrio", jamás a la bolsa de basura común (corta a quien la cargue).</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_bar</span></div>
+      <div><div class="t">Paso 4 · Regla del vidrio en barra</div><h4>Hielo con pinza, nunca con vaso</h4><p>Si un vaso se rompe cerca del hielo, se descarta TODO el hielo de esa hielera y se lava. Un vidrio invisible en la bebida de un invitado es un accidente grave. El hielo se saca con pinza o pala, nunca con el vaso.</p></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Zona</th><th>Riesgo típico</th><th>Cómo lo prevenimos</th></tr></thead>
+      <tbody>
+        <tr><td>Línea de cocina</td><td>Grasa y agua en el piso</td><td>Trapo seco a mano, limpiar apenas cae, tapete antideslizante</td></tr>
+        <tr><td>Lavavajillas</td><td>Charco constante de agua</td><td>Tapete de goma, secar cada cierto tiempo, calzado antideslizante</td></tr>
+        <tr><td>Cámara / congelador</td><td>Piso húmedo y frío, condensación</td><td>Entrar con cuidado, secar goteos, no correr</td></tr>
+        <tr><td>Salón</td><td>Comida o bebida derramada</td><td>Levantar en el acto, cono si tarda, avisar al mozo de la zona</td></tr>
+        <tr><td>Escaleras a almacén</td><td>Peldaños mojados, mala luz</td><td>Una mano libre en el pasamanos, buena iluminación, nada apilado</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Ejemplo real:</b> viernes 9pm, un mozo cruza con cuatro platos y no ve el chorrito de aceite que cayó de la freidora. Se resbala, quema con la comida y se lastima la muñeca. Todo por 20 segundos de piso sin secar. Secar a tiempo no es perder tiempo: es el tiempo mejor invertido de la noche.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Cortes y quemaduras</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Cuchillos, plancha, freidora, horno de pizza, vapor y platos recién salidos: la cocina está llena de filos y calor. La buena noticia es que casi todo corte y quemadura se previene con técnica y se atiende con calma.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cuchillo afilado</h3><div class="d">Un cuchillo sin filo es más peligroso: resbala y necesitas forzar. Mantenlo afilado, córtalo sobre tabla estable (paño húmedo debajo) y siempre alejando el filo de tus dedos.</div><div class="s">// filo hacia la tabla</div></div>
+      <div class="tipo"><h3>Garra de gato</h3><div class="d">La mano que sujeta el alimento va con los dedos doblados hacia adentro, nudillos guiando el cuchillo. Nunca dedos estirados sobre lo que cortas.</div><div class="s">// nudillos = tope</div></div>
+      <div class="tipo"><h3>Cuchillo que cae, cae</h3><div class="d">Si se te resbala un cuchillo, NO intentes atajarlo. Da un paso atrás y deja que caiga. Un cuchillo en el piso se recoge; uno atajado en el aire te corta la mano.</div><div class="s">// paso atrás, no manotazo</div></div>
+      <div class="tipo"><h3>Mango hacia adentro</h3><div class="d">Al lavar o transportar cuchillos, filo abajo y mango visible. Nunca los dejes en el lavadero bajo el agua jabonosa: quien meta la mano se corta sin verlo.</div><div class="s">// nunca sumergido</div></div>
+      <div class="tipo"><h3>Todo lo del horno quema</h3><div class="d">Asume que sartén, bandeja, mango y borde del horno de pizza están calientes. Usa siempre paño seco (uno mojado transmite el calor y te quema peor) o manopla.</div><div class="s">// "¡caliente!" en voz alta</div></div>
+      <div class="tipo"><h3>Aceite y agua no se llevan</h3><div class="d">Nunca eches agua ni alimento con escarcha de hielo a la freidora: salta y quema. Baja las papas despacio, alejando el cuerpo, y nunca llenes la freidora por encima de su marca.</div><div class="s">// gota de agua = explosión</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Quemadura leve · qué hacer</h4><ul>
+        <li>Enfría con agua corriente fría 10–20 min (no helada)</li>
+        <li>Quita anillos/reloj de la zona antes de que hinche</li>
+        <li>Cubre con gasa estéril suelta del botiquín</li>
+        <li>Si es en cara, manos, o más grande que la palma: al médico</li>
+      </ul></div>
+      <div class="box no"><h4>Quemadura · nunca hagas</h4><ul>
+        <li>Poner hielo directo, pasta de dientes, aceite ni mantequilla</li>
+        <li>Reventar las ampollas</li>
+        <li>Despegar la ropa pegada a la piel quemada</li>
+        <li>Seguir trabajando "aguantando" una quemadura grande</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Corte, paso a paso:</b> lávate y presiona con gasa limpia hasta que pare de sangrar (2–3 min sin espiar). Cubre con curita o gasa y, si manipulas alimentos, dedil o guante encima. Si el corte es profundo, no para de sangrar o ves grasa/hueso: presión firme, eleva la mano y va a emergencia. Todo corte con sangre saca a esa persona de la línea de alimentos hasta cubrirlo bien.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Extintores y control del fuego</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Saber cuál extintor usar y cómo, en 10 segundos, marca la diferencia entre un susto y un incendio. En cocina el fuego más común es de aceite y grasa: el agua lo empeora. Conoce tu equipo antes de que suene la alarma.</p>
+    <table class="t">
+      <thead><tr><th>Clase de fuego</th><th>Qué arde</th><th>Extintor a usar</th></tr></thead>
+      <tbody>
+        <tr><td><b>A</b></td><td>Sólidos: papel, cartón, madera, manteles, servilletas</td><td>PQS (polvo) o agua</td></tr>
+        <tr><td><b>B</b></td><td>Líquidos: aceite, alcohol, licores en barra, solventes</td><td>PQS o CO₂ (nunca agua)</td></tr>
+        <tr><td><b>C</b></td><td>Equipo eléctrico energizado: horno, freidora, tablero</td><td>CO₂ o PQS (nunca agua)</td></tr>
+        <tr><td><b>K</b></td><td>Aceites y grasas de cocina a alta temperatura</td><td>Extintor Clase K (acetato de potasio)</td></tr>
+      </tbody>
+    </table>
+    <p class="lead" style="margin-top:14px">El PQS (polvo químico seco ABC) es el más común y sirve para casi todo. Pero para la freidora y la plancha, lo ideal es el <b>Clase K</b>. Aprende la técnica <b>PASS</b>:</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">lock_open</span></div>
+      <div><div class="t">P · Pull</div><h4>Jala el pasador (seguro)</h4><p>Retira el precinto y jala el pin del extintor. Párate a 2–3 metros del fuego, con una salida a tu espalda (nunca dejes que el fuego quede entre tú y la puerta).</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">my_location</span></div>
+      <div><div class="t">A · Aim</div><h4>Apunta a la base del fuego</h4><p>Dirige la manguera a la base de las llamas, no a las llamas altas. Ahí está el combustible; apagas la raíz, no el humo.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">pan_tool</span></div>
+      <div><div class="t">S · Squeeze</div><h4>Aprieta la palanca</h4><p>Presiona la palanca para descargar. Un extintor portátil dura solo 8–15 segundos: úsalo con decisión, no lo desperdicies apuntando mal.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">sync_alt</span></div>
+      <div><div class="t">S · Sweep</div><h4>Barre de lado a lado</h4><p>Mueve el chorro en abanico sobre la base hasta que el fuego se apague. Retrocede vigilando: si vuelve a prender, repite. Si no cede, evacúa y llama a bomberos (116).</p></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí, ante un amago de fuego</h4><ul>
+        <li>Tapa la sartén/olla con su tapa o un paño húmedo para ahogar la llama</li>
+        <li>Corta el gas de la hornilla si puedes hacerlo sin riesgo</li>
+        <li>Usa el extintor solo si el fuego es pequeño y tienes salida detrás</li>
+        <li>Avisa fuerte "¡FUEGO!" para que todos sepan</li>
+      </ul></div>
+      <div class="box no"><h4>No, nunca</h4><ul>
+        <li>Echar agua a aceite ardiendo (explota y esparce el fuego)</li>
+        <li>Mover una sartén en llamas por la cocina</li>
+        <li>Combatir un fuego que ya pasó tu altura o llega al techo</li>
+        <li>Volver por tus cosas una vez que decidiste evacuar</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Sábelo hoy, no en la emergencia:</b> ¿dónde están los extintores de tu área y de qué clase son? Chequea que la aguja del manómetro esté en la zona verde y la tarjeta de inspección vigente. Un extintor descargado o vencido no apaga nada. Reporta al gerente cualquiera con la aguja en rojo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Botiquín y primeros auxilios</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El botiquín es de todos y para todos. Debe estar visible, señalizado, completo y sin candado. Saber qué tiene y cómo usarlo hace que un accidente menor no se vuelva mayor.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Curación</h3><div class="d">Gasas estériles, vendas, esparadrapo, curitas, apósitos, solución salina o suero fisiológico para lavar heridas, antiséptico (clorhexidina/yodo).</div><div class="s">// heridas y cortes</div></div>
+      <div class="tipo"><h3>Quemaduras</h3><div class="d">Gasa vaselinada estéril, compresas limpias. NO cremas caseras. Lo principal para quemadura es agua fría corriente, que ya tienes en el caño.</div><div class="s">// enfriar primero</div></div>
+      <div class="tipo"><h3>Protección</h3><div class="d">Guantes de nitrilo (para atender sin contacto con sangre), tijera de punta roma, dediles para cubrir dedos en cocina, mascarilla.</div><div class="s">// tú también te proteges</div></div>
+      <div class="tipo"><h3>Lista de contactos</h3><div class="d">Pegada en el botiquín: SAMU 106, Bomberos 116, Emergencias 105, la clínica/EsSalud más cercana, y el celular del encargado de seguridad del local.</div><div class="s">// números grandes y visibles</div></div>
+      <div class="tipo"><h3>Lo que NO va sin permiso</h3><div class="d">No repartas pastillas ni antibióticos por tu cuenta. Un analgésico solo si la persona lo pide y no es alérgica. Ante duda de salud, se llama al médico.</div><div class="s">// no juegues a doctor</div></div>
+      <div class="tipo"><h3>Revisión mensual</h3><div class="d">Alguien revisa vencimientos y repone lo usado cada mes. Un botiquín con gasas vencidas o vacío es tan inútil como no tenerlo.</div><div class="s">// completo o no sirve</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Situación</th><th>Qué hacer ya</th><th>Cuándo escalar</th></tr></thead>
+      <tbody>
+        <tr><td>Corte que sangra</td><td>Presión con gasa + elevar la zona</td><td>No para en 10 min, es profundo o muy sucio → emergencia</td></tr>
+        <tr><td>Quemadura</td><td>Agua fría 10–20 min + gasa suelta</td><td>Mayor que la palma, en cara/manos, con ampollas → médico</td></tr>
+        <tr><td>Se atragantó (asfixia)</td><td>Anímalo a toser; si no puede, maniobra de Heimlich</td><td>Se pone morado o desmaya → 106 de inmediato</td></tr>
+        <tr><td>Desmayo</td><td>Recuéstalo, eleva las piernas, dale aire</td><td>No reacciona o no respira → RCP + 106</td></tr>
+        <tr><td>Golpe/caída fuerte</td><td>No lo muevas si sospechas fractura o golpe de cabeza</td><td>Pérdida de conocimiento o dolor intenso → 106</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El orden salva:</b> ante cualquier accidente, primero <b>P</b>rotege (que no haya más peligro para ti ni el herido), luego <b>A</b>visa (llama o manda a alguien a llamar) y recién ahí <b>S</b>ocorre. Se llama "PAS". Y regla de oro de manipulación de alimentos: quien tiene una herida abierta o vómito/diarrea NO manipula comida hasta estar cubierto o dado de alta.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Evacuación · sismo e incendio</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Lima es zona sísmica: el sismo no avisa. Y un incendio se vuelve incontrolable en minutos. En ambos, tu ventaja es tener el plan claro ANTES. Conoce tu ruta, tu zona segura y tu rol con los invitados.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">public</span></div>
+      <div><div class="t">Sismo · durante</div><h4>Quédate y protégete si el temblor es fuerte</h4><p>Si el sismo es intenso y estás lejos de la salida, no corras entre mesas y vidrios: ubícate en una zona segura señalizada (columna, junto a muro estructural), lejos de ventanas, botellas de la barra y repisas. Protege tu cabeza. En cocina, aléjate de ollas calientes y freidoras.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">directions_walk</span></div>
+      <div><div class="t">Sismo · después</div><h4>Evacúa con calma cuando pare</h4><p>Terminado el movimiento, corta gas y electricidad si es tu rol, y evacúa por la ruta señalizada hacia el punto de reunión (la vereda/plaza acordada). Sin correr, sin regresar por cosas. Cuenta con réplicas.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_fire_department</span></div>
+      <div><div class="t">Incendio</div><h4>Avisa, corta, evacúa</h4><p>Grita "¡FUEGO!", activa la alarma. Si el fuego es pequeño y sabes, usa el extintor (Módulo 4); si no, evacúa ya. Cierra puertas al salir (frena el fuego), no uses ascensor. Si hay humo, agáchate: el aire limpio está abajo.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">groups</span></div>
+      <div><div class="t">Con invitados</div><h4>Guíalos, no los abandones</h4><p>El equipo evacúa a los invitados: los mozos guían su zona hacia la salida más cercana, con prioridad a adultos mayores, embarazadas, niños y personas con discapacidad. Nadie sale antes que los comensales. El anfitrión verifica que no quede nadie en baños ni salones.</p></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí, en toda evacuación</h4><ul>
+        <li>Conoce las DOS salidas más cercanas a tu estación</li>
+        <li>Ve al punto de reunión y espera ahí para el conteo del personal</li>
+        <li>Mantén libres siempre las rutas y salidas de emergencia</li>
+        <li>Sigue las indicaciones del líder/brigadista de evacuación</li>
+      </ul></div>
+      <div class="box no"><h4>No, jamás</h4><ul>
+        <li>Bloquear la salida de emergencia con cajas, sillas o mercadería</li>
+        <li>Trabar la puerta de emergencia con llave durante el servicio</li>
+        <li>Usar el ascensor o volver por celular, propinas o mochila</li>
+        <li>Empujar o correr generando pánico entre invitados</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Simulacro que sirve:</b> practicamos evacuación aunque parezca exagerado. En un sismo real vas a hacer lo que ensayaste, no lo que leíste. Aprende hoy: ¿cuál es tu punto de reunión?, ¿quién es el brigadista del turno?, ¿dónde está la llave de gas general? Si dudas de alguna, pregúntala antes de terminar el día.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>EPP</b><span>Equipo de Protección Personal: calzado antideslizante, guante de malla, mandil, manoplas, guantes de químicos. Tu primera barrera.</span></div>
+      <div class="gterm"><b>PQS</b><span>Polvo Químico Seco. Extintor ABC más común; sirve para sólidos, líquidos y equipo eléctrico. No ideal para grasa de cocina.</span></div>
+      <div class="gterm"><b>Extintor Clase K</b><span>Especial para aceites y grasas de cocina a alta temperatura (freidora, plancha). Enfría y forma una capa que ahoga la llama.</span></div>
+      <div class="gterm"><b>CO₂</b><span>Extintor de dióxido de carbono. Ideal para equipo eléctrico energizado; no deja residuo. No usar en espacios cerrados sin ventilar.</span></div>
+      <div class="gterm"><b>PASS</b><span>Técnica de uso del extintor: Pull (jala el seguro), Aim (apunta a la base), Squeeze (aprieta), Sweep (barre de lado a lado).</span></div>
+      <div class="gterm"><b>PAS</b><span>Orden de actuación ante un accidentado: Proteger la escena, Avisar a emergencias, Socorrer a la persona.</span></div>
+      <div class="gterm"><b>Garra de gato</b><span>Técnica de corte: la mano que sujeta el alimento con los dedos doblados y los nudillos guiando el cuchillo, para no cortarte.</span></div>
+      <div class="gterm"><b>Zona segura</b><span>Punto interno señalizado (junto a columna o muro estructural, lejos de vidrios) donde protegerte durante un sismo fuerte.</span></div>
+      <div class="gterm"><b>Punto de reunión</b><span>Lugar externo acordado (vereda o plaza) donde se junta todo el equipo tras evacuar, para el conteo de personal.</span></div>
+      <div class="gterm"><b>Ruta de evacuación</b><span>Camino señalizado y siempre despejado hacia la salida de emergencia. Nunca se bloquea ni se traba con llave.</span></div>
+      <div class="gterm"><b>Casi accidente</b><span>Incidente que no llegó a lastimar ("casi me resbalo"). Se reporta porque avisa de un peligro a corregir antes del daño real.</span></div>
+      <div class="gterm"><b>Manómetro</b><span>Reloj indicador del extintor. Aguja en zona verde = cargado y listo; en rojo = descargado o sobrecargado, hay que reportarlo.</span></div>
+      <div class="gterm"><b>Heimlich</b><span>Maniobra de compresión abdominal para desobstruir la vía aérea de alguien que se atraganta y no puede toser ni hablar.</span></div>
+      <div class="gterm"><b>Brigadista</b><span>Persona del turno designada y capacitada para liderar la evacuación, usar el extintor y dar la primera respuesta en emergencias.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Seguridad en el trabajo · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Prevención diaria</h4><ul>
+          <li>Camina, no corras. Avisa "¡voy!", "¡detrás!", "¡caliente!"</li>
+          <li>Carga con las piernas, no la espalda. Pesa mucho → pide ayuda</li>
+          <li>Estación limpia y despejada; químicos rotulados, nunca mezclados</li>
+          <li>Reporta el "casi accidente" y arregla el peligro que veas</li>
+        </ul></div>
+        <div class="op-box"><h4>Pisos y caídas</h4><ul>
+          <li>Derrame = cono + secar YA (agua o grasa hasta que no brille)</li>
+          <li>Vidrio: escoba y recogedor, nunca con la mano; a contenedor rígido</li>
+          <li>Vaso roto en barra → descarta todo el hielo de esa hielera</li>
+          <li>Calzado antideslizante siempre; una mano libre en escaleras</li>
+        </ul></div>
+        <div class="op-box"><h4>Cortes y quemaduras</h4><ul>
+          <li>Cuchillo afilado, garra de gato, filo hacia la tabla</li>
+          <li>Se cae el cuchillo → paso atrás, déjalo caer</li>
+          <li>Corte: presión con gasa + eleva; profundo → emergencia</li>
+          <li>Quemadura: agua fría 10–20 min. Nunca hielo, pasta ni aceite</li>
+        </ul></div>
+        <div class="op-box"><h4>Extintor (PASS)</h4><ul>
+          <li>Pull–Aim–Squeeze–Sweep, apunta a la BASE del fuego</li>
+          <li>Aceite/grasa → Clase K. Eléctrico → CO₂. Nunca agua a esos</li>
+          <li>Fuego en sartén: tápalo, corta el gas, ahoga la llama</li>
+          <li>Salida a tu espalda; si crece, evacúa y llama a 116</li>
+        </ul></div>
+        <div class="op-box"><h4>Botiquín · PAS</h4><ul>
+          <li>Proteger → Avisar → Socorrer. Botiquín visible y completo</li>
+          <li>Herido con sangre o vómito NO manipula alimentos</li>
+          <li>No repartas pastillas por tu cuenta</li>
+          <li>Emergencias: SAMU 106 · Bomberos 116 · Policía 105</li>
+        </ul></div>
+        <div class="op-box"><h4>Sismo e incendio</h4><ul>
+          <li>Sismo fuerte: zona segura, lejos de vidrios; evacúa al parar</li>
+          <li>Incendio: avisa, corta gas, evacúa; con humo agáchate</li>
+          <li>Guía a los invitados; prioridad a mayores, niños, embarazadas</li>
+          <li>Punto de reunión + conteo. Rutas y salidas SIEMPRE libres</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Seguridad en el trabajo · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

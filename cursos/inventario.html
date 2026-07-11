@@ -1,0 +1,302 @@
+<!-- Curso Academia Prep! · Inventario, recepción, FEFO y mermas · Cocina / BOH -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Inventario, recepción, FEFO y mermas · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b45309'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Inventario y FEFO</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#b45309">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Inventario, recepción, FEFO y mermas</h1>
+    <p>Todo lo que entra al almacén se recibe, se revisa, se guarda y se cuenta con criterio. Para cocina y almacén: recibir bien, guardar bien y saber exactamente qué tienes y qué se te va en merma.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Cocina y almacén</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el inventario es la segunda cuenta más grande del restaurante después de la planilla. Un lomo recibido tibio, un lote de queso que venció al fondo de la cámara o un conteo "a ojo" se traducen en plata que se pierde sin que nadie la vea. Recibir, rotar y contar bien es la diferencia entre un food cost sano y un local que trabaja para la basura.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Recepción de mercadería</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">El momento más importante del inventario es la puerta de atrás. Lo que aceptas mal ya lo pagaste: nunca firmes una guía sin haber contado y revisado. Recibir es un trabajo, no una firma rápida.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Ten la orden a la mano</h3><div class="d">Antes de que llegue el proveedor, ten la orden de compra o el pedido. Recibes contra lo que pediste, no contra lo que trajeron.</div><div class="s">Sin orden, no se recibe</div></div>
+      <div class="tipo"><h3>Peso real, no el de la guía</h3><div class="d">Pesa en tu balanza calibrada. El kilo de camarón o de lomo se comprueba, no se cree. Descuenta hielo, cajas y jabas del peso neto.</div><div class="s">Balanza tarada en cero</div></div>
+      <div class="tipo"><h3>Termómetro en mano</h3><div class="d">Mide la temperatura de refrigerados y congelados apenas bajan del camión. El frío se pierde en minutos parado en la vereda.</div><div class="s">Punta limpia y desinfectada</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">📋</div><div><div class="t">Paso 1 · Antes de tocar la caja</div><h4>Compara guía vs. orden</h4><p>Revisa que el proveedor, los productos, las cantidades y los precios de la guía de remisión coincidan con tu orden. Si trajo algo que no pediste, no entra.</p></div></div>
+      <div class="paso"><div class="ico">⚖️</div><div><div class="t">Paso 2 · Contar y pesar</div><h4>Cuenta unidad por unidad</h4><p>Pesa lo que va por kilo y cuenta lo que va por unidad. 10 kg de tomate son 10 kg en tu balanza, no "una jaba llena". Anota el peso real al lado del de la guía.</p></div></div>
+      <div class="paso"><div class="ico">🌡️</div><div><div class="t">Paso 3 · Temperatura y calidad</div><h4>Mide frío y revisa el producto</h4><p>Refrigerado a 0–5 °C, congelado a −18 °C o menos. Revisa color, olor, empaque y fecha de vencimiento antes de aceptar (esto se detalla en el Módulo 2).</p></div></div>
+      <div class="paso"><div class="ico">✍️</div><div><div class="t">Paso 4 · Firmar con observaciones</div><h4>Anota faltantes y rechazos en la guía</h4><p>Si falta peso o rechazas algo, escríbelo en la guía antes de firmar y que el repartidor lo vea. Toma foto. Luego registra la entrada en Prep! Mercado.</p></div></div>
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">Paso 5 · Guardar de inmediato</div><h4>Primero lo perecible</h4><p>Congelados y refrigerados van directo a su cámara; nada de dejar el pescado 20 minutos en la mesa mientras terminas de contar los abarrotes.</p></div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> no recibas mercadería en plena hora pico ni cuando estás solo. Coordina las entregas fuera del servicio (por ejemplo antes de las 11:00) para poder revisar con calma. La prisa es la mejor amiga del proveedor que trae menos.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Control de calidad al recibir</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Aceptar o rechazar es tu decisión, y es reversible solo en la puerta. Una vez que firmaste y el camión se fue, ese producto malo es tuyo. Aprende las señales de rechazo por familia de producto.</p>
+    <table class="t">
+      <thead><tr><th>Producto</th><th>Acepta si...</th><th>Rechaza si...</th><th>Temp. de recepción</th></tr></thead>
+      <tbody>
+        <tr><td>Pescado / mariscos</td><td>Ojos brillantes, agallas rojas, olor a mar, carne firme</td><td>Olor a amoniaco, ojos hundidos, carne blanda, mucosa gris</td><td>0–4 °C (sobre hielo)</td></tr>
+        <tr><td>Carnes rojas</td><td>Color rojo cereza, grasa blanca, superficie seca al tacto</td><td>Verdoso o marrón, viscoso, olor agrio</td><td>0–5 °C</td></tr>
+        <tr><td>Pollo / aves</td><td>Piel rosada uniforme, sin manchas, firme</td><td>Piel pegajosa, morada, olor fuerte</td><td>0–4 °C</td></tr>
+        <tr><td>Lácteos y quesos</td><td>Empaque sellado, fecha vigente, cadena de frío</td><td>Empaque inflado o roto, fecha corta, suero cortado</td><td>0–5 °C</td></tr>
+        <tr><td>Verduras y frutas</td><td>Turgentes, color vivo, sin golpes ni pudrición</td><td>Marchitas, con moho, magulladas, con tierra excesiva</td><td>Ambiente / 8–10 °C</td></tr>
+        <tr><td>Congelados</td><td>Duros como piedra, sin escarcha excesiva</td><td>Blandos, con hielo grueso o recongelados (bloques deformes)</td><td>−18 °C o menos</td></tr>
+        <tr><td>Abarrotes / secos</td><td>Empaque íntegro, sin humedad, sin plaga</td><td>Bolsas rotas, latas abolladas u oxidadas, gorgojos</td><td>Ambiente seco</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — recibir con criterio</h4><ul>
+        <li>Revisa la fecha de vencimiento: debe quedar vida útil suficiente para venderlo</li>
+        <li>Verifica el registro sanitario en productos empacados</li>
+        <li>Rechaza la caja completa si una parte llegó mal y toma foto</li>
+        <li>Descongelar y recongelar es motivo de rechazo automático</li>
+        <li>Ante la duda, llama al jefe de cocina antes de firmar</li>
+      </ul></div>
+      <div class="box no"><h4>No — errores que se pagan caro</h4><ul>
+        <li>Firmar la guía "para no hacer esperar al repartidor"</li>
+        <li>Recibir pescado tibio "porque el proveedor es de confianza"</li>
+        <li>Aceptar latas abolladas: riesgo de botulismo</li>
+        <li>Guardar sin revisar y descubrir el problema en el servicio</li>
+        <li>Aceptar productos sin fecha o con etiqueta borrada</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Ejemplo real:</b> llega el proveedor con 8 kg de langostinos a 9 °C en vez de 0–4 °C. Aunque "se ven bien", la cadena de frío ya se rompió y con marisco no se juega. Rechazas, lo anotas en la guía, avisas a compras y esa noche cambias el plato del día. Cuesta menos que una intoxicación en sala.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Almacenamiento correcto</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Guardar bien es la mitad del control de inventario. Cada producto tiene su lugar, su temperatura y su altura. Un almacén ordenado se cuenta rápido, no cría plagas y no esconde vencidos al fondo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Orden vertical en cámara</h3><div class="d">Arriba lo listo para comer (postres, salsas), al medio los crudos que menos contaminan, abajo las carnes y pollo crudos. El jugo que gotea nunca cae sobre algo cocido.</div><div class="s">Cocido arriba, crudo abajo</div></div>
+      <div class="tipo"><h3>Todo rotulado y fechado</h3><div class="d">Cada producto pasado a otro envase lleva etiqueta: qué es, fecha de ingreso y fecha de vencimiento. Sin rótulo no se puede aplicar FEFO.</div><div class="s">Sin etiqueta, no existe</div></div>
+      <div class="tipo"><h3>15 cm del piso y pared</h3><div class="d">Nada apoyado directo en el suelo. Usa parihuelas y estantería para que circule el aire, se limpie debajo y no suban roedores ni humedad.</div><div class="s">Nunca cajas en el piso</div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Zona</th><th>Temperatura</th><th>Qué guarda</th><th>Ojo con</th></tr></thead>
+      <tbody>
+        <tr><td>Congeladora</td><td>−18 °C o menos</td><td>Carnes, pescado, masas, helados</td><td>Escarcha = puerta mal cerrada</td></tr>
+        <tr><td>Refrigeración carnes</td><td>0–2 °C</td><td>Res, cerdo, pollo, embutidos</td><td>Separar por tipo, tapado</td></tr>
+        <tr><td>Refrigeración general</td><td>2–5 °C</td><td>Lácteos, salsas, cocidos, verdura lavada</td><td>Cocido siempre arriba</td></tr>
+        <tr><td>Cámara de verduras</td><td>8–10 °C</td><td>Frutas y verduras frescas</td><td>No lavar hasta usar</td></tr>
+        <tr><td>Almacén seco</td><td>Ambiente (15–21 °C)</td><td>Abarrotes, enlatados, harinas</td><td>Seco, ventilado, sin luz directa</td></tr>
+        <tr><td>Químicos / limpieza</td><td>Ambiente, aparte</td><td>Detergentes, desinfectantes</td><td>NUNCA cerca de alimentos</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Contaminación cruzada:</b> los químicos de limpieza y los alimentos jamás comparten estante. Un frasco de desengrasante encima de un saco de harina es una emergencia, no un descuido. Zonas separadas, siempre.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>FEFO y rotación de stock</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">FEFO = First Expired, First Out: lo primero que vence es lo primero que sale. No importa cuándo llegó, importa cuándo caduca. Rotar bien es plata: cada producto que vence en el estante es dinero que tiraste a la basura.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🏷️</div><div><div class="t">Paso 1 · Etiqueta al ingresar</div><h4>Marca fecha de vencimiento visible</h4><p>Apenas guardas, pon la fecha de caducidad grande y al frente. Si el producto no la trae (a granel), calcula la vida útil y anótala tú.</p></div></div>
+      <div class="paso"><div class="ico">🔄</div><div><div class="t">Paso 2 · Lo que vence primero, adelante</div><h4>Ordena por fecha, no por llegada</h4><p>Al reponer, el lote más próximo a vencer va adelante y el nuevo atrás. Así la mano del cocinero siempre agarra primero lo que urge salir.</p></div></div>
+      <div class="paso"><div class="ico">🚦</div><div><div class="t">Paso 3 · Semáforo de vencimientos</div><h4>Revisa a diario lo que está por caducar</h4><p>Verde: vida útil larga. Amarillo: vence en 2–3 días, priorízalo en la producción. Rojo: vence hoy/mañana, úsalo ya o va a merma.</p></div></div>
+      <div class="paso"><div class="ico">📲</div><div><div class="t">Paso 4 · Usa las alertas de Prep!</div><h4>Deja que el sistema te avise</h4><p>Mercado marca los lotes por vencer (ME-09 / FEFO). Revisa la alerta cada mañana y coordina con cocina qué mover en el menú del día.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — rotación sana</h4><ul>
+        <li>FEFO manda: sale primero lo que vence primero</li>
+        <li>Producto nuevo detrás del viejo, siempre</li>
+        <li>Etiqueta de fecha al frente y legible</li>
+        <li>Revisar el semáforo de vencimientos cada mañana</li>
+        <li>Coordinar con cocina para vender lo "amarillo"</li>
+      </ul></div>
+      <div class="box no"><h4>No — desperdicio garantizado</h4><ul>
+        <li>Poner lo nuevo adelante porque es más fácil</li>
+        <li>Guardar sin fecha y "confiar en la memoria"</li>
+        <li>Descubrir el vencido recién cuando apesta</li>
+        <li>Amontonar cajas y no ver lo que hay al fondo</li>
+        <li>Usar FIFO por costumbre cuando FEFO dice otra cosa</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>FEFO vs. FIFO:</b> FIFO (lo primero que entra, primero sale) sirve para abarrotes de fecha pareja. Pero si un lote nuevo vence antes que uno viejo, manda FEFO. Regla simple: <b>siempre mira la fecha de vencimiento, no la de llegada.</b></div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Conteo de inventario</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El inventario es la foto real de lo que tienes. Se cuenta lo físico y se compara contra lo que dice el sistema: la diferencia te dice si hay merma, robo, error de recepción o de receta. Cuenta con método, no a ojo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Conteo ciego</h3><div class="d">Cuenta sin ver el número teórico del sistema. Así anotas lo que hay de verdad y no "ajustas" al número esperado. Luego el sistema compara (ME-12).</div><div class="s">Primero cuentas, después comparas</div></div>
+      <div class="tipo"><h3>Misma unidad siempre</h3><div class="d">Define la unidad de conteo por insumo: kilos, litros, unidades o botellas. Contar "media caja" no sirve; convierte a la unidad real del sistema.</div><div class="s">Kilos con kilos, no jabas</div></div>
+      <div class="tipo"><h3>Local cerrado y quieto</h3><div class="d">Cuenta con el almacén sin movimiento: fin de mes, antes de abrir o al cerrar. Si entran y salen productos mientras cuentas, el número miente.</div><div class="s">Sin despachos durante el conteo</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🗺️</div><div><div class="t">Paso 1 · Ruta fija</div><h4>Cuenta zona por zona, en orden</h4><p>Sigue siempre el mismo recorrido (congeladora → refrigeración → cámara → seco → barra). Así no te saltas ni cuentas dos veces el mismo estante.</p></div></div>
+      <div class="paso"><div class="ico">✍️</div><div><div class="t">Paso 2 · Anota en el momento</div><h4>Registra al pesar, no de memoria</h4><p>Apunta cada línea al contarla, en la app o en la planilla. Nada de "ya me acuerdo": entre estante y estante se olvida y se inventa.</p></div></div>
+      <div class="paso"><div class="ico">🔍</div><div><div class="t">Paso 3 · Teórico vs. real</div><h4>Compara y explica la diferencia</h4><p>El sistema resta lo vendido (por recetas) del stock inicial. Si el real no cuadra, revisa: ¿merma sin registrar? ¿receta mal cargada? ¿recepción mal contada?</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Paso 4 · Doble aprobación</div><h4>Anomalías se recuentan y se firman</h4><p>Diferencias grandes (±20%) se recuentan antes de ajustar. En Prep! el conteo con anomalía pide una segunda revisión antes de cerrar el inventario.</p></div></div>
+    </div>
+    <div class="callout"><b>Frecuencia práctica:</b> los productos caros o críticos (lomo, camarón, licores, quesos finos) se cuentan a diario o por turno. El inventario completo, una vez al mes como mínimo. Lo que más plata mueve, se vigila más seguido.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Registro de mermas</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Merma es todo producto que se pierde y no se vende: lo que se malogró, se cayó, se cortó de más o se quemó. La merma existe siempre; lo grave es no registrarla. Lo que no se anota, no se puede corregir.</p>
+    <table class="t">
+      <thead><tr><th>Tipo de merma</th><th>Ejemplo del día</th><th>¿Evitable?</th><th>Qué hacer</th></tr></thead>
+      <tbody>
+        <tr><td>Vencimiento</td><td>Queso fresco que caducó al fondo de la cámara</td><td>Sí — FEFO</td><td>Registrar y revisar por qué no rotó</td></tr>
+        <tr><td>Deterioro / frío</td><td>Lechuga marchita, pescado que perdió cadena de frío</td><td>Sí — almacenar bien</td><td>Registrar y ajustar recepción/temperatura</td></tr>
+        <tr><td>Preparación</td><td>Recorte de grasa, cáscaras, espinas al porcionar</td><td>Parcial</td><td>Medir el rendimiento y ajustar la receta</td></tr>
+        <tr><td>Cocción / error</td><td>Plato quemado o mal armado que se rehace</td><td>Sí — técnica</td><td>Registrar como merma de cocina y capacitar</td></tr>
+        <tr><td>Rotura / caída</td><td>Botella o insumo que se cayó al piso</td><td>Sí — cuidado</td><td>Registrar al instante con motivo real</td></tr>
+        <tr><td>Robo / faltante</td><td>Stock que no cuadra sin causa clara</td><td>Sí — control</td><td>Investigar; no esconder como "merma"</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — registrar merma como se debe</h4><ul>
+        <li>Anota el mismo momento en que ocurre, no al final del turno</li>
+        <li>Peso o cantidad exacta y el motivo real</li>
+        <li>Usa el registro de mermas de Prep! Mercado (ME-08)</li>
+        <li>Fotografía la merma grande como respaldo</li>
+        <li>Revisa el reporte semanal: ¿qué insumo se va más en merma?</li>
+      </ul></div>
+      <div class="box no"><h4>No — mermas que descuadran todo</h4><ul>
+        <li>"Botar y ya", sin anotar nada</li>
+        <li>Poner "varios" como motivo para no explicar</li>
+        <li>Tapar un faltante o robo llamándolo merma</li>
+        <li>Acumular todo para registrarlo al fin de mes</li>
+        <li>Regalar o llevarse producto sin descontarlo del stock</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La merma habla:</b> si cada semana botas 3 kg de palta madura, no es mala suerte: compras de más o rotas mal. El registro convierte la basura en información. Con ese dato ajustas el PAR de compra, la receta o la rotación, y el food cost baja solo.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>FEFO</b><span>First Expired, First Out. Sale primero lo que vence primero, sin importar cuándo llegó.</span></div>
+      <div class="gterm"><b>FIFO</b><span>First In, First Out. Sale primero lo que entró primero. Útil cuando las fechas son parejas.</span></div>
+      <div class="gterm"><b>PAR</b><span>Nivel mínimo de stock que siempre debes tener de un insumo. Por debajo del PAR, se repone.</span></div>
+      <div class="gterm"><b>Merma</b><span>Producto que se pierde y no se vende: vencido, malogrado, roto, recortado o quemado.</span></div>
+      <div class="gterm"><b>Cadena de frío</b><span>Mantener el producto refrigerado o congelado sin cortes desde el proveedor hasta su uso.</span></div>
+      <div class="gterm"><b>Guía de remisión</b><span>Documento del proveedor que detalla qué y cuánto entrega. Se recibe contra la orden.</span></div>
+      <div class="gterm"><b>Orden de compra</b><span>Lo que tú pediste. Recibes comparando la guía contra esta orden, no al revés.</span></div>
+      <div class="gterm"><b>Peso neto</b><span>Peso real del producto sin hielo, cajas ni empaque. Es lo que de verdad pagas y usas.</span></div>
+      <div class="gterm"><b>Conteo ciego</b><span>Contar el físico sin ver el número teórico del sistema, para no "ajustar" al esperado.</span></div>
+      <div class="gterm"><b>Teórico vs. real</b><span>Comparar lo que el sistema calcula (por recetas) contra lo que cuentas en el estante.</span></div>
+      <div class="gterm"><b>Vida útil</b><span>Tiempo que un producto se mantiene apto para consumo desde su ingreso o producción.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Pasar bacterias de un producto o superficie a otro: crudo sobre cocido, químico junto a alimento.</span></div>
+      <div class="gterm"><b>Rotulado</b><span>Etiquetar cada producto con nombre, fecha de ingreso y de vencimiento. Sin rótulo no hay FEFO.</span></div>
+      <div class="gterm"><b>Food cost</b><span>Costo de los insumos frente a lo que vendes. La recepción, la rotación y la merma lo mueven directo.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en almacén</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Inventario, recepción y FEFO · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Al recibir</h4><ul>
+          <li>Recibe contra la orden, nunca a ojo</li>
+          <li>Pesa neto y cuenta unidad por unidad</li>
+          <li>Frío: refrig. 0–5 °C · congelado −18 °C</li>
+          <li>Anota faltantes en la guía antes de firmar</li>
+          <li>Guarda lo perecible primero</li>
+        </ul></div>
+        <div class="op-box"><h4>Rechaza si</h4><ul>
+          <li>Olor a amoniaco o agrio, color raro</li>
+          <li>Congelado blando o recongelado</li>
+          <li>Lata abollada, empaque roto o inflado</li>
+          <li>Fecha de vencimiento corta o borrada</li>
+          <li>Llegó tibio: cadena de frío rota</li>
+        </ul></div>
+        <div class="op-box"><h4>Guardar y FEFO</h4><ul>
+          <li>Cocido arriba, crudo abajo</li>
+          <li>15 cm del piso y de la pared</li>
+          <li>Todo rotulado con fecha al frente</li>
+          <li>Lo que vence primero, adelante</li>
+          <li>Químicos siempre aparte</li>
+        </ul></div>
+        <div class="op-box"><h4>Contar y merma</h4><ul>
+          <li>Conteo ciego, misma unidad, ruta fija</li>
+          <li>Compara teórico vs. real y explica</li>
+          <li>Críticos a diario; completo cada mes</li>
+          <li>Registra la merma al instante y con motivo</li>
+          <li>Faltante raro se investiga, no se tapa</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Inventario, recepción, FEFO y mermas · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

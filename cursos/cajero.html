@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Cajero: cobro, propinas y arqueo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23117a56'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Caja</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#117a56">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Cajero: cobro, propinas y arqueo</h1>
+    <p>La caja es lo último que toca el invitado y lo primero que revisa el dueño. Aquí aprendes a cobrar rápido y sin errores en efectivo, Yape, Plin y tarjeta; a manejar la propina con transparencia; a emitir la boleta o factura correcta; y a cuadrar tu caja al centavo cuando cierras. Cobrar bien es cuidar la plata del restaurante y la despedida del comensal.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Cajero</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un solo cobro mal hecho contamina toda la noche. Un vuelto de más que se repite deja la caja corta al cierre; un Yape que nunca llegó porque solo miraste la pantalla del cliente es plata que el restaurante pierde; una factura sin RUC obliga a anular y rehacer. Cuadrar tu caja al final —sin sobrantes ni faltantes— es la señal más clara de que se puede confiar en ti con el dinero.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Tu caja antes del primer cobro</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Una buena caja se gana antes de que llegue el primer comensal. Recibes un fondo fijo, lo cuentas, dejas todo ordenado y verificas que los equipos funcionen. Si arrancas con la caja desordenada o sin saber cuánto tenías, al cierre nunca vas a saber si falta o sobra.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">savings</span></div>
+      <div><div class="t">Paso 1 · Recibe el fondo</div><h4>Cuenta el fondo fijo delante de quien te lo entrega</h4><p>El fondo (o "sencillo") es la plata para dar vuelto, normalmente S/ 200 a S/ 300. Cuéntalo billete por billete y moneda por moneda con el gerente delante. Firma la entrega. Ese monto es tu punto de partida: al cierre debe seguir ahí, aparte de las ventas.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">account_balance_wallet</span></div>
+      <div><div class="t">Paso 2 · Ordena por denominación</div><h4>Un compartimento por billete y por moneda</h4><p>Billetes de S/ 200, 100, 50, 20 y 10 en la gaveta; monedas de S/ 5, 2, 1 y de céntimos en las divisiones chicas. Todos mirando en el mismo sentido. Un cajón ordenado da vuelto en segundos y evita confundir un S/ 100 con un S/ 10 en hora punta.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">point_of_sale</span></div>
+      <div><div class="t">Paso 3 · Prueba los equipos</div><h4>POS, impresora y datáfono encendidos y con papel</h4><p>Enciende el sistema, abre el turno de caja en Prep!, confirma que la impresora tenga rollo y que el POS de tarjetas (Niubiz / Izipay) marque señal. Ten a la mano el celular con Yape y Plin del negocio, cargado y con datos. Un datáfono sin señal en plena cena es una cola de comensales molestos.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">visibility</span></div>
+      <div><div class="t">Paso 4 · Asegura tu puesto</div><h4>Nadie más toca tu gaveta</h4><p>La caja es tuya durante el turno: tú respondes por ese dinero. No la dejes abierta ni sola, no prestes tu usuario del POS y no permitas que otro dé vuelto de tu gaveta. Si te relevan, se hace un arqueo de cambio de turno y se firma. Sin excepción.</p></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> fondo y ventas son plata distinta. El fondo entra y sale igual; la venta es lo que sumaste durante el turno. Si al cierre mezclas ambos, tu arqueo nunca va a cuadrar.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Medios de pago: efectivo, Yape, Plin y tarjeta</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">En una mesa de cuatro es normal que uno pague con tarjeta, otro yapee su parte y el resto ponga efectivo. Tu trabajo es cobrar cada medio con su propia verificación y registrarlo en el método correcto en Prep!, para que el arqueo cuadre. Cada medio tiene su truco.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Efectivo</h3><div class="d">Recibe, di el monto en voz alta ("me das cien"), deja el billete a la vista sobre la gaveta hasta entregar el vuelto, y recién guárdalo. Así evitas el "te di 100, no 50".</div><div class="s">verifica y anuncia</div></div>
+      <div class="tipo"><h3>Yape</h3><div class="d">El pago llega al celular del negocio, no al del cliente. Espera el sonido y la notificación con el nombre y el monto exacto. Nunca aceptes solo una captura de pantalla.</div><div class="s">confirma en TU celular</div></div>
+      <div class="tipo"><h3>Plin</h3><div class="d">Igual que Yape pero de la banca (BCP, Interbank, BBVA, Scotiabank). Mismo control: confirma el abono en la app o el celular del negocio antes de cerrar la cuenta.</div><div class="s">mismo cuidado que Yape</div></div>
+      <div class="tipo"><h3>Tarjeta (POS)</h3><div class="d">Inserta, acerca o pasa la tarjeta en el datáfono. Espera "APROBADO" y el voucher. Débito o crédito, contactless o con chip: siempre gana el voucher impreso, no la pantalla del cliente.</div><div class="s">espera el APROBADO</div></div>
+      <div class="tipo"><h3>Cuotas</h3><div class="d">Si piden crédito en cuotas, se selecciona el número de cuotas en el POS de tarjetas. Confirma con el comensal cuántas antes de procesar: revertir una operación en cuotas es engorroso.</div><div class="s">pregunta antes de dar</div></div>
+      <div class="tipo"><h3>Pago mixto</h3><div class="d">Una cuenta se puede pagar en varios medios a la vez. En Prep! registra cada parte en su método (ej. S/ 80 tarjeta + S/ 40 Yape) hasta llegar al total. La suma de partes debe cerrar exacta.</div><div class="s">cada parte, su método</div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — cobro seguro</h4><ul>
+        <li>Confirmas el Yape/Plin por el sonido y la notificación en el celular del negocio</li>
+        <li>Revisas que el nombre y el monto del abono coincidan con la cuenta</li>
+        <li>Esperas el voucher "APROBADO" antes de despedir al comensal</li>
+        <li>Registras cada medio en su método exacto dentro del POS</li>
+      </ul></div>
+      <div class="box no"><h4>No — así se pierde plata</h4><ul>
+        <li>Aceptar una captura de pantalla de Yape como prueba de pago</li>
+        <li>Dar por pagado con solo ver la pantalla del celular del cliente</li>
+        <li>Cerrar la cuenta con la tarjeta "rechazada" pensando que igual entró</li>
+        <li>Anotar todo como efectivo "para no complicarte" con el registro</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El fraude más común:</b> la captura de Yape falsa o de otra fecha. Es tan sencillo como retocar una imagen o mostrar el pago de ayer. El abono de verdad llega a TU celular con sonido, nombre y monto. Sin esa notificación en tu equipo, la cuenta no está pagada.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Vuelto y manejo de efectivo</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El efectivo es el único medio donde un error tuyo cuesta dinero al toque: un vuelto de más nunca vuelve. Dar cambio con método —contando de subida y en voz alta— es lo que separa una caja que cuadra de una que siempre queda corta.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">volume_up</span></div>
+      <div><div class="t">Método</div><h4>Cuenta "de subida" y en voz alta</h4><p>Cuenta S/ 62 y el comensal te da S/ 100. Arma el vuelto sumando desde 62 hasta 100: "62… 3 son 65, 5 son 70, 30 son 100". Le devuelves S/ 38 diciéndolo. Este método casi nunca se equivoca y el invitado sigue la cuenta contigo.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">front_hand</span></div>
+      <div><div class="t">Regla del billete a la vista</div><h4>Deja el billete arriba de la gaveta hasta terminar</h4><p>No guardes el billete con el que te pagan hasta haber entregado el vuelto completo. Así, si el comensal dice "te di 200", el billete de 100 sigue visible y no hay discusión. Recién cuando el vuelto está entregado, lo guardas.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">search</span></div>
+      <div><div class="t">Billetes falsos</div><h4>Toca, mira y gira todo billete de S/ 100 y S/ 200</h4><p>Siente el relieve del número y del texto (impresión en alto relieve), inclina el billete para ver el hilo de seguridad y la tinta que cambia de color, y busca la marca de agua al trasluz. Ante la duda, pide otro con calma: "¿me puedes dar otro billetito, por favor?". Un falso que aceptas sale de tu arqueo.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">coins</span></div>
+      <div><div class="t">Cuida el sencillo</div><h4>No te quedes sin monedas ni billetes chicos</h4><p>El sencillo se agota rápido en el turno. Si ves que bajan las monedas y los billetes de S/ 10 y S/ 20, pide un canje al gerente antes de quedarte sin poder dar vuelto. Quedarte sin cambio frena la caja igual que un datáfono caído.</p></div>
+    </div>
+    <div class="callout"><b>Ojo con el apuro:</b> los errores de vuelto casi siempre pasan en hora punta, cuando hay cola y quieres ir rápido. Es justo ahí donde más disciplina necesitas: cuenta de subida y en voz alta aunque el local esté lleno. Un minuto contando bien ahorra el faltante del cierre.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Propinas: transparencia total</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La propina es del equipo, no de la casa ni tuya. Tu rol como cajero es capturarla bien, registrarla clara y que llegue completa al pozo que se reparte. Manejar mal la propina es la forma más rápida de perder la confianza de tus compañeros de sala y cocina.</p>
+    <table class="t">
+      <thead><tr><th>Situación</th><th>Qué haces</th><th>Cómo se registra</th></tr></thead>
+      <tbody>
+        <tr><td>Propina en efectivo, aparte de la cuenta</td><td>Va directo al pozo o al tacho de propinas, nunca a tu gaveta de ventas</td><td>No entra al arqueo de venta; se cuenta con el equipo al cierre</td></tr>
+        <tr><td>Propina sumada al pago con tarjeta</td><td>Ingresas el monto de propina en el POS antes de procesar el cobro</td><td>Queda registrada como propina en Prep!, separada de la venta</td></tr>
+        <tr><td>"Deja el vuelto de propina"</td><td>Confirmas: "¿el vuelto completo de propina?" y lo separas al tacho</td><td>Se registra como propina, no se guarda como efectivo de venta</td></tr>
+        <tr><td>10% de servicio en la cuenta</td><td>Es sugerido, no obligatorio; si el comensal no lo quiere, se retira sin discutir</td><td>Se anula la línea de servicio y se reimprime la cuenta</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sí — propina limpia</h4><ul>
+        <li>Registras la propina de tarjeta en el POS antes de cobrar</li>
+        <li>Separas la propina de efectivo del dinero de la venta</li>
+        <li>Explicas que el 10% es voluntario si el invitado pregunta</li>
+        <li>Al cierre, la propina del turno se cuenta y reparte con el equipo</li>
+      </ul></div>
+      <div class="box no"><h4>No — propina turbia</h4><ul>
+        <li>Meter la propina de efectivo a tu bolsillo o a la gaveta de ventas</li>
+        <li>Cobrar propina en tarjeta sin avisar al comensal</li>
+        <li>Insistir o incomodar cuando alguien no deja propina</li>
+        <li>Prometer un porcentaje de propina y no registrarla</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Recuerda:</b> el 10% de servicio en Perú es voluntario, no obligatorio por ley. Si un comensal pide retirarlo, se hace con una sonrisa y sin comentarios. La buena atención se cuida hasta en la forma de cobrar la propina.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Boleta o factura: el comprobante correcto</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Todo cobro cierra con un comprobante. Elegir mal entre boleta y factura obliga a anular y rehacer, y una anulación mal hecha desordena el cuadre y las cuentas de la SUNAT. La regla es simple: pregunta siempre antes de emitir.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Boleta de venta</h3><div class="d">Para el consumidor final, la persona que come y no necesita sustentar gasto de empresa. Solo pide su nombre y DNI si el monto lo requiere. Es lo más común en el restaurante.</div><div class="s">persona · DNI</div></div>
+      <div class="tipo"><h3>Factura</h3><div class="d">Para quien necesita sustentar el gasto a nombre de una empresa. Requiere RUC, razón social y dirección. Pídelos antes de emitir: la factura no se puede corregir con un simple tachón.</div><div class="s">empresa · RUC</div></div>
+      <div class="tipo"><h3>Pregunta primero</h3><div class="d">Antes de emitir, di: "¿Boleta o factura?". Si es factura, pide los datos completos de RUC. Emitir la boleta y que luego pidan factura significa anular y volver a empezar.</div><div class="s">"¿boleta o factura?"</div></div>
+      <div class="tipo"><h3>Nota de crédito</h3><div class="d">Si ya emitiste un comprobante y hay un error o una devolución, no se borra: se emite una nota de crédito que lo anula. Avisa al gerente; no rehagas por tu cuenta.</div><div class="s">corrige, no borra</div></div>
+      <div class="tipo"><h3>Comprobante electrónico</h3><div class="d">Prep! emite el comprobante electrónico y lo envía por correo o WhatsApp si el comensal lo pide. Confirma el correo con calma: un dato mal escrito no le llega el documento.</div><div class="s">envía al correo correcto</div></div>
+      <div class="tipo"><h3>Siempre se entrega</h3><div class="d">Todo consumo lleva comprobante, aunque el invitado diga "no lo necesito". Es obligación del negocio emitirlo. Cobrar sin comprobante te expone a ti y al restaurante.</div><div class="s">obligatorio, sin excepción</div></div>
+    </div>
+    <div class="callout"><b>El error clásico:</b> emitir la boleta y que el cliente diga "ah, necesitaba factura para mi empresa". Ya emitida, toca anular con nota de crédito y rehacer con el RUC. Se evita con una sola pregunta al inicio del cobro: <b>¿boleta o factura?</b></div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Arqueo y cuadre de caja</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El arqueo es el momento de la verdad: contar la plata física y compararla con lo que dice el sistema. Cuando cuadra, cerraste bien. Cuando no, tienes que encontrar la diferencia antes de irte, no al día siguiente. Un cierre ordenado toma diez minutos; uno desordenado, una hora y un mal rato.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">calculate</span></div>
+      <div><div class="t">Paso 1 · Cuenta lo físico</div><h4>Cuenta el efectivo real de la gaveta</h4><p>Cuenta todos los billetes y monedas de la gaveta. A ese total réstale el fondo fijo con el que abriste (ej. S/ 300). Lo que queda es tu <b>venta en efectivo real</b>. Cuenta dos veces: la primera para saber, la segunda para confirmar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">receipt_long</span></div>
+      <div><div class="t">Paso 2 · Saca el reporte</div><h4>Cierra el turno en Prep! y lee los totales</h4><p>El sistema te da la venta esperada por método: efectivo, Yape, Plin, tarjeta. Ese es tu "debería haber". Imprime o anota los cuatro totales; son la vara contra la que comparas la plata y los vouchers.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">compare_arrows</span></div>
+      <div><div class="t">Paso 3 · Compara medio por medio</div><h4>Efectivo contado vs sistema; vouchers vs tarjeta; abonos vs Yape/Plin</h4><p>Efectivo real contra efectivo del sistema. Suma de vouchers del datáfono contra el total de tarjeta. Abonos recibidos en el celular contra el total de Yape y Plin. Cada medio debe cerrar por su lado; no compenses un faltante de efectivo con un sobrante de tarjeta.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">flag</span></div>
+      <div><div class="t">Paso 4 · Explica la diferencia</div><h4>Sobrante o faltante: se reporta, no se esconde</h4><p>Si hay descuadre, revisa: ¿un vuelto de más?, ¿una propina que entró como venta?, ¿una factura anulada mal registrada? Anota el sobrante o faltante en el reporte de cierre y avísale al gerente. Esconder un faltante es peor que tenerlo: lo primero se corrige, lo segundo se investiga.</p></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Concepto</th><th>Ejemplo</th><th>Monto</th></tr></thead>
+      <tbody>
+        <tr><td>Efectivo total en gaveta</td><td>Todo lo contado</td><td>S/ 1,150.00</td></tr>
+        <tr><td>(–) Fondo fijo de apertura</td><td>Lo que recibiste al abrir</td><td>– S/ 300.00</td></tr>
+        <tr><td>= Venta en efectivo real</td><td>Lo que debes comparar</td><td>S/ 850.00</td></tr>
+        <tr><td>Venta en efectivo según Prep!</td><td>Lo que dice el sistema</td><td>S/ 852.00</td></tr>
+        <tr><td><b>Diferencia (faltante)</b></td><td>Se reporta al gerente</td><td><b>– S/ 2.00</b></td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Cierre honesto:</b> un cajero de confianza no es el que nunca descuadra, es el que reporta cada diferencia y ayuda a encontrarla. Sobrantes y faltantes chicos pasan; ocultarlos, no. La transparencia en el cierre es lo que hace que la casa te confíe la caja mañana.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Fondo fijo (sencillo)</b><span>Dinero base para dar vuelto con el que abres la caja. Entra y sale igual; no es venta.</span></div>
+      <div class="gterm"><b>Arqueo de caja</b><span>Conteo del dinero físico para compararlo con lo que registró el sistema. Se hace al cierre y en cambios de turno.</span></div>
+      <div class="gterm"><b>Cuadre / descuadre</b><span>Cuando lo físico coincide con el sistema, la caja cuadra. Si no, hay descuadre: sobrante o faltante.</span></div>
+      <div class="gterm"><b>Faltante</b><span>Falta dinero respecto a lo que dice el sistema. Suele venir de un vuelto de más o un cobro mal registrado.</span></div>
+      <div class="gterm"><b>Sobrante</b><span>Hay más dinero del que indica el sistema. También se reporta: casi siempre es una venta no registrada.</span></div>
+      <div class="gterm"><b>Voucher</b><span>Comprobante que imprime el datáfono al aprobar un pago con tarjeta. Es tu prueba del cobro.</span></div>
+      <div class="gterm"><b>Datáfono / POS de tarjetas</b><span>Equipo que procesa tarjetas (Niubiz, Izipay). Muestra "APROBADO" y emite el voucher.</span></div>
+      <div class="gterm"><b>Yape</b><span>Billetera móvil (BCP). El pago llega al celular del negocio con nombre y monto. Se confirma por notificación, no por captura.</span></div>
+      <div class="gterm"><b>Plin</b><span>Billetera móvil de la banca (Interbank, BBVA, Scotiabank y otros). Mismo control que Yape.</span></div>
+      <div class="gterm"><b>Boleta de venta</b><span>Comprobante para el consumidor final. Requiere DNI según el monto. Es lo más común en el restaurante.</span></div>
+      <div class="gterm"><b>Factura</b><span>Comprobante a nombre de una empresa para sustentar gasto. Exige RUC, razón social y dirección.</span></div>
+      <div class="gterm"><b>Nota de crédito</b><span>Documento que anula o corrige un comprobante ya emitido. Reemplaza al "borrón": nada se elimina, se anula.</span></div>
+      <div class="gterm"><b>10% de servicio</b><span>Cargo sugerido de propina en la cuenta. Es voluntario en Perú: si el comensal no lo quiere, se retira.</span></div>
+      <div class="gterm"><b>Pozo de propinas</b><span>Bolsa común donde se junta la propina del turno para repartirla entre el equipo según lo acordado.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en caja</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Caja · Chuleta del cajero</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes de abrir</h4><ul>
+          <li>Cuenta el fondo fijo con el gerente delante y firma</li>
+          <li>Ordena la gaveta por denominación</li>
+          <li>POS, impresora con papel y datáfono con señal</li>
+          <li>Yape y Plin del negocio cargados y con datos</li>
+        </ul></div>
+        <div class="op-box"><h4>Medios de pago</h4><ul>
+          <li>Efectivo: anuncia el monto y billete a la vista</li>
+          <li>Yape / Plin: confirma en TU celular, nunca por captura</li>
+          <li>Tarjeta: espera "APROBADO" y el voucher</li>
+          <li>Pago mixto: cada parte en su método hasta el total</li>
+        </ul></div>
+        <div class="op-box"><h4>Vuelto sin errores</h4><ul>
+          <li>Cuenta "de subida" y en voz alta</li>
+          <li>Deja el billete a la vista hasta entregar el vuelto</li>
+          <li>Toca, mira y gira los billetes de S/ 100 y S/ 200</li>
+          <li>Pide canje antes de quedarte sin sencillo</li>
+        </ul></div>
+        <div class="op-box"><h4>Propina</h4><ul>
+          <li>Es del equipo, nunca a tu gaveta de ventas</li>
+          <li>Propina en tarjeta: ingrésala en el POS antes de cobrar</li>
+          <li>El 10% de servicio es voluntario: se retira sin discutir</li>
+          <li>Al cierre se cuenta y reparte con el equipo</li>
+        </ul></div>
+        <div class="op-box"><h4>Comprobante</h4><ul>
+          <li>Pregunta siempre: "¿boleta o factura?"</li>
+          <li>Factura = RUC, razón social y dirección antes de emitir</li>
+          <li>Error o devolución: nota de crédito, avisa al gerente</li>
+          <li>Siempre se entrega comprobante, sin excepción</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre y arqueo</h4><ul>
+          <li>Efectivo contado – fondo = venta en efectivo real</li>
+          <li>Compara medio por medio, no compenses entre ellos</li>
+          <li>Vouchers vs tarjeta · abonos vs Yape/Plin</li>
+          <li>Sobrante o faltante: se reporta, nunca se esconde</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Cajero: cobro, propinas y arqueo · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

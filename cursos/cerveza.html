@@ -1,0 +1,326 @@
+<!-- Curso: Cerveza y maridaje (bartender / mesero) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Cerveza y maridaje · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c07a1a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Cerveza &amp; Maridaje</span>
+    <nav class="nav">
+      <a href="#m1">1 · Cómo leer una cerveza</a><a href="#m2">2 · Estilos</a><a href="#m3">3 · Servicio y temperatura</a><a href="#m4">4 · Artesanal peruana</a><a href="#m5">5 · Maridaje</a><a href="#m6">6 · En la mesa</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c07a1a">
+    <div class="k">Academia Prep! · Bar</div>
+    <h1>Cerveza y maridaje</h1>
+    <p>La cerveza dejó de ser "la fría de siempre". Hoy un buen restaurante tiene estilos que conversan con los platos tan bien como un vino, y una escena artesanal peruana que da orgullo mostrar. Aquí aprendes a distinguir estilos, a servirlos a su temperatura y en su copa, y a recomendarlos con criterio para que el invitado pruebe algo nuevo y vuelva por más.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Bartender / Mesero</span><span>🍺 Bar</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una cerveza es margen alto, rotación rápida y una venta que casi nadie sabe hacer bien. El invitado que solo pediría "una chela" termina probando una IPA peruana porque tú se la describiste, la sirvió a su temperatura y le calzó con su lomo saltado. Eso es un ticket más alto, una mesa más contenta y una historia que van a contar. Saber de cerveza te separa del que solo destapa botellas.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Cómo leer una cerveza</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de vender, entiende qué llevas en la mano. Toda cerveza sale de cuatro ingredientes y se divide en dos grandes familias. Con eso y tres números en la etiqueta ya puedes describir cualquier cerveza sin haberla probado.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Agua</h3><div class="d">El 90% de la cerveza. Su mineralidad marca el estilo: aguas duras para las tostadas, blandas para las lagers limpias.</div></div>
+      <div class="tipo"><h3>Malta</h3><div class="d">Cebada germinada y tostada. Aporta el color, el cuerpo y los sabores dulces: pan, galleta, caramelo, chocolate, café. Es el "alma" de la cerveza.</div></div>
+      <div class="tipo"><h3>Lúpulo</h3><div class="d">La flor que da el amargor y los aromas cítricos, florales, resinosos o tropicales. Es la estrella de las IPA. También conserva la cerveza.</div></div>
+      <div class="tipo"><h3>Levadura</h3><div class="d">El microorganismo que convierte el azúcar en alcohol y CO₂. Define la familia: fermenta arriba (ale) o abajo (lager) y suma frutas o especias.</div></div>
+      <div class="tipo"><h3>Familia ALE</h3><div class="d">Fermentación alta y cálida. Más aromática, frutal y compleja: golden, pale ale, IPA, trigo, porter, stout. Casi toda la artesanal es ale.</div></div>
+      <div class="tipo"><h3>Familia LAGER</h3><div class="d">Fermentación baja y fría, larga maduración. Limpia, crocante y refrescante: pilsner, la rubia industrial clásica. Fácil de tomar.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Dato en la etiqueta</th><th>Qué significa</th><th>Cómo usarlo en mesa</th></tr></thead>
+        <tbody>
+          <tr><td><b>ABV</b> (% alcohol)</td><td>Graduación. Una rubia ~4.5%, una IPA ~6.5%, una imperial stout 8–10%.</td><td>"Es una cerveza suave, de 4.5, para acompañar toda la comida sin cansar."</td></tr>
+          <tr><td><b>IBU</b> (amargor)</td><td>Unidades de amargor del lúpulo. &lt;20 suave, 20–40 balanceada, &gt;50 amarga (IPA).</td><td>"Esta es amarga y cítrica, un poco de carácter; si busca algo suave, mejor la golden."</td></tr>
+          <tr><td><b>Color (SRM)</b></td><td>De la malta: paja, dorado, ámbar, cobre, marrón, negro.</td><td>"Mientras más oscura, más notas a tostado, caramelo o café; la clara es más ligera."</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="callout"><b>Regla mental rápida:</b> <b>malta = dulce, tostado, cuerpo</b> (lo que sientes en el paladar). <b>Lúpulo = amargo y aroma</b> (lo que hueles y el final). <b>Levadura = frutal o especiado</b> (el trasfondo). Si aprendes a nombrar de dónde viene cada cosa, describes cualquier cerveza aunque sea la primera vez que la ves.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Los estilos que debes conocer</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">No necesitas los 100 estilos del mundo. Con estos ocho cubres el 95% de cualquier carta de restaurante en Lima. Apréndete el sabor, el color y una frase para venderlos.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Estilo</th><th>Color / cuerpo</th><th>Sabor</th><th>Cómo describirlo en mesa</th></tr></thead>
+        <tbody>
+          <tr><td><b>Pilsner / Lager</b></td><td>Dorada, ligera</td><td>Limpia, seca, crocante, poco amargor</td><td>"Fresca y fácil, la clásica bien fría para empezar."</td></tr>
+          <tr><td><b>Golden Ale</b></td><td>Dorada, media</td><td>Suave, un toque a pan y miel, muy balanceada</td><td>"La puerta de entrada a la artesanal: rica y sin ser fuerte."</td></tr>
+          <tr><td><b>Trigo / Weizen</b></td><td>Turbia, media</td><td>Notas a plátano, clavo, cítrico; muy refrescante</td><td>"Turbia y afrutada, riquísima con calor; se sirve con una rodaja de naranja."</td></tr>
+          <tr><td><b>Pale Ale (APA)</b></td><td>Ámbar clara, media</td><td>Malta + lúpulo cítrico, amargor moderado</td><td>"Con más carácter, cítrica pero equilibrada, no muy amarga."</td></tr>
+          <tr><td><b>IPA</b></td><td>Dorada/ámbar, media</td><td>Amarga, muy aromática: cítrico, tropical, resina</td><td>"Para el que le gusta el lúpulo: amarga, aromática, con personalidad."</td></tr>
+          <tr><td><b>Amber / Roja</b></td><td>Cobriza, media</td><td>Caramelo, tostado suave, malta dulce</td><td>"Tostadita y acaramelada, ideal con carnes y parrillas."</td></tr>
+          <tr><td><b>Porter</b></td><td>Marrón oscura, media-alta</td><td>Chocolate, café, malta tostada</td><td>"Oscura y sedosa, con notas a café y chocolate."</td></tr>
+          <tr><td><b>Stout</b></td><td>Negra, alta</td><td>Café tostado, cacao amargo, cremosa</td><td>"Negra y cremosa, como un café con cuerpo; buenísima con postres."</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Cómo hablar de estilos bien</h4><ul>
+        <li>Nombra el sabor con imágenes: "cítrica", "a café", "a pan"</li>
+        <li>Ubica al invitado: "más suave / con más carácter"</li>
+        <li>Ofrece un camino: rubia → golden → pale ale → IPA</li>
+        <li>Admite si no la probaste, pero descríbela por su ficha</li>
+      </ul></div>
+      <div class="box no"><h4>Errores al describir</h4><ul>
+        <li>Decir solo "es artesanal" (no dice nada del sabor)</li>
+        <li>Llamar "amarga" a todo lo que no sea rubia industrial</li>
+        <li>Empujar una IPA fuerte a quien pidió "algo ligero"</li>
+        <li>Inventar sabores que no tiene para vender</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El puente perfecto:</b> el que solo toma rubia industrial no salta directo a una IPA. Llévalo por la <b>Golden Ale</b>: es su misma zona de confort pero con más sabor. Cuando le guste, sube a una Pale Ale, y de ahí a la IPA. Así ganas al invitado para toda la carta artesanal en lugar de asustarlo con una IPA amarga de entrada.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Servicio: temperatura, copa y tiraje</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Una gran cerveza mal servida es una cerveza mala. Demasiado fría no sabe a nada; demasiado caliente, empalaga. En la copa equivocada pierde aroma y espuma. Servirla bien toma diez segundos y es lo que separa un bar de nivel de una bodega.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Estilo</th><th>Temperatura</th><th>Copa / vaso</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>Pilsner / Lager rubia</td><td>3–5 °C (bien fría)</td><td>Vaso alto / pilsner</td><td>Se disfruta muy fría y refrescante; el frío realza su corte seco.</td></tr>
+          <tr><td>Golden Ale / Trigo</td><td>5–7 °C</td><td>Copa tulipa / vaso de trigo</td><td>Algo menos fría para que salgan los aromas afrutados.</td></tr>
+          <tr><td>Pale Ale / IPA</td><td>7–9 °C</td><td>Copa tulipa / IPA</td><td>Si está muy fría no hueles el lúpulo, que es toda su gracia.</td></tr>
+          <tr><td>Amber / Roja</td><td>8–10 °C</td><td>Copa balón / pinta</td><td>Templada deja salir el caramelo y el tostado de la malta.</td></tr>
+          <tr><td>Porter / Stout</td><td>10–13 °C</td><td>Copa balón / pinta</td><td>Casi al tiempo: muy fría esconde el café y el chocolate.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="paso"><div class="ico">🧼</div><div><div class="t">PASO 1 · COPA LIMPIA</div><h4>"Beer clean": sin grasa, sin gotas</h4><p>La copa debe estar impecable y sin restos de grasa (la grasa mata la espuma). Enjuágala con agua fría justo antes de servir: fría y húmeda, la espuma se forma pareja y no se pega. Nunca la seques con trapo que suelte pelusa.</p></div></div>
+      <div class="paso"><div class="ico">📐</div><div><div class="t">PASO 2 · 45 GRADOS</div><h4>Inclina la copa</h4><p>Sostén la copa a 45° y vierte apuntando al centro de la pared, sin que el pico toque el vidrio ni la cerveza. Deja que baje suave por el costado.</p></div></div>
+      <div class="paso"><div class="ico">⬆️</div><div><div class="t">PASO 3 · ENDEREZA AL FINAL</div><h4>Levanta para armar la corona</h4><p>Cuando llegue a la mitad, endereza la copa poco a poco y sirve al centro para levantar <b>dos dedos de espuma</b> (la corona). La espuma no es desperdicio: atrapa el aroma y protege la cerveza del aire.</p></div></div>
+      <div class="paso"><div class="ico">🍺</div><div><div class="t">PASO 4 · PRESENTA</div><h4>Lleva de inmediato</h4><p>Sirve y lleva enseguida: la corona y el gas se van con los minutos. Apoya sobre posavasos, con el logo de la marca de frente al invitado. Si es botella, muéstrala antes y sirve tú la primera copa.</p></div></div>
+    </div>
+    <div class="callout"><b>El mito del vaso congelado:</b> la escarcha del congelador es agua que <b>diluye la cerveza y anula su aroma</b>. Sirve para una rubia industrial que solo buscas heladísima, pero una artesanal jamás va en vaso congelado: la matas. Copa fría de nevera, sí; copa con hielo por dentro, nunca. Y la cerveza artesanal <b>no lleva limón ni sal</b>: eso es para tapar defectos de una industrial ligera.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Cerveza artesanal peruana</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El Perú vive un boom cervecero: hay decenas de cervecerías chicas haciendo estilos de nivel mundial, muchas premiadas afuera. Conocerlas es un diferencial enorme, sobre todo con el turista que quiere probar lo local. Aprende las casas grandes y qué las hace especiales.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Barbarian (Lima)</h3><div class="d">Pionera del boom limeño. Su <b>174 Session IPA</b> es un íntegro clásico: lupulada pero fácil de tomar. También golden y IPAs frutales.</div><div class="s">Casa · Lima</div></div>
+      <div class="tipo"><h3>Sierra Andina (Huaraz)</h3><div class="d">Cerveza de altura andina. La <b>Alpamayo Golden</b> y la <b>Andean Pale Ale</b> son referentes; agua de deshielo de la cordillera.</div><div class="s">Casa · Áncash</div></div>
+      <div class="tipo"><h3>Nuevo Mundo (Lima)</h3><div class="d">Su brewpub en Barranco es catedral cervecera. La <b>Punchao Summer Ale</b> y sus IPAs rotativas son muy pedidas.</div><div class="s">Casa · Lima</div></div>
+      <div class="tipo"><h3>Candelaria (Lima)</h3><div class="d">Casa de estilos con carácter y ediciones especiales; muy respetada entre cerveceros. Buenas IPAs y tostadas.</div><div class="s">Casa · Lima</div></div>
+      <div class="tipo"><h3>Cumbres / Zenith / Maddok</h3><div class="d">Otras casas fuertes de la escena: golden, APA, IPA y stouts sólidas. Rota según disponibilidad y temporada.</div><div class="s">Varias · Perú</div></div>
+      <div class="tipo"><h3>Insumos peruanos</h3><div class="d">Muchas usan <b>maíz morado, aguaymanto, coca, quinua, café de Villa Rica o cacao</b>. Son un gancho brutal para el invitado curioso.</div><div class="s">Identidad local</div></div>
+    </div>
+    <div class="callout" style="margin-bottom:12px"><b>Lo que cambia con la artesanal:</b> no es filtrada ni pasteurizada como la industrial, así que es <b>viva</b>: hay que cuidarla del calor y la luz, rotar el stock (la más antigua primero) y servirla fresca. Una IPA pierde su aroma a lúpulo en pocas semanas; no la dejes meses en la vitrina al sol. Revisa siempre la fecha antes de recomendarla.</div>
+    <div class="do2">
+      <div class="box yes"><h4>Vender lo peruano con orgullo</h4><ul>
+        <li>"Esta es de Huaraz, con agua de la cordillera"</li>
+        <li>Contar el insumo local: maíz morado, aguaymanto, café</li>
+        <li>Ofrecer una tabla de degustación (3–4 estilos)</li>
+        <li>Al turista: "pruebe una IPA peruana, están premiadas"</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que resta puntos</h4><ul>
+        <li>No saber de qué región o casa es la que ofreces</li>
+        <li>Servir una artesanal vencida o guardada al sol</li>
+        <li>Tratarla como industrial (vaso congelado, limón, sal)</li>
+        <li>Decir "es igual a la de siempre pero más cara"</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Maridaje básico: qué va con qué</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Maridar es simple si entiendes tres jugadas. La cerveza tiene ventaja sobre el vino: su carbonatación y su amargor <b>limpian el paladar</b> entre bocado y bocado, y va increíble con lo picante y lo frito, donde el vino sufre.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>1 · Complementar</h3><div class="d">Sabores que van en la misma dirección. Malta tostada con carne a la parrilla; stout con postre de chocolate. El plato y la cerveza se refuerzan.</div></div>
+      <div class="tipo"><h3>2 · Contrastar</h3><div class="d">Sabores opuestos que se equilibran. Una cerveza dulce corta un plato picante; una ácida de trigo alivia un frito graso.</div></div>
+      <div class="tipo"><h3>3 · Cortar / limpiar</h3><div class="d">El gas y el amargor barren la grasa y el picante del paladar. Por eso la cerveza va tan bien con anticuchos, chicharrón y pizza.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Plato</th><th>Estilo que calza</th><th>Por qué funciona</th></tr></thead>
+        <tbody>
+          <tr><td>Ceviche / tiradito</td><td>Pilsner o Trigo</td><td>Ligeras y cítricas, no tapan el pescado; el gas refresca el ají y la lima.</td></tr>
+          <tr><td>Causa, piqueos fríos</td><td>Golden Ale</td><td>Suave y equilibrada, acompaña sin competir.</td></tr>
+          <tr><td>Anticuchos / parrilla</td><td>Amber / Roja o Porter</td><td>La malta tostada dialoga con el carbón y la carne; corta la grasa.</td></tr>
+          <tr><td>Lomo saltado</td><td>Pale Ale o IPA suave</td><td>El lúpulo aguanta el sillao y la cebolla; el amargor limpia el sartén.</td></tr>
+          <tr><td>Ají de gallina / picante</td><td>Golden o Trigo (algo dulces)</td><td>El dulzor de la malta calma el ají; el gas refresca el picante.</td></tr>
+          <tr><td>Pizza / pastas rojas</td><td>Amber o Pale Ale</td><td>Malta y acidez del tomate se equilibran; muy versátil con quesos.</td></tr>
+          <tr><td>Chicharrón / fritos</td><td>IPA o Pilsner</td><td>Amargor y burbuja cortan la grasa y refrescan entre bocados.</td></tr>
+          <tr><td>Quesos maduros</td><td>IPA o Amber</td><td>Intensidad pareja; el lúpulo aguanta el queso fuerte.</td></tr>
+          <tr><td>Postre de chocolate / helado</td><td>Stout o Porter</td><td>Café y cacao de la malta se funden con el postre. Cierre perfecto.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="callout"><b>Las dos reglas que nunca fallan:</b> <b>(1) intensidad pareja</b> — un plato delicado (ceviche) pide una cerveza ligera; un plato potente (parrilla) pide una cerveza con cuerpo, para que ninguno tape al otro. <b>(2) con picante, dulzura</b> — nunca acompañes un plato muy picante con una IPA amarga (el amargor amplifica el ardor); busca una golden o trigo con algo de dulzor que calme el ají.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>En la mesa: recomendar, servir y cerrar</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Todo el conocimiento sirve solo si lo usas frente al invitado. Esta es la secuencia completa: de la primera pregunta al registro en Prep!. Memorízala; es tu guion para cada mesa que quiere una cerveza.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div class="paso"><div class="ico">1️⃣</div><div><div class="t">PREGUNTA Y UBICA</div><h4>Averigua qué le gusta</h4><p>No preguntes "¿una cerveza?" (respuesta: la de siempre). Pregunta: "¿Le provoca algo ligero y fresco, o algo con más sabor?" Con eso ya sabes si vas a rubia/golden o a pale ale/IPA.</p></div></div>
+      <div class="paso"><div class="ico">2️⃣</div><div><div class="t">RECOMIENDA CONCRETO</div><h4>Ofrece dos opciones con historia</h4><p>"Tenemos una golden peruana de Huaraz, suave y rica, o una IPA cítrica con más carácter. Con su lomo saltado le iría muy bien la pale ale." Concreto, con maridaje, sin abrumar con toda la carta.</p></div></div>
+      <div class="paso"><div class="ico">3️⃣</div><div><div class="t">SIRVE BIEN</div><h4>Temperatura, copa y corona</h4><p>Copa limpia y fría, a 45°, dos dedos de espuma, a su temperatura. Muestra la botella antes de servir. Lleva de inmediato para no perder el gas.</p></div></div>
+      <div class="paso"><div class="ico">4️⃣</div><div><div class="t">ACOMPAÑA</div><h4>Atento al vaso vacío</h4><p>Cuando quede un tercio, ofrece la siguiente sin que la pidan: "¿Le sirvo otra, o probamos ahora la amber con la parrilla?" Así encadenas la venta y le muestras la carta.</p></div></div>
+      <div class="paso"><div class="ico">5️⃣</div><div><div class="t">REGISTRA EN PREP!</div><h4>Comanda y cuenta</h4><p>Ingresa la cerveza en <b>/pos</b> apenas la tomes; entra al bar en la <b>/linea</b>. Al cerrar, cobra desde <b>/pos</b> con su método de pago. Si el invitado tiene ficha, anota qué estilo le gustó en <b>/bienvenida</b> para su próxima visita.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Servicio de cerveza de nivel</h4><ul>
+        <li>Recomendar con maridaje, no solo listar marcas</li>
+        <li>Servir a la temperatura del estilo, no todo helado</li>
+        <li>Ofrecer la tabla de degustación al curioso</li>
+        <li>Reponer antes de que el vaso quede vacío</li>
+        <li>Contar el origen: casa, región, insumo peruano</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que delata al novato</h4><ul>
+        <li>"Tenemos rubia, roja y negra" y nada más</li>
+        <li>Servir la IPA congelada, sin aroma</li>
+        <li>Dejar el vaso vacío cinco minutos</li>
+        <li>Recomendar sin saber a qué sabe la cerveza</li>
+        <li>Ponerle limón o sal a una artesanal</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Tu firma:</b> el invitado no va a recordar los IBU exactos de su IPA. Va a recordar que le recomendaste una cerveza peruana que no conocía, que llegó a su punto y que calzó perfecto con su plato. Ese momento —"qué buena la que me trajiste"— es tu trabajo, y es lo que convierte una chela cualquiera en una experiencia que van a repetir.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Ale</b><span>Familia de fermentación alta y cálida. Más aromática y frutal: golden, pale ale, IPA, trigo, porter, stout.</span></div>
+      <div class="gterm"><b>Lager</b><span>Familia de fermentación baja y fría, con larga maduración. Limpia y refrescante: pilsner, la rubia industrial.</span></div>
+      <div class="gterm"><b>ABV</b><span>Alcohol por volumen (%). Una rubia ronda 4.5%, una IPA 6.5%, una imperial stout 8–10%.</span></div>
+      <div class="gterm"><b>IBU</b><span>Unidades de amargor que aporta el lúpulo. Menos de 20 es suave; más de 50, francamente amarga.</span></div>
+      <div class="gterm"><b>Malta</b><span>Cebada germinada y tostada. Da color, cuerpo y sabores dulces: pan, caramelo, chocolate, café.</span></div>
+      <div class="gterm"><b>Lúpulo</b><span>Flor que aporta amargor y aromas (cítrico, tropical, resina). La estrella de las IPA; también conserva.</span></div>
+      <div class="gterm"><b>Levadura</b><span>Microorganismo que fermenta el azúcar en alcohol y CO₂. Define la familia y suma notas frutales o especiadas.</span></div>
+      <div class="gterm"><b>IPA</b><span>India Pale Ale. Estilo muy lupulado, amargo y aromático. La cerveza estrella del movimiento artesanal.</span></div>
+      <div class="gterm"><b>Golden Ale</b><span>Ale rubia, suave y balanceada. El mejor puente para quien recién entra a la cerveza artesanal.</span></div>
+      <div class="gterm"><b>Stout / Porter</b><span>Cervezas oscuras de malta tostada, con notas a café y chocolate. Ideales con postres.</span></div>
+      <div class="gterm"><b>Corona / espuma</b><span>La capa de espuma sobre la cerveza. Atrapa el aroma y la protege del aire; se buscan dos dedos.</span></div>
+      <div class="gterm"><b>Beer clean</b><span>Copa impecable, sin restos de grasa, que permite una espuma pareja. La grasa arruina la corona.</span></div>
+      <div class="gterm"><b>Artesanal</b><span>Cerveza de producción pequeña, no filtrada ni pasteurizada. Es "viva": hay que cuidarla del calor y rotarla.</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Combinar comida y bebida para que se realcen. Con cerveza: complementar, contrastar o limpiar el paladar.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Cerveza y maridaje · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Las dos familias</h4><ul>
+          <li>ALE: fermenta arriba, aromática y frutal</li>
+          <li>LAGER: fermenta abajo, limpia y refrescante</li>
+          <li>Malta = dulce/tostado · Lúpulo = amargo/aroma</li>
+          <li>ABV = alcohol · IBU = amargor</li>
+        </ul></div>
+        <div class="op-box"><h4>Estilos clave</h4><ul>
+          <li>Pilsner/Golden: suaves, para empezar</li>
+          <li>Trigo: turbia, afrutada, refrescante</li>
+          <li>Pale Ale / IPA: cítricas, con carácter</li>
+          <li>Amber, Porter, Stout: tostadas y oscuras</li>
+        </ul></div>
+        <div class="op-box"><h4>Temperatura de servicio</h4><ul>
+          <li>Lager 3–5° · Golden/Trigo 5–7°</li>
+          <li>Pale/IPA 7–9° · Amber 8–10°</li>
+          <li>Porter/Stout 10–13° (casi al tiempo)</li>
+          <li>Nunca vaso congelado en artesanal</li>
+        </ul></div>
+        <div class="op-box"><h4>Servir bien</h4><ul>
+          <li>Copa limpia y fría (beer clean)</li>
+          <li>45°, verter al costado, enderezar al final</li>
+          <li>Dos dedos de espuma (corona)</li>
+          <li>Sin limón ni sal en artesanal</li>
+        </ul></div>
+        <div class="op-box"><h4>Maridaje que no falla</h4><ul>
+          <li>Ceviche → Pilsner o Trigo</li>
+          <li>Parrilla/anticucho → Amber o Porter</li>
+          <li>Lomo saltado → Pale Ale</li>
+          <li>Picante → Golden/Trigo (dulces), no IPA</li>
+          <li>Chocolate/postre → Stout</li>
+        </ul></div>
+        <div class="op-box"><h4>En Prep!</h4><ul>
+          <li>Pregunta "¿ligero o con sabor?" y ubica</li>
+          <li>Recomienda concreto + maridaje + origen peruano</li>
+          <li>Comanda en /pos → entra al bar en /linea</li>
+          <li>Anota el estilo favorito en /bienvenida</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Cerveza y maridaje · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

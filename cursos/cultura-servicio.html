@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Cultura de servicio y hospitalidad · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237c1f3a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Hospitalidad</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:var(--wine)">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Cultura de servicio y hospitalidad</h1>
+    <p>La comida abre la puerta; la hospitalidad hace que quieran volver. Este curso es para todo el equipo —salón, cocina, barra, caja y recepción— porque la experiencia del invitado la construimos entre todos, no solo quien lleva el plato a la mesa.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un plato perfecto con un trato frío se olvida; un detalle humano bien dado se cuenta a los amigos. El 68% de los invitados que dejan de venir lo hacen por sentirse ignorados, no por la comida. La hospitalidad es lo que un competidor no te puede copiar del menú.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es hospitalidad de verdad</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Servicio es entregar lo que el invitado pidió. Hospitalidad es cómo lo hace sentir mientras lo recibe. Los dos importan, pero solo uno se recuerda al día siguiente.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Servicio ≠ hospitalidad</h3><div class="d">El servicio es técnico y se mide en segundos y pasos. La hospitalidad es emocional: la lees en la cara del invitado, no en el cronómetro.</div><div class="s">técnico vs. humano</div></div>
+      <div class="tipo"><h3>El plato es la mitad</h3><div class="d">Un ceviche impecable con una mesa pegajosa o un mozo que no mira a los ojos ya arruinó la noche. Todo cuenta como una sola experiencia.</div><div class="s">todo suma o resta</div></div>
+      <div class="tipo"><h3>Anfitrión, no camarero</h3><div class="d">Piensa como si el invitado estuviera en tu casa. En tu casa no dices "eso no me toca": ves un vaso vacío y lo llenas, venga de tu sección o no.</div><div class="s">mentalidad de dueño</div></div>
+      <div class="tipo"><h3>Cocina también hospeda</h3><div class="d">Un pase limpio, un plato bien montado y una respuesta rápida a una alergia son hospitalidad aunque el invitado no vea la cocina.</div><div class="s">back of house cuenta</div></div>
+      <div class="tipo"><h3>La hospitalidad se contagia</h3><div class="d">Un equipo que se trata bien entre sí transmite calma. El invitado siente la tensión de una discusión en el pase aunque no la escuche.</div><div class="s">clima interno = clima en sala</div></div>
+      <div class="tipo"><h3>Se da, no se cobra</h3><div class="d">La hospitalidad genuina no espera propina a cambio. Paradójicamente, cuando dejas de perseguir la propina, llega sola.</div><div class="s">generosidad primero</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Esto es hospitalidad</h4><ul>
+        <li>Recordar que la señora de la mesa 6 toma su pisco sour sin clara.</li>
+        <li>Notar que una pareja celebra y llevar un postre con una vela sin que lo pidan.</li>
+        <li>Avisar a cocina que el niño de la 3 tiene hambre y adelantar su plato.</li>
+      </ul></div>
+      <div class="box no"><h4>Esto es solo servicio (o menos)</h4><ul>
+        <li>Recitar los especiales de memoria sin mirar a nadie a la cara.</li>
+        <li>Dejar la cuenta en la mesa sin preguntar cómo estuvo todo.</li>
+        <li>Responder "no es mi mesa" cuando alguien pide más pan.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Prueba de la casa:</b> antes de cada acción pregúntate: "¿lo haría así si esta persona estuviera sentada en la mesa de mi casa?". Si la respuesta es no, ajústalo.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>La mentalidad de anfitrión</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El anfitrión no reacciona: anticipa. Lee la mesa, se adelanta a la necesidad y toma decisiones sin pedir permiso para lo pequeño. Aquí está el hábito, paso a paso.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">👀</div><div><div class="t">Antes de acercarte</div><h4>Lee la mesa desde lejos</h4><p>¿Vienen de trabajo o a celebrar? ¿Es primera cita, familia con niños, cierre de negocio? La energía de la mesa te dice el ritmo y el tono que necesita antes de que digas una palabra.</p></div></div>
+      <div class="paso"><div class="ico">🤝</div><div><div class="t">Primeros 30 segundos</div><h4>Recibe con nombre y contacto visual</h4><p>"Buenas noches, bienvenidos a la casa." Sonríe, mira a los ojos, usa el nombre si hay reserva. La primera impresión se forma antes de la carta.</p></div></div>
+      <div class="paso"><div class="ico">🔮</div><div><div class="t">Durante la comida</div><h4>Anticipa la siguiente necesidad</h4><p>Copa a la mitad = prepárate a servir. Cubiertos cruzados = retira. Miran alrededor buscando algo = acércate antes de que levanten la mano.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Autonomía</div><h4>Resuelve lo pequeño sin consultar</h4><p>Un pan extra, cambiar una copa manchada, traer una manta si hace frío en la terraza: se hace, no se pregunta al gerente. Escala solo lo que cuesta plata o rompe una política.</p></div></div>
+      <div class="paso"><div class="ico">🚪</div><div><div class="t">La despedida</div><h4>Cierra tan bien como abriste</h4><p>La última impresión pesa tanto como la primera. Acompaña a la puerta, agradece por nombre, invita a volver. "Fue un gusto tenerlos, los esperamos pronto."</p></div></div>
+    </div>
+    <div class="callout"><b>Regla del anfitrión:</b> nunca digas "no". Di "déjame ver cómo lo resolvemos". Si de verdad no se puede, ofrece la mejor alternativa antes de cerrar la puerta.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Los momentos que importan</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Una visita tiene puntos de contacto donde la experiencia se gana o se pierde. No todos pesan igual: hay momentos "pico" que definen el recuerdo. Domínalos y perdona lo demás.</p>
+    <table class="t">
+      <thead><tr><th>Momento</th><th>Qué siente el invitado</th><th>Qué hace la casa</th><th>Estándar</th></tr></thead>
+      <tbody>
+        <tr><td><b>La llegada</b></td><td>"¿Me esperaban? ¿Estoy en el lugar correcto?"</td><td>Recibir en menos de 30 seg, con contacto visual y sonrisa, aunque estés ocupado.</td><td>Nadie espera parado sin saludo &gt;30 s</td></tr>
+        <tr><td><b>La primera bebida</b></td><td>"Ya estoy instalado, empieza mi noche."</td><td>Ofrecer agua y carta de bebidas apenas se sientan; sugerir con criterio.</td><td>Bebida en mesa &lt;5 min</td></tr>
+        <tr><td><b>La primera mordida</b></td><td>"¿Valió la pena venir?"</td><td>Que el plato llegue caliente, montado como en la foto, y a tiempo.</td><td>Entrada &lt;12 min, fondo &lt;20 min</td></tr>
+        <tr><td><b>El chequeo</b></td><td>"¿Les importa cómo estoy?"</td><td>Volver a los 2 minutos de la primera mordida: "¿Cómo está todo?" mirando el plato, no de pasada.</td><td>1 chequeo real por plato</td></tr>
+        <tr><td><b>La cuenta</b></td><td>"Ya me quiero ir / no me apuren."</td><td>Traer la cuenta rápido cuando la piden, nunca antes. Cobrar sin fricción.</td><td>Cuenta &lt;3 min de pedirla</td></tr>
+        <tr><td><b>La despedida</b></td><td>"¿Se alegran de que haya venido?"</td><td>Agradecer por nombre, acompañar a la salida, invitar a volver.</td><td>Nadie se va sin un "gracias, vuelvan"</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Momento pico + final:</b> la gente recuerda una experiencia por su punto más alto y por cómo terminó. Un detalle memorable a mitad de la cena y una despedida cálida valen más que ser correcto en todo lo demás.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Leer a la mesa y personalizar</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Hospitalidad no es tratar a todos igual: es tratar a cada quien como necesita. La misma mesa que quiere charlar con un turista puede molestar a un ejecutivo con prisa. Aprende a calibrar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Mesa de negocios</h3><div class="d">Quieren eficiencia y privacidad. Sé preciso, no interrumpas conversaciones, ten la cuenta lista. Menos charla, más ritmo.</div><div class="s">rápido y discreto</div></div>
+      <div class="tipo"><h3>Celebración</h3><div class="d">Cumpleaños, aniversario, ascenso. Súbete a la energía: un postre con vela, una foto, cantar si el ambiente lo pide. Haz el momento más grande.</div><div class="s">amplifica la alegría</div></div>
+      <div class="tipo"><h3>Primera cita</h3><div class="d">Quieren impresionar y estar tranquilos. Sé cálido pero no invasivo, sugiere sin presionar, dales espacio. Lee la química de la mesa.</div><div class="s">cálido, no invasivo</div></div>
+      <div class="tipo"><h3>Turista</h3><div class="d">Curiosidad por la cocina peruana. Cuenta la historia del plato, explica el pisco, recomienda. Eres el embajador de Lima esa noche.</div><div class="s">cuenta la historia</div></div>
+      <div class="tipo"><h3>Familia con niños</h3><div class="d">Adelanta algo para el niño, ofrece algo sencillo del menú, cuida los tiempos. Padre tranquilo = mesa feliz.</div><div class="s">adelanta al peque</div></div>
+      <div class="tipo"><h3>Habitual</h3><div class="d">Ya es de la casa. Reconócelo por nombre, recuerda su mesa y su trago. "Lo de siempre, ¿don Carlos?" vale oro.</div><div class="s">reconoce y recuerda</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Personalizar bien</h4><ul>
+        <li>Ajustar el ritmo del servicio al ánimo de la mesa.</li>
+        <li>Registrar en Bienvenida la alergia o el trago favorito para la próxima visita.</li>
+        <li>Preguntar "¿es una ocasión especial?" al tomar la reserva.</li>
+      </ul></div>
+      <div class="box no"><h4>Personalizar mal</h4><ul>
+        <li>Tutear a un ejecutivo mayor o llamar "amigo" a todos por igual.</li>
+        <li>Interrumpir una conversación íntima para recitar los especiales.</li>
+        <li>Apurar a una mesa que vino a disfrutar la sobremesa.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Herramienta de la casa:</b> usa la ficha del comensal en <b>Bienvenida</b>. Ahí quedan alergias, celebraciones, bebida preferida y notas. Un habitual reconocido por su nombre es un habitual que trae a sus amigos.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Exceder expectativas</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cumplir lo esperado deja al invitado satisfecho; superarlo lo deja encantado. No hace falta regalar la casa: los mejores detalles cuestan atención, no plata.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El detalle sin costo</h3><div class="d">Recordar un nombre, guardar la mesa junto a la ventana que le gusta, felicitar un cumpleaños. Cuesta cero soles y se recuerda un año.</div><div class="s">memoria &gt; regalo</div></div>
+      <div class="tipo"><h3>El extra pequeño</h3><div class="d">Un shot de la casa antes del postre, una cortesía cuando hubo una demora, un taxi llamado bajo la lluvia. Gestos chicos, impacto grande.</div><div class="s">bajo costo, alto valor</div></div>
+      <div class="tipo"><h3>Resolver algo que no pidieron</h3><div class="d">Ver que a alguien le incomoda el sol y ofrecer cambiarlo de mesa. Notar antes de que se quejen es la marca de la casa.</div><div class="s">anticipación pura</div></div>
+      <div class="tipo"><h3>Conocimiento que sorprende</h3><div class="d">Explicar de dónde viene el ají amarillo, maridar el plato con un pisco de una región específica. Saber más de lo que esperaban.</div><div class="s">experto cercano</div></div>
+      <div class="tipo"><h3>El sí donde otros dicen no</h3><div class="d">"¿Pueden partir el postre en dos?" "Claro, y les pongo dos cucharas." Flexibilidad donde el otro restaurante puso un muro.</div><div class="s">flexibilidad</div></div>
+      <div class="tipo"><h3>El seguimiento</h3><div class="d">Un mensaje post-visita agradeciendo, invitar a una encuesta corta, recordar la fecha especial el año siguiente. La relación no termina en la puerta.</div><div class="s">la relación sigue</div></div>
+    </div>
+    <div class="callout"><b>Cuidado con exagerar:</b> exceder no es abrumar. Diez interrupciones "atentas" molestan más que ayudan. El mejor servicio se siente presente cuando lo necesitas e invisible cuando no. Sirve, luego desaparece.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cuando algo sale mal: recuperación</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Los errores pasan: un plato demorado, una copa rota, un pedido equivocado. Lo que define a la casa no es no fallar nunca, sino cómo responde cuando falla. Una queja bien resuelta crea un fan más leal que si nada hubiera pasado.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">👂</div><div><div class="t">Paso 1 · Escucha</div><h4>Deja que hable, no interrumpas</h4><p>Mira a los ojos, no te pongas a la defensiva. A veces solo quieren sentirse escuchados. No expliques el porqué todavía.</p></div></div>
+      <div class="paso"><div class="ico">🙏</div><div><div class="t">Paso 2 · Discúlpate de verdad</div><h4>Reconoce sin excusas</h4><p>"Tiene toda la razón, esto no debió pasar y lo lamento." Nada de "es que la cocina está llena". El invitado no tiene la culpa de tu operación.</p></div></div>
+      <div class="paso"><div class="ico">🛠️</div><div><div class="t">Paso 3 · Resuelve rápido</div><h4>Actúa ya, no prometas para después</h4><p>Cambia el plato de inmediato, adelántalo en cocina, ofrece una cortesía si corresponde. La velocidad de la solución importa tanto como la solución.</p></div></div>
+      <div class="paso"><div class="ico">➕</div><div><div class="t">Paso 4 · Compensa el mal rato</div><h4>Da algo extra</h4><p>Un postre de la casa, la copa de vino que esperaba: un gesto que diga "nos importas". Salir tablas no basta; hay que dejar la balanza a favor.</p></div></div>
+      <div class="paso"><div class="ico">🔄</div><div><div class="t">Paso 5 · Confirma y cierra</div><h4>Vuelve a verificar antes de que se vaya</h4><p>"¿Quedó todo bien al final?" Y avisa a cocina/gerencia para que no se repita. El cierre convierte un mal momento en una buena historia.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Recuperación que gana</h4><ul>
+        <li>Asumir el error frente al invitado, aunque no fuera tuyo.</li>
+        <li>Avisar al gerente a tiempo cuando la solución te supera.</li>
+        <li>Dejar registro para que el problema no se repita mañana.</li>
+      </ul></div>
+      <div class="box no"><h4>Recuperación que hunde</h4><ul>
+        <li>Discutir o echarle la culpa a cocina, a la barra o al invitado.</li>
+        <li>Prometer "ya lo traigo" y no volver a aparecer.</li>
+        <li>Esconder la queja para que el gerente no se entere.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La paradoja del servicio:</b> un invitado cuya queja se resuelve rápido y con calidez suele quedar <b>más</b> leal que uno al que nunca le falló nada. El problema es tu oportunidad de demostrar quién eres.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Hospitalidad</b><span>El lado emocional del servicio: cómo haces sentir al invitado, no solo qué le entregas.</span></div>
+      <div class="gterm"><b>Servicio</b><span>La ejecución técnica: tiempos, pasos y estándares. Necesario, pero no suficiente por sí solo.</span></div>
+      <div class="gterm"><b>Anfitrión</b><span>Actitud de tratar al invitado como en tu propia casa: anticipas, resuelves y das sin que te lo pidan.</span></div>
+      <div class="gterm"><b>Invitado / comensal</b><span>Cómo llamamos a quien nos visita. Nunca "cliente": es alguien a quien recibimos, no una transacción.</span></div>
+      <div class="gterm"><b>Momento pico</b><span>El instante más intenso de la visita. La memoria del invitado se ancla ahí y en cómo termina.</span></div>
+      <div class="gterm"><b>Punto de contacto</b><span>Cada interacción entre la casa y el invitado: llegada, bebida, plato, chequeo, cuenta, despedida.</span></div>
+      <div class="gterm"><b>Anticipación</b><span>Ver la necesidad antes de que la pidan: la copa a la mitad, el frío en la terraza, el niño con hambre.</span></div>
+      <div class="gterm"><b>Recuperación del servicio</b><span>El protocolo para convertir un error en una buena experiencia: escucha, disculpa, resuelve, compensa, cierra.</span></div>
+      <div class="gterm"><b>Chequeo</b><span>Volver a la mesa poco después de servir para confirmar que todo está bien, mirando el plato de verdad.</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Un extra sin cargo (postre, copa, shot de la casa) usado con criterio para sorprender o compensar.</span></div>
+      <div class="gterm"><b>Lectura de mesa</b><span>Interpretar el ánimo y el tipo de mesa para calibrar ritmo, tono y nivel de cercanía.</span></div>
+      <div class="gterm"><b>Personalización</b><span>Adaptar el trato a cada invitado en vez de un guion igual para todos.</span></div>
+      <div class="gterm"><b>Ficha del comensal</b><span>Registro en Bienvenida con alergias, celebraciones, bebida y notas para reconocerlo en su próxima visita.</span></div>
+      <div class="gterm"><b>Habitual</b><span>Invitado frecuente que ya es de la casa. Reconocerlo por su nombre es la mejor forma de fidelizar.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Hospitalidad · Chuleta del equipo</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>La diferencia clave</h4><ul>
+          <li>Servicio = qué entregas. Hospitalidad = cómo lo haces sentir.</li>
+          <li>El plato es la mitad; la otra mitad la das tú.</li>
+          <li>Trata a cada mesa como si estuviera en tu casa.</li>
+          <li>La hospitalidad la construimos todos: salón, cocina, barra y caja.</li>
+        </ul></div>
+        <div class="op-box"><h4>Mentalidad de anfitrión</h4><ul>
+          <li>Lee la mesa desde lejos antes de acercarte.</li>
+          <li>Anticipa: copa a la mitad, cubiertos cruzados, mirada que busca.</li>
+          <li>Resuelve lo pequeño sin pedir permiso.</li>
+          <li>Nunca digas "no": di "déjame ver cómo lo resolvemos".</li>
+        </ul></div>
+        <div class="op-box"><h4>Momentos que importan</h4><ul>
+          <li>Saludo &lt;30 s · bebida &lt;5 min · chequeo real por plato.</li>
+          <li>Cuenta &lt;3 min de pedirla, nunca antes.</li>
+          <li>Cuida el momento pico y la despedida: es lo que se recuerda.</li>
+          <li>Nadie se va sin un "gracias, vuelvan" por su nombre.</li>
+        </ul></div>
+        <div class="op-box"><h4>Personaliza</h4><ul>
+          <li>Negocio: rápido y discreto. Celebración: amplifica.</li>
+          <li>Turista: cuenta la historia. Familia: adelanta al peque.</li>
+          <li>Habitual: reconoce el nombre y el trago de siempre.</li>
+          <li>Registra alergias y fechas en la ficha de Bienvenida.</li>
+        </ul></div>
+        <div class="op-box"><h4>Exceder, sin abrumar</h4><ul>
+          <li>Los mejores detalles cuestan atención, no plata.</li>
+          <li>Recuerda nombres, anticipa necesidades, di "sí".</li>
+          <li>Sirve cuando te necesitan, desaparece cuando no.</li>
+        </ul></div>
+        <div class="op-box"><h4>Si algo sale mal (5 pasos)</h4><ul>
+          <li>Escucha · Discúlpate sin excusas · Resuelve ya.</li>
+          <li>Compensa el mal rato · Confirma antes de que se vaya.</li>
+          <li>Asume el error aunque no sea tuyo; escala a tiempo.</li>
+          <li>Una queja bien resuelta crea al invitado más leal.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Cultura de servicio y hospitalidad · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

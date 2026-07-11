@@ -1,0 +1,316 @@
+<!-- Curso Academia Prep! · Higiene y manipulación de alimentos (HACCP) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Higiene y manipulación de alimentos (HACCP) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230e8f66'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Higiene HACCP</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0e8f66">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Higiene y manipulación de alimentos</h1>
+    <p>Las reglas que protegen a cada comensal y a tu restaurante: cadena de frío, temperaturas seguras, FEFO, contaminación cruzada y buenas prácticas. Para cocina y sala, del que recibe la mercadería al que sirve la mesa.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Cocina y sala</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una intoxicación no distingue si el plato era un ceviche premium o un menú del día. Un solo error de temperatura o una tabla mal usada puede enfermar a una mesa, cerrar el local por DIGESA y borrar años de reputación en una reseña. La inocuidad no se ve en el plato, pero se paga carísimo cuando falta.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Higiene personal y lavado de manos</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Tú eres la principal fuente de contaminación en la cocina. El 90% de los contagios se corta con manos limpias y hábitos básicos. Empieza por ti antes de tocar un solo alimento.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Uniforme limpio</h3><div class="d">Mandil y gorro limpios cada turno. El gorro cubre todo el cabello; barba con cubrebarba. Nada de ropa de calle en la línea.</div><div class="s">Cambia el mandil manchado</div></div>
+      <div class="tipo"><h3>Sin joyas ni uñas</h3><div class="d">Fuera anillos, reloj, pulseras y aretes colgantes. Uñas cortas, sin esmalte ni postizas: acumulan bacterias y pueden caer al plato.</div><div class="s">Solo argolla lisa, si acaso</div></div>
+      <div class="tipo"><h3>Si estás enfermo, avisa</h3><div class="d">Diarrea, vómitos, fiebre, gripe o heridas infectadas en la mano = no manipulas alimentos. Reporta al jefe de cocina, no te quedes callado.</div><div class="s">Herida cubierta + guante</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">💧</div><div><div class="t">20–40 segundos · lavabo exclusivo de manos</div><h4>1. Moja y enjabona hasta el codo</h4><p>Agua caliente y jabón. El lavadero de manos no es para lavar verduras ni ollas.</p></div></div>
+      <div class="paso"><div class="ico">🤲</div><div><div class="t">Mínimo 20 segundos frotando</div><h4>2. Frota palmas, dorso, entre dedos y uñas</h4><p>Usa el cepillo de uñas. La suciedad se esconde debajo de la uña y en el pulgar.</p></div></div>
+      <div class="paso"><div class="ico">🚿</div><div><div class="t">Agua corriente, sin tocar el caño sucio</div><h4>3. Enjuaga bien y seca con papel toalla</h4><p>Nada de secarse en el mandil. Con el mismo papel cierra el caño y abre la puerta.</p></div></div>
+      <div class="paso"><div class="ico">🧴</div><div><div class="t">El gel no reemplaza el lavado</div><h4>4. Alcohol gel solo sobre manos ya limpias</h4><p>El desinfectante refuerza, no sustituye. Si hay grasa o restos, primero agua y jabón.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Lávate las manos SIEMPRE</h4><ul>
+        <li>Al llegar y al volver a la línea</li>
+        <li>Después de ir al baño (obligatorio)</li>
+        <li>Al pasar de crudo a cocido</li>
+        <li>Tras tocar basura, caja, dinero o celular</li>
+        <li>Después de estornudar, sonarte o toser</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que enferman a la mesa</h4><ul>
+        <li>Probar la comida con el dedo o la misma cuchara</li>
+        <li>Secarte las manos en el mandil</li>
+        <li>Usar guante como excusa para no lavarte</li>
+        <li>Tocar comida lista con manos que tocaron pollo crudo</li>
+        <li>Manipular con corte abierto sin cubrir</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Guante ≠ mano limpia:</b> el guante se contamina igual que tu mano. Cámbialo al cambiar de tarea (dejaste el pollo, vas a emplatar) y nunca lo reutilices. Lávate las manos antes de ponértelo y después de sacártelo.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Cadena de frío y temperaturas seguras</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Las bacterias se multiplican rápido entre 5 °C y 60 °C: es la <b>zona de peligro</b>. Tu trabajo es que los alimentos pasen el menor tiempo posible ahí. Frío bien frío, caliente bien caliente, y nada tibio olvidado.</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Situación</th><th>Temperatura objetivo</th><th>Ejemplo de la casa</th></tr></thead>
+      <tbody>
+        <tr><td>Refrigeración</td><td>0 °C a 5 °C</td><td>Pescado del ceviche, lácteos, salsas madre</td></tr>
+        <tr><td>Congelación</td><td>−18 °C o menos</td><td>Langostinos, masa de pizza, fondos</td></tr>
+        <tr><td>Zona de peligro (evitar)</td><td>5 °C a 60 °C</td><td>Causa dejada en el mesón, leche de tigre tibia</td></tr>
+        <tr><td>Cocción segura (centro)</td><td>≥ 70 °C por 2 min</td><td>Lomo saltado, tallarín, guisos</td></tr>
+        <tr><td>Aves y carne molida</td><td>≥ 74 °C</td><td>Pollo a la brasa, ají de gallina, hamburguesa</td></tr>
+        <tr><td>Mantener en caliente (baño maría)</td><td>≥ 63 °C</td><td>Ají de gallina y arroz en la línea del buffet</td></tr>
+        <tr><td>Recalentar</td><td>≥ 74 °C, una sola vez</td><td>Fondo del día que sobró de ayer</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Termómetro, no ojímetro</h3><div class="d">Mide en el centro del alimento con termómetro de punción, limpio y desinfectado. "Se ve cocido" no es un dato.</div><div class="s">Calíbralo en agua con hielo: 0 °C</div></div>
+      <div class="tipo"><h3>Regla 2 horas / 4 horas</h3><div class="d">Fuera de frío: hasta 2 h se puede volver a refrigerar; entre 2 y 4 h úsalo ya; más de 4 h se descarta.</div><div class="s">Cronometra la mise en place</div></div>
+      <div class="tipo"><h3>Enfriar rápido</h3><div class="d">De 60 °C a 21 °C en 2 h y a 5 °C en 4 h más. Divide en tápers bajos, baño de hielo, destapado hasta que baje.</div><div class="s">Nunca ollón caliente al refri</div></div>
+    </div>
+    <div class="callout"><b>Ceviche a la peruana:</b> el pescado sale del refri (≤5 °C) recién al pedido, se corta sobre tabla fría y regresa al frío. El limón no "cocina" ni mata todo: la seguridad viene de que el pescado sea fresquísimo y esté siempre frío. Nunca prepares baldes de leche de tigre a temperatura ambiente "para más tarde".</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Recepción, almacenamiento y FEFO</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La inocuidad empieza en la puerta de servicio. Lo que aceptas mal ya no lo arreglas después. Y lo que guardas sin orden se vence, se pierde plata y se sirve algo que no debía salir.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🌡️</div><div><div class="t">Antes de firmar la guía</div><h4>1. Mide temperatura al recibir</h4><p>Refrigerados ≤ 5 °C, congelados −18 °C. Si el pescado llega tibio o el pollo con líquido rojizo y olor, se rechaza. No lo metas al frío para "salvarlo".</p></div></div>
+      <div class="paso"><div class="ico">🔎</div><div><div class="t">Empaque, olor, color, fecha</div><h4>2. Inspecciona y revisa vencimientos</h4><p>Latas abolladas o hinchadas, cajas mojadas, empaque roto o producto fuera de fecha = rechazo. Anota lote y vencimiento.</p></div></div>
+      <div class="paso"><div class="ico">🏷️</div><div><div class="t">Etiqueta con fecha de ingreso</div><h4>3. Rotula todo apenas entra</h4><p>Fecha de recepción y, si lo abres o cocinas, fecha de apertura/preparación. Sin etiqueta no sabes qué va primero.</p></div></div>
+      <div class="paso"><div class="ico">📦</div><div><div class="t">FEFO manda sobre FIFO</div><h4>4. Guarda con lo que vence primero adelante</h4><p><b>FEFO</b> (primero en vencer, primero en salir): lo de fecha más cercana va al frente. Lo nuevo, atrás. Así rota solo.</p></div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Orden del refrigerador de <b>arriba hacia abajo</b>, según la temperatura de cocción que necesita cada cosa (así, si algo gotea, nunca cae sobre lo que se come crudo o ya está listo):</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Nivel</th><th>Qué va ahí</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Estante superior</td><td>Listos para comer y cocidos: postres, salsas, causa</td><td>No se cocinan más; que nada les gotee encima</td></tr>
+        <tr><td>Nivel medio-alto</td><td>Frutas y verduras lavadas</td><td>Van sin cocción o con cocción mínima</td></tr>
+        <tr><td>Nivel medio</td><td>Pescados y mariscos crudos</td><td>Cocción media; su jugo no debe caer a lo de arriba</td></tr>
+        <tr><td>Nivel bajo</td><td>Carnes rojas enteras</td><td>Se sellan a alta temperatura</td></tr>
+        <tr><td>Estante inferior</td><td>Aves y carne molida crudas</td><td>Necesitan 74 °C; su goteo es el más peligroso</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>Nunca en el piso:</b> todo va sobre parihuela o repisa, a mínimo 15 cm del suelo y separado de la pared. Crudos y cocidos jamás en el mismo estante sin separación. Producto sin etiqueta = producto que se descarta.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Contaminación cruzada</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Es pasar microbios (o un alérgeno) de un alimento crudo, una superficie o una mano hacia un alimento listo para comer. No se ve, no huele, y es la causa número uno de intoxicaciones evitables.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cruzada por contacto</h3><div class="d">El jugo del pollo crudo toca la lechuga de la ensalada. Directo, inmediato, peligroso.</div><div class="s">Separa crudo de listo</div></div>
+      <div class="tipo"><h3>Cruzada por utensilio</h3><div class="d">Misma tabla o cuchillo para el pescado crudo y para picar el limón del pisco sour.</div><div class="s">Un uso, una tabla</div></div>
+      <div class="tipo"><h3>Cruzada por alérgeno</h3><div class="d">Restos de maní en la licuadora arruinan la salsa de un comensal alérgico. Puede ser mortal.</div><div class="s">Lava antes entre pedidos</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Sistema de <b>tablas por color</b> (misma lógica para cuchillos). Ténlas rotuladas y colgadas por separado:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Color</th><th>Uso</th><th>En la casa</th></tr></thead>
+      <tbody>
+        <tr><td>Roja</td><td>Carnes rojas crudas</td><td>Lomo, res para el saltado</td></tr>
+        <tr><td>Amarilla</td><td>Aves crudas</td><td>Pollo, pato</td></tr>
+        <tr><td>Azul</td><td>Pescados y mariscos crudos</td><td>Corvina del ceviche, langostinos</td></tr>
+        <tr><td>Verde</td><td>Frutas y verduras</td><td>Limón, cebolla, cilantro</td></tr>
+        <tr><td>Blanca</td><td>Lácteos, pan, alimentos cocidos</td><td>Queso, emplatado final</td></tr>
+      </tbody>
+    </table></div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Corta la cadena así</h4><ul>
+        <li>Tabla y cuchillo distintos para cada grupo</li>
+        <li>Prepara crudos y cocidos en momentos o zonas separadas</li>
+        <li>Lávate las manos al cambiar de alimento</li>
+        <li>Guarda crudos abajo, listos arriba</li>
+        <li>Avisa y limpia todo ante un pedido con alergia</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que dispara una intoxicación</h4><ul>
+        <li>Picar cebolla en la tabla donde estuvo el pollo</li>
+        <li>El paño con el que limpiaste el pescado en la barra</li>
+        <li>Apilar pescado crudo sobre la causa lista</li>
+        <li>El mismo trapo para todo, todo el turno</li>
+        <li>Guardar crudo destapado junto a lo cocido</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Limpieza, desinfección y buenas prácticas</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Limpio no es lo mismo que desinfectado. Limpiar quita la suciedad visible; desinfectar mata los microbios que quedan. Siempre en ese orden, y sin saltarse pasos.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧽</div><div><div class="t">Paso 1</div><h4>Retira los restos</h4><p>Barre migas, raspa grasa, tira los residuos gruesos de la superficie o el utensilio.</p></div></div>
+      <div class="paso"><div class="ico">🫧</div><div><div class="t">Paso 2</div><h4>Lava con detergente y agua caliente</h4><p>Talla bien mesones, tablas y equipos. Aquí se va la suciedad que ves.</p></div></div>
+      <div class="paso"><div class="ico">💦</div><div><div class="t">Paso 3</div><h4>Enjuaga</h4><p>Quita todo el detergente con agua limpia; si no, el desinfectante no actúa bien.</p></div></div>
+      <div class="paso"><div class="ico">🧪</div><div><div class="t">Paso 4 · deja actuar</div><h4>Desinfecta y respeta el tiempo</h4><p>Solución de lejía a la dilución indicada (aprox. 1 cdta por litro para superficies) o desinfectante del local. Déjalo actuar el tiempo de contacto; no seques al toque.</p></div></div>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Limpia sobre la marcha</h3><div class="d">Clean as you go: no acumules ollas ni superficies sucias. Desinfecta el mesón cada vez que cambias de tarea.</div><div class="s">Superficie despejada = segura</div></div>
+      <div class="tipo"><h3>Paños con código</h3><div class="d">Un paño para superficies limpias y otro para lo sucio; cámbialos seguido. El trapo húmedo y sucio esparce bacterias por todo.</div><div class="s">A lavandería, no al bolsillo</div></div>
+      <div class="tipo"><h3>Control de plagas</h3><div class="d">Basura tapada y sacada seguido, sin puertas abiertas, sin cajas de cartón viejas. Reporta rastros de roedores o insectos al toque.</div><div class="s">Cero comida a la vista de noche</div></div>
+    </div>
+    <div class="callout"><b>Agua y hielo también son alimento:</b> el hielo del pisco sour o de conservar el pescado se toma con pinza o cucharón limpio, nunca con la mano ni con el vaso. Usa solo agua potable para preparar y para el hielo.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>HACCP en la práctica: puntos críticos</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">HACCP es un sistema para <b>anticipar</b> los peligros en vez de descubrirlos cuando alguien ya se enfermó. No es papeleo: es identificar los momentos donde algo puede salir mal y controlarlos con datos, no con confianza.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Peligro</h3><div class="d">Lo que puede enfermar: biológico (bacterias, parásitos), químico (desinfectante, alérgeno) o físico (vidrio, metal, hueso).</div><div class="s">Piensa qué puede fallar</div></div>
+      <div class="tipo"><h3>PCC · Punto crítico</h3><div class="d">El paso donde controlas o eliminas el peligro: cocción, refrigeración, recepción. Si falla ahí, no hay red de seguridad después.</div><div class="s">Cocción, frío, recepción</div></div>
+      <div class="tipo"><h3>Límite crítico</h3><div class="d">El número que no se negocia: pollo a 74 °C, refri a ≤5 °C, lejía a la dilución correcta.</div><div class="s">Un valor medible, no "más o menos"</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Tus tres puntos críticos del día a día, con su control y su acción correctiva:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>PCC</th><th>Límite</th><th>Cómo lo controlas</th><th>Si se pasa</th></tr></thead>
+      <tbody>
+        <tr><td>Recepción</td><td>Frío ≤ 5 °C · congelado −18 °C</td><td>Termómetro al recibir + revisar fecha/empaque</td><td>Rechazar y anotar en la guía</td></tr>
+        <tr><td>Cocción</td><td>Centro ≥ 70 °C (aves 74 °C)</td><td>Termómetro de punción al centro</td><td>Seguir cocinando hasta llegar</td></tr>
+        <tr><td>Conservación</td><td>Frío ≤ 5 °C · caliente ≥ 63 °C</td><td>Registro de temperaturas 2–3 veces/turno</td><td>Corregir equipo o descartar producto</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>Registra siempre:</b> anota temperaturas de cámaras y de baño maría en la planilla del turno (usa el checklist de El Libro en Prep!). Si DIGESA llega, tus registros son tu respaldo; y si algo falla, sabes dónde y cuándo pasó. Ante la duda, la regla de oro: <b>si dudas, bótalo</b> — un plato perdido es más barato que un comensal enfermo.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Inocuidad</b><span>Garantía de que un alimento no causará daño al comerlo. Es la meta de todo lo que hacemos con la comida.</span></div>
+      <div class="gterm"><b>HACCP / APPCC</b><span>Sistema de Análisis de Peligros y Puntos Críticos de Control: prevenir riesgos antes de que lleguen al plato.</span></div>
+      <div class="gterm"><b>Zona de peligro</b><span>El rango de 5 °C a 60 °C donde las bacterias se multiplican más rápido. Los alimentos deben cruzarla rápido.</span></div>
+      <div class="gterm"><b>Cadena de frío</b><span>Mantener un alimento refrigerado o congelado sin interrupción, de la recepción al servicio.</span></div>
+      <div class="gterm"><b>FEFO</b><span>First Expired, First Out: sale primero lo que vence primero. Manda sobre el FIFO para evitar vencidos.</span></div>
+      <div class="gterm"><b>FIFO</b><span>First In, First Out: sale primero lo que entró primero. Ordena la rotación del almacén.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Paso de microbios o alérgenos de un alimento crudo, superficie o mano hacia un alimento listo.</span></div>
+      <div class="gterm"><b>PCC</b><span>Punto Crítico de Control: el paso donde se elimina o controla un peligro (cocción, frío, recepción).</span></div>
+      <div class="gterm"><b>Límite crítico</b><span>El valor que no se negocia en un PCC: una temperatura, un tiempo o una concentración medible.</span></div>
+      <div class="gterm"><b>Desinfección</b><span>Reducir los microbios de una superficie ya limpia a un nivel seguro, con calor o desinfectante.</span></div>
+      <div class="gterm"><b>Alérgeno</b><span>Ingrediente que provoca reacción en personas sensibles: maní, mariscos, lácteos, gluten, huevo, entre otros.</span></div>
+      <div class="gterm"><b>Manipulador</b><span>Toda persona que toca alimentos, equipos o superficies de contacto. Requiere carné sanitario vigente.</span></div>
+      <div class="gterm"><b>Trazabilidad</b><span>Poder rastrear un alimento por su lote y fecha, desde el proveedor hasta el plato servido.</span></div>
+      <div class="gterm"><b>Regla 2h/4h</b><span>Un alimento fuera de frío: hasta 2 h se recupera, entre 2 y 4 h se usa ya, más de 4 h se descarta.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en cocina</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Higiene y HACCP · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Temperaturas clave</h4><ul>
+          <li>Refri: 0–5 °C · Congelador: −18 °C</li>
+          <li>Zona de peligro: 5–60 °C (evítala)</li>
+          <li>Cocción: ≥70 °C · aves/molida: ≥74 °C</li>
+          <li>Caliente en línea: ≥63 °C</li>
+          <li>Recalentar: ≥74 °C, una sola vez</li>
+        </ul></div>
+        <div class="op-box"><h4>Lávate las manos</h4><ul>
+          <li>20–40 s con jabón, hasta el codo</li>
+          <li>Al salir del baño y volver a la línea</li>
+          <li>Al pasar de crudo a cocido</li>
+          <li>Tras basura, caja, dinero o celular</li>
+          <li>El guante no reemplaza el lavado</li>
+        </ul></div>
+        <div class="op-box"><h4>Tablas por color</h4><ul>
+          <li>Roja: carne roja cruda</li>
+          <li>Amarilla: aves crudas</li>
+          <li>Azul: pescados y mariscos</li>
+          <li>Verde: frutas y verduras</li>
+          <li>Blanca: cocidos, lácteos, pan</li>
+        </ul></div>
+        <div class="op-box"><h4>Almacenar (FEFO)</h4><ul>
+          <li>Vence primero, sale primero</li>
+          <li>Etiqueta con fecha todo lo que entra</li>
+          <li>Arriba lo listo, abajo aves crudas</li>
+          <li>A 15 cm del piso, nunca en el suelo</li>
+          <li>Rechaza lo que llega tibio o vencido</li>
+        </ul></div>
+        <div class="op-box"><h4>Limpieza</h4><ul>
+          <li>Retirar → lavar → enjuagar → desinfectar</li>
+          <li>Desinfectante: respeta el tiempo de contacto</li>
+          <li>Clean as you go, mesón despejado</li>
+          <li>Paños distintos para limpio y sucio</li>
+        </ul></div>
+        <div class="op-box"><h4>Regla de oro</h4><ul>
+          <li>Si dudas, bótalo</li>
+          <li>Enfermo o con herida: avisa, no manipules</li>
+          <li>Mide, no adivines: usa termómetro</li>
+          <li>Registra temperaturas cada turno</li>
+          <li>Alergia en el pedido: limpia y avisa</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Higiene y manipulación de alimentos (HACCP) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

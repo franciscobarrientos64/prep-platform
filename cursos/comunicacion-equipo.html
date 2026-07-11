@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Comunicación y trabajo en equipo · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d9603b'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Comunicación</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#d9603b">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Comunicación y trabajo en equipo</h1>
+    <p>El servicio no lo salva un héroe: lo salva un equipo que se entiende. Este curso te da las palabras exactas, los rituales del turno y la actitud para que cocina y sala trabajen como una sola brigada, sin gritos y sin errores.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el 80% de los platos devueltos, mesas molestas y roces en el turno no vienen de mala comida ni mala voluntad: vienen de un mensaje que no se dijo, no se escuchó o no se confirmó. Comunicar bien es la habilidad más barata y más rentable de todo el restaurante.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Los cimientos: hablar para que el turno funcione</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de aprender frases, entiende cómo funciona la comunicación cuando hay ruido, prisa y una comanda tras otra. En el turno no comunicamos para quedar bien: comunicamos para que el plato salga perfecto y a tiempo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Corto, claro y en voz alta</h3><div class="d">En la línea nadie tiene tiempo de descifrar. "Marchando mesa 12, dos lomos término medio" gana a "creo que ya casi manda la doce".</div><div class="s">Frase corta = menos error</div></div>
+      <div class="tipo"><h3>Confirma siempre (loop cerrado)</h3><div class="d">Quien recibe repite lo que oyó: "Oído, dos lomos término medio, doce". Sin ese eco, no sabes si el mensaje llegó.</div><div class="s">Digo → repites → confirmo</div></div>
+      <div class="tipo"><h3>Un solo canal por tema</h3><div class="d">Una modificación se dice al expedidor, no a tres personas a la vez. Tres versiones del mismo cambio = un plato mal.</div><div class="s">Una voz manda el pase</div></div>
+      <div class="tipo"><h3>El tono también comunica</h3><div class="d">Firme no es gritar. En sala se habla bajo y cálido; en cocina, alto y neutro. Nunca con desprecio, ni bajo presión.</div><div class="s">Volumen según la zona</div></div>
+      <div class="tipo"><h3>Nombres, no "oye tú"</h3><div class="d">Llamar por el nombre ("Rosa, ¿lista la 8?") ordena la respuesta y baja la tensión. El anonimato genera roces.</div><div class="s">Nombre + pedido concreto</div></div>
+      <div class="tipo"><h3>Lo urgente se anuncia</h3><div class="d">Si algo cambia el orden del pase (una alergia, una mesa VIP, un 86), se dice fuerte y de inmediato, no "cuando pueda".</div><div class="s">Urgente = ahora, en voz alta</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> un mensaje no está dado hasta que alguien lo confirmó. Si nadie te respondió "oído", tu comanda todavía no existe.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>El lenguaje del pase: cocina ⇄ sala</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">La cocina y la sala hablan un idioma común que ahorra tiempo y evita malentendidos. Estas palabras son universales en cocinas de nivel; apréndelas y úsalas igual todos, todos los turnos.</p>
+    <table class="t">
+      <thead><tr><th>Palabra</th><th>Qué significa</th><th>Ejemplo real en Casa Italia</th></tr></thead>
+      <tbody>
+        <tr><td><b>Oído</b></td><td>"Recibí y entendí tu mensaje".</td><td>Chef: "Marchando dos risottos". Línea: "Oído, dos risottos".</td></tr>
+        <tr><td><b>Marchar</b></td><td>Empezar a cocinar un plato ahora.</td><td>"Marcha los antipasti de la 5, entran de una".</td></tr>
+        <tr><td><b>Detrás / Voy detrás</b></td><td>Paso por atrás con algo caliente o filoso.</td><td>"¡Detrás, caliente!" al cruzar con la pizza del horno.</td></tr>
+        <tr><td><b>86</b></td><td>Se acabó un producto o plato. Ya no se vende.</td><td>"86 pulpo". La sala deja de ofrecerlo de inmediato.</td></tr>
+        <tr><td><b>En fuego</b></td><td>El pedido ya está enviado a cocina y cocinándose.</td><td>La comanda de la 12 pasó de "oído" a "en fuego".</td></tr>
+        <tr><td><b>Recoger / Pickup</b></td><td>El plato está listo en el pase para llevar.</td><td>Expedidor: "Recoger mesa 8, dos fondos y un postre".</td></tr>
+        <tr><td><b>Al pase</b></td><td>Llevar el plato terminado a la ventana del expedidor.</td><td>"Sube la milanesa al pase, va con la 3".</td></tr>
+        <tr><td><b>Retrasar / Hold</b></td><td>Frenar un plato para que salga con el resto de la mesa.</td><td>"Retrasa el postre de la 6, todavía comen el fondo".</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El expedidor manda el pase:</b> es la única voz que sincroniza cocina y sala. Todos le hablan a él y él ordena qué sale y cuándo. Si cada mozo grita a su estación, el pase colapsa.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Comunicación clara en el servicio, mesa por mesa</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La misma claridad de la cocina aplica frente al comensal. Un mensaje bien dado al invitado y bien pasado a cocina evita esperas, alergias mal manejadas y platos que vuelven.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Así sí</h4><ul>
+        <li>"Enseguida confirmo con cocina si el risotto puede ir sin mantequilla." (No prometas lo que no sabes.)</li>
+        <li>Anotas la alergia y la repites en voz alta al expedidor: "Alergia a maní en la 7, silla 2".</li>
+        <li>Avisas al comensal el tiempo real: "Su fondo sale en unos 15 minutos".</li>
+        <li>Si algo se demora, tú te acercas primero, antes de que el invitado tenga que buscarte.</li>
+        <li>Pasas la mesa a tu compañero al ir al break: "La 4 ya pidió postre, la 9 está por cerrar cuenta".</li>
+      </ul></div>
+      <div class="box no"><h4>Así no</h4><ul>
+        <li>"Sí, seguro se puede", sin confirmar con cocina. Genera un plato mal y un invitado molesto.</li>
+        <li>Dejar la alergia solo anotada en la comanda, sin decirla en voz alta.</li>
+        <li>"Ya sale", cuando en realidad ni entró a cocina.</li>
+        <li>Esconderte cuando hay demora. El silencio molesta más que la espera.</li>
+        <li>Irte al break sin traspasar tus mesas. Nadie sabe qué falta.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Alergias = comunicación crítica:</b> nunca se asume, nunca se adivina. Se pregunta al invitado, se anota, se dice en voz alta al pase y cocina confirma "oído, alergia". Un eslabón que falla puede mandar a alguien al hospital.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Resolver conflictos en caliente, sin quemar el turno</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">En un turno lleno los roces son normales: un plato que se demoró, una comanda mal leída, dos personas cansadas. El problema no es el roce, es dejarlo crecer. Sigue estos pasos para bajar la tensión y volver al servicio.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">pause_circle</span></div><div><div class="t">Paso 1 · En el momento</div><h4>Primero el servicio, después el reclamo</h4><p>Si estamos en pleno pase, no se discute en la línea. "Lo hablamos apenas baje el ritmo." El invitado no puede pagar nuestros roces.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">hearing</span></div><div><div class="t">Paso 2 · Escuchar</div><h4>Deja que el otro termine</h4><p>Antes de defenderte, entiende qué pasó. "¿Qué comanda te llegó? Vamos a ver juntos." La mayoría de los conflictos son un dato que no cuadró, no una mala intención.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">person</span></div><div><div class="t">Paso 3 · Hablar del hecho, no de la persona</div><h4>"La 12 salió fría", no "eres un desastre"</h4><p>Describe lo que pasó y su efecto, sin etiquetas. Atacar a la persona escala; describir el hecho resuelve.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">build</span></div><div><div class="t">Paso 4 · Buscar la solución, no al culpable</div><h4>"¿Cómo salvamos esta mesa ahora?"</h4><p>Primero se arregla el plato del invitado. El "de quién fue la culpa" se ve después, en frío, para que no se repita.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">forum</span></div><div><div class="t">Paso 5 · Cerrar después del turno</div><h4>El chef o gerente media si hace falta</h4><p>Terminado el servicio, si quedó tensión, se habla en corto y en privado. Nunca frente a comensales, nunca por chat a las 2 a.m.</p></div></div>
+    </div>
+    <div class="callout"><b>Nunca frente al invitado:</b> discutir en el salón o gritar hacia la cocina rompe la experiencia por la que el comensal pagó. La tensión se resuelve en la cocina, en corto y con respeto.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Respeto y colaboración: somos una sola brigada</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cocina y sala no compiten: dependen la una de la otra. El mozo vende lo que la cocina cocina; la cocina brilla por cómo la sala lo presenta. La actitud diaria construye (o destruye) esa confianza.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Una sola meta</h3><div class="d">El invitado feliz es de todos. No hay "ganó cocina" o "ganó sala": o gana la mesa, o perdemos todos.</div><div class="s">Un equipo, un objetivo</div></div>
+      <div class="tipo"><h3>Cubre a tu compañero</h3><div class="d">Ves una mesa sin agua que no es tuya, la sirves. Ves a un cocinero hundido, avisas al chef. Nadie se hunde solo.</div><div class="s">Correr por el otro</div></div>
+      <div class="tipo"><h3>Reconoce en voz alta</h3><div class="d">"Buen pase, salió redondo." Un gracias sincero en el turno vale más que mil bonos. Reconocer cuesta cero.</div><div class="s">Gratitud diaria</div></div>
+      <div class="tipo"><h3>Puntualidad = respeto</h3><div class="d">Llegar tarde carga tu trabajo sobre el resto. Llegar a tiempo y con la estación lista es el primer "te respeto".</div><div class="s">A tiempo y listo</div></div>
+      <div class="tipo"><h3>Sin bromas que hieren</h3><div class="d">El humor une, pero apodos, burlas por origen o género no. Lo que incomoda a uno, daña a todo el equipo.</div><div class="s">Reír juntos, no del otro</div></div>
+      <div class="tipo"><h3>Todos los puestos valen</h3><div class="d">El lavaplatos, el ayudante y el sommelier hacen posible el mismo plato. Trata a cada uno como te gustaría que te traten.</div><div class="s">Sin puestos de segunda</div></div>
+    </div>
+    <div class="callout"><b>La regla del "gracias" y el "oído":</b> dos palabras que, dichas todo el turno, cambian el clima de una cocina. "Oído" dice que escuchas; "gracias" dice que valoras. Cuestan nada y lo cambian todo.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Rituales de comunicación: pre-turno y cierre</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La mejor comunicación no se improvisa en el fuego: se prepara antes y se ordena después. Estos dos rituales de 5 minutos evitan la mayoría de los problemas del servicio.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups</span></div><div><div class="t">Antes · Briefing (pre-turno)</div><h4>Todos juntos, 5 minutos, de pie</h4><p>Sala y cocina en un círculo. Se revisa: reservas y mesas VIP, 86 del día, platos nuevos o cambios de carta, alergias conocidas, y quién cubre qué estación.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">record_voice_over</span></div><div><div class="t">Durante · El pase</div><h4>El expedidor sincroniza todo</h4><p>Una sola voz canta las comandas, marca tiempos y avisa demoras. Todos confirman con "oído". Los cambios se anuncian fuerte y una sola vez.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">fact_check</span></div><div><div class="t">Después · Cierre de turno</div><h4>3 preguntas rápidas</h4><p>¿Qué salió bien? ¿Qué se demoró o se devolvió y por qué? ¿Qué falta reponer o avisar al siguiente turno? Se anota en la bitácora de El Libro, no queda en la memoria de uno.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">swap_horiz</span></div><div><div class="t">Traspaso entre turnos</div><h4>Nadie se va sin pasar la posta</h4><p>El turno que sale le deja al que entra: mesas activas, cuentas por cerrar, faltantes y pendientes. Un traspaso de 2 minutos evita una hora de confusión.</p></div></div>
+    </div>
+    <table class="t">
+      <thead><tr><th>Momento</th><th>Quién habla</th><th>Qué se comunica</th></tr></thead>
+      <tbody>
+        <tr><td>Briefing (pre-turno)</td><td>Chef + gerente de sala</td><td>Reservas, VIP, 86, alergias, cambios de carta, estaciones</td></tr>
+        <tr><td>Servicio</td><td>Expedidor</td><td>Marchar, tiempos, demoras, recoger, retrasos, 86 nuevos</td></tr>
+        <tr><td>Cierre</td><td>Todo el equipo</td><td>Qué salió bien, qué falló, qué reponer → bitácora</td></tr>
+        <tr><td>Traspaso</td><td>Turno que sale → turno que entra</td><td>Mesas activas, cuentas, faltantes, pendientes</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>5 minutos que ahorran el turno:</b> un briefing bien hecho previene más errores que cualquier corrección en pleno fuego. La comunicación se gana antes de que entre la primera comanda.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Oído</b><span>Confirmación de que recibiste y entendiste un mensaje. Cierra el circuito de comunicación.</span></div>
+      <div class="gterm"><b>Marchar</b><span>Orden de empezar a cocinar un plato en ese momento. La da el expedidor o el chef.</span></div>
+      <div class="gterm"><b>86</b><span>Código para "se acabó". Se cantó "86 pulpo" = la sala deja de ofrecerlo de inmediato.</span></div>
+      <div class="gterm"><b>Pase / Ventana</b><span>El punto donde cocina entrega el plato terminado y el expedidor lo sincroniza con la sala.</span></div>
+      <div class="gterm"><b>Expedidor</b><span>La persona que canta las comandas, ordena tiempos y es el único puente de voz entre cocina y sala.</span></div>
+      <div class="gterm"><b>Briefing</b><span>Reunión corta de todo el equipo antes del turno para alinear reservas, 86, alergias y cambios.</span></div>
+      <div class="gterm"><b>En fuego</b><span>El pedido ya fue enviado a cocina y se está cocinando. En Prep!, el estado del plato en la Línea (KDS).</span></div>
+      <div class="gterm"><b>Detrás / Voy detrás</b><span>Aviso al pasar por atrás de alguien con algo caliente o filoso, para evitar choques.</span></div>
+      <div class="gterm"><b>Loop cerrado</b><span>Técnica de repetir en voz alta lo que se escuchó para confirmar que el mensaje llegó bien.</span></div>
+      <div class="gterm"><b>Retrasar / Hold</b><span>Frenar un plato a propósito para que salga junto con el resto de la mesa.</span></div>
+      <div class="gterm"><b>Traspaso / Pasar la posta</b><span>Entregar al turno o compañero que entra el estado de las mesas y los pendientes.</span></div>
+      <div class="gterm"><b>Bitácora</b><span>Registro escrito del turno (en El Libro de Prep!): qué salió bien, qué falló, qué reponer.</span></div>
+      <div class="gterm"><b>Recoger / Pickup</b><span>Aviso de que un plato está listo en el pase para que la sala lo lleve a la mesa.</span></div>
+      <div class="gterm"><b>Corner / Detrás caliente</b><span>Avisos de seguridad al girar en una esquina ciega o cruzar con algo caliente en la línea.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Comunicación y equipo · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Los 3 hábitos</h4><ul><li>Corto, claro y en voz alta</li><li>Confirma siempre: di "oído"</li><li>Una sola voz manda el pase</li></ul></div>
+        <div class="op-box"><h4>Palabras del pase</h4><ul><li>Oído · Marchar · En fuego</li><li>86 = se acabó, no se vende</li><li>Detrás · Recoger · Retrasar</li></ul></div>
+        <div class="op-box"><h4>Con el invitado</h4><ul><li>No prometas sin confirmar cocina</li><li>Alergia: anota + di en voz alta</li><li>Demora: avisa tú primero</li></ul></div>
+        <div class="op-box"><h4>Conflictos</h4><ul><li>Primero el servicio, luego el reclamo</li><li>Habla del hecho, no de la persona</li><li>Nunca frente al comensal</li></ul></div>
+        <div class="op-box"><h4>Respeto diario</h4><ul><li>Una meta: el invitado feliz</li><li>Cubre a tu compañero</li><li>"Gracias" y "oído" todo el turno</li></ul></div>
+        <div class="op-box"><h4>Rituales</h4><ul><li>Briefing 5 min antes del turno</li><li>Cierre: qué salió bien / falló / reponer</li><li>Traspaso: nadie se va sin pasar la posta</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Comunicación y trabajo en equipo · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

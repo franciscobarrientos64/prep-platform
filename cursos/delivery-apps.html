@@ -1,0 +1,323 @@
+<!-- Curso Academia Prep! · Coordinación con apps y repartidores · Área Delivery -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Coordinación con apps y repartidores · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e8590c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Delivery / Apps</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#e8590c">
+    <div class="k">Academia Prep! · Delivery</div>
+    <h1>Coordinación con apps y repartidores</h1>
+    <p>Todo lo que necesitas para manejar Rappi, PedidosYa, Didi y tu canal propio sin perder tiempos ni calidad: preparación para viaje, sincronía con cocina, trato con el repartidor, y cómo resolver incidencias y cancelaciones sin quemar la calificación.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Equipo Delivery</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> en delivery el comensal no ve tu servicio, solo abre la bolsa en su casa. Un empaque flojo, 6 minutos de más o un repartidor que sale con el pedido incompleto se convierten en una estrella menos, un reembolso y un cliente que no vuelve. Tu trabajo es que el plato llegue igual de bueno que si saliera de la línea a la mesa.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Los canales y cómo funciona cada uno</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">No todos los pedidos entran igual. Antes de tocar una bolsa tienes que saber por qué canal llegó, porque eso define quién recoge, quién paga y a quién reclamas si algo sale mal.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Apps (marketplace)</h3><div class="d">Rappi, PedidosYa, Didi Food. El comensal pide en la app, la cocina recibe la comanda en la tablet, y un repartidor de la app recoge. Cobran comisión (20–30%).</div><div class="s">Repartidor: de la app</div></div>
+      <div class="tipo"><h3>Canal propio</h3><div class="d">WhatsApp del local, la carta digital de Prep! (/pedir) o llamada. 0% comisión, el margen es tuyo. Tú decides si reparte moto propia o un courier.</div><div class="s">Repartidor: tuyo</div></div>
+      <div class="tipo"><h3>Recojo en tienda</h3><div class="d">Pickup: el comensal viene por su pedido. No hay repartidor, pero igual va sellado y con nombre. El punto de entrega es la barra o mostrador de delivery.</div><div class="s">Repartidor: el propio comensal</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Canal</th><th>Dónde entra el pedido</th><th>Quién recoge</th><th>A quién reclamas</th></tr></thead>
+      <tbody>
+        <tr><td>Rappi / PedidosYa / Didi</td><td>Tablet de la app + KDS delivery</td><td>Repartidor de la app (con casaca de la marca)</td><td>Soporte de la app desde la tablet</td></tr>
+        <tr><td>Carta Prep! (/pedir)</td><td>POS y KDS del local (origen "delivery propio")</td><td>Moto propia o courier contratado</td><td>Gerencia del local</td></tr>
+        <tr><td>WhatsApp / teléfono</td><td>Se ingresa a mano al POS</td><td>Moto propia o courier</td><td>Gerencia del local</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla de oro:</b> cada pedido tiene un dueño desde que suena hasta que sale por la puerta. Si no sabes por qué canal entró, todavía no estás listo para prepararlo.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Armar el pedido para que viaje bien</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Un plato que en salón es perfecto puede llegar frío, aguado o volteado. El empaque no es "meter en la bolsa": es proteger temperatura, textura y presentación durante 20–40 minutos de moto.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">checklist</span></div>
+      <div><div class="t">PASO 1 · Verifica contra la comanda</div><h4>Cuenta ítem por ítem</h4><p>Lee la comanda en voz baja y toca cada envase. Un lomo saltado, una porción de arroz, una chaufa, la gaseosa, los cubiertos. Si dice "sin ají" o "extra cancha", confírmalo mirando el plato, no de memoria.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">thermostat</span></div>
+      <div><div class="t">PASO 2 · Separa frío de caliente</div><h4>Nunca mezcles temperaturas</h4><p>El ceviche y la causa van en bolsa aparte del ají de gallina caliente. El calor cocina el pescado y marchita la lechuga. Los helados y postres fríos, en la última bolsa que se arma. Si el pedido es grande, usa dos bolsas y márcalas.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">restaurant</span></div>
+      <div><div class="t">PASO 3 · Salsas y crocantes aparte</div><h4>Lo que se aguada, se separa</h4><p>Salsa de la pasta, leche de tigre, aderezo de la ensalada, la crema volteada: en envase individual. Las papas fritas y la cancha en bolsita de papel, nunca tapadas con líquido encima. El comensal arma su plato en casa.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">lock</span></div>
+      <div><div class="t">PASO 3 · Sella y etiqueta</div><h4>Precinto de seguridad + nombre</h4><p>Cierra con sticker o precinto que se rompa al abrir: es la garantía de que nadie tocó la comida. Pega la etiqueta con el nombre del comensal y los últimos 4 dígitos del pedido hacia afuera, visible para el repartidor.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_drink</span></div>
+      <div><div class="t">PASO 5 · Bebidas, cubiertos y servilletas</div><h4>Lo obvio es lo que más se olvida</h4><p>Gaseosa parada y asegurada para que no se voltee. Cubiertos, servilletas, sorbete y el ají o cremas de cortesía si aplican. Revisa que la bebida coincida (Inca Kola normal vs sin azúcar es un reclamo clásico).</p></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Doble bolsa para pedidos pesados o con caldo</li>
+        <li>Envases con tapa a presión bien cerrada</li>
+        <li>Sopas y caldos máximo al 80% del envase</li>
+        <li>Etiqueta visible hacia afuera</li>
+        <li>Foto mental: "¿lo abriría contento en mi casa?"</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Apilar envases calientes que aplasten el de abajo</li>
+        <li>Pizza inclinada dentro de la bolsa (queso pegado a la tapa)</li>
+        <li>Dejar la bolsa abierta "porque ya viene la moto"</li>
+        <li>Poner el helado junto a lo caliente</li>
+        <li>Mandar salsas ya vertidas sobre lo crocante</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Tiempos y sincronía con la cocina</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El error más caro del delivery es el desfase: el plato listo enfriándose en la barra mientras la moto no llega, o el repartidor esperando 10 minutos parado. Tu rol es hacer que cocina y repartidor lleguen al punto de entrega al mismo tiempo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Tiempo de preparación</h3><div class="d">Lo que tarda la cocina. En apps tú confirmas este tiempo al aceptar el pedido; si dices 15 min, la moto se asigna para llegar a los 15.</div><div class="s">Objetivo: cumplir lo prometido</div></div>
+      <div class="tipo"><h3>Ventana de armado</h3><div class="d">Los últimos 2–3 minutos: sellar, embolsar, bebida. Recién ahí armas, para que salga caliente. No armes con el plato esperando.</div><div class="s">Objetivo: mínimo tiempo en barra</div></div>
+      <div class="tipo"><h3>Punto de entrega</h3><div class="d">La barra de delivery. Ahí se junta comanda, bolsa sellada y repartidor. Todo pasa por un solo lugar, no por la puerta de cocina.</div><div class="s">Objetivo: un solo cuello ordenado</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Momento</th><th>Qué haces</th><th>Tiempo ideal</th></tr></thead>
+      <tbody>
+        <tr><td>Entra la comanda</td><td>Aceptas y confirmas tiempo real de cocina (no pongas 10 si están saturados)</td><td>&lt; 60 seg</td></tr>
+        <tr><td>Cocina marcha</td><td>Preparas envases, bolsa, etiqueta y bebida por adelantado</td><td>Durante la preparación</td></tr>
+        <tr><td>Plato listo</td><td>Armas, sellas y dejas en la barra de delivery</td><td>2–3 min</td></tr>
+        <tr><td>Llega el repartidor</td><td>Verificas código/pedido, entregas, marcas "entregado a repartidor"</td><td>&lt; 90 seg</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Si la cocina se satura:</b> alarga el tiempo de preparación en la app ANTES de que el sistema asigne moto. Es mejor prometer 25 min y cumplir, que prometer 12 y que el plato salga a los 30 frío. La app penaliza el retraso, no el tiempo honesto.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Comunicación con el repartidor</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El repartidor es la última persona que toca tu comida antes del comensal. Trátalo como parte del equipo: 30 segundos de trato claro evitan pedidos perdidos, entregas frías y malas calificaciones que también te salpican a ti.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">qr_code_2</span></div>
+      <div><div class="t">ENTREGA</div><h4>Confirma el pedido correcto</h4><p>Pregunta el nombre o el número de pedido y contrástalo con la etiqueta. En apps, verifica el código que muestra la tablet o el teléfono del repartidor. Nunca entregues "el que sigue" sin confirmar: dos motos juntas se cruzan las bolsas.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">volume_up</span></div>
+      <div><div class="t">INSTRUCCIONES</div><h4>Di en voz alta lo delicado</h4><p>"Va sopa, mantenla parada", "el helado va aparte, no lo voltees", "son dos bolsas". El repartidor no vio cómo lo armaste. Un aviso de 5 segundos salva el pedido.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">handshake</span></div>
+      <div><div class="t">TRATO</div><h4>Respeto y agua</h4><p>Salúdalo, dale un lugar para esperar, ofrece agua si hace calor. Un repartidor bien tratado cuida tu bolsa y vuelve con ganas. El maltrato se paga con estrellas bajas y comida sacudida.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">task_alt</span></div>
+      <div><div class="t">CIERRE</div><h4>Marca la entrega en el sistema</h4><p>Apenas sale la moto, marca "entregado a repartidor" en la tablet o en Prep!. Así el tiempo corre desde la salida real y quedas cubierto si luego hay un reclamo de demora que no fue tuyo.</p></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Confirmar nombre/código antes de soltar la bolsa</li>
+        <li>Avisar lo frágil o caliente en voz alta</li>
+        <li>Tener la bolsa lista cuando llega (no lo hagas esperar)</li>
+        <li>Anotar la placa/nombre si el pedido es de alto valor</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Entregar sin verificar y adivinar cuál es</li>
+        <li>Discutir con el repartidor delante de comensales</li>
+        <li>Dejar el pedido en el mostrador sin decir nada</li>
+        <li>Mandarlo con el pedido incompleto "para no demorar"</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Incidencias y cancelaciones</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Las cosas salen mal: un ítem agotado, la moto que no aparece, el comensal que cancela a mitad de cocción. Lo que define tu calificación no es el error, es cómo lo resuelves y qué tan rápido avisas.</p>
+    <table class="t">
+      <thead><tr><th>Situación</th><th>Qué hacer</th><th>A quién avisas</th></tr></thead>
+      <tbody>
+        <tr><td>Ítem agotado</td><td>Avisa de inmediato, ofrece reemplazo similar. No mandes algo distinto sin confirmar.</td><td>Soporte de la app o comensal (canal propio)</td></tr>
+        <tr><td>El repartidor no llega</td><td>Deja el plato en zona de mantenimiento de calor, reporta la demora. Si supera el límite, pide reasignación.</td><td>Soporte de la app desde la tablet</td></tr>
+        <tr><td>Comensal cancela ya cocinado</td><td>Registra la merma en Vuelto/Mermas. En apps, documenta que ya estaba en preparación para el reembolso.</td><td>Gerencia + app</td></tr>
+        <tr><td>Reclamo por pedido incompleto</td><td>No discutas. Verifica el checklist de armado, ofrece reenvío o nota de crédito según política.</td><td>Gerencia</td></tr>
+        <tr><td>Dirección errada / comensal no responde</td><td>El repartidor gestiona con la app. Tú guardas evidencia de que salió completo y a tiempo.</td><td>Soporte de la app</td></tr>
+      </tbody>
+    </table>
+    <div class="paso" style="margin-top:6px">
+      <div class="ico"><span class="material-symbols-outlined">bolt</span></div>
+      <div><div class="t">PROTOCOLO</div><h4>Avisa antes de que reclamen</h4><p>Si sabes que un pedido va tarde o incompleto, comunícalo tú primero. Un mensaje proactivo ("se nos agotó el flan, te mandamos suspiro de cortesía, ¿va?") convierte un reclamo en un cliente agradecido.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">description</span></div>
+      <div><div class="t">RESPALDO</div><h4>Documenta todo</h4><p>Foto de la bolsa sellada, hora de salida marcada, checklist cumplido. Ante un reembolso injusto, la evidencia es lo que evita que la app te descuente. Sin registro, siempre pierde el local.</p></div>
+    </div>
+    <div class="callout"><b>Cortesías con criterio:</b> una atención de bajo costo (un postre, una gaseosa) puede salvar la calificación de un pedido problemático. Pero pásalo por aprobación de gerencia y regístralo; no es plata que sale del aire, sale del margen.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Canal propio: cuidar tu margen y tu cliente</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Cada pedido por tu WhatsApp o tu carta digital vale más: no pagas 25% de comisión. Pero también eres tú quien responde por todo. Bien manejado, el canal propio es el que te deja el mejor margen y los clientes que sí vuelven.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Respuesta rápida</h3><div class="d">En WhatsApp, contesta en menos de 2 minutos. Ten la carta y los tiempos a la mano. El comensal que espera 10 min se va a la app.</div><div class="s">Meta: &lt; 2 min de respuesta</div></div>
+      <div class="tipo"><h3>Datos completos</h3><div class="d">Nombre, dirección con referencia, teléfono, forma de pago (Yape/Plin/efectivo/tarjeta) y si necesita vuelto. Confirma la dirección antes de despachar.</div><div class="s">Meta: 0 pedidos con dato faltante</div></div>
+      <div class="tipo"><h3>El extra que fideliza</h3><div class="d">Nota escrita a mano, un ají de cortesía, "gracias por pedir directo". Lo que la app no te deja hacer, el canal propio sí.</div><div class="s">Meta: que pida directo la próxima</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Confirmar dirección y referencia antes de que salga la moto</li>
+        <li>Repetir el pedido completo al cliente antes de cerrar</li>
+        <li>Cobrar/confirmar el pago según la política (Yape antes de salir)</li>
+        <li>Invitar a pedir directo la próxima vez</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Despachar a una dirección sin referencia en Lima</li>
+        <li>Prometer 30 min cuando la cocina está a tope</li>
+        <li>Bajar la calidad "porque es delivery propio"</li>
+        <li>Dejar sin respuesta un mensaje "para atender después"</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regresa el pedido al POS:</b> todo pedido de canal propio se ingresa al sistema igual que uno de mesa. Así cocina lo ve, se controla el inventario y queda registrado para la caja. Un pedido "solo por WhatsApp" que no entra al POS es un descuadre esperando a pasar.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Marketplace</b><span>App de terceros (Rappi, PedidosYa, Didi) que trae pedidos y repartidor a cambio de una comisión sobre la venta.</span></div>
+      <div class="gterm"><b>Canal propio</b><span>Pedidos que llegan por tu WhatsApp, teléfono o carta digital Prep!. Sin comisión: el margen es del restaurante.</span></div>
+      <div class="gterm"><b>Tiempo de preparación</b><span>Minutos que declaras que tarda la cocina. Define cuándo la app asigna la moto para que coincida con el plato listo.</span></div>
+      <div class="gterm"><b>Punto de entrega</b><span>La barra de delivery donde se juntan comanda, bolsa sellada y repartidor. Único lugar de salida ordenado.</span></div>
+      <div class="gterm"><b>Precinto de seguridad</b><span>Sticker o cinta que se rompe al abrir la bolsa. Garantiza que nadie manipuló el pedido en el camino.</span></div>
+      <div class="gterm"><b>Pickup / recojo en tienda</b><span>El comensal viene por su pedido. No hay repartidor, pero igual va sellado, etiquetado y verificado.</span></div>
+      <div class="gterm"><b>Reasignación</b><span>Pedir a la app que mande otro repartidor cuando el asignado no llega o cancela. Se gestiona desde soporte en la tablet.</span></div>
+      <div class="gterm"><b>Reembolso</b><span>Devolución de dinero al comensal por un error. Si es culpa del local sin evidencia, la app lo descuenta de tu liquidación.</span></div>
+      <div class="gterm"><b>Calificación / rating</b><span>Estrellas que dejan comensales y repartidores. Baja la visibilidad en la app; se cuida con tiempos, empaque y trato.</span></div>
+      <div class="gterm"><b>KDS delivery</b><span>Pantalla de cocina dedicada a los pedidos para llevar (Línea en Prep!), separada de los pedidos de salón.</span></div>
+      <div class="gterm"><b>Comanda</b><span>El detalle del pedido (ítems, notas, modificadores) que llega a cocina. Es contra lo que verificas antes de sellar.</span></div>
+      <div class="gterm"><b>Merma</b><span>Producto que se pierde: un pedido cancelado ya cocinado, un plato que se malogró. Se registra en Vuelto/Mermas.</span></div>
+      <div class="gterm"><b>Ventana de armado</b><span>Los últimos 2–3 minutos donde embolsas, sellas y agregas la bebida, para que el plato salga caliente y no espere.</span></div>
+      <div class="gterm"><b>Referencia</b><span>Dato que ubica la dirección en Lima ("frente al parque", "portón azul"). Sin ella, un pedido de canal propio se pierde.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la barra de delivery</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Delivery · Chuleta de coordinación</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes de sellar</h4><ul>
+          <li>Verifica ítem por ítem contra la comanda</li>
+          <li>Frío aparte de caliente, en bolsas distintas</li>
+          <li>Salsas y crocantes en envase individual</li>
+          <li>Bebida correcta, cubiertos y servilletas</li>
+          <li>Sella con precinto y etiqueta visible</li>
+        </ul></div>
+        <div class="op-box"><h4>Tiempos</h4><ul>
+          <li>Acepta y confirma tiempo real de cocina en &lt;60 seg</li>
+          <li>Arma recién en los últimos 2–3 min</li>
+          <li>Si la cocina se satura, alarga el tiempo ANTES</li>
+          <li>Marca "entregado a repartidor" al salir la moto</li>
+        </ul></div>
+        <div class="op-box"><h4>Con el repartidor</h4><ul>
+          <li>Confirma nombre o código antes de soltar la bolsa</li>
+          <li>Avisa en voz alta lo frágil y lo caliente</li>
+          <li>Trátalo con respeto; ten la bolsa lista</li>
+          <li>Pedido de alto valor: anota placa/nombre</li>
+        </ul></div>
+        <div class="op-box"><h4>Si algo falla</h4><ul>
+          <li>Avisa TÚ primero, antes de que reclamen</li>
+          <li>Ítem agotado: ofrece reemplazo, no lo cambies solo</li>
+          <li>Documenta: foto sellada + hora de salida + checklist</li>
+          <li>Cortesía solo con aprobación y registro</li>
+        </ul></div>
+        <div class="op-box"><h4>Canal propio</h4><ul>
+          <li>Responde en menos de 2 minutos</li>
+          <li>Confirma dirección + referencia + pago</li>
+          <li>Repite el pedido completo antes de cerrar</li>
+          <li>Ingresa SIEMPRE el pedido al POS</li>
+        </ul></div>
+        <div class="op-box"><h4>Nunca</h4><ul>
+          <li>Entregar sin verificar cuál pedido es</li>
+          <li>Mandar salsa vertida sobre lo crocante</li>
+          <li>Prometer tiempos que la cocina no cumple</li>
+          <li>Bajar la calidad por ser delivery</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Coordinación con apps y repartidores · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

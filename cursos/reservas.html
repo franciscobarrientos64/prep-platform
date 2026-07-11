@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Reservas y lista de espera · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23127475'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Reservas</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#127475">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Reservas y lista de espera</h1>
+    <p>El libro de reservas es el corazón del salón: define cuántas mesas se ocupan, a qué hora y con qué calma. Este curso te enseña a tomar y confirmar reservas sin errores, a mover los horarios como un tablero de ajedrez, a manejar el overbooking y el no-show, y a dar tiempos de espera reales que la gente sí respeta.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Anfitrión</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una mesa vacía a las 9 pm en un viernes lleno es plata perdida que no vuelve; una mesa mal reservada arruina la noche de dos grupos a la vez. El anfitrión que domina el libro llena el salón sin apurar a nadie y sin dejar comensales parados en la puerta. Eres el primer y el último contacto de la noche.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Tomar la reserva: los datos que no pueden faltar</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Una reserva mal tomada explota horas después, cuando ya no puedes arreglarla. Cada llamada, WhatsApp o reserva del widget tiene que salir con la misma información completa. Sin esos datos, no es una reserva: es una intención.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Nombre y apellido</h3><div class="d">Con quién vas a hablar cuando lleguen. "Reserva a nombre de Quispe" ordena la búsqueda en el libro y evita confusiones con homónimos.</div><div class="s">Anótalo tal cual lo dicen</div></div>
+      <div class="tipo"><h3>Fecha y hora exactas</h3><div class="d">Confirma el día de la semana: "el viernes 18, ¿correcto?". Muchos errores nacen de un "este sábado" que era el siguiente.</div><div class="s">Fecha + día + hora</div></div>
+      <div class="tipo"><h3>Número de comensales</h3><div class="d">Pregunta "¿cuántas personas en total, incluyéndote?". Un PAX mal contado tumba el plano: pediste mesa de 4 y llegan 6.</div><div class="s">Total de PAX, sin dudar</div></div>
+      <div class="tipo"><h3>Teléfono (WhatsApp)</h3><div class="d">Es tu única forma de confirmar, avisar demoras o recuperar un no-show. Sin teléfono, la reserva viaja a ciegas.</div><div class="s">Repite el número en voz alta</div></div>
+      <div class="tipo"><h3>Ocasión y preferencias</h3><div class="d">Cumpleaños, aniversario, cierre de negocio, mesa en terraza, lejos del aire, silla de bebé. Esto convierte una mesa en una experiencia.</div><div class="s">Celebración → aviso a cocina</div></div>
+      <div class="tipo"><h3>Alergias y restricciones</h3><div class="d">"¿Alguna alergia o algo que no coman en el grupo?". Lo anotas en la reserva para que llegue al mozo y a cocina antes del pedido.</div><div class="s">Se avisa, nunca se improvisa</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> antes de colgar o cerrar el chat, repite la reserva completa: "Confirmo: Quispe, mesa para 4, viernes 18 a las 8:30, cumpleaños. ¿Todo correcto?". Ese eco atrapa el 90% de los errores.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Confirmar y recordar: cerrar el círculo</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Tomar la reserva es la mitad del trabajo. La otra mitad es confirmarla y recordarla a tiempo, porque una reserva que nadie confirma es la principal causa de mesas vacías. La confirmación no es opcional: es parte del proceso.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">check_circle</span></div>
+      <div><div class="t">Al instante</div><h4>Confirmación inmediata</h4><p>Apenas queda tomada, envías el WhatsApp de confirmación con nombre, PAX, fecha y hora. En Prep! se dispara solo al guardar la reserva; revisa que salga. El comensal debe ver por escrito lo que reservó.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">event_available</span></div>
+      <div><div class="t">24 horas antes</div><h4>Recordatorio con re-confirmación</h4><p>El día previo mandas "Te esperamos mañana a las 8:30 para 4 personas. Responde SÍ para confirmar o escríbenos si cambió algo". El "SÍ" te dice qué mesas son firmes y cuáles liberar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">schedule</span></div>
+      <div><div class="t">2–3 horas antes</div><h4>Última llamada a los que no respondieron</h4><p>A los que no dieron el "SÍ", una llamada corta. Si no contestan dos veces, la mesa entra en riesgo y la ofreces a la lista de espera con un margen de tolerancia.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">door_front</span></div>
+      <div><div class="t">A la llegada</div><h4>Recibir por su nombre</h4><p>"Buenas noches, señor Quispe, lo esperábamos. Su mesa en la terraza está lista." Reconocer la reserva en la puerta cierra el círculo y arranca la experiencia con el pie derecho.</p></div>
+    </div>
+    <div class="callout"><b>Dato de sala:</b> una reserva confirmada el día anterior tiene la mitad de probabilidad de convertirse en no-show. El recordatorio no molesta: protege tu mesa y demuestra que los esperas.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Horarios, turnos y tiempo de mesa</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El salón no es infinito: tiene un número de asientos que rota durante la noche. Tu trabajo es distribuir las reservas para llenar sin amontonar, entendiendo cuánto dura cada mesa según el tamaño del grupo. Esto es lo que hace que a las 9 pm todo fluya en lugar de colapsar.</p>
+    <table class="t">
+      <thead><tr><th>Tamaño del grupo</th><th>Tiempo de mesa estimado</th><th>Cómo lo usas al reservar</th></tr></thead>
+      <tbody>
+        <tr><td>2 personas</td><td>1 h 30 min</td><td>Puedes girar la mesa dos veces en la noche (8:00 y 9:45).</td></tr>
+        <tr><td>4 personas</td><td>1 h 45 min – 2 h</td><td>Un solo turno en horas pico; deja colchón antes del siguiente.</td></tr>
+        <tr><td>6 a 8 personas</td><td>2 h 30 min</td><td>Grupo grande = una sola sentada. No prometas esa mesa a otro esa noche.</td></tr>
+        <tr><td>Grupo/evento (+10)</td><td>3 h o más</td><td>Reserva de bloque cerrado; coordina con cocina y con el gerente.</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="tipo"><h3>Turnos escalonados</h3><div class="d">No sientes a todos a las 8:30. Distribuye: 7:30, 8:00, 8:45, 9:15. Cocina respira y el salón no se satura de un golpe.</div><div class="s">Escalona, no amontones</div></div>
+      <div class="tipo"><h3>Colchón entre sentadas</h3><div class="d">Deja 15 min entre que una mesa se va y llega la siguiente reserva: limpiar, montar y respirar. Sin colchón, el segundo turno espera parado.</div><div class="s">+15 min para rotar la mesa</div></div>
+      <div class="tipo"><h3>Ritmo de cocina</h3><div class="d">Evita que 5 mesas de 6 entren juntas a las 9. La cocina se traba y todos esperan. Reparte los grupos grandes en la noche.</div><div class="s">Protege la línea de cocina</div></div>
+    </div>
+    <div class="callout"><b>Truco del anfitrión:</b> mira el timeline de Prep! como un tablero, no como una lista. Cada mesa es una barra en el tiempo. Si dos barras del mismo asiento se pisan, tienes un choque que resolver antes de que llegue la gente, no en la puerta.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Overbooking: llenar sin quemarte</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Un porcentaje de las reservas nunca llega. Si reservas exactamente los asientos que tienes, terminas la noche con mesas vacías que pudiste vender. El overbooking controlado compensa los no-shows; el descontrolado deja gente parada. La diferencia es criterio y números, no suerte.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Overbooking inteligente</h4><ul>
+        <li>Sobre-reservas según tu tasa real de no-show (si históricamente falla 1 de cada 10, puedes reservar un ~10% extra en horas pico)</li>
+        <li>Aplicas card hold o seña a grupos grandes y fechas top para bajar el riesgo</li>
+        <li>Tienes un plan B: barra, terraza o adelantar una mesa que ya pide la cuenta</li>
+        <li>Revisas el libro con el gerente antes del servicio para calibrar el colchón</li>
+      </ul></div>
+      <div class="box no"><h4>Overbooking a ciegas</h4><ul>
+        <li>Aceptas todo "porque igual algunos no vienen" sin mirar el número</li>
+        <li>Sobre-reservas grupos grandes, que son los más difíciles de reacomodar</li>
+        <li>No avisas a cocina ni al gerente que el salón va sobrevendido</li>
+        <li>Dejas a comensales con reserva confirmada esperando de pie sin explicación</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cuándo NO hacer overbooking:</b> noches de menú degustación, eventos privados, o cuando la mesa promedio es de 6+. Ahí cada asiento cuesta mucho reacomodar y un choque arruina dos experiencias. Mejor lista de espera bien manejada que un overbooking que estalle en la puerta.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>No-show y llegadas tarde</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El no-show (reserva que nunca llega) y el late (que llega tarde) son las dos fugas de dinero más comunes del salón. No las eliminas del todo, pero con protocolo bajas su impacto de arruinar la noche a ser un detalle manejable.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Tolerancia clara</h3><div class="d">Define un margen: 15 min es lo estándar. Pasado ese tiempo sin aviso, la mesa entra en riesgo y puede ofrecerse a la lista de espera.</div><div class="s">15 min y llamas</div></div>
+      <div class="tipo"><h3>Llama antes de liberar</h3><div class="d">Nunca sueltas una mesa sin intentar contacto. "Señor Quispe, lo esperamos, ¿está en camino?". A veces están estacionando.</div><div class="s">Un intento real primero</div></div>
+      <div class="tipo"><h3>Card hold / seña</h3><div class="d">En fechas top o grupos grandes, pide tarjeta de garantía. Cobras solo si no avisan. Baja los no-shows de golpe y filtra reservas serias.</div><div class="s">Garantía en fechas fuertes</div></div>
+      <div class="tipo"><h3>Registra el patrón</h3><div class="d">Marca el no-show en la ficha del comensal. Un cliente que falló tres veces se maneja distinto: se le pide seña o se le sugiere walk-in.</div><div class="s">La ficha tiene memoria</div></div>
+      <div class="tipo"><h3>Late que llega</h3><div class="d">Si llegan tarde pero hay espacio, recíbelos cálido. Si ya diste la mesa, explica sin culpa: "Guardamos hasta las 8:45; te ubico apenas se libere algo".</div><div class="s">Firme y amable, sin drama</div></div>
+      <div class="tipo"><h3>Reacomoda rápido</h3><div class="d">Un no-show confirmado es una mesa viva. Ofrécela de inmediato a la lista de espera o a un walk-in. Cada minuto vacía cuesta.</div><div class="s">Mesa libre = a la waitlist</div></div>
+    </div>
+    <div class="callout"><b>Cómo se dice, no qué se dice:</b> al comensal que llega 40 min tarde y perdió su mesa nunca le echas la culpa en la cara. "Te esperamos y la mesa se ocupó; déjame ver cómo te ubico lo antes posible" resuelve más que "es que no avisaste". El tono decide si vuelve o si te destroza en Google.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Lista de espera con tiempos reales</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Cuando el salón está lleno, la lista de espera bien manejada convierte una negativa en una venta. El secreto es dar un tiempo honesto y hacer sentir a la gente atendida, no aparcada. Un tiempo inventado que se incumple genera más molestia que la espera misma.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">timer</span></div>
+      <div><div class="t">Cotiza el tiempo</div><h4>Da un rango real, con margen</h4><p>Mira qué mesas están por pedir la cuenta y cuántas van adelante en la lista. Di "unos 25 a 30 minutos" y apunta más al techo. Si la mesa sale antes, quedas como un héroe; si te pasas del tiempo prometido, quedas mal.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">contact_phone</span></div>
+      <div><div class="t">Toma datos y avisa por WhatsApp</div><h4>No los dejes parados en la puerta</h4><p>Anota nombre, PAX y teléfono en la waitlist de Prep!. Ofréceles la barra o dar una vuelta: "Te escribo apenas se libere". Un comensal con copa en la barra espera feliz; uno de pie mirando el reloj se va.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">priority_high</span></div>
+      <div><div class="t">Respeta prioridades</div><h4>Orden justo, con excepciones humanas</h4><p>La lista es por orden de llegada, pero adultos mayores, embarazadas, personas con bebés o con movilidad reducida tienen prioridad. En Prep! la waitlist marca estas prioridades para que nadie las olvide bajo presión.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">notifications_active</span></div>
+      <div><div class="t">Avisa y da margen</div><h4>Llama y guarda la mesa un momento</h4><p>Cuando se libera, escribe o llama: "Tu mesa está lista". Da 5–10 min para que lleguen si andaban cerca. Si no responden, pasas al siguiente y los mantienes en lista por si aparecen.</p></div>
+    </div>
+    <div class="callout"><b>La pantalla pública ayuda:</b> mostrar la lista de espera con tiempos estimados (en una pantalla o por link) baja la ansiedad: la gente ve que avanza y confía. Un tiempo visible y que se cumple vale más que mil disculpas.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>PAX</b><span>Número de comensales de una reserva o mesa. "Mesa de 4 PAX" = 4 personas.</span></div>
+      <div class="gterm"><b>No-show</b><span>Reserva confirmada que nunca llega ni avisa. La fuga de ingresos más común del salón.</span></div>
+      <div class="gterm"><b>Overbooking</b><span>Aceptar más reservas que asientos disponibles, calculando que un porcentaje no llegará.</span></div>
+      <div class="gterm"><b>Turn-time / tiempo de mesa</b><span>Cuánto dura ocupada una mesa desde que se sienta hasta que se va. Define cuántas veces la giras.</span></div>
+      <div class="gterm"><b>Girar / rotar la mesa</b><span>Volver a usar la misma mesa con un nuevo grupo la misma noche.</span></div>
+      <div class="gterm"><b>Sentada / turno</b><span>Cada grupo que ocupa una mesa en un horario. Una mesa puede tener dos sentadas por noche.</span></div>
+      <div class="gterm"><b>Colchón</b><span>Margen de tiempo entre una sentada y la siguiente para limpiar y montar la mesa (~15 min).</span></div>
+      <div class="gterm"><b>Waitlist / lista de espera</b><span>Cola de comensales sin reserva esperando que se libere una mesa, con tiempo estimado.</span></div>
+      <div class="gterm"><b>Walk-in</b><span>Comensal que llega sin reserva. Se atiende si hay espacio o se pasa a la waitlist.</span></div>
+      <div class="gterm"><b>Card hold / seña</b><span>Tarjeta de garantía o pago adelantado que respalda una reserva; se cobra solo ante no-show.</span></div>
+      <div class="gterm"><b>Late</b><span>Comensal que llega tarde, dentro o fuera del margen de tolerancia.</span></div>
+      <div class="gterm"><b>Tolerancia</b><span>Minutos que guardas una mesa reservada antes de considerarla no-show (estándar: 15 min).</span></div>
+      <div class="gterm"><b>Cotizar el tiempo</b><span>Estimar y comunicar cuánto esperará un walk-in antes de sentarse.</span></div>
+      <div class="gterm"><b>Turnos escalonados</b><span>Distribuir las reservas en horarios distintos para no saturar cocina ni salón de golpe.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en el atril</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Reservas y waitlist · Chuleta del anfitrión</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Al tomar la reserva</h4><ul>
+          <li>Nombre y apellido</li>
+          <li>Fecha + día de la semana + hora</li>
+          <li>PAX totales (confirma el número)</li>
+          <li>Teléfono / WhatsApp (repítelo)</li>
+          <li>Ocasión, preferencias y alergias</li>
+          <li>Repite todo antes de cerrar</li>
+        </ul></div>
+        <div class="op-box"><h4>Confirmar y recordar</h4><ul>
+          <li>Confirmación por WhatsApp al instante</li>
+          <li>Recordatorio 24 h antes: pide "SÍ"</li>
+          <li>Llamada 2–3 h antes a los que no responden</li>
+          <li>Recibe por su nombre en la puerta</li>
+        </ul></div>
+        <div class="op-box"><h4>Horarios y overbooking</h4><ul>
+          <li>Escalona los turnos, no amontones</li>
+          <li>+15 min de colchón para rotar la mesa</li>
+          <li>2 PAX ~1h30 · 4 PAX ~2h · 6-8 PAX ~2h30</li>
+          <li>Overbooking según tu tasa real de no-show</li>
+          <li>Card hold en fechas top y grupos grandes</li>
+        </ul></div>
+        <div class="op-box"><h4>No-show y waitlist</h4><ul>
+          <li>Tolerancia 15 min → llama antes de liberar</li>
+          <li>Marca el no-show en la ficha del comensal</li>
+          <li>Cotiza el tiempo con margen al techo</li>
+          <li>Toma teléfono, ofrece barra, avisa por WhatsApp</li>
+          <li>Prioridad: mayores, embarazadas, bebés, movilidad</li>
+          <li>Tono cálido y firme, nunca culpar</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Reservas y lista de espera · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

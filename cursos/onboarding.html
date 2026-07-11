@@ -1,0 +1,261 @@
+<!-- Curso: Onboarding Prep! · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Onboarding Prep! · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237c1f3a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Onboarding</span>
+    <nav class="nav">
+      <a href="#m1">1 · Bienvenida</a><a href="#m2">2 · Valores</a><a href="#m3">3 · La app</a><a href="#m4">4 · Primeros días</a><a href="#m5">5 · El servicio</a><a href="#m6">6 · A quién acudir</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:var(--wine)">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Onboarding Prep!</h1>
+    <p>Tu primer curso en la casa. En 40 minutos vas a saber quiénes somos, cómo trabajamos, cómo usar la app Prep! desde tu primer turno y a quién acudir cuando tengas una duda. Bienvenido al equipo.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Personal nuevo</span><span>🤝 FOH + BOH</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> los primeros días marcan cómo trabajarás el resto del tiempo. Un equipo que entiende el porqué del servicio y maneja la app sin fricción sirve más rápido, comete menos errores y deja al comensal con ganas de volver. Eso empieza contigo, hoy.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Bienvenido a la casa</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">No entras a un trabajo, entras a un equipo. Esto es lo primero que necesitas saber para sentirte en casa desde el turno uno.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Somos un solo pase</h3><div class="d">Cocina, barra, salón y caja no son islas. Un plato tardío en la línea es problema de todos. Aquí se pide ayuda y se da ayuda sin que te lo pidan.</div></div>
+      <div class="tipo"><h3>El comensal es un invitado</h3><div class="d">No decimos "cliente". Quien se sienta en la mesa es un invitado en nuestra casa: se le recibe por su nombre cuando lo sabemos y se le despide con ganas de volver.</div></div>
+      <div class="tipo"><h3>Mise en place primero</h3><div class="d">Antes de abrir, todo listo: estación montada, sal, cubiertos pulidos, carta del día sabida. Un turno bien montado se sirve solo.</div></div>
+      <div class="tipo"><h3>Aquí se aprende</h3><div class="d">Nadie nació sabiendo. Vas a equivocarte y está bien: lo que no está bien es esconder el error. Se avisa, se corrige y se sigue.</div></div>
+      <div class="tipo"><h3>Prep! es tu copiloto</h3><div class="d">Todo lo operativo vive en una app: pedidos, mesas, recetas, tus horarios, tu planilla. La conoces en el módulo 3.</div></div>
+      <div class="tipo"><h3>Respeto sin excepción</h3><div class="d">Entre compañeros y con cada invitado. Cero gritos en el salón, cero maltrato en la cocina. La presión no justifica el mal trato.</div></div>
+    </div>
+    <div class="callout"><b>Tu primera semana:</b> tu trabajo no es saberlo todo, es <b>observar, preguntar y anotar</b>. Ten siempre a mano una libreta o el bloc del celular. Las preguntas "tontas" del día 1 son las que evitan un error caro el día 20.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Misión, visión y valores</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Todo lo que hacemos, hasta cómo doblamos una servilleta, sale de estas ideas. Léelas hasta que sean tuyas.</p>
+    <div class="card" style="margin-bottom:12px">
+      <p style="font-size:13.5px"><b>Misión:</b> que cada persona que entra por la puerta se vaya sintiendo mejor de como llegó, con una experiencia que combine cocina honesta, servicio cálido y detalle en cada paso.</p>
+      <p style="font-size:13.5px;margin-top:8px"><b>Visión:</b> ser el restaurante al que la gente vuelve por su cumpleaños, su cierre de negocio y su martes cualquiera, y el lugar donde el equipo quiere hacer carrera.</p>
+    </div>
+    <div class="grid g3">
+      <div class="tipo"><h3>🔥 Cariño en el plato</h3><div class="d">Cocinamos como para la familia. Producto fresco, punto exacto, nada sale de la línea si no lo comerías tú.</div><div class="s">valor 01</div></div>
+      <div class="tipo"><h3>🤝 Hospitalidad de verdad</h3><div class="d">Leemos la mesa: quién celebra, quién tiene prisa, quién quiere que lo dejen tranquilo. Servimos a la persona, no al asiento.</div><div class="s">valor 02</div></div>
+      <div class="tipo"><h3>✨ El detalle importa</h3><div class="d">La copa sin marcas, el baño impecable, el "sin ají" recordado. Los detalles son la diferencia entre bien y memorable.</div><div class="s">valor 03</div></div>
+      <div class="tipo"><h3>🧭 Honestidad</h3><div class="d">Si un plato se demora, se avisa. Si no hay un insumo, se dice. Nunca se inventa. La confianza se cuida en cada respuesta.</div><div class="s">valor 04</div></div>
+      <div class="tipo"><h3>🌱 Mejora continua</h3><div class="d">El "siempre se hizo así" no es una razón. Si ves una forma mejor, propónla. Las buenas ideas vienen de la línea, no solo de la oficina.</div><div class="s">valor 05</div></div>
+      <div class="tipo"><h3>🫱 Cuidamos al equipo</h3><div class="d">Un equipo cansado y maltratado no cuida a nadie. Turnos justos, propina transparente, respeto en las dos direcciones.</div><div class="s">valor 06</div></div>
+    </div>
+    <div class="callout"><b>En la práctica:</b> cuando dudes qué hacer y no tengas a quién preguntar, elige la opción que <b>más cuide al invitado y a tu compañero</b>. Casi nunca te vas a equivocar con ese filtro.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Tour de la app Prep!</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Prep! es una sola app con módulos. No necesitas todos: usarás los de tu rol. Se abre desde el celular o la tablet de tu estación, con tu usuario y clave.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Bienvenida</h3><div class="d">Reservas, lista de espera y ficha del invitado (alergias, si es VIP, si cumple años). El anfitrión vive aquí.</div><div class="s">/bienvenida</div></div>
+      <div class="tipo"><h3>POS</h3><div class="d">Toma de pedido por mesa y silla, mandar a cocina, dividir la cuenta y cobrar (efectivo, Yape, tarjeta). El mozo y la caja.</div><div class="s">/pos</div></div>
+      <div class="tipo"><h3>Línea (KDS)</h3><div class="d">La pantalla de cocina y barra. Muestra las comandas y su tiempo. Se toca para pasar de Oído → En fuego → Servido.</div><div class="s">/linea</div></div>
+      <div class="tipo"><h3>Recetas</h3><div class="d">Ficha técnica de cada plato: ingredientes, gramajes, emplatado y alérgenos. Tu consulta cuando dudes cómo va algo.</div><div class="s">/recetas</div></div>
+      <div class="tipo"><h3>Mercado</h3><div class="d">Inventario, recepción de mercadería y mermas. Cocina y almacén cargan lo que entra y lo que se malogra.</div><div class="s">/mercado</div></div>
+      <div class="tipo"><h3>RRHH</h3><div class="d">Tu asistencia (marcas con selfie + ubicación), tus turnos, permisos y tu planilla. Todo lo tuyo como trabajador.</div><div class="s">/rrhh</div></div>
+      <div class="tipo"><h3>El Libro</h3><div class="d">La intranet: comunicados del día, procedimientos, checklists de apertura/cierre y la bitácora. Empieza tu turno aquí.</div><div class="s">/el-libro</div></div>
+      <div class="tipo"><h3>Vuelto</h3><div class="d">Caja chica: registras un gasto pequeño con foto del recibo y lo aprueba tu supervisor. Para compras de última hora.</div><div class="s">/vuelto</div></div>
+      <div class="tipo"><h3>Carta digital</h3><div class="d">El menú que el invitado ve al escanear el QR de la mesa. Lo que actives en Recetas aparece aquí al instante.</div><div class="s">/carta</div></div>
+    </div>
+    <div class="callout"><b>Micro-copy de Prep!:</b> la app te habla en cocina. Cuando algo se procesa dice <b>Oído</b>; cuando se completa, <b>Servido</b>; si algo falla, <b>Atrás</b>; una comanda enviada a cocina está <b>En fuego</b>. Es el idioma de la casa, no te asustes.</div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Tu rol</th><th>Módulos que usarás a diario</th><th>Primer gesto del turno</th></tr></thead>
+      <tbody>
+        <tr><td>Mozo / Runner</td><td>POS, Bienvenida, El Libro</td><td>Marcar asistencia y leer el briefing en El Libro</td></tr>
+        <tr><td>Anfitrión</td><td>Bienvenida, POS</td><td>Revisar reservas y lista de espera del día</td></tr>
+        <tr><td>Cocina / Pizzaiolo</td><td>Línea (KDS), Recetas, Mercado</td><td>Encender el KDS y confirmar mise en place</td></tr>
+        <tr><td>Bartender</td><td>Línea, POS, Recetas</td><td>Revisar comandas de barra y stock de la barra</td></tr>
+        <tr><td>Caja / Supervisor</td><td>POS, Vuelto, El Libro</td><td>Abrir caja y revisar cortesías pendientes</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Tus primeros días</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Así se ve tu arranque paso a paso. No corras: la meta de la primera semana es entender el ritmo de la casa, no rendir como veterano.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🪪</div><div><div class="t">DÍA 1 · Llegada</div><h4>Registro y accesos</h4><p>Recibes tu usuario y clave de Prep!, tu casillero y tu uniforme. Cambia tu clave en el primer ingreso. Marca tu asistencia en RRHH (selfie + ubicación) para saber que funciona.</p></div></div>
+      <div class="paso"><div class="ico">👖</div><div><div class="t">DÍA 1 · Presentación</div><h4>Uniforme y presentación</h4><p>Uniforme limpio y planchado, zapato cerrado antideslizante, uñas cortas, pelo recogido, cero perfume fuerte en cocina. En FOH: aliento fresco y manos impecables, siempre.</p></div></div>
+      <div class="paso"><div class="ico">🚶</div><div><div class="t">DÍA 1 · Tour físico</div><h4>Conoce el local</h4><p>Recorre salón, cocina, barra, almacén, baños, salidas de emergencia y el punto de encuentro. Ubica el extintor, el botiquín y dónde se guarda cada cosa. Pregunta los nombres de todos.</p></div></div>
+      <div class="paso"><div class="ico">👀</div><div><div class="t">DÍAS 2–3 · Sombra</div><h4>Acompaña a un veterano</h4><p>Sigues a un compañero de tu área todo el turno. Observas cómo toma un pedido, cómo marcha la comida, cómo cierra una cuenta. Anotas dudas y las resuelves al cierre, no en pleno servicio.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">DÍAS 2–4 · La carta</div><h4>Estudia el menú</h4><p>Prueba (o al menos ve) los platos estrella. Aprende ingredientes principales y alérgenos de cada uno en Recetas. Debes poder recomendar 2 entradas, 2 fondos y 1 postre sin dudar.</p></div></div>
+      <div class="paso"><div class="ico">🤲</div><div><div class="t">DÍAS 4–5 · Manos a la obra</div><h4>Primeras mesas asistidas</h4><p>Atiendes con tu padrino cerca. Empiezas con mesas tranquilas. Él revisa que uses bien el POS y corrige en el momento. Cada turno tomas un poco más solo.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">FIN DE SEMANA 1 · Check-in</div><h4>Conversación con tu líder</h4><p>Tu jefe de área te da feedback: qué va bien, qué reforzar. Es tu momento para decir qué te cuesta y qué necesitas. Sin sorpresas: esto se conversa siempre de frente.</p></div></div>
+    </div>
+    <div class="callout"><b>Regla de oro del novato:</b> ante cualquier duda con un invitado, mejor un "permítame confirmarlo y le digo enseguida" que inventar una respuesta. Preguntar nunca queda mal; improvisar sí.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Cómo trabajamos: el servicio</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Estos son los hábitos que se esperan de todos, del primer día en adelante. No son sugerencias: son el estándar de la casa.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Sí hacemos</h4><ul>
+        <li>Saludar a cada invitado en menos de 30 segundos de sentado</li>
+        <li>Anunciar toda alergia en el POS por silla, y avisar a cocina</li>
+        <li>Marchar los platos por tiempos para que la mesa coma junta</li>
+        <li>Llevar y traer siempre algo: manos vacías, viaje perdido</li>
+        <li>Avisar de inmediato si un plato se demora o se acabó</li>
+        <li>Dejar la estación como la quisieras encontrar</li>
+        <li>Pedir aprobación del gerente antes de una cortesía</li>
+      </ul></div>
+      <div class="box no"><h4>No hacemos</h4><ul>
+        <li>Decir "no hay" sin ofrecer una alternativa</li>
+        <li>Discutir con un invitado o entre compañeros en el salón</li>
+        <li>Usar el celular personal en piso durante el servicio</li>
+        <li>Mandar comida de la línea sin revisar el pase</li>
+        <li>Cobrar sin repetir la cuenta y confirmar el método de pago</li>
+        <li>Tapar un error o una merma: siempre se registra</li>
+        <li>Dejar una mesa sucia o una copa manchada</li>
+      </ul></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Situación real</th><th>Qué haces</th><th>En Prep!</th></tr></thead>
+      <tbody>
+        <tr><td>Invitado avisa que es alérgico al maní</td><td>Lo registras por su silla y confirmas con cocina antes de mandar</td><td>POS → botón alergia en la silla</td></tr>
+        <tr><td>Se acabó el plato del día</td><td>Ofreces 1–2 alternativas parecidas de una vez, sin dramatizar</td><td>Recetas / Carta muestra qué está activo</td></tr>
+        <tr><td>La mesa 6 pide la cuenta dividida</td><td>Divides por ítem o por partes iguales y repites el total</td><td>POS → Cobrar → Dividir</td></tr>
+        <tr><td>Un plato demora más de 10 min en la línea</td><td>Vas a la mesa, avisas con un tiempo real y ofreces algo (pan, agua)</td><td>Línea marca la comanda en rojo</td></tr>
+        <tr><td>Cumpleaños en la reserva</td><td>Coordinas el postre con vela y avisas al equipo antes del postre</td><td>Bienvenida → ficha del invitado</td></tr>
+        <tr><td>Compraste hielo de urgencia</td><td>Registras el gasto con foto del recibo para reembolso</td><td>Vuelto → nuevo gasto</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>A quién acudir</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Nunca estás solo. Saber a quién preguntar según el tema te ahorra tiempo y evita errores. Esta es la cadena de la casa.</p>
+    <table class="t">
+      <thead><tr><th>Si tu tema es…</th><th>Acudes a…</th><th>Y si no está…</th></tr></thead>
+      <tbody>
+        <tr><td>Un invitado molesto o un reclamo</td><td>Supervisor de turno / Gerente</td><td>Anfitrión senior, nunca discutas solo</td></tr>
+        <tr><td>Duda de un plato, alérgeno o preparación</td><td>Chef o jefe de cocina</td><td>Consulta la ficha en Recetas</td></tr>
+        <tr><td>Un cóctel o tema de barra</td><td>Bartender de turno</td><td>Supervisor</td></tr>
+        <tr><td>La app Prep! no responde o hay un error</td><td>Supervisor de turno</td><td>Reinicia sesión; reporta en El Libro</td></tr>
+        <tr><td>Turnos, permisos, cambio de horario</td><td>Tu jefe de área / RRHH</td><td>Solicítalo en RRHH con anticipación</td></tr>
+        <tr><td>Un accidente o tema de seguridad</td><td>Supervisor + botiquín</td><td>Punto de encuentro, sigue el protocolo</td></tr>
+        <tr><td>Una cortesía o descuento</td><td>Gerente (aprueba en el POS)</td><td>No se aplica sin aprobación</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El Libro es tu tablero:</b> cada turno empieza leyendo el <b>briefing del día</b> ahí (86 de la carta, reservas grandes, avisos). Si algo pasa en tu turno que el siguiente debe saber, lo dejas en la <b>bitácora</b>. Así la casa nunca pierde el hilo.</div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Pregunta temprano</h3><div class="d">Antes del servicio, en el briefing, es el mejor momento para tus dudas. En pleno rush, solo lo urgente.</div></div>
+      <div class="tipo"><h3>Cadena de mando</h3><div class="d">Compañero → jefe de área → supervisor → gerente. Sube un escalón solo si el anterior no puede resolver.</div></div>
+      <div class="tipo"><h3>Todo se registra</h3><div class="d">Un reclamo, una merma, un incidente: queda en El Libro. La memoria falla, la bitácora no.</div></div>
+    </div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Mise en place</b><span>"Todo en su lugar". El montaje y preparación previos al servicio: estación lista, insumos cortados, carta sabida.</span></div>
+      <div class="gterm"><b>FOH / BOH</b><span>Front of House (salón: mozos, anfitrión, barra) y Back of House (cocina, almacén). Los dos frentes de la casa.</span></div>
+      <div class="gterm"><b>El pase</b><span>El punto donde la cocina entrega los platos y el expedidor revisa antes de que salgan al salón. También la pantalla que lo coordina.</span></div>
+      <div class="gterm"><b>Marchar</b><span>Dar la orden de empezar a preparar un tiempo (entradas, fondos) para que la mesa reciba junta y a tiempo.</span></div>
+      <div class="gterm"><b>Comanda</b><span>El pedido de una mesa que llega a cocina o barra. En Prep! aparece en la pantalla de Línea (KDS).</span></div>
+      <div class="gterm"><b>KDS</b><span>Kitchen Display System: la pantalla de cocina/barra que muestra las comandas, sus tiempos y estados. En Prep! es "Línea".</span></div>
+      <div class="gterm"><b>POS</b><span>Point of Sale: el módulo donde el mozo toma el pedido, lo manda a cocina y la caja cobra.</span></div>
+      <div class="gterm"><b>86</b><span>Código de que un plato o insumo se agotó. "86 al lomo" = ya no hay lomo, sácalo de la venta.</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Un plato o descuento sin cargo para el invitado. En Prep! requiere aprobación del gerente.</span></div>
+      <div class="gterm"><b>Merma</b><span>Producto que se pierde o malogra y no se vende. Se registra siempre en Mercado con su motivo.</span></div>
+      <div class="gterm"><b>Walk-in</b><span>Invitado que llega sin reserva. El anfitrión lo ubica según disponibilidad o lo pone en lista de espera.</span></div>
+      <div class="gterm"><b>Turn-time</b><span>El tiempo que una mesa está ocupada, de que se sienta a que se libera. Ayuda a planear reservas.</span></div>
+      <div class="gterm"><b>Briefing</b><span>La reunión corta antes de abrir: avisos del día, 86, reservas importantes, quién cubre qué. En El Libro.</span></div>
+      <div class="gterm"><b>Runner</b><span>Quien lleva los platos de la cocina a la mesa y apoya al mozo. Clave para que la comida salga caliente y rápido.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Onboarding Prep! · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Los 6 valores</h4><ul><li>Cariño en el plato</li><li>Hospitalidad de verdad</li><li>El detalle importa</li><li>Honestidad, nunca inventes</li><li>Mejora continua</li><li>Cuidamos al equipo</li></ul></div>
+        <div class="op-box"><h4>Arranque de turno</h4><ul><li>Marca asistencia en RRHH</li><li>Lee el briefing en El Libro</li><li>Confirma tu mise en place</li><li>Revisa los 86 del día</li><li>Uniforme y presentación ok</li></ul></div>
+        <div class="op-box"><h4>La app en 1 línea</h4><ul><li>POS: pedir y cobrar</li><li>Línea (KDS): pantalla de cocina</li><li>Bienvenida: reservas + ficha</li><li>Recetas: platos y alérgenos</li><li>El Libro: avisos y bitácora</li></ul></div>
+        <div class="op-box"><h4>Reglas que no se rompen</h4><ul><li>Saludo en menos de 30 seg</li><li>Alergias siempre en el POS</li><li>Cortesía = aprueba gerente</li><li>Nunca tapes un error o merma</li><li>Cero celular en piso en rush</li></ul></div>
+        <div class="op-box"><h4>Micro-copy de la casa</h4><ul><li>Oído = procesando</li><li>En fuego = va a cocina</li><li>Servido = listo</li><li>Atrás = algo falló</li><li>Va = confirmado</li></ul></div>
+        <div class="op-box"><h4>Ante la duda</h4><ul><li>Pregunta, no inventes</li><li>Cadena: jefe → supervisor → gerente</li><li>Reclamo: llama al supervisor</li><li>Plato/alérgeno: chef o Recetas</li><li>Elige cuidar al invitado y al compañero</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Onboarding Prep! · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

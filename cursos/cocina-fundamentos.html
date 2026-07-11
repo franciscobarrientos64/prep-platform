@@ -1,0 +1,326 @@
+<!-- Curso Academia Prep! · Fundamentos de cocina -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Fundamentos de cocina · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c2410c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Cocina Fundamentos</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c2410c">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Fundamentos de cocina</h1>
+    <p>La base técnica del cocinero de línea: mise en place, cortes con cuchillo, métodos de cocción, fondos y salsas madre, y cómo sazonar con criterio. Lo que separa a quien apila platos de quien cocina de verdad.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Cocinero de línea</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> en el servicio nadie tiene tiempo de enseñarte lo básico. El corte parejo cocina parejo, el fondo bien hecho sostiene la salsa, y la sazón a punto es la diferencia entre un plato que devuelven y uno que piden otra vez. Dominar los fundamentos te hace rápido, constante y confiable en la línea: el cocinero que el chef quiere en el turno fuerte.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Mise en place: montar la estación</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Mise en place es "todo en su lugar" antes de que entre la primera comanda. El 80% de un buen servicio se gana aquí, con el local vacío. Si montas mal, el turno te revienta a las 9 pm.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Lee la carta y el prep</h3><div class="d">Antes de tocar un cuchillo, revisa la lista de preparaciones del día y qué platos salen de tu estación. Sabe qué te falta y qué se acaba.</div><div class="s">Cero sorpresas a media hora del turno</div></div>
+      <div class="tipo"><h3>Ordena el flujo</h3><div class="d">De izquierda a derecha: sucio/crudo → trabajo → limpio/listo. Que tu mano no cruce la tabla para alcanzar algo. Menos pasos, menos errores.</div><div class="s">La estación se arma para el zurdo o diestro</div></div>
+      <div class="tipo"><h3>Rotula y fecha todo</h3><div class="d">Cada táper con nombre y fecha. La salsa criolla, el ají, el fondo: nada anónimo. FEFO manda, lo que vence primero sale primero.</div><div class="s">Sin etiqueta = se descarta</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">📋</div><div><div class="t">Primero lo primero</div><h4>1. Cronograma inverso</h4><p>Mira la hora de apertura y trabaja hacia atrás. Lo que tarda (fondos, braseados, marinadas) va primero; lo delicado (hierbas picadas, guarniciones) al final para que llegue fresco.</p></div></div>
+      <div class="paso"><div class="ico">🔪</div><div><div class="t">Agrupa tareas iguales</div><h4>2. Corta todo lo del mismo tipo junto</h4><p>Toda la cebolla del turno de una vez, no cada vez que sale un pedido. Cambiar de tarea cuesta tiempo. Batchea el prep.</p></div></div>
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">Cadena de frío</div><h4>3. Monta la línea fría a temperatura</h4><p>Insertos sobre cama de hielo o refri de línea a ≤5 °C. Solo saca lo que uses en 2 horas; el resto queda en cámara y repones.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Antes de abrir</div><h4>4. Prueba, ajusta y limpia</h4><p>Prueba cada salsa y guiso, ajusta sazón, limpia el mesón y ten paños, sanitizante y bolsa de basura a mano. Estación limpia = estación rápida.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Estación bien montada</h4><ul>
+        <li>Insumos porcionados y al alcance de la mano</li>
+        <li>Cuchillo afilado y tabla estable (paño húmedo debajo)</li>
+        <li>Paño de línea limpio + paño seco para agarrar caliente</li>
+        <li>Salsas probadas y ajustadas antes del primer pedido</li>
+        <li>Repuestos en cámara listos para reponer</li>
+      </ul></div>
+      <div class="box no"><h4>Montaje que te hunde el turno</h4><ul>
+        <li>Empezar a cortar cuando ya cae la comanda</li>
+        <li>Tápers sin rotular apilados sin orden</li>
+        <li>Sacar todo el stock a la línea y que se caliente</li>
+        <li>Cuchillo sin filo "porque no hay tiempo"</li>
+        <li>Mesón lleno de cosas que no usas hoy</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla del cocinero de línea:</b> "Si tienes tiempo de apoyarte, tienes tiempo de limpiar y reponer." Los valles entre pedidos son para adelantar mise en place y bajar tápers, no para el celular. El que repone en el valle sobrevive el pico.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Cortes básicos con cuchillo</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El cuchillo es tu herramienta principal. Cortes parejos cocinan parejo y se ven profesionales en el plato. Además, un cuchillo afilado es más seguro que uno sin filo: no resbala y no necesitas forzar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La garra</h3><div class="d">Curva los dedos de la mano que sujeta, con los nudillos hacia el filo y la punta de los dedos escondida. El cuchillo se apoya en el nudillo y no te corta.</div><div class="s">Nudillos guían, yemas ocultas</div></div>
+      <div class="tipo"><h3>Agarre de pinza</h3><div class="d">Pellizca la hoja con pulgar e índice justo delante del mango. Da control real; agarrar solo el mango es de aficionado.</div><div class="s">Control desde la hoja, no el mango</div></div>
+      <div class="tipo"><h3>Punta apoyada</h3><div class="d">Para picar, la punta no se levanta de la tabla: la hoja mece hacia adelante y abajo. Movimiento continuo, no golpes verticales.</div><div class="s">Mecer, no martillar</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Los cortes que se piden en cualquier cocina peruana de nivel, con su medida y su uso real:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Corte</th><th>Medida aprox.</th><th>Dónde se usa en la casa</th></tr></thead>
+      <tbody>
+        <tr><td>Brunoise</td><td>Cubo de 3 mm</td><td>Cebolla y ají de la salsa criolla, base de escabeche</td></tr>
+        <tr><td>Cubo / macedonia</td><td>Cubo de 1–1.5 cm</td><td>Papa y zanahoria del estofado, verduras del arroz</td></tr>
+        <tr><td>Juliana</td><td>Tiras de 4–5 cm x 2 mm</td><td>Cebolla del lomo saltado, pimiento del tallarín saltado</td></tr>
+        <tr><td>Pluma</td><td>Juliana fina de cebolla siguiendo la fibra</td><td>Cebolla del ceviche y de la sarza criolla</td></tr>
+        <tr><td>Chiffonade</td><td>Tiras finísimas de hoja</td><td>Albahaca del pesto, culantro y hierbabuena en chiffonade</td></tr>
+        <tr><td>Bastón / batonnet</td><td>Tira de 6 cm x 6 mm</td><td>Papas fritas del lomo saltado, apio del fondo</td></tr>
+        <tr><td>Mirepoix</td><td>Cubo rústico de 1.5–2 cm</td><td>Cebolla, zanahoria y apio del fondo (no se come, se cuela)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>El cuchillo se afila y se asienta:</b> afilar (con piedra) recupera el filo; asentar (con chaira) endereza el filo antes de cada uso. Asienta a diario, afila cuando ya no muerde el tomate. Guárdalo seco y nunca lo dejes dentro del lavadero: se mella y alguien se corta.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Métodos de cocción</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Cocinar es controlar calor, tiempo y humedad. Todo se reduce a dos familias: calor seco (dora, concentra sabor) y calor húmedo (ablanda, transfiere sabor al líquido). Elegir bien el método define la textura del plato.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Reacción de Maillard</h3><div class="d">El dorado sobre 140 °C que crea sabor y aroma en la carne sellada y el pan tostado. Sin sartén caliente y superficie seca, no ocurre: solo hierves la carne en su jugo.</div><div class="s">Sartén caliente, carne seca, no amontones</div></div>
+      <div class="tipo"><h3>Sellar no "cierra el jugo"</h3><div class="d">Sellar da costra y sabor, no encierra líquidos (eso es un mito). El jugo se cuida con el punto de cocción y el reposo, no con el sellado.</div><div class="s">Sella por sabor, reposa por jugo</div></div>
+      <div class="tipo"><h3>Reposo de la carne</h3><div class="d">Tras cocer, deja reposar la carne unos minutos: los jugos se redistribuyen y no se vacían al cortar. Cortar al toque = plato en un charco.</div><div class="s">Descansa antes de cortar</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Los métodos que un cocinero de línea usa todos los días:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Método</th><th>Calor</th><th>Cómo es</th><th>Plato de la casa</th></tr></thead>
+      <tbody>
+        <tr><td>Saltear</td><td>Seco</td><td>Sartén/wok muy caliente, poco aceite, movimiento constante</td><td>Lomo saltado, tallarín saltado</td></tr>
+        <tr><td>Freír</td><td>Seco</td><td>Inmersión en aceite a 170–180 °C</td><td>Chicharrón, papas, jalea</td></tr>
+        <tr><td>Asar / hornear</td><td>Seco</td><td>Aire caliente del horno o la brasa</td><td>Pollo a la brasa, pescado al horno</td></tr>
+        <tr><td>Hervir / blanquear</td><td>Húmedo</td><td>Agua en ebullición; blanquear es un hervor corto + agua con hielo</td><td>Fideos, verduras fijadas en verde</td></tr>
+        <tr><td>Pochar</td><td>Húmedo</td><td>Líquido a 70–85 °C, sin hervir</td><td>Huevo poché, pescado pochado</td></tr>
+        <tr><td>Sudar</td><td>Húmedo</td><td>Fuego bajo con tapa, sin dorar, para soltar humedad y dulzor</td><td>Aderezo de cebolla del seco, base de guisos</td></tr>
+        <tr><td>Brasear / guisar</td><td>Mixto</td><td>Sellar y luego cocción lenta en líquido, tapado</td><td>Seco de res, rabo, osobuco</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>El error #1 de la línea:</b> amontonar en la sartén. Si llenas el sartén de carne, baja la temperatura, suelta agua y hierve gris en vez de dorar. Cocina en tandas, deja espacio y deja que cada pieza haga contacto con el metal caliente. Paciencia de 30 segundos, sabor de sobra.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Fondos: la base de todo</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Un fondo (o caldo base) es agua que extrajo sabor, cuerpo y gelatina de huesos y verduras. Es el cimiento de sopas, salsas, arroces y guisos. Un buen fondo levanta un plato mediocre; uno malo hunde uno bueno.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🦴</div><div><div class="t">Blanco o oscuro</div><h4>1. Elige huesos y decide si tuestas</h4><p>Fondo blanco: huesos sin dorar (ave, pescado), sabor limpio. Fondo oscuro: huesos y mirepoix tostados al horno hasta dorar, sabor profundo y color. El tostado define el carácter.</p></div></div>
+      <div class="paso"><div class="ico">🥕</div><div><div class="t">Mirepoix</div><h4>2. Agrega la base aromática</h4><p>Cebolla, zanahoria y apio en cubo rústico (mirepoix). En clave peruana suma poro, un trozo de ají y ramas de culantro. Nada de sal todavía.</p></div></div>
+      <div class="paso"><div class="ico">🌡️</div><div><div class="t">Nunca hierve fuerte</div><h4>3. Cocina a fuego suave (frémir)</h4><p>Apenas temblando, jamás borbotón. El hervor fuerte emulsiona la grasa y enturbia el fondo. Suave y paciente = fondo limpio y claro.</p></div></div>
+      <div class="paso"><div class="ico">🧹</div><div><div class="t">Espuma y grasa arriba</div><h4>4. Espuma sin parar (écumer)</h4><p>Retira con cucharón la espuma y grasa que sube. Esa espuma es impureza y amargor. Un fondo bien espumado es transparente.</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">Tiempos por tipo</div><h4>5. Cuela, enfría rápido y guarda</h4><p>Cuela por colador fino, enfría en baño de hielo (de 60 °C a 5 °C rápido) y refrigera. Rotula y fecha. Un buen fondo cuaja como gelatina en frío: esa es la señal.</p></div></div>
+    </div>
+    <div style="overflow-x:auto"><table class="t" style="margin-top:12px">
+      <thead><tr><th>Fondo</th><th>Huesos</th><th>Tiempo a fuego suave</th></tr></thead>
+      <tbody>
+        <tr><td>De pescado (fumet)</td><td>Espinas y cabezas blancas (no de pescado graso)</td><td>20–30 min (más lo amarga)</td></tr>
+        <tr><td>De ave</td><td>Carcasa y huesos de pollo</td><td>3–4 horas</td></tr>
+        <tr><td>De res (oscuro)</td><td>Huesos con tuétano, tostados</td><td>6–8 horas</td></tr>
+        <tr><td>De verduras</td><td>Recortes limpios (nada de papa ni fibras amargas)</td><td>45 min</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><b>Aprovecha los recortes:</b> las cabezas del pescado del ceviche, las carcasas del pollo, los tallos del culantro y las puntas de cebolla que ibas a botar son oro para el fondo. Un buen jefe de cocina mide el food cost por lo que rescata, no solo por lo que compra. Guarda recortes limpios en un táper rotulado "para fondo".</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Salsas madre y sus hijas</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Las salsas madre son cinco bases clásicas de las que salen decenas de salsas "hijas" con pequeños agregados. Aprender las madres es aprender un idioma: con ellas improvisas sin receta y entiendes cualquier salsa de la carta.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Bechamel</h3><div class="d">Leche espesada con roux blanco. De ella: salsa mornay (con queso), la base del pastel de acelga o unos canelones.</div><div class="s">Leche + roux</div></div>
+      <div class="tipo"><h3>Velouté</h3><div class="d">Fondo claro (ave o pescado) espesado con roux rubio. Base de cremas y salsas suaves para pescados y aves.</div><div class="s">Fondo claro + roux</div></div>
+      <div class="tipo"><h3>Española / demi-glace</h3><div class="d">Fondo oscuro espesado y reducido. La demi-glace acompaña carnes y da cuerpo profundo a un jugo de asado.</div><div class="s">Fondo oscuro reducido</div></div>
+      <div class="tipo"><h3>Tomate</h3><div class="d">Tomate cocido con aromáticos. Base de napolitana, boloñesa, arrabbiata y la salsa de la pizza.</div><div class="s">Tomate + aromáticos</div></div>
+      <div class="tipo"><h3>Holandesa</h3><div class="d">Emulsión tibia de yema y mantequilla clarificada con ácido. De ella nace la bearnesa. Delicada: se corta con el calor.</div><div class="s">Yema + mantequilla emulsionadas</div></div>
+      <div class="tipo"><h3>El roux</h3><div class="d">Partes iguales de harina y grasa cocidas juntas. Blanco (poco), rubio (medio) u oscuro (nuez). Es el espesante de tres de las cinco madres.</div><div class="s">Harina + grasa a fuego</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Cómo se arma una salsa hija sin quemarla ni encimarla:</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧈</div><div><div class="t">Base de la madre</div><h4>1. Haz el roux y cocínalo</h4><p>Derrite la grasa, agrega la harina y cocina 2–3 min removiendo. El roux crudo sabe a harina y no espesa bien. Cocínalo antes de mojar.</p></div></div>
+      <div class="paso"><div class="ico">🥛</div><div><div class="t">Sin grumos</div><h4>2. Incorpora el líquido de a pocos</h4><p>Líquido tibio sobre roux caliente (o al revés), en chorros, batiendo sin parar. De golpe = grumos. Deja que espese entre agregado y agregado.</p></div></div>
+      <div class="paso"><div class="ico">🍋</div><div><div class="t">Personaliza</div><h4>3. Convierte la madre en hija</h4><p>Queso rallado → mornay; culantro y ají amarillo → una velouté peruana para pescado; vino reducido y demi → salsa para el lomo. Pequeños agregados, gran cambio.</p></div></div>
+      <div class="paso"><div class="ico">🥄</div><div><div class="t">Punto y brillo</div><h4>4. Ajusta textura, sazón y monta con mantequilla</h4><p>Punto nappe: napa el reverso de la cuchara y al pasar el dedo deja el trazo. Rectifica sal, y fuera del fuego monta con un cubo de mantequilla fría para brillo y cuerpo.</p></div></div>
+    </div>
+    <div class="callout"><b>Punto nappe, la prueba de la cuchara:</b> hunde una cuchara, sácala y pasa el dedo por el reverso. Si el trazo queda limpio y no se cierra, la salsa está en su punto. Si chorrea, reduce más; si está pastosa, aligera con un poco de fondo caliente.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Sazón: el punto exacto</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La técnica te lleva lejos, pero la sazón es lo que el comensal recuerda. Sazonar es equilibrar los cinco gustos y probar en cada etapa, no solo al final. La sal no se "arregla" al terminar: se construye en capas.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Sazona en capas</h3><div class="d">Una pizca al sudar la cebolla, otra al agregar el líquido, ajuste al final. La sal puesta por capas penetra; toda junta al final solo queda en la superficie.</div><div class="s">Prueba, ajusta, prueba de nuevo</div></div>
+      <div class="tipo"><h3>Prueba con cuchara limpia</h3><div class="d">Nunca con el dedo ni con la misma cuchara dos veces (contaminación). Prueba, corrige, y prueba con cuchara nueva. Es higiene y es criterio.</div><div class="s">Cuchara nueva cada vez</div></div>
+      <div class="tipo"><h3>Ácido: el interruptor</h3><div class="d">Un chorro de limón o vinagre despierta un plato plano al instante, muchas veces mejor que más sal. Un guiso "le falta algo" casi siempre le falta acidez.</div><div class="s">Antes de echar más sal, prueba ácido</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Los cinco gustos y cómo se corrigen en la línea peruana:</p>
+    <div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Gusto</th><th>Lo aporta</th><th>Si le falta / si sobra</th></tr></thead>
+      <tbody>
+        <tr><td>Salado</td><td>Sal, sillao, sal de ajo</td><td>Falta: pizca de sal. Sobra: agrega líquido/papa, o acidez para balancear</td></tr>
+        <tr><td>Ácido</td><td>Limón, vinagre, tamarindo</td><td>Falta: chorro de limón. Sobra: pizca de azúcar o más grasa</td></tr>
+        <tr><td>Dulce</td><td>Azúcar, chancaca, cebolla sudada</td><td>Falta: toque de azúcar. Sobra: acidez o sal</td></tr>
+        <tr><td>Amargo</td><td>Ají tostado, cáscara, café</td><td>Sobra (lo más común): grasa, dulce o dilución. Suele ser un defecto</td></tr>
+        <tr><td>Umami</td><td>Sillao, tomate, hongos, fondo, huacatay</td><td>Falta profundidad: fondo concentrado, un toque de sillao o glutamato con criterio</td></tr>
+      </tbody>
+    </table></div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Sazón con criterio</h4><ul>
+        <li>Prueba en frío y en caliente: el frío esconde la sal</li>
+        <li>Sube sal de a poco: siempre puedes agregar, no quitar</li>
+        <li>Equilibra grasa + ácido + sal antes de servir</li>
+        <li>Termina con hierba fresca o un toque de aceite crudo</li>
+        <li>Corrige el mismo plato tal como sale, no "en general"</li>
+      </ul></div>
+      <div class="box no"><h4>Errores de sazón</h4><ul>
+        <li>Salar todo al final y de golpe</li>
+        <li>Probar con el dedo o repetir cuchara</li>
+        <li>Confiar en la receta sin probar el resultado</li>
+        <li>Tapar un plato plano con más sal en vez de ácido</li>
+        <li>Servir sin probar "porque siempre sale igual"</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La prueba de oro antes del pase:</b> prueba cada plato o salsa justo antes de mandarlo. La sal, el ácido y el picante cambian con el tiempo y la temperatura. Un segundo de prueba ahorra un plato devuelto y una reseña de una estrella. Si dudas del punto, llama al chef: rectificar a tiempo es de profesional, no de novato.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Mise en place</b><span>"Todo en su lugar": el prep y el montaje de la estación antes del servicio. La base de un turno tranquilo.</span></div>
+      <div class="gterm"><b>Brunoise</b><span>Corte en cubo muy pequeño (≈3 mm), parejo. Típico de la cebolla de la salsa criolla.</span></div>
+      <div class="gterm"><b>Juliana</b><span>Corte en tiras finas y largas. La cebolla del lomo saltado va en juliana gruesa.</span></div>
+      <div class="gterm"><b>Chiffonade</b><span>Tiras finísimas de hojas (albahaca, culantro), enrollando la hoja y cortando.</span></div>
+      <div class="gterm"><b>Mirepoix</b><span>Base aromática de cebolla, zanahoria y apio en cubo rústico para fondos y guisos.</span></div>
+      <div class="gterm"><b>Maillard</b><span>Reacción de dorado sobre ~140 °C que crea sabor y aroma en carnes, panes y tostados.</span></div>
+      <div class="gterm"><b>Blanquear</b><span>Hervor corto seguido de agua con hielo. Fija el verde de las verduras y detiene la cocción.</span></div>
+      <div class="gterm"><b>Pochar</b><span>Cocinar en líquido caliente sin hervir (70–85 °C). Ideal para huevo poché y pescado delicado.</span></div>
+      <div class="gterm"><b>Brasear</b><span>Sellar y luego cocinar lento en líquido tapado. Ablanda cortes duros: seco de res, osobuco.</span></div>
+      <div class="gterm"><b>Fondo</b><span>Caldo base de huesos y verduras que aporta sabor y cuerpo a salsas, sopas y guisos.</span></div>
+      <div class="gterm"><b>Fumet</b><span>Fondo de pescado, de cocción corta (20–30 min) para no amargar.</span></div>
+      <div class="gterm"><b>Roux</b><span>Mezcla cocida de harina y grasa a partes iguales; espesa bechamel, velouté y española.</span></div>
+      <div class="gterm"><b>Nappe</b><span>Punto de una salsa que napa el reverso de la cuchara y deja el trazo del dedo limpio.</span></div>
+      <div class="gterm"><b>Umami</b><span>El quinto gusto, sabroso y profundo. Lo dan el fondo, el sillao, el tomate, los hongos y el huacatay.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en cocina</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Fundamentos de cocina · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Mise en place</h4><ul>
+          <li>Lee carta y prep antes de tocar el cuchillo</li>
+          <li>Cronograma inverso: lo lento primero</li>
+          <li>Batchea: corta todo lo igual de una vez</li>
+          <li>Rotula y fecha (FEFO manda)</li>
+          <li>Repón en los valles, no en el pico</li>
+        </ul></div>
+        <div class="op-box"><h4>Cuchillo y cortes</h4><ul>
+          <li>La garra: nudillos guían, yemas ocultas</li>
+          <li>Agarre de pinza sobre la hoja</li>
+          <li>Brunoise 3 mm · Juliana tiras finas</li>
+          <li>Mirepoix rústico para fondos</li>
+          <li>Asienta a diario, afila cuando no muerde</li>
+        </ul></div>
+        <div class="op-box"><h4>Cocción</h4><ul>
+          <li>Seco dora (Maillard) · húmedo ablanda</li>
+          <li>No amontones el sartén: cocina en tandas</li>
+          <li>Sella por sabor, reposa por jugo</li>
+          <li>Frito 170–180 °C · pochar 70–85 °C</li>
+          <li>Brasear = sellar + cocción lenta tapado</li>
+        </ul></div>
+        <div class="op-box"><h4>Fondos</h4><ul>
+          <li>Blanco (limpio) u oscuro (tostado)</li>
+          <li>Fuego suave, nunca hervor fuerte</li>
+          <li>Espuma sin parar = fondo claro</li>
+          <li>Fumet 20–30 min · ave 3–4 h · res 6–8 h</li>
+          <li>Cuela, enfría rápido, rotula y fecha</li>
+        </ul></div>
+        <div class="op-box"><h4>Salsas madre</h4><ul>
+          <li>Bechamel · Velouté · Española · Tomate · Holandesa</li>
+          <li>Roux cocido, líquido de a pocos, sin grumos</li>
+          <li>Hija = madre + pequeño agregado</li>
+          <li>Punto nappe: napa la cuchara</li>
+          <li>Monta con mantequilla fría fuera del fuego</li>
+        </ul></div>
+        <div class="op-box"><h4>Sazón</h4><ul>
+          <li>Sazona en capas, prueba en cada etapa</li>
+          <li>Cuchara limpia y nueva cada vez</li>
+          <li>Plano: prueba ácido antes que más sal</li>
+          <li>5 gustos: salado, ácido, dulce, amargo, umami</li>
+          <li>Prueba SIEMPRE justo antes del pase</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Fundamentos de cocina · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Datos del comensal (Ley 29733) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f766e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Datos del comensal</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#glosario">Glosario</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0f766e">
+    <div class="k">Academia Prep! · Todo el equipo</div>
+    <h1>Datos del comensal (Ley 29733)</h1>
+    <p>Cada teléfono que anotas para una reserva, cada alergia que registras y cada correo que pides para una campaña es un dato personal que la ley te confía. Este curso te enseña a pedirlo bien, guardarlo con cuidado y usarlo solo para lo que el comensal aceptó, sin trabar el servicio.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Todo el equipo</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> la confianza es parte del cubierto. Un comensal que te deja su número espera que lo trates con el mismo cuidado que su alergia. Manejar mal sus datos no solo rompe esa confianza: expone al restaurante a sanciones de la Autoridad Nacional de Protección de Datos Personales que se cuentan en UIT, no en propinas.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué protege la Ley 29733 y por qué te toca a ti</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La Ley N° 29733 (Ley de Protección de Datos Personales) y su reglamento existen para una idea simple: los datos de una persona son suyos, no de quien los recolecta. El restaurante solo los tiene "prestados" para un fin concreto. Esto aplica a todos: anfitriona, mozo, bar, cocina, caja y administración.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Qué es un dato personal</h3><div class="d">Cualquier información que identifica a una persona: nombre, DNI, teléfono, correo, foto, cumpleaños, incluso "el señor calvo de la mesa 4 que siempre pide Malbec".</div><div class="s">Si permite reconocerla, es dato</div></div>
+      <div class="tipo"><h3>Datos sensibles = doble cuidado</h3><div class="d">Alergias, dietas médicas, discapacidad, religión (kosher/halal), salud. La ley los blinda: solo con consentimiento expreso y jamás para marketing.</div><div class="s">Se usan solo para el servicio</div></div>
+      <div class="tipo"><h3>El titular manda</h3><div class="d">El comensal es el "titular" del dato. Puede pedir verlo, corregirlo o que lo borres cuando quiera. Tú eres solo el custodio.</div><div class="s">Su dato, sus reglas</div></div>
+      <div class="tipo"><h3>Fin declarado y único</h3><div class="d">Un dato pedido para reservar sirve para reservar. Usarlo para mandarle promos sin permiso es cambiarle el fin: eso la ley no lo permite.</div><div class="s">Un dato, un propósito</div></div>
+      <div class="tipo"><h3>Quién vigila</h3><div class="d">La Autoridad Nacional de Protección de Datos Personales (ANPDP), del Ministerio de Justicia, investiga denuncias y sanciona. No hace falta que haya "robo": basta el mal uso.</div><div class="s">ANPDP · Minjus</div></div>
+      <div class="tipo"><h3>Aplica aunque seas chico</h3><div class="d">No importa si es un bistró de 8 mesas o un grupo con 4 sedes: si guardas datos de personas, la ley te alcanza igual.</div><div class="s">Sin mínimo de tamaño</div></div>
+    </div>
+    <div class="callout"><b>Regla mental:</b> antes de anotar cualquier dato de un comensal, pregúntate "¿para qué lo necesito y él lo sabe?". Si no tienes respuesta clara a las dos, no lo pidas.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Consentimiento: cómo pedirlo bien</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El corazón de la ley es el consentimiento. Sin permiso válido del comensal, casi nada de lo que hagas con sus datos es legal. Pero "válido" tiene requisitos: la ley exige que sea previo, informado, expreso, libre e inequívoco. Aprende a reconocer cuándo lo tienes de verdad.</p>
+    <table class="t">
+      <thead><tr><th>Requisito</th><th>Qué significa</th><th>Ejemplo en tu restaurante</th></tr></thead>
+      <tbody>
+        <tr><td><b>Previo</b></td><td>Se pide antes de usar el dato, no después.</td><td>Pides el correo para promos al registrar al comensal, no le mandas la promo y luego "avisas".</td></tr>
+        <tr><td><b>Informado</b></td><td>La persona sabe para qué se usará y quién lo usa.</td><td>"Es para avisarte de eventos y menús de temporada de Casa Italia."</td></tr>
+        <tr><td><b>Expreso</b></td><td>Un sí claro y activo, no supuesto.</td><td>Marca la casilla "Acepto recibir novedades" él mismo; no viene premarcada.</td></tr>
+        <tr><td><b>Libre</b></td><td>Sin presión ni condicionar el servicio.</td><td>Reservar NO exige aceptar marketing. Se puede reservar y decir no a las promos.</td></tr>
+        <tr><td><b>Inequívoco</b></td><td>Queda registro de que dijo que sí.</td><td>En Prep! queda guardado <span class="mono">acepta_marketing = sí</span> con fecha y hora.</td></tr>
+      </tbody>
+    </table>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Consentimiento bien pedido</h4><ul>
+        <li>"¿Te gustaría recibir por WhatsApp nuestros menús de estación? Es opcional." y esperas su sí.</li>
+        <li>Separas los dos permisos: reservar (necesario) y marketing (opcional).</li>
+        <li>Registras el sí en la ficha del comensal en Bienvenida, con la fecha.</li>
+        <li>Si duda, lo dejas en no. Un no hoy puede ser un sí más adelante.</li>
+      </ul></div>
+      <div class="box no"><h4>Consentimiento que NO vale</h4><ul>
+        <li>Asumir que "si me dio su número, quiere promos". No: te lo dio para la reserva.</li>
+        <li>Casilla premarcada o meterlo en la lista "por defecto".</li>
+        <li>"Le doy la mesa solo si acepta el boletín." Eso es forzado, no libre.</li>
+        <li>Agregar a un grupo de WhatsApp de ofertas sin que lo pidiera.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> el permiso para reservar y el permiso para hacer marketing son dos cosas distintas. Nunca los mezcles ni des uno por el otro.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Los datos del día a día y cómo cuidarlos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">En un turno normal pasan por tus manos decenas de datos: la reserva del cumpleaños, la alergia de la mesa 7, la tarjeta que se quedó de garantía, el correo de la factura. Dos principios te guían: pide solo lo necesario (minimización) y protégelo mientras lo tengas (seguridad).</p>
+    <table class="t">
+      <thead><tr><th>Dato que manejas</th><th>¿Para qué?</th><th>Cuidado clave</th></tr></thead>
+      <tbody>
+        <tr><td>Nombre + teléfono de reserva</td><td>Confirmar y contactar por la mesa</td><td>No lo compartas por chats personales; queda en Prep!, no en tu celular.</td></tr>
+        <tr><td>Alergia / dieta (dato sensible)</td><td>Cocinar seguro para esa persona</td><td>Se registra por silla y solo lo ve quien cocina o sirve. No es chisme de pasillo.</td></tr>
+        <tr><td>Correo para boleta/factura</td><td>Emitir el comprobante</td><td>No lo sumes a la lista de promos "de una". Ese correo vino para la factura.</td></tr>
+        <tr><td>Datos de tarjeta (card hold)</td><td>Garantía anti no-show</td><td>Nunca anotes el número en papel ni foto. Va tokenizado por la pasarela, no a mano.</td></tr>
+        <tr><td>Cumpleaños / aniversario</td><td>Detalle de servicio si él lo dio</td><td>Úsalo para agasajar, no para perseguirlo con ofertas si no aceptó marketing.</td></tr>
+        <tr><td>Foto o reseña del comensal</td><td>Redes del restaurante</td><td>Publicar su cara o nombre necesita su permiso, aunque haya venido feliz.</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="tipo"><h3>Pide lo justo</h3><div class="d">Para una reserva basta nombre, teléfono y N° de personas. No pidas DNI ni correo "por si acaso". Menos datos, menos riesgo.</div><div class="s">Minimización</div></div>
+      <div class="tipo"><h3>Pantalla y voz</h3><div class="d">No dejes la ficha del comensal abierta a la vista de otra mesa. No leas en voz alta el teléfono de alguien en un salón lleno.</div><div class="s">Discreción física</div></div>
+      <div class="tipo"><h3>Nada en papelitos</h3><div class="d">Reservas y datos van a Prep!, no a un cuaderno que cualquiera hojea ni a un Excel en un USB. El sistema tiene acceso por rol.</div><div class="s">Un solo lugar seguro</div></div>
+      <div class="tipo"><h3>Tu clave es tuya</h3><div class="d">No prestes tu usuario ni dejes la sesión abierta. Si entra alguien con tu clave y hace mal uso, quedó a tu nombre.</div><div class="s">No compartir accesos</div></div>
+      <div class="tipo"><h3>Cuando ya no sirve</h3><div class="d">Un dato guardado "para siempre sin razón" es un riesgo. Se conserva lo necesario para la operación y el CRM, no de por vida porque sí.</div><div class="s">Guardar con propósito</div></div>
+      <div class="tipo"><h3>El proveedor también cuenta</h3><div class="d">Si usamos una herramienta externa (mensajería, reservas), esos datos siguen siendo responsabilidad del restaurante. Nada de mandarlos a apps random.</div><div class="s">Encargado de tratamiento</div></div>
+    </div>
+    <div class="callout"><b>Prueba del titular:</b> antes de anotar algo, imagina que el comensal lee tu pantalla. Si le incomodaría cómo o dónde guardaste su dato, corrígelo ahora.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Derechos ARCO: cuando el comensal reclama su dato</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La ley le da al comensal cuatro derechos sobre sus datos, conocidos como ARCO. Puede ejercerlos cuando quiera y el restaurante está obligado a responder. No hay que asustarse: casi siempre es un pedido simple. Lo importante es no ignorarlo y saber a quién derivarlo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>A · Acceso</h3><div class="d">"¿Qué datos míos tienen?" Puede pedir saber qué información guardas de él y para qué la usas.</div><div class="s">Derecho a saber</div></div>
+      <div class="tipo"><h3>R · Rectificación</h3><div class="d">"Mi teléfono cambió / mi nombre está mal." Puede exigir que corrijas datos errados o desactualizados.</div><div class="s">Derecho a corregir</div></div>
+      <div class="tipo"><h3>C · Cancelación</h3><div class="d">"Bórrenme de sus registros." Puede pedir la eliminación de sus datos cuando ya no hay motivo para tenerlos.</div><div class="s">Derecho a que te borren</div></div>
+      <div class="tipo"><h3>O · Oposición</h3><div class="d">"No quiero recibir más sus mensajes." Puede negarse a un uso concreto, típicamente el marketing.</div><div class="s">Derecho a decir basta</div></div>
+    </div>
+    <h4 style="margin:16px 0 6px;font-size:14px">Qué haces tú cuando alguien lo pide</h4>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">record_voice_over</span></div><div><div class="t">Paso 1</div><h4>Escucha y no lo tomes personal</h4><p>"Dejen de mandarme WhatsApp" no es una queja del servicio: es un derecho. Agradece que avise y confirma que lo resolverás.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">how_to_reg</span></div><div><div class="t">Paso 2</div><h4>Confirma que es él</h4><p>Antes de borrar o entregar datos, asegúrate de que quien pide es el titular (o alguien autorizado). No des la ficha de un comensal a un tercero.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">task_alt</span></div><div><div class="t">Paso 3</div><h4>Actúa en el sistema</h4><p>Para "no más promos", retira el consentimiento en la ficha (queda en <span class="mono">acepta_marketing = no</span>). Para corregir un dato, edítalo. Hecho, no esperes.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">supervisor_account</span></div><div><div class="t">Paso 4</div><h4>Deriva lo grande</h4><p>Un "acceso" formal o un "bórrenme todo" por escrito va al administrador o encargado de datos. Tú registras el pedido y avisas; no lo dejes en el aire.</p></div></div>
+    <div class="callout"><b>Plazo real:</b> los pedidos ARCO tienen plazos legales de respuesta (días, no semanas). Por eso nunca digas "yo no me encargo" y lo olvides: escálalo el mismo turno.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Errores que cuestan caro y qué hacer ante un incidente</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La mayoría de sanciones no nacen de hackers, sino de descuidos cotidianos: una lista de correos filtrada, un comensal agregado a promos sin permiso, una foto publicada sin consentir. Conocer los errores típicos y cómo reaccionar ante una fuga evita multas y, sobre todo, protege la confianza.</p>
+    <div class="do2">
+      <div class="box no"><h4>Errores que sancionan</h4><ul>
+        <li>Mandar campañas a quien nunca aceptó marketing.</li>
+        <li>Vender, prestar o pasar la base de comensales a otro negocio.</li>
+        <li>Publicar foto, nombre o mesa de un invitado en redes sin permiso.</li>
+        <li>Guardar números de tarjeta anotados a mano o en fotos.</li>
+        <li>Seguir escribiéndole a quien pidió "no más mensajes".</li>
+        <li>Dejar la base exportada en un WhatsApp o correo personal.</li>
+      </ul></div>
+      <div class="box yes"><h4>Prácticas que te protegen</h4><ul>
+        <li>Armar campañas solo con la audiencia que dijo sí.</li>
+        <li>Incluir siempre un "responde BAJA para no recibir más".</li>
+        <li>Pedir permiso antes de publicar a cualquier comensal.</li>
+        <li>Datos sensibles y de pago solo dentro de Prep!, nunca sueltos.</li>
+        <li>Retirar de inmediato a quien se opone.</li>
+        <li>Avisar al administrador apenas notas algo raro.</li>
+      </ul></div>
+    </div>
+    <h4 style="margin:16px 0 6px;font-size:14px">Cuánto está en juego (escala de sanciones ANPDP)</h4>
+    <table class="t">
+      <thead><tr><th>Gravedad</th><th>Ejemplo típico</th><th>Rango (en UIT)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Leve</b></td><td>No informar bien el fin, descuidos formales.</td><td>Hasta ~5 UIT</td></tr>
+        <tr><td><b>Grave</b></td><td>Usar datos sin consentimiento válido, no atender un derecho ARCO.</td><td>~5 a 50 UIT</td></tr>
+        <tr><td><b>Muy grave</b></td><td>Vender la base, filtrar datos sensibles, dar datos a terceros sin permiso.</td><td>~50 a 100 UIT</td></tr>
+      </tbody>
+    </table>
+    <h4 style="margin:16px 0 6px;font-size:14px">Si crees que hubo una fuga o mal uso</h4>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">bolt</span></div><div><div class="t">Ahora</div><h4>Corta y avisa</h4><p>Si una lista se filtró, un dispositivo se perdió o alguien accedió sin permiso: avisa al administrador de inmediato. La velocidad reduce el daño.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">edit_note</span></div><div><div class="t">Registra</div><h4>Qué pasó y a quién afecta</h4><p>Anota qué datos, de cuántos comensales y cómo ocurrió. Sin culpar a nadie: se documenta para resolver, no para castigar.</p></div></div>
+    <div class="paso"><div class="ico"><span class="material-symbols-outlined">shield</span></div><div><div class="t">Contén</div><h4>Cierra la brecha</h4><p>Cambia claves, revoca accesos, borra la copia mal enviada. El encargado evalúa si corresponde comunicar a los afectados o a la Autoridad.</p></div></div>
+    <div class="callout"><b>Ocultar es peor:</b> una fuga bien atendida se controla; una escondida crece y se convierte en la sanción muy grave. Nunca calles un incidente por miedo.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Marketing responsable: WhatsApp, campañas y listas</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El marketing directo (WhatsApp, correo, SMS) es donde más se resbala un restaurante. La buena noticia: hacerlo bien no solo es legal, vende mejor, porque le hablas a quien de verdad quiere oírte. Estas son las reglas para campañas limpias.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Solo lista opt-in</h3><div class="d">Tu audiencia son quienes marcaron "sí quiero novedades". En Prep! Engagement solo arma campañas con <span class="mono">acepta_marketing = sí</span>. No hay atajos.</div><div class="s">Sí explícito, siempre</div></div>
+      <div class="tipo"><h3>Baja fácil y visible</h3><div class="d">Cada mensaje debe permitir salir: "Responde BAJA" o un enlace. Y cuando alguien lo usa, sale de verdad y para siempre.</div><div class="s">Salir es un derecho</div></div>
+      <div class="tipo"><h3>Identifícate</h3><div class="d">El comensal debe saber que le escribe Casa Italia, no un número desconocido. Nada de mensajes anónimos ni disfrazados.</div><div class="s">Marca clara al frente</div></div>
+      <div class="tipo"><h3>Respeta horas y ritmo</h3><div class="d">No satures. Un mensaje relevante de vez en cuando fideliza; tres promos al día a medianoche generan bajas y molestias.</div><div class="s">Menos y mejor</div></div>
+      <div class="tipo"><h3>Nada de datos sensibles</h3><div class="d">Jamás segmentes campañas por alergias, salud o dieta médica. Esos datos son para cocinar seguro, no para vender.</div><div class="s">Sensibles fuera del marketing</div></div>
+      <div class="tipo"><h3>No compres ni cruces bases</h3><div class="d">Listas compradas, scrapeadas o "prestadas" por un amigo de otro local son ilegales. Tu base se construye con tus comensales.</div><div class="s">Base propia y consentida</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Campaña que sí</h4><ul>
+        <li>"Hola Ana, soy Casa Italia. Vuelve el menú de trufa esta semana. Responde BAJA si no quieres más avisos."</li>
+        <li>Va solo a quienes aceptaron y no se dieron de baja.</li>
+        <li>Uno o dos mensajes al mes, con algo que vale la pena.</li>
+      </ul></div>
+      <div class="box no"><h4>Campaña que no</h4><ul>
+        <li>Blast a todos los números que pasaron por la reserva este año.</li>
+        <li>Agregar comensales a un grupo de ofertas sin avisar.</li>
+        <li>"Promo para celíacos" filtrando por la alergia registrada.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La regla que resume todo:</b> escríbele solo a quien te dijo que sí, dile siempre quién eres y déjalo salir cuando quiera. Una lista limpia de 200 vale más que una sucia de 2000.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Ley N° 29733</b><span>Ley de Protección de Datos Personales del Perú. Regula cómo se recolectan, guardan y usan los datos de las personas.</span></div>
+      <div class="gterm"><b>ANPDP</b><span>Autoridad Nacional de Protección de Datos Personales, del Ministerio de Justicia. Vigila, investiga denuncias y aplica sanciones.</span></div>
+      <div class="gterm"><b>Dato personal</b><span>Cualquier información que permite identificar a una persona: nombre, DNI, teléfono, correo, foto, cumpleaños.</span></div>
+      <div class="gterm"><b>Dato sensible</b><span>Información especialmente protegida: salud, alergias, dieta médica, religión, discapacidad. Solo para el servicio, nunca para marketing.</span></div>
+      <div class="gterm"><b>Titular</b><span>La persona dueña de los datos: el comensal. El restaurante solo los custodia para un fin.</span></div>
+      <div class="gterm"><b>Consentimiento</b><span>Permiso del titular para usar sus datos. Debe ser previo, informado, expreso, libre e inequívoco.</span></div>
+      <div class="gterm"><b>Opt-in</b><span>El "sí quiero" explícito para recibir marketing. Sin opt-in, no hay campaña que valga.</span></div>
+      <div class="gterm"><b>Opt-out / baja</b><span>La opción de salir de una lista. Debe estar siempre disponible y respetarse de inmediato.</span></div>
+      <div class="gterm"><b>Derechos ARCO</b><span>Acceso, Rectificación, Cancelación y Oposición: lo que el comensal puede exigir sobre sus datos.</span></div>
+      <div class="gterm"><b>Minimización</b><span>Pedir y guardar solo los datos necesarios para el fin. Menos datos, menos riesgo.</span></div>
+      <div class="gterm"><b>Finalidad</b><span>El propósito declarado del dato. Un dato pedido para reservar no puede usarse para vender sin permiso.</span></div>
+      <div class="gterm"><b>Encargado de tratamiento</b><span>Proveedor externo que maneja datos por encargo del restaurante (mensajería, reservas). El responsable sigue siendo el restaurante.</span></div>
+      <div class="gterm"><b>Brecha / incidente</b><span>Fuga, pérdida o acceso no autorizado a datos. Se avisa de inmediato al administrador; ocultarla lo empeora.</span></div>
+      <div class="gterm"><b>UIT</b><span>Unidad Impositiva Tributaria: la unidad en que se miden las multas. Las sanciones graves suman decenas de UIT.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Datos del comensal · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Las 3 reglas de oro</h4><ul>
+          <li>Su dato, su fin: úsalo solo para lo que lo pediste.</li>
+          <li>Reservar y marketing son permisos distintos.</li>
+          <li>Escríbele solo a quien dijo "sí" y déjalo salir.</li>
+        </ul></div>
+        <div class="op-box"><h4>Consentimiento válido</h4><ul>
+          <li>Previo · Informado · Expreso</li>
+          <li>Libre (no condiciona el servicio)</li>
+          <li>Inequívoco (queda registrado con fecha)</li>
+        </ul></div>
+        <div class="op-box"><h4>Datos sensibles</h4><ul>
+          <li>Alergias, salud, dieta, religión.</li>
+          <li>Solo para cocinar y servir seguro.</li>
+          <li>Nunca para segmentar campañas.</li>
+        </ul></div>
+        <div class="op-box"><h4>Derechos ARCO</h4><ul>
+          <li>Acceso: qué datos tienen de él.</li>
+          <li>Rectificación: corregir un dato.</li>
+          <li>Cancelación: borrarlo. Oposición: no más promos.</li>
+        </ul></div>
+        <div class="op-box"><h4>Nunca hagas esto</h4><ul>
+          <li>Sumar correos de factura a la lista de promos.</li>
+          <li>Anotar tarjetas a mano o por foto.</li>
+          <li>Publicar a un comensal sin su permiso.</li>
+          <li>Pasar la base a otro negocio o celular.</li>
+        </ul></div>
+        <div class="op-box"><h4>Si hay fuga o pedido</h4><ul>
+          <li>ARCO o incidente: avisa al admin el mismo turno.</li>
+          <li>"No más mensajes" → retira consentimiento ya.</li>
+          <li>Nunca ocultes un incidente: se agrava.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Datos del comensal (Ley 29733) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

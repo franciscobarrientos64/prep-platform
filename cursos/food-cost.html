@@ -1,0 +1,355 @@
+<!-- Curso Academia Prep! · Recetas estándar y food cost -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Recetas estándar y food cost · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23047857'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Food Cost</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#047857">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Recetas estándar y food cost</h1>
+    <p>La receta que se cocina igual todos los días y cuesta lo que debe. Fichas técnicas, costeo por porción, food cost objetivo, escalado y control de porciones: la parte del oficio que decide si el restaurante gana o solo factura.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~50 min</span><span>🎯 Cocina · Admin</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> un plato que se vende lleno de sabor pero sin ficha técnica es una fuga de plata. Si hoy el lomo lleva 180 g y mañana 240 g "al ojo", el food cost sube 6 puntos y nadie sabe por qué. La receta estándar hace que el plato sepa igual, cueste igual y deje el margen que planeaste, esté quien esté en la línea. Cada punto de food cost que controlas es utilidad que se queda en casa.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La ficha técnica (receta estándar)</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La ficha técnica es la receta oficial de la casa: ingredientes exactos, gramajes, rendimiento, montaje y costo. No es la libreta del chef, es un documento que cualquiera de la línea puede seguir y da siempre el mismo plato. Sin ficha, no hay food cost real que valga.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Gramajes exactos</h3><div class="d">Todo en gramos, mililitros o unidades. "Un chorro de sillao" no existe: son 15 ml. Lo que no se pesa, no se controla ni se cuesta.</div><div class="s">Balanza y jarra medidora, no el ojo</div></div>
+      <div class="tipo"><h3>Rendimiento y porciones</h3><div class="d">Cuántas porciones salen y de qué peso. Una base de ají de gallina de 4 kg debe rendir 20 porciones de 200 g, no "las que salgan".</div><div class="s">Porción definida = costo por porción real</div></div>
+      <div class="tipo"><h3>Montaje con foto</h3><div class="d">El plato terminado fotografiado: dónde va la salsa, cuántas hojas de culantro, el peso del arroz. La foto cierra la discusión.</div><div class="s">El plato se ve igual en toda mesa</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">📝</div><div><div class="t">Encabezado</div><h4>1. Identifica el plato</h4><p>Nombre en carta, estación (caliente / fría / forno / bar), número de porciones que rinde y alérgenos presentes. Es lo primero que lee quien produce.</p></div></div>
+      <div class="paso"><div class="ico">⚖️</div><div><div class="t">Cuerpo</div><h4>2. Ingredientes con cantidad y unidad</h4><p>Lista cada insumo con su cantidad neta (ya limpio) y su costo unitario. Separa la sub-receta (ej. crema de ají amarillo) para reusarla en otros platos sin recostearla cada vez.</p></div></div>
+      <div class="paso"><div class="ico">👨‍🍳</div><div><div class="t">Procedimiento</div><h4>3. Pasos, tiempos y puntos de control</h4><p>Método claro y corto, con temperaturas y tiempos. Marca los puntos críticos: sellado del lomo a fuego alto, leche del ají al punto, temperatura de servicio.</p></div></div>
+      <div class="paso"><div class="ico">💰</div><div><div class="t">Cierre</div><h4>4. Costo, precio y food cost</h4><p>Costo por porción, precio de carta y el food cost % resultante. Fecha de última actualización de precios. Sin esta línea, la ficha es solo una receta.</p></div></div>
+    </div>
+    <div class="callout"><b>Ejemplo — Ficha "Lomo saltado":</b> lomo fino 180 g, cebolla roja 70 g, tomate 60 g, papa blanca 200 g (fritas), sillao 15 ml, vinagre tinto 8 ml, ají amarillo 10 g, culantro 3 g, arroz cocido 200 g. Rinde 1 porción. Costo insumos S/ 11.90. Todo lo demás (procedimiento, punto de wok, foto de montaje) cuelga de estos números.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Ficha que sí sirve</h4><ul>
+        <li>Cantidades netas en gramos / ml / unidades</li>
+        <li>Rendimiento y peso de porción declarados</li>
+        <li>Sub-recetas separadas y reutilizables</li>
+        <li>Foto de montaje y alérgenos visibles</li>
+        <li>Costo y fecha de actualización de precios</li>
+      </ul></div>
+      <div class="box no"><h4>Receta que no controla nada</h4><ul>
+        <li>"Sal al gusto", "un chorro", "una taza"</li>
+        <li>Sin peso de porción: cada cocinero sirve distinto</li>
+        <li>Copiar y pegar la sub-receta en cada plato</li>
+        <li>Sin costo: imposible saber si deja margen</li>
+        <li>Versión en la cabeza del chef, no en papel</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Costeo por porción: del kilo al plato</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Costear no es dividir el precio del kilo entre las porciones. Casi todo insumo pierde peso al limpiarlo: el pescado se filetea, la cebolla se pela, el lomo se recorta la grasa. Ese descarte es merma, y si no lo cuentas tu food cost siempre saldrá más bajo de lo real.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Precio de compra (AP)</h3><div class="d">Lo que pagas por el insumo tal como llega: el kilo de perico entero a S/ 32, la caja de tomate. Es el punto de partida, no el costo del plato.</div><div class="s">AP = As Purchased</div></div>
+      <div class="tipo"><h3>Rendimiento y merma</h3><div class="d">Lo aprovechable después de limpiar. Si de 1 kg de pescado usas 600 g, tu rendimiento es 60% y la merma 40%. Ese dato lo mides en tu cocina, no lo copias de internet.</div><div class="s">Yield = neto ÷ bruto</div></div>
+      <div class="tipo"><h3>Costo real por gramo (EP)</h3><div class="d">Precio AP dividido entre el rendimiento. El perico "cuesta" S/ 32/kg comprado, pero limpio cuesta S/ 53.30/kg. Con ese número costeas la porción.</div><div class="s">EP = Edible Portion</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:8px;color:var(--wine);font-weight:600">CEVICHE CLÁSICO · 1 porción — costeo con merma real</p>
+      <table class="t">
+        <thead><tr><th>Insumo</th><th>Precio AP</th><th>Rend.</th><th>Costo EP</th><th>Cant. neta</th><th>Costo porción</th></tr></thead>
+        <tbody>
+          <tr><td>Perico fresco</td><td>S/ 32.00/kg</td><td>60%</td><td>S/ 53.33/kg</td><td>170 g</td><td>S/ 9.07</td></tr>
+          <tr><td>Limón</td><td>S/ 6.00/kg</td><td>35% (jugo)</td><td>S/ 17.14/kg</td><td>60 ml</td><td>S/ 1.03</td></tr>
+          <tr><td>Cebolla roja</td><td>S/ 3.50/kg</td><td>85%</td><td>S/ 4.12/kg</td><td>50 g</td><td>S/ 0.21</td></tr>
+          <tr><td>Camote</td><td>S/ 3.00/kg</td><td>80%</td><td>S/ 3.75/kg</td><td>90 g</td><td>S/ 0.34</td></tr>
+          <tr><td>Choclo, ají, culantro, sal</td><td>—</td><td>—</td><td>—</td><td>varios</td><td>S/ 0.95</td></tr>
+          <tr><td colspan="5" style="text-align:right;font-weight:700">Costo total por porción</td><td style="font-weight:800;background:var(--green-soft)">S/ 11.60</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>El error más caro:</b> costear el perico a S/ 32/kg (precio de compra) en vez de S/ 53.33/kg (precio limpio). Con 170 g de porción, ese error te dice que el pescado cuesta S/ 5.44 cuando en realidad cuesta S/ 9.07. Son S/ 3.63 de food cost invisible por plato. En 40 ceviches al día son S/ 145 diarios que creías tener y no están.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Costeo confiable</h4><ul>
+        <li>Mides tu propia merma pesando bruto vs. neto</li>
+        <li>Usas costo EP (limpio) para cada porción</li>
+        <li>Actualizas precios cuando cambia el proveedor</li>
+        <li>Sumas el "misceláneo" (sal, aceite, hierbas) como % o monto fijo</li>
+        <li>Incluyes el aprovechamiento del descarte (espinas para fondo)</li>
+      </ul></div>
+      <div class="box no"><h4>Costeo que engaña</h4><ul>
+        <li>Dividir precio del kilo entre porciones sin merma</li>
+        <li>Copiar rendimientos de un libro, no de tu insumo</li>
+        <li>Ignorar aceite de fritura, sal y condimentos "porque es poco"</li>
+        <li>Costear una vez y no tocar más el número</li>
+        <li>Olvidar el costo de la guarnición (arroz, papas)</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Food cost objetivo y precio de venta</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El food cost % es cuánto de lo que cobras por un plato se te va en insumos. Es la brújula del negocio. En alta cocina en Lima suele apuntarse a 28–35%: alto y comes la utilidad, bajo y el plato se ve "pobre" o caro. El precio sale del costo y del objetivo, no de "lo que cobra el de al lado".</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧮</div><div><div class="t">Fórmula base</div><h4>1. Food cost % = costo ÷ precio (sin IGV)</h4><p>Ceviche que cuesta S/ 11.60 y se vende a S/ 42 (sin IGV) tiene un food cost de 11.60 ÷ 42 = <b>27.6%</b>. Ese porcentaje es lo que mides contra tu objetivo.</p></div></div>
+      <div class="paso"><div class="ico">🎯</div><div><div class="t">Precio desde el objetivo</div><h4>2. Precio = costo ÷ food cost objetivo</h4><p>Si el objetivo del plato es 30%: precio = 11.60 ÷ 0.30 = S/ 38.67. Ese es el mínimo para no bajar de tu meta; de ahí subes a un precio "bonito" de carta.</p></div></div>
+      <div class="paso"><div class="ico">✨</div><div><div class="t">Precio psicológico</div><h4>3. Redondea con criterio, no al azar</h4><p>S/ 38.67 se cierra en carta a S/ 39 o S/ 42, no a S/ 38.67. Redondear hacia arriba baja el food cost y se ve más limpio. Nunca redondees hacia abajo por "quedar bien".</p></div></div>
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">Impuestos y servicio</div><h4>4. Separa IGV y 10% de servicio</h4><p>El precio de carta en Perú suele mostrarse con IGV (18%) y a veces + 10% de servicio. Costea y fija food cost siempre sobre el <b>precio neto sin IGV</b>; los impuestos no son tu ingreso.</p></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:8px;color:var(--wine);font-weight:600">TABLA DE DECISIÓN · costo → precio según objetivo</p>
+      <table class="t">
+        <thead><tr><th>Plato</th><th>Costo porción</th><th>FC objetivo</th><th>Precio mínimo</th><th>Precio carta</th><th>FC real</th></tr></thead>
+        <tbody>
+          <tr><td>Ceviche clásico</td><td>S/ 11.60</td><td>30%</td><td>S/ 38.67</td><td>S/ 42</td><td>27.6%</td></tr>
+          <tr><td>Lomo saltado</td><td>S/ 11.90</td><td>32%</td><td>S/ 37.19</td><td>S/ 39</td><td>30.5%</td></tr>
+          <tr><td>Ají de gallina</td><td>S/ 6.80</td><td>28%</td><td>S/ 24.29</td><td>S/ 28</td><td>24.3%</td></tr>
+          <tr><td>Pisco sour</td><td>S/ 4.20</td><td>22%</td><td>S/ 19.09</td><td>S/ 24</td><td>17.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>No todo lleva el mismo objetivo:</b> las bebidas y cócteles cargan food cost bajo (18–24%) y sostienen el margen; los platos de proteína cara (lomo, pescado) viven en 30–35% y son gancho de la carta. El food cost que importa es el <b>promedio ponderado por lo que se vende</b>, no plato por plato. Un menú sano puede tener platos "caros" de costo si vende suficientes bebidas y entradas rentables.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Escalado de recetas</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Escalar es llevar una receta de X porciones a Y porciones sin que cambie el sabor. Suena a multiplicar, y en parte lo es, pero hay ingredientes y tiempos que no escalan lineal. Escalar mal es la causa número uno de "hoy la base salió salada" o "el postre no cuajó".</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Factor de conversión</h3><div class="d">FC = porciones que necesitas ÷ porciones de la receta. De una base de 20 porciones a 50: FC = 2.5. Multiplicas cada ingrediente por 2.5.</div><div class="s">FC = deseado ÷ original</div></div>
+      <div class="tipo"><h3>Lineal vs. no lineal</h3><div class="d">Proteínas, líquidos y guarniciones escalan lineal. Sal, ají, especias, licor, leudantes y gelatina NO: se ajustan al gusto y por prueba, empezando por debajo.</div><div class="s">La sazón se corrige, no se multiplica</div></div>
+      <div class="tipo"><h3>Tiempos y equipo</h3><div class="d">El tiempo de cocción no se multiplica por el FC. El doble de guiso en la misma olla tarda más en romper hervor y puede pegarse. Ajusta olla, fuego y turnos de tanda.</div><div class="s">Más volumen ≠ más tiempo exacto</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:8px;color:var(--wine);font-weight:600">CREMA DE AJÍ AMARILLO · de 10 a 25 porciones — FC = 2.5</p>
+      <table class="t">
+        <thead><tr><th>Ingrediente</th><th>Receta (10 porc.)</th><th>× FC 2.5</th><th>Escalado (25 porc.)</th><th>¿Ajuste?</th></tr></thead>
+        <tbody>
+          <tr><td>Ají amarillo licuado</td><td>500 g</td><td>×2.5</td><td>1250 g</td><td>Lineal</td></tr>
+          <tr><td>Cebolla</td><td>300 g</td><td>×2.5</td><td>750 g</td><td>Lineal</td></tr>
+          <tr><td>Aceite</td><td>80 ml</td><td>×2.5</td><td>200 ml</td><td>Lineal</td></tr>
+          <tr><td>Ajo molido</td><td>20 g</td><td>×2.5</td><td>50 g</td><td>Prueba: empieza con 40 g</td></tr>
+          <tr><td>Sal</td><td>8 g</td><td>×2.5</td><td>20 g</td><td>No lineal: sazona al final</td></tr>
+          <tr><td>Tiempo de sudado</td><td>12 min</td><td>—</td><td>18–22 min</td><td>Más volumen, no ×2.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Escalar bien</h4><ul>
+        <li>Calcula el FC una vez y aplícalo a los ingredientes base</li>
+        <li>Sub-sazona: agrega sal y ají al final, probando</li>
+        <li>Reescala también el rendimiento y el costo por porción</li>
+        <li>Ajusta el equipo: olla más grande, tandas si hace falta</li>
+        <li>Anota la versión escalada como nueva ficha de producción</li>
+      </ul></div>
+      <div class="box no"><h4>Escalar mal</h4><ul>
+        <li>Multiplicar la sal y las especias por el FC "a ciegas"</li>
+        <li>Multiplicar el tiempo de cocción por el mismo factor</li>
+        <li>Meter el triple de volumen en la misma olla</li>
+        <li>No recostear: la merma cambia con el volumen</li>
+        <li>Escalar "a ojo" en plena producción sin ficha</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla práctica:</b> al escalar hacia arriba, la sal, el ají y los licores empieza con el 80% de lo que da la multiplicación y sube probando. Es mucho más fácil agregar sal que rescatar una base salada de 20 litros. Cuando bajas de escala (de 50 a 10), el riesgo se invierte: los ingredientes de sazón pesan más, mide con balanza fina.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Control de porciones</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La ficha puede estar perfecta, pero si en la línea se sirve "un poco más" cada vez, el food cost se dispara y nadie lo nota hasta el inventario. El control de porciones es lo que hace que el número de la ficha sea el número real. Es disciplina, y se apoya en herramientas simples.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Pesa y mide siempre</h3><div class="d">Balanza en la línea para proteínas, cucharón medido para salsas, porcionador de helado para arroz y purés. Lo que se sirve al ojo, se sirve de más.</div><div class="s">10 g de más × 60 platos = 600 g regalados</div></div>
+      <div class="tipo"><h3>Pre-porciona en mise</h3><div class="d">Filetes ya pesados y separados, salsas en biberones dosificadores, guarniciones en moldes. En el pico no hay tiempo de pesar: la porción se define antes del servicio.</div><div class="s">La constancia se arma con el local vacío</div></div>
+      <div class="tipo"><h3>Estándar visual</h3><div class="d">Foto del plato montado a la vista, vajilla del mismo tamaño y una muestra de referencia al inicio del turno. El ojo se calibra contra un patrón, no contra el ánimo del día.</div><div class="s">Todos apuntan a la misma foto</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:8px;color:var(--wine);font-weight:600">EL COSTO DE LA SOBREPORCIÓN · lomo fino a S/ 66/kg limpio</p>
+      <table class="t">
+        <thead><tr><th>Escenario</th><th>Porción real</th><th>Exceso</th><th>Costo extra/plato</th><th>× 60 platos/día</th><th>Al mes</th></tr></thead>
+        <tbody>
+          <tr><td>Según ficha</td><td>180 g</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>"Un poquito más"</td><td>200 g</td><td>+20 g</td><td>S/ 1.32</td><td>S/ 79</td><td>S/ 2 376</td></tr>
+          <tr><td>Mano suelta</td><td>230 g</td><td>+50 g</td><td>S/ 3.30</td><td>S/ 198</td><td>S/ 5 940</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><b>Esto no es tacañería, es respeto al comensal y al negocio:</b> la sobreporción no solo cuesta plata, rompe la experiencia. El comensal que un día recibe 230 g y al siguiente 160 g siente que el restaurante es inconsistente. La porción estándar garantiza que cada mesa pague por lo mismo y reciba lo mismo. Ese es el sello de una cocina profesional, no la generosidad improvisada.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Porción bajo control</h4><ul>
+        <li>Balanza encendida en la estación de montaje</li>
+        <li>Cucharones y biberones dosificadores rotulados por salsa</li>
+        <li>Proteínas pre-pesadas en el mise en place</li>
+        <li>Foto de montaje pegada a la vista de la línea</li>
+        <li>Chef verifica 2–3 platos al azar por servicio</li>
+      </ul></div>
+      <div class="box no"><h4>Porción a la deriva</h4><ul>
+        <li>Servir "a mano" salsas y guarniciones</li>
+        <li>Cambiar el tamaño de vajilla y no ajustar el montaje</li>
+        <li>"Le pongo más porque el cliente es habitual"</li>
+        <li>Cucharones distintos cada día en la misma salsa</li>
+        <li>Nadie revisa el plato antes de que salga al pase</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Food cost teórico vs. real: cerrar el círculo</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Tienes fichas costeadas y porciones controladas. Ahora hay que comprobar que la teoría se cumple. El food cost teórico es lo que deberías haber gastado según las recetas y las ventas; el real es lo que de verdad salió del inventario. La diferencia entre ambos es tu varianza, y ahí se esconde la plata que se fuga.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">📐</div><div><div class="t">Teórico</div><h4>1. Food cost teórico = fichas × platos vendidos</h4><p>Si vendiste 40 ceviches (costo ficha S/ 11.60) y 30 lomos (S/ 11.90), tu costo teórico de insumos fue 40×11.60 + 30×11.90 = <b>S/ 821</b>. Es lo que las recetas dicen que debiste gastar.</p></div></div>
+      <div class="paso"><div class="ico">📦</div><div><div class="t">Real</div><h4>2. Food cost real = inventario inicial + compras − final</h4><p>Cuentas el almacén al inicio, sumas las compras del periodo y restas lo que quedó al final. Ese consumo real de insumos se compara contra el teórico y contra las ventas.</p></div></div>
+      <div class="paso"><div class="ico">🔍</div><div><div class="t">Varianza</div><h4>3. Varianza = real − teórico</h4><p>Si el real fue S/ 940 y el teórico S/ 821, hay S/ 119 de varianza (14% de más). Una varianza sana está por debajo del 2–3%. Más que eso es una alarma, no un redondeo.</p></div></div>
+      <div class="paso"><div class="ico">🛠️</div><div><div class="t">Acción</div><h4>4. Rastrea la causa y corrige</h4><p>Las cuatro sospechosas de siempre: sobreporción, merma no registrada, mal costeo de fichas y mermas por robo o vencimiento. Ataca la más grande primero, no todas a la vez.</p></div></div>
+    </div>
+    <div class="callout"><b>Con Prep! esto es automático:</b> el módulo <b>Recetas</b> guarda las fichas costeadas y el food cost por plato; <b>Mercado</b> lleva el inventario, las compras y las mermas; y la vista <b>Teórico vs. real</b> cruza las ventas del POS con las recetas para depletar insumos y mostrarte la varianza sin sacar la calculadora. Tu trabajo es mantener las fichas al día y registrar cada merma. El sistema hace las restas y te dice dónde se está yendo la plata.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Círculo cerrado</h4><ul>
+        <li>Fichas actualizadas cuando cambia un precio de compra</li>
+        <li>Toda merma registrada con motivo (se cayó, se venció, prueba)</li>
+        <li>Inventario contado con periodicidad fija (semanal / quincenal)</li>
+        <li>Varianza revisada y explicada, no escondida</li>
+        <li>Precios de carta ajustados si el costo subió de forma sostenida</li>
+      </ul></div>
+      <div class="box no"><h4>Fuga sin control</h4><ul>
+        <li>Fichas de hace un año con precios viejos</li>
+        <li>Mermas que se botan sin anotar</li>
+        <li>Contar inventario "cuando se pueda"</li>
+        <li>Ver la varianza y decir "algo habrá pasado"</li>
+        <li>Comer la subida de insumos sin tocar el precio</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Ficha técnica</b><span>Receta estándar de la casa: ingredientes, gramajes, procedimiento, rendimiento, costo y foto de montaje. La versión oficial que cualquiera puede seguir.</span></div>
+      <div class="gterm"><b>Food cost</b><span>Costo de los insumos de un plato o del negocio. En soles (por plato) o en porcentaje (contra la venta).</span></div>
+      <div class="gterm"><b>Food cost %</b><span>Costo de insumos ÷ precio de venta sin IGV. Cuánto de lo que cobras se va en materia prima. Meta típica en alta cocina: 28–35%.</span></div>
+      <div class="gterm"><b>Merma</b><span>Peso o producto que se pierde al limpiar, cocinar o por deterioro. Lo que compras pero no llega al plato.</span></div>
+      <div class="gterm"><b>Rendimiento (yield)</b><span>Porción aprovechable de un insumo tras limpiarlo. Neto ÷ bruto. Un pescado con 60% de rendimiento deja 600 g limpios por kilo.</span></div>
+      <div class="gterm"><b>Costo AP / EP</b><span>AP (As Purchased) es el precio tal como se compra; EP (Edible Portion) es el precio ya limpio, ajustado por rendimiento. Se costea con EP.</span></div>
+      <div class="gterm"><b>Costo por porción</b><span>Suma del costo EP de cada ingrediente por la cantidad neta que lleva una porción, más miscelánea (sal, aceite, hierbas).</span></div>
+      <div class="gterm"><b>Precio de venta</b><span>Costo por porción ÷ food cost objetivo, redondeado hacia arriba a un precio de carta. Siempre calculado sin IGV.</span></div>
+      <div class="gterm"><b>Factor de conversión (FC)</b><span>Porciones que necesitas ÷ porciones de la receta. Multiplicador para escalar los ingredientes lineales.</span></div>
+      <div class="gterm"><b>Porción estándar</b><span>Cantidad exacta (en gramos o unidades) que debe llevar cada plato. Lo que garantiza consistencia y food cost real.</span></div>
+      <div class="gterm"><b>Food cost teórico</b><span>Lo que deberías haber gastado según las fichas × los platos vendidos. El costo "de manual".</span></div>
+      <div class="gterm"><b>Food cost real</b><span>Consumo efectivo de insumos: inventario inicial + compras − inventario final. Lo que de verdad salió del almacén.</span></div>
+      <div class="gterm"><b>Varianza</b><span>Diferencia entre food cost real y teórico. Sana por debajo de 2–3%; más que eso señala sobreporción, merma o robo.</span></div>
+      <div class="gterm"><b>Sub-receta</b><span>Preparación base que se usa en varios platos (crema de ají, fondo, salsa criolla). Se costea una vez y se reutiliza.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en cocina</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Food Cost · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Fórmulas clave</h4><ul>
+          <li>Food cost % = costo ÷ precio (sin IGV)</li>
+          <li>Precio = costo ÷ food cost objetivo</li>
+          <li>Costo EP = precio AP ÷ rendimiento</li>
+          <li>Rendimiento = neto ÷ bruto</li>
+          <li>Varianza = food cost real − teórico</li>
+        </ul></div>
+        <div class="op-box"><h4>Objetivos de food cost</h4><ul>
+          <li>Bebidas y cócteles: 18–24%</li>
+          <li>Entradas y guarniciones: 22–28%</li>
+          <li>Fondos de proteína cara: 30–35%</li>
+          <li>Lo que manda: el promedio ponderado por ventas</li>
+          <li>Meta de varianza real vs. teórico: &lt;2–3%</li>
+        </ul></div>
+        <div class="op-box"><h4>Costeo sin engañarte</h4><ul>
+          <li>Costea con precio limpio (EP), no con el del kilo</li>
+          <li>Mide tu propia merma, no la copies</li>
+          <li>Suma sal, aceite y hierbas como miscelánea</li>
+          <li>Actualiza precios al cambiar de proveedor</li>
+          <li>Separa sub-recetas reutilizables</li>
+        </ul></div>
+        <div class="op-box"><h4>Control de porciones</h4><ul>
+          <li>Balanza en la línea, cucharón y biberón medidos</li>
+          <li>Pre-porciona proteínas en el mise en place</li>
+          <li>Foto de montaje a la vista + vajilla uniforme</li>
+          <li>Al escalar: sal y ají al 80% y sube probando</li>
+          <li>Registra cada merma con su motivo</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Recetas estándar y food cost · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

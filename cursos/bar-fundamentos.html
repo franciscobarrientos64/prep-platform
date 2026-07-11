@@ -1,0 +1,304 @@
+<!-- Curso: Bartender: fundamentos (bartender) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Bartender: fundamentos · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230e7c86'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Barra &amp; Coctelería</span>
+    <nav class="nav">
+      <a href="#m1">1 · Mise en place</a><a href="#m2">2 · Herramientas</a><a href="#m3">3 · Hielo</a><a href="#m4">4 · Técnicas base</a><a href="#m5">5 · Cristalería</a><a href="#m6">6 · Servicio y cierre</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0e7c86">
+    <div class="k">Academia Prep! · Bar</div>
+    <h1>Bartender: fundamentos</h1>
+    <p>La base del oficio detrás de la barra: montar tu estación como un profesional, dominar las tres técnicas madre —batido, refrescado y macerado—, entender por qué el hielo manda y servir cada trago en la copa correcta. No memorizas recetas: aprendes a leerlas y a repetirlas igual, trago tras trago, aunque el salón esté a reventar.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Bartender</span><span>🍸 Bar / BOH-FOH</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> la barra es el punto más rentable y más visible del restaurante. Un pisco sour montado en 90 segundos, siempre igual de bueno, paga la noche; un trago flojo, aguado o distinto cada vez, se recuerda peor que un plato malo porque el invitado te vio hacerlo. Dominar los fundamentos es lo que separa a quien "prepara tragos" de quien sostiene una barra bajo presión.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Mise en place de barra</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de que llegue el primer invitado, la barra ya ganó o perdió la noche. Mise en place ("todo en su sitio") es tener cada botella, cítrico, herramienta y guarnición al alcance de la mano, en el mismo lugar de siempre, para que puedas armar un trago sin mirar y sin dar un paso de más.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Speed rail cargado</h3><div class="d">La riel frontal lleva tus botellas de más rotación: pisco quebranta, pisco acholado, ron, vodka, gin, triple sec y jarabe de goma. Mismo orden siempre. Si la mano ya sabe dónde está el pisco, no pierdes 3 segundos por trago.</div></div>
+      <div class="tipo"><h3>Cítricos exprimidos del día</h3><div class="d">Limón peruano exprimido fresco cada servicio, colado y en botella rotulada con la hora. El zumo se oxida y amarga en horas; nunca uses jugo de ayer. Calcula ~1 kg de limón por cada 20 pisco sours previstos.</div></div>
+      <div class="tipo"><h3>Jarabe de goma listo</h3><div class="d">Goma 1:1 (azúcar blanca : agua) o 2:1 para más cuerpo. Prepáralo en frío o tibio, cuélalo y guárdalo en botella dosificadora rotulada con fecha. Dura ~1 semana en frío. Es tu dulzor estándar: sin él, cada trago sale distinto.</div></div>
+      <div class="tipo"><h3>Estación de guarniciones</h3><div class="d">Rodajas y twists de limón, hojas de hierbabuena lavadas en agua con hielo, amargo de angostura, sal y azúcar para escarchar. Todo en recipientes tapados sobre cama de hielo. Repón antes de que se acaben, no cuando ya se acabaron.</div></div>
+      <div class="tipo"><h3>Hielo dividido</h3><div class="d">Dos hieleras separadas: una de hielo de servicio (el que va al vaso) y otra de trabajo (el que va a la coctelera). Nunca metas la mano ni el vaso a la hielera: usa pinza o pala. El hielo es alimento, se contamina igual que cualquier otro.</div></div>
+      <div class="tipo"><h3>Zona húmeda y zona seca</h3><div class="d">Coctelera, jiggers y colador cerca del hielo y el lavadero (zona húmeda). Copas, botellas y guarniciones lejos de salpicaduras (zona seca). Un paño para vidrio y otro para superficie, nunca el mismo.</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro de la barra:</b> todo vuelve a su lugar apenas lo usas. Una coctelera dejada "un segundo" en el lugar equivocado es el trago que se demora cuando entran seis comandas juntas. La barra ordenada no es estética: es velocidad.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Las herramientas del bartender</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Cada herramienta hace una cosa y la hace bien. Conócelas por su nombre, sabe para qué sirve cada una y cuídalas: una coctelera abollada o un jigger torcido te cambian el trago sin que te des cuenta.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Herramienta</th><th>Para qué sirve</th><th>Detalle que importa</th></tr></thead>
+        <tbody>
+          <tr><td><b>Coctelera Boston</b></td><td>Batir tragos con cítricos, clara, crema o jugo. Dos piezas: lata + lata o lata + vaso.</td><td>Sella con un golpe seco en ángulo; abre con una palmada en el punto donde las dos piezas se traban.</td></tr>
+          <tr><td><b>Jigger (medidor)</b></td><td>Medir el licor y los modificadores con exactitud. Doble cono, normalmente 30/45 ml o 25/50 ml.</td><td>Llénalo hasta el borde, no "a ojo". La consistencia del trago vive aquí.</td></tr>
+          <tr><td><b>Vaso mezclador</b></td><td>Refrescar (remover) tragos sin cítricos: un negroni, un martini, un manhattan.</td><td>Grueso y pesado para que no se caliente; se usa con hielo grande y bar spoon.</td></tr>
+          <tr><td><b>Bar spoon</b></td><td>Remover en espiral, medir dosis pequeñas (~5 ml) y flotar capas.</td><td>El mango largo y torcido deja girar la cucharilla contra la pared del vaso sin esfuerzo.</td></tr>
+          <tr><td><b>Colador Hawthorne</b></td><td>Colar de la coctelera reteniendo hielo y pulpa. Tiene resorte.</td><td>Ajusta el resorte contra el borde; empújalo con el índice para abrir o cerrar el paso.</td></tr>
+          <tr><td><b>Colador fino</b></td><td>Doble colado: retiene astillas de hielo y trozos de hierba o pulpa.</td><td>Se sostiene sobre la copa mientras cuelas con el Hawthorne. Da un trago limpio y sedoso.</td></tr>
+          <tr><td><b>Muddler (macerador)</b></td><td>Machacar hierbas, frutas y azúcar para liberar aroma y jugo.</td><td>Presiona y gira, no golpees. De madera sin barniz o de plástico food-grade.</td></tr>
+          <tr><td><b>Exprimidor de mano</b></td><td>Sacar zumo de limón al momento sin amargar la cáscara.</td><td>El limón va con la piel hacia arriba: el aceite de la cáscara no cae al zumo.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Cuidado que sí</h4><ul>
+        <li>Lava coctelera y jigger entre trago y trago si cambias de receta</li>
+        <li>Seca el metal apenas lo lavas: el agua deja marcas y oxida el resorte</li>
+        <li>Ten dos jiggers: uno para dulces/jarabes, otro para licores</li>
+        <li>Revisa que el resorte del Hawthorne no esté flojo antes del servicio</li>
+      </ul></div>
+      <div class="box no"><h4>Cuidado que no</h4><ul>
+        <li>Medir "al ojo" con el pico de la botella cuando hay apuro</li>
+        <li>Usar el mismo muddler sin lavarlo entre hierbabuena y frutos rojos</li>
+        <li>Golpear el muddler como martillo: rompe la fibra y amarga la hierba</li>
+        <li>Dejar la coctelera armada y mojada por dentro entre pedidos</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco de estación:</b> arma un "kit mínimo" que nunca sale de tu vista en servicio: coctelera, dos jiggers, Hawthorne, colador fino, bar spoon y muddler. Si te falta uno, la comanda se frena. Tenlos secos y a la mano antes de abrir.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>El hielo: el ingrediente invisible</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El hielo no es "para enfriar y ya". Es el ingrediente que más agua aporta al trago y el que decide qué tan frío y qué tan diluido queda. Un mal hielo arruina una buena receta; un buen hielo salva casi cualquier cosa.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cubo grande (5×5 cm)</h3><div class="d">Poca superficie, se derrite lento. Va en tragos "on the rocks" y en removidos servidos con hielo: un old fashioned, un chilcano largo. Enfría sin aguar rápido.</div></div>
+      <div class="tipo"><h3>Cubo de bar estándar</h3><div class="d">El caballito de batalla. Llena la coctelera hasta arriba para batir y refrescar. Cuanto más hielo, más frío y menos dilución descontrolada, no al revés.</div></div>
+      <div class="tipo"><h3>Hielo pilé / frappé</h3><div class="d">Triturado. Enfría muy rápido y aguota mucho: perfecto para un julep de hierbabuena o un trago tropical, pésimo para un martini. Se hace en licuadora o con lienzo y mazo.</div></div>
+      <div class="tipo"><h3>Hielo de servicio limpio</h3><div class="d">Transparente, sin olor, sin astillas viejas. El hielo absorbe olores de la conservadora (limón, cebolla). Guárdalo tapado y lejos de alimentos aromáticos.</div></div>
+      <div class="tipo"><h3>Hielo seco para batir</h3><div class="d">Usa hielo recién sacado, duro y seco. El hielo "sudado" o a medio derretir ya trae agua: entra al trago aguándolo desde el primer segundo antes de que batas.</div></div>
+      <div class="tipo"><h3>Nunca reutilizar</h3><div class="d">El hielo que ya estuvo en una coctelera va al lavadero, jamás al vaso del invitado. Ya se derritió, tomó licor y perdió filo. Hielo de trabajo y hielo de servicio no se mezclan.</div></div>
+    </div>
+    <div class="callout"><b>La regla del frío:</b> más hielo enfría más rápido y, contra la intuición, diluye menos. Media coctelera de hielo se derrite entera tratando de enfriar; una coctelera llena enfría casi al instante y aguota poco. Cuando dudes, agrega hielo.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Las tres técnicas madre</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Casi todo lo que se sirve en una barra nace de tres gestos: batir, refrescar y macerar. Domínalos y podrás armar cientos de tragos leyendo una receta, sin haberla hecho nunca. La técnica correcta depende de los ingredientes, no del gusto.</p>
+
+    <h3 style="font-size:15px;margin:6px 0 4px">Batido (shake) — para cítricos, clara, crema o jugo</h3>
+    <div class="card" style="margin-bottom:12px">
+      <div class="paso"><div class="ico">🥃</div><div><div class="t">Paso 1 · Construye en la lata</div><h4>Mide y vierte los ingredientes</h4><p>Ejemplo pisco sour: 3 oz pisco quebranta, 1 oz zumo de limón, ¾ oz jarabe de goma, 1 clara de huevo. Mide todo con jigger, siempre en el mismo orden.</p></div></div>
+      <div class="paso"><div class="ico">🌀</div><div><div class="t">Paso 2 · Dry shake (opcional, con clara)</div><h4>Bate sin hielo primero</h4><p>Con clara de huevo, bate primero sin hielo 8–10 seg para montar la espuma. Luego abres, agregas hielo y vuelves a batir. Esa doble espuma es la firma del pisco sour.</p></div></div>
+      <div class="paso"><div class="ico">❄️</div><div><div class="t">Paso 3 · Hielo y sella</div><h4>Llena de hielo y cierra fuerte</h4><p>Coctelera hasta el tope con hielo seco. Sella con un golpe firme. Sostén ambas piezas: si se abre en pleno batido, se te va el trago encima.</p></div></div>
+      <div class="paso"><div class="ico">💪</div><div><div class="t">Paso 4 · Bate 10–15 seg</div><h4>Movimiento firme, sobre el hombro</h4><p>Bate hacia atrás y adelante, con el hielo golpeando de punta a punta. Escucharás el hielo romperse. Frío intenso, espuma y dilución justa. Sabor: debe estar bien frío al tacto de la lata.</p></div></div>
+      <div class="paso"><div class="ico">🍸</div><div><div class="t">Paso 5 · Doble colado</div><h4>Cuela con Hawthorne + colador fino</h4><p>Vierte reteniendo hielo y astillas. En copa fría. Remata el pisco sour con 3 gotas de angostura sobre la espuma. Sirve de inmediato: la espuma se cae con los minutos.</p></div></div>
+    </div>
+
+    <h3 style="font-size:15px;margin:6px 0 4px">Refrescado / removido (stir) — para tragos solo de licores</h3>
+    <div class="card" style="margin-bottom:12px">
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">Paso 1 · Vaso mezclador con hielo</div><h4>Hielo grande y limpio</h4><p>Un negroni, un martini o un manhattan no llevan cítrico: no se baten (quedarían turbios y aguados). Se remueven en vaso mezclador con hielo grande.</p></div></div>
+      <div class="paso"><div class="ico">🥄</div><div><div class="t">Paso 2 · Remueve en espiral</div><h4>Bar spoon contra la pared, 20–30 seg</h4><p>Gira suave, la cucharilla pegada a la pared del vaso. Enfría y diluye lo justo sin meter aire: el trago queda cristalino y sedoso.</p></div></div>
+      <div class="paso"><div class="ico">🍹</div><div><div class="t">Paso 3 · Cuela a la copa</div><h4>Solo Hawthorne, sin colador fino</h4><p>Sirve en copa fría (martini) o en vaso con un cubo grande (negroni). Termina con el twist de cáscara: exprime el aceite sobre el trago y pasa la piel por el borde.</p></div></div>
+    </div>
+
+    <h3 style="font-size:15px;margin:6px 0 4px">Macerado (muddle) — para liberar hierbas y frutas</h3>
+    <div class="card" style="margin-bottom:12px">
+      <div class="paso"><div class="ico">🌿</div><div><div class="t">Paso 1 · Hierba o fruta al fondo</div><h4>Hierbabuena, limón o frutos rojos</h4><p>Ejemplo base de un mojito o un smash: hojas de hierbabuena + un toque de jarabe o azúcar en el fondo del vaso. Hojas limpias y secas, sin tallo grueso.</p></div></div>
+      <div class="paso"><div class="ico">🔨</div><div><div class="t">Paso 2 · Presiona y gira, no machaques</div><h4>2–3 presiones suaves con giro</h4><p>La hierba solo necesita liberar su aceite aromático. Si la rompes de más, suelta la clorofila y amarga el trago. La fruta sí se presiona más para sacar el jugo.</p></div></div>
+      <div class="paso"><div class="ico">🥤</div><div><div class="t">Paso 3 · Arma sobre el macerado</div><h4>Licor, hielo y completa</h4><p>Agrega el pisco o ron, llena de hielo, completa con soda o jugo y da un remove corto para integrar. El aroma sube desde el fondo con cada sorbo.</p></div></div>
+    </div>
+
+    <div class="callout"><b>Cómo elegir la técnica sin dudar:</b> ¿lleva cítrico, jugo, clara o crema? → <b>se bate</b>. ¿es solo licores y modificadores? → <b>se refresca</b>. ¿empieza con hierba o fruta fresca en el vaso? → <b>se macera</b> y luego se arma. Esta regla decide el 90% de la carta.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Cristalería: la copa correcta</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La copa no es decoración: define la temperatura, concentra o abre el aroma y le dice al invitado qué está bebiendo antes del primer sorbo. Servir el trago correcto en la copa equivocada lo hace ver amateur aunque sepa bien.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Copa / vaso</th><th>Para qué</th><th>Ejemplo en carta peruana</th></tr></thead>
+        <tbody>
+          <tr><td><b>Copa coupé</b></td><td>Batidos servidos sin hielo, con espuma.</td><td>Pisco sour, algarrobina, capitán</td></tr>
+          <tr><td><b>Copa martini / cóctel</b></td><td>Refrescados sin hielo, servidos bien fríos.</td><td>Martini, manhattan</td></tr>
+          <tr><td><b>Vaso alto (highball / collins)</b></td><td>Tragos largos con soda o jugo, mucho hielo.</td><td>Chilcano de pisco, cuba libre, mojito</td></tr>
+          <tr><td><b>Vaso bajo (old fashioned / rocks)</b></td><td>Tragos cortos on the rocks, con cubo grande.</td><td>Old fashioned, negroni, pisco puro con hielo</td></tr>
+          <tr><td><b>Copa de vino</b></td><td>Vino y tragos aromáticos que ganan al abrirse.</td><td>Sangría, spritz, vino de la casa</td></tr>
+          <tr><td><b>Copa flauta</b></td><td>Espumantes: conserva la burbuja y el frío.</td><td>Champán, prosecco, coctel con espumante</td></tr>
+          <tr><td><b>Vaso shot / caballito</b></td><td>Servicio directo de destilado sin diluir.</td><td>Pisco puro, tequila, catas de pisco</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Cristalería impecable</h4><ul>
+        <li>Enfría la copa antes: hielo y agua adentro mientras armas el trago</li>
+        <li>Pule con paño de microfibra a contraluz, sin dejar huellas</li>
+        <li>Toma la copa por el tallo o la base, nunca por el borde</li>
+        <li>Revisa cada copa antes de servir: sin manchas, sin lápiz labial, sin astillas</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que se ven</h4><ul>
+        <li>Servir un batido con espuma en vaso alto: la espuma se pierde</li>
+        <li>Copa tibia recién salida del lavavajillas: baja el trago al instante</li>
+        <li>Huellas de dedos en el cristal bajo la luz de la barra</li>
+        <li>Copa con astilla o rajadura: se retira, no se sirve jamás</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla práctica:</b> con espuma y sin hielo → coupé. Solo licor y sin hielo → martini. Largo con burbujas → vaso alto. Corto y potente → vaso bajo. Si tienes eso claro, aciertas casi toda la carta sin preguntar.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Servicio y cierre de barra</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Montar y hacer tragos es medio oficio; el otro medio es sostener el ritmo bajo presión, mantener la barra limpia toda la noche y cerrarla lista para mañana. Un cierre flojo se paga al día siguiente con una barra desordenada en plena hora punta.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Trabaja por tandas</h3><div class="d">Cuando entran seis comandas, agrúpalas: todos los pisco sours juntos, todos los chilcanos juntos. Mide, luego bate, luego cuela en serie. Batir de a uno cuando podías hacer cuatro es perder la noche.</div></div>
+      <div class="tipo"><h3>Limpia mientras trabajas</h3><div class="d">"Clean as you go": enjuaga la coctelera apenas cuelas, seca el metal, pasa el paño a la barra entre trago y trago. Una barra pegajosa a las 10 pm es una barra que no se limpió a las 8.</div></div>
+      <div class="tipo"><h3>Comunicación con el mozo</h3><div class="d">Repite la comanda en voz alta, avisa cuando un trago sale ("¡pisco sour listo, mesa 4!") y marca las alergias: sin huevo, sin lácteo, sin gluten. La barra también es responsable de lo que sirve.</div></div>
+      <div class="tipo"><h3>Control de mermas</h3><div class="d">Mide siempre con jigger: servir "generoso" a ojo se come el margen. Anota la botella que se vacía y las mermas (una copa rota, un trago devuelto) según el procedimiento de la casa.</div></div>
+      <div class="tipo"><h3>Consumo responsable</h3><div class="d">Sabe reconocer al invitado que ya bebió de más y avisa a tu jefe de sala. Ofrece agua, pausa el servicio de alcohol con tacto. Es parte del oficio, no una excepción.</div></div>
+      <div class="tipo"><h3>Cierre para el mañana</h3><div class="d">Descarta cítricos del día, tapa y refrigera jarabes rotulados, lava y seca toda la herramienta, limpia rieles y superficies, bota el hielo de trabajo y deja la lista de reposición. Abrir mañana debe tomar minutos, no una hora.</div></div>
+    </div>
+    <div class="callout"><b>El estándar Prep!:</b> un buen bartender se mide por el trago número cincuenta, no por el primero. Consistencia, limpieza y ritmo sostenidos toda la noche —esa es la diferencia entre una barra que aguanta un lleno total y una que colapsa.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Mise en place</b><span>"Todo en su sitio". El montaje previo de la barra: botellas, cítricos, jarabes, hielo y herramientas listos antes de abrir.</span></div>
+      <div class="gterm"><b>Speed rail</b><span>La riel frontal de la barra donde van las botellas de mayor rotación, en orden fijo, al alcance de la mano.</span></div>
+      <div class="gterm"><b>Jigger</b><span>Medidor de doble cono para dosificar licor y modificadores con exactitud. La clave de la consistencia.</span></div>
+      <div class="gterm"><b>Coctelera Boston</b><span>Coctelera de dos piezas (lata + lata o lata + vaso) que se usa para batir tragos con cítrico, clara o crema.</span></div>
+      <div class="gterm"><b>Batido (shake)</b><span>Técnica de agitar con hielo tragos que llevan cítrico, jugo, clara o crema. Enfría, integra y aporta espuma.</span></div>
+      <div class="gterm"><b>Refrescado (stir)</b><span>Remover en vaso mezclador tragos hechos solo de licores. Enfría y diluye sin airear ni enturbiar.</span></div>
+      <div class="gterm"><b>Macerado (muddle)</b><span>Presionar y girar hierbas o frutas con el muddler para liberar aroma y jugo antes de armar el trago.</span></div>
+      <div class="gterm"><b>Dry shake</b><span>Batir sin hielo primero (con clara de huevo) para montar la espuma; luego se bate de nuevo con hielo.</span></div>
+      <div class="gterm"><b>Doble colado</b><span>Colar con Hawthorne y colador fino a la vez para retener hielo, astillas, pulpa y trozos de hierba.</span></div>
+      <div class="gterm"><b>Dilución</b><span>El agua que el hielo aporta al trago al derretirse. Bien controlada equilibra el alcohol; mal controlada lo agua.</span></div>
+      <div class="gterm"><b>Jarabe de goma</b><span>Jarabe de azúcar (1:1 o 2:1) usado como dulzor estándar para que cada trago salga igual.</span></div>
+      <div class="gterm"><b>Twist</b><span>Cáscara de cítrico exprimida sobre el trago para soltar su aceite aromático; luego se pasa por el borde de la copa.</span></div>
+      <div class="gterm"><b>On the rocks</b><span>Servido con hielo en el vaso, a diferencia de "up" (colado sin hielo, en copa fría).</span></div>
+      <div class="gterm"><b>Clean as you go</b><span>Limpiar sobre la marcha: enjuagar, secar y ordenar entre trago y trago para no acumular desorden.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Bartender: fundamentos · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Mise en place antes de abrir</h4><ul>
+          <li>Speed rail cargado, mismo orden siempre</li>
+          <li>Limón exprimido fresco del día, colado y rotulado</li>
+          <li>Jarabe de goma en botella con fecha</li>
+          <li>Guarniciones, angostura y sal/azúcar listos</li>
+          <li>Hielo dividido: servicio vs trabajo</li>
+        </ul></div>
+        <div class="op-box"><h4>Elige la técnica</h4><ul>
+          <li>¿Cítrico, jugo, clara o crema? → BATIR</li>
+          <li>¿Solo licores y modificadores? → REFRESCAR</li>
+          <li>¿Empieza con hierba o fruta? → MACERAR</li>
+          <li>Con clara → dry shake primero</li>
+          <li>Siempre mide con jigger, nunca a ojo</li>
+        </ul></div>
+        <div class="op-box"><h4>Hielo</h4><ul>
+          <li>Más hielo = más frío y menos dilución</li>
+          <li>Coctelera llena de hielo seco y duro</li>
+          <li>Cubo grande para on the rocks</li>
+          <li>Hielo de trabajo jamás va al vaso</li>
+        </ul></div>
+        <div class="op-box"><h4>La copa correcta</h4><ul>
+          <li>Espuma sin hielo → coupé</li>
+          <li>Licor sin hielo → martini</li>
+          <li>Largo con burbujas → vaso alto</li>
+          <li>Corto y potente → vaso bajo (rocks)</li>
+          <li>Enfría y pule la copa antes de servir</li>
+        </ul></div>
+        <div class="op-box"><h4>Pisco sour de memoria</h4><ul>
+          <li>3 oz pisco · 1 oz limón · ¾ oz goma · 1 clara</li>
+          <li>Dry shake → hielo → bate 10–15 seg</li>
+          <li>Doble colado a coupé fría</li>
+          <li>3 gotas de angostura sobre la espuma</li>
+          <li>Sirve de inmediato</li>
+        </ul></div>
+        <div class="op-box"><h4>Servicio y cierre</h4><ul>
+          <li>Trabaja por tandas cuando llueven comandas</li>
+          <li>Clean as you go toda la noche</li>
+          <li>Avisa alergias: sin huevo / lácteo / gluten</li>
+          <li>Consumo responsable: agua y aviso al jefe</li>
+          <li>Cierra: cítricos fuera, herramienta seca, reposición anotada</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Bartender: fundamentos · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

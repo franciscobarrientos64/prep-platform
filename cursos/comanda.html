@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Toma de comanda y manejo de bandeja · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b8442a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Comanda y bandeja</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#b8442a">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Toma de comanda y manejo de bandeja</h1>
+    <p>La comanda es un contrato con la cocina: lo que apuntas es lo que sale. Aquí aprendes a tomar la orden sin errores, hablar el idioma del pase, marchar por tiempos y mover la bandeja con seguridad, plato tras plato, mesa tras mesa.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Mesero / Runner</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una comanda mal tomada quema producto, retrasa toda la mesa y descuadra la caja; una bandeja mal cargada termina en el piso frente al invitado. Dominar ambas es lo que separa a un mesero de un profesional de sala.</div>
+
+  <!-- ==================== MÓDULO 1 ==================== -->
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Antes de la mesa: tu mise en place de sala</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">No se toma una comanda de memoria improvisada. Se llega a la mesa con la carta sabida, la libreta lista y la estación surtida. La mitad de los errores de comanda nacen antes de que el invitado hable.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Conoce la carta hoy</h3><div class="d">Antes de abrir, memoriza los 86 (agotados) del día, los platos nuevos y el especial. Prueba lo que el chef mandó a degustar: no puedes vender lo que no probaste.</div><div class="s">Pre-servicio · 10 min</div></div>
+      <div class="tipo"><h3>Herramienta lista</h3><div class="d">Comandera o tablet cargada, dos lapiceros que escriban, mechero/encendedor si hay flambeado, destapador y descorchador en el bolsillo del mandil.</div><div class="s">Nunca vuelvas por un lapicero</div></div>
+      <div class="tipo"><h3>Sabe tu numeración</h3><div class="d">Cada mesa tiene un asiento 1 fijo (normalmente el que mira a la puerta o la referencia del salón). Sin numeración clara, el plato llega a la persona equivocada.</div><div class="s">Casa Italia: silla 1 = frente a barra</div></div>
+      <div class="tipo"><h3>Alérgenos a la mano</h3><div class="d">Ten claro qué platos llevan gluten, lácteos, frutos secos, mariscos y ají. Si no estás seguro, la respuesta es "déjeme confirmar con cocina", nunca "creo que no".</div><div class="s">Seguridad del invitado</div></div>
+      <div class="tipo"><h3>Lee tu rango</h3><div class="d">Camina tus mesas antes del turno: quién ya está sentado, quién espera carta, quién pidió la cuenta. Entras a servicio con el mapa en la cabeza.</div><div class="s">Situational awareness</div></div>
+      <div class="tipo"><h3>Palabra clave: "Oído"</h3><div class="d">En Prep! todo lo que se procesa es "Oído", lo entregado es "Servido" y lo que va a cocina es "En fuego". Usa el mismo lenguaje al cantar y al apuntar.</div><div class="s">Micro-copy del sistema</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> si te preguntan por un plato y dudas, no inventes. "Se lo confirmo en un segundo" cuesta 30 segundos; un invitado con alergia mal informado cuesta el restaurante.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 2 ==================== -->
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Tomar la orden sin errores</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">La secuencia importa tanto como la letra. Se toma la comanda en orden, se apunta por asiento, se registran los modificadores y se cierra repitiendo. Así la cocina recibe algo que puede leer y ejecutar.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">looks_one</span></div>
+      <div><div class="t">Paso 1 · Posición</div><h4>Ponte donde te vean, no encima</h4><p>Párate a la derecha del invitado que abre, cuerpo ligeramente inclinado, libreta abajo. Nunca apoyes la mano en la mesa ni interrumpas una conversación: espera el contacto visual.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">looks_two</span></div>
+      <div><div class="t">Paso 2 · Sentido del reloj</div><h4>Empieza por el asiento 1 y sigue en orden</h4><p>Toma bebidas primero (o el especial si la mesa aún duda). Anota siempre en sentido horario desde el asiento 1. Si el anfitrión pide "ordeno por la mesa", igual apúntalo por asiento para poder marcar sin preguntar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">edit_note</span></div>
+      <div><div class="t">Paso 3 · Apunta por asiento</div><h4>Cada línea es una silla</h4><p>Formato: <b>número de silla — plato — modificador — término</b>. Ejemplo: "S3 · Ravioli funghi · sin culantro · alergia lácteos". Un plato compartido va como "centro/mesa". Nunca agrupes dos platos distintos en una línea.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">restaurant</span></div>
+      <div><div class="t">Paso 4 · Recomienda y sube el ticket</div><h4>Sugiere con criterio, no con guion</h4><p>Ofrece la entrada para compartir, la guarnición que redondea el fondo, la copa que marida. "El osso buco pide una polenta al lado" vende y cuida al invitado. Vender de más lo que no van a comer arruina la experiencia.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">check_circle</span></div>
+      <div><div class="t">Paso 5 · Cierra repitiendo</div><h4>Lee la comanda en voz alta</h4><p>"Entonces: dos ravioli, un osso buco término tres cuartos, una ensalada sin queso por alergia y una botella de agua con gas." Confirmar en la mesa evita el 90% de las devoluciones. Recién ahí disparas al sistema.</p></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Apuntar por número de silla, siempre</li>
+        <li>Escribir modificadores y alergias en el momento</li>
+        <li>Repetir la orden completa antes de marchar</li>
+        <li>Preguntar el término de la carne y cómo se cocina el huevo</li>
+        <li>Avisar de una vez si un plato demora (risotto, entero al horno)</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Confiar en la memoria "para no interrumpir"</li>
+        <li>Anotar "lo mismo x2" sin desglosar por silla</li>
+        <li>Prometer un cambio de receta sin consultar a cocina</li>
+        <li>Dejar el término o punto de cocción en blanco</li>
+        <li>Salir de la mesa sin cerrar y confirmar</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Trampa clásica:</b> la mesa que "va agregando". Cierra cada ronda ("¿algo más por ahora?") y márchala; no dejes una comanda abierta media hora o la cocina no sabe cuándo empezar.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 3 ==================== -->
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>El idioma del pase: términos y abreviaturas</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La cocina no lee frases, lee claves. Aprende los términos de cocción, cómo se cantan los pedidos y cómo se escribe un modificador para que el cocinero entienda sin levantar la cabeza.</p>
+    <table class="t">
+      <thead><tr><th>Cocción de carne</th><th>Cómo se pide</th><th>Cómo se ve al corte</th></tr></thead>
+      <tbody>
+        <tr><td>Azul / bleu</td><td>"Vuelta y vuelta"</td><td>Sellada afuera, casi cruda y fría al centro</td></tr>
+        <tr><td>Rojo / jugoso</td><td>Término rojo o "1/4"</td><td>Centro rojo tibio, mucho jugo</td></tr>
+        <tr><td>Medio / a punto</td><td>"Término medio", "3/4"</td><td>Centro rosado, firme y jugoso</td></tr>
+        <tr><td>Tres cuartos</td><td>"Tres cuartos"</td><td>Rosado tenue solo al centro</td></tr>
+        <tr><td>Bien cocido</td><td>"Bien hecho", "cocido"</td><td>Sin rosado, gris parejo (avisa: reseca)</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Cómo se canta</h3><div class="d">Al pase se canta el plato, no el ingrediente: "Marcha una entrada, sigue un ravioli, dispara un osso buco". El expedidor arma la mesa con eso.</div></div>
+      <div class="tipo"><h3>Modificadores</h3><div class="d">"Sin", "aparte", "extra", "cambio por". Ejemplo: "risotto sin champiñón, parmesano aparte". Lo que va aparte se escribe pegado al plato, no al final de la comanda.</div></div>
+      <div class="tipo"><h3>Alergia ≠ preferencia</h3><div class="d">"No le gusta el ají" se escribe como preferencia. "Alergia al maní" se escribe en rojo o con ⚠ y se canta en voz alta al pase. Son dos mundos distintos.</div></div>
+      <div class="tipo"><h3>El huevo</h3><div class="d">Frito, poché, a la copa, revuelto, vuelta y vuelta. En un tallarín carbonara o un lomo montado, el término del huevo se pregunta igual que el de la carne.</div></div>
+      <div class="tipo"><h3>"86"</h3><div class="d">Cuando un plato se agota, la cocina dice "86 osso buco". Lo tachas de tu carta mental y no lo ofreces más hasta que lo levanten.</div></div>
+      <div class="tipo"><h3>"En el aire" / "all day"</h3><div class="d">"All day tres ravioli" = el total de ravioli pendientes en cocina ahora mismo, sumando todas las mesas. Te ayuda a estimar tiempos.</div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Abreviatura</th><th>Significa</th><th>Ejemplo en comanda</th></tr></thead>
+      <tbody>
+        <tr><td>S/N</td><td>Silla / número</td><td>S2: gnocchi</td></tr>
+        <tr><td>x2, x3</td><td>Cantidad</td><td>Bruschetta x2</td></tr>
+        <tr><td>SG</td><td>Sin gluten</td><td>Pasta SG (opción penne de arroz)</td></tr>
+        <tr><td>VEG</td><td>Vegetariano / veggie</td><td>Lasagna VEG</td></tr>
+        <tr><td>MARCHA</td><td>Empezar a preparar</td><td>Marcha entradas mesa 7</td></tr>
+        <tr><td>DISPARA / FUEGO</td><td>Mandar a cocinar ya</td><td>Dispara fondos mesa 7</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Estándar Casa Italia:</b> los fondos de carne siempre llevan término escrito; la pasta lleva punto ("al dente" por defecto) solo si el invitado lo pide distinto; todo alérgeno va marcado con ⚠ y se canta al expedidor sí o sí.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 4 ==================== -->
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Marchar por tiempos (course timing)</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Marchar es controlar el ritmo de la mesa: que las entradas lleguen calientes, que el fondo salga cuando el invitado terminó la entrada, que nadie espere de más ni coma apurado. El mesero es el director de orquesta entre la mesa y el pase.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">flag</span></div>
+      <div><div class="t">Marcha</div><h4>Avisar sin cocinar aún</h4><p>Enviar el pedido a cocina en modo "marcha" alista los ingredientes pero no dispara la cocción. Sirve para que cocina vea lo que viene y organice la estación.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_fire_department</span></div>
+      <div><div class="t">Dispara / En fuego</div><h4>Cocinar ahora</h4><p>Cuando la mesa está lista para el siguiente tiempo, disparas. En Prep! el ítem pasa a "En fuego" en el KDS y arranca el timer de la Línea. Un fondo que se dispara tarde llega frío o corre a la mesa: ninguno sirve.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">timer</span></div>
+      <div><div class="t">Lee la mesa</div><h4>Dispara el fondo al retirar la entrada</h4><p>La señal para disparar el segundo tiempo es visual: cubiertos juntos, plato de entrada casi vacío. Ahí levantas la entrada y disparas el fondo. La cocina no adivina el ritmo de la mesa; tú se lo das.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">groups</span></div>
+      <div><div class="t">Cuida la mesa completa</div><h4>Todos comen a la vez</h4><p>Nadie recibe su fondo mientras el de al lado sigue esperando. Si un plato demora (algo al horno, un término bien cocido), avisa a cocina para sincronizar o avisa a la mesa. Platos que salen desparejos rompen la comida.</p></div>
+    </div>
+    <table class="t">
+      <thead><tr><th>Momento en la mesa</th><th>Qué haces con la cocina</th><th>Palabra Prep!</th></tr></thead>
+      <tbody>
+        <tr><td>Recién sentados, ya ordenaron</td><td>Marchas entradas, marcas fondos</td><td>Oído / Marcha</td></tr>
+        <tr><td>Comiendo la entrada</td><td>Fondos siguen en "marcha", listos para disparar</td><td>En espera</td></tr>
+        <tr><td>Cubiertos juntos, entrada terminada</td><td>Retiras y disparas fondos</td><td>En fuego</td></tr>
+        <tr><td>Fondo servido y consumido</td><td>Retiras, ofreces postres/café, marchas dulces</td><td>Servido</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Error caro:</b> disparar todo junto "para no volver a cocina". Las entradas y los fondos salen al mismo tiempo, la mesa se satura, el fondo se enfría esperando y terminas devolviendo comida. Marcha, espera la señal, dispara.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 5 ==================== -->
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Cargar y equilibrar la bandeja</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La bandeja no se carga con fuerza, se carga con física. Peso al centro, sobre la palma, distribuido en círculo. Bien armada, un mesero mueve una mesa completa en un viaje sin que tiemble una copa.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">balance</span></div>
+      <div><div class="t">Punto de equilibrio</div><h4>El peso vive en el centro</h4><p>Los platos y jarras más pesados van al centro de la bandeja, justo sobre tu palma. Lo liviano (panera, copas vacías) hacia el borde. Si el centro está vacío y el peso en la orilla, la bandeja bascula.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">back_hand</span></div>
+      <div><div class="t">La mano</div><h4>Palma abierta, no dedos</h4><p>La bandeja descansa sobre la palma y las yemas abiertas, brazo pegado al costado, codo en 90°. La otra mano estabiliza el borde. Nunca la cargues con los dedos como pinza: no aguanta y te tiembla.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">arrow_upward</span></div>
+      <div><div class="t">Levantar</div><h4>Con las piernas, desde el jack</h4><p>Carga y descarga sobre un soporte (jack/tijera) o el borde de la mesa auxiliar, nunca en el aire. Flexiona las rodillas, espalda recta, sube con las piernas. Así proteges tu espalda turno tras turno.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">directions_walk</span></div>
+      <div><div class="t">Transporte</div><h4>Mira al frente, no a la bandeja</h4><p>Camina firme, la vista al camino, no a los platos. Anuncia "¡voy detrás!" al cruzar por cocina o esquinas ciegas. En puertas de vaivén, mano libre adelante. La bandeja va por encima del hombro solo si la sabes rotar.</p></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Peso pesado al centro, sobre la palma</li>
+        <li>Copas boca arriba y separadas del filo</li>
+        <li>Bandeja seca y con liner antideslizante</li>
+        <li>Descargar siempre desde afuera hacia adentro</li>
+        <li>Un viaje bien armado antes que tres a medias</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Apilar más de lo que controlas por vanidad</li>
+        <li>Cargar líquidos calientes al borde de la bandeja</li>
+        <li>Sostenerla solo con los dedos o contra la cadera</li>
+        <li>Caminar mirando los platos en vez del camino</li>
+        <li>Descargar en el aire sin apoyo ni jack</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Orden de descarga:</b> retira siempre desde el plato más cercano a tu cuerpo hacia el más lejano, o la bandeja pierde contrapeso y se voltea. Baja primero lo pesado del centro y reequilibra sobre la marcha.</div>
+  </section>
+
+  <!-- ==================== MÓDULO 6 ==================== -->
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Servir y retirar en la mesa</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La comanda perfecta y la bandeja perfecta se rematan en la mesa: servir el plato correcto a la persona correcta, por el lado correcto, en el orden correcto. Aquí el invitado juzga todo el servicio.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Plato por la izquierda</h3><div class="d">La comida se coloca por la izquierda del invitado; se retira por la derecha. Bebidas se sirven y retiran por la derecha. Regla mnemotécnica: "sólido izquierda, líquido derecha".</div></div>
+      <div class="tipo"><h3>Sin preguntar "¿de quién?"</h3><div class="d">Gracias a la numeración de sillas, llegas con el plato al invitado exacto sin "¿el ravioli de quién era?". Preguntar en la mesa delata que la comanda se tomó mal.</div></div>
+      <div class="tipo"><h3>Orden de prioridad</h3><div class="d">Se sirve primero a niños y adultos mayores, luego damas en sentido horario, luego caballeros, y al anfitrión al final. Todos deben recibir su plato casi al mismo tiempo.</div></div>
+      <div class="tipo"><h3>Marcar la mesa</h3><div class="d">Antes de que salga un plato, "marca": pon el cubierto que ese plato necesita (cuchara para sopa, cuchillo para carne). El plato nunca llega antes que su cubierto.</div></div>
+      <div class="tipo"><h3>Anuncia el plato</h3><div class="d">Al dejarlo: "Ravioli de funghi, buen provecho". Corto y claro. Si lleva un cuidado especial ("cuidado, el plato está caliente"), avísalo.</div></div>
+      <div class="tipo"><h3>Retirar bien</h3><div class="d">Retira cuando toda la mesa terminó (cubiertos juntos), nunca el plato de uno mientras otro sigue comiendo. Limpia migas antes del postre. Nunca apiles ruidosamente frente al invitado.</div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Colocar comida por la izquierda, retirar por la derecha</li>
+        <li>Servir siguiendo la prioridad y luego el reloj</li>
+        <li>Marcar cubiertos antes de que salga el plato</li>
+        <li>Retirar cuando toda la mesa terminó</li>
+        <li>Anunciar cada plato al dejarlo</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Cruzar el brazo por delante de la cara del invitado</li>
+        <li>Preguntar "¿de quién era esto?" con el plato en mano</li>
+        <li>Retirar el plato de uno que aún come</li>
+        <li>Apilar platos sucios a la vista de la mesa</li>
+        <li>Servir el fondo sin haber marcado el cuchillo</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cierre del ciclo:</b> comanda tomada por asiento → marchada por tiempos → cargada equilibrada → servida por el lado y a la persona correcta. Cuando los cuatro pasos salen limpios, la mesa ni nota el trabajo detrás: eso es servicio de nivel.</div>
+  </section>
+
+  <!-- ==================== GLOSARIO ==================== -->
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Comanda</b><span>La orden escrita del invitado. Es un contrato con la cocina y la caja: lo que se apunta es lo que se prepara y se cobra.</span></div>
+      <div class="gterm"><b>Marchar</b><span>Ordenar a la cocina el ritmo de preparación: qué plato empieza ahora y cuál espera, para que cada tiempo salga en su momento.</span></div>
+      <div class="gterm"><b>Disparar / En fuego</b><span>Dar la orden de cocinar ya un plato. En Prep! el ítem pasa a estado "En fuego" y arranca su timer en la Línea (KDS).</span></div>
+      <div class="gterm"><b>Course timing</b><span>La coreografía de los tiempos de la comida: entradas, fondo, postre, cada uno servido cuando la mesa está lista para él.</span></div>
+      <div class="gterm"><b>Pase / Expedidor</b><span>El puesto que arma y despacha las mesas completas desde cocina. Le cantas los platos y él coordina que salgan juntos.</span></div>
+      <div class="gterm"><b>86</b><span>Código para "agotado". "86 osso buco" significa que ese plato ya no se ofrece hasta nuevo aviso.</span></div>
+      <div class="gterm"><b>All day</b><span>El total de un plato pendiente en cocina sumando todas las mesas. "All day cuatro ravioli" = cuatro ravioli en cola ahora mismo.</span></div>
+      <div class="gterm"><b>Asiento / Silla</b><span>La posición numerada de cada invitado en la mesa, con un asiento 1 fijo. Permite servir el plato correcto sin preguntar.</span></div>
+      <div class="gterm"><b>Término</b><span>El punto de cocción de una carne: azul, rojo, medio, tres cuartos o bien cocido. Siempre se pregunta y se apunta.</span></div>
+      <div class="gterm"><b>Modificador</b><span>Un cambio sobre el plato base: "sin", "aparte", "extra", "cambio por". Se escribe pegado al plato al que afecta.</span></div>
+      <div class="gterm"><b>Marcar la mesa</b><span>Poner el cubierto que un plato requiere antes de servirlo (cuchara de sopa, cuchillo de carne). El cubierto llega antes que el plato.</span></div>
+      <div class="gterm"><b>Jack / Tijera</b><span>El soporte plegable donde se apoya la bandeja para cargar y descargar sin sostenerla en el aire.</span></div>
+      <div class="gterm"><b>Runner</b><span>Quien corre los platos de la cocina a la mesa. Debe saber la numeración de sillas para entregar sin preguntar.</span></div>
+      <div class="gterm"><b>Alérgeno</b><span>Ingrediente que puede causar reacción (gluten, lácteos, frutos secos, mariscos). Se marca con ⚠ y se canta al pase en voz alta.</span></div>
+    </div>
+  </section>
+
+  <!-- ==================== ONE-PAGER ==================== -->
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Comanda y bandeja · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Tomar la orden</h4><ul>
+          <li>Apunta por número de silla, en sentido horario</li>
+          <li>Formato: silla — plato — modificador — término</li>
+          <li>Registra alergias en el momento y con ⚠</li>
+          <li>Repite la orden completa antes de disparar</li>
+        </ul></div>
+        <div class="op-box"><h4>Cocción de carne</h4><ul>
+          <li>Azul: vuelta y vuelta · Rojo: jugoso</li>
+          <li>Medio: rosado firme · Tres cuartos: rosado tenue</li>
+          <li>Bien cocido: sin rosado (avisa que reseca)</li>
+          <li>El huevo también lleva punto (poché, frito, copa)</li>
+        </ul></div>
+        <div class="op-box"><h4>Marchar por tiempos</h4><ul>
+          <li>Marcha = alistar · Dispara = cocinar ya</li>
+          <li>Dispara el fondo al retirar la entrada</li>
+          <li>Toda la mesa come a la vez</li>
+          <li>Nunca dispares todo junto "de una"</li>
+        </ul></div>
+        <div class="op-box"><h4>La bandeja</h4><ul>
+          <li>Peso pesado al centro, sobre la palma</li>
+          <li>Codo 90°, otra mano estabiliza el borde</li>
+          <li>Carga y descarga en jack, sube con las piernas</li>
+          <li>Descarga de adentro hacia afuera para no voltear</li>
+        </ul></div>
+        <div class="op-box"><h4>Servir en mesa</h4><ul>
+          <li>Sólido por la izquierda, líquido por la derecha</li>
+          <li>Prioridad: niños/mayores → damas → caballeros → anfitrión</li>
+          <li>Marca el cubierto antes de que salga el plato</li>
+          <li>Retira solo cuando toda la mesa terminó</li>
+        </ul></div>
+        <div class="op-box"><h4>Códigos del pase</h4><ul>
+          <li>86 = agotado · All day = total pendiente en cocina</li>
+          <li>Oído = procesando · En fuego = a cocina · Servido = entregado</li>
+          <li>SG = sin gluten · VEG = vegetariano</li>
+          <li>Duda con un plato: "se lo confirmo", nunca inventes</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Toma de comanda y manejo de bandeja · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

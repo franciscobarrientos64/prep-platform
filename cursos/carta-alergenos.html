@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Conocimiento de carta y alérgenos · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b3541e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Carta y alérgenos</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#glosario">Glosario</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#b3541e">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Conocimiento de carta y alérgenos</h1>
+    <p>Un mesero que domina la carta no lee platos: los cuenta. Sabe qué lleva cada preparación, cómo se cocina, qué alérgenos esconde y a quién se lo puede recomendar con seguridad. Este curso te da esa base: describir con hambre, responder sin dudar y proteger al comensal que te confía lo que puede o no puede comer.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~50 min</span><span>🎯 Mesero</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el comensal no ve la cocina; te ve a ti. Una descripción tibia baja el ticket y una respuesta improvisada sobre un alérgeno puede mandar a alguien al hospital. Conocer la carta es vender mejor; conocer los alérgenos es responsabilidad legal y humana. Las dos cosas viven en tu boca cuando llegas a la mesa.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Cómo está armada la carta</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de describir un plato tienes que entender la lógica de la carta: cómo se agrupan los platos, en qué orden se sirven y qué historia cuenta cada sección. Una carta no es una lista de precios: es un recorrido pensado por la cocina. Si lo entiendes, guías al comensal por ese recorrido en vez de solo tomar nota.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Para picar / entradas</h3><div class="d">Platos ligeros para abrir el apetito y compartir: causa nikkei, tiradito de fondo blanco, croquetas de ají de gallina. Se pensaron para el centro de la mesa.</div><div class="s">Sugiere 1 cada 2 personas</div></div>
+      <div class="tipo"><h3>Fondos de mar</h3><div class="d">Ceviches, arroces con mariscos, pescado del día. Marca siempre cuál es el pescado fresco de hoy: es tu recomendación más honesta.</div><div class="s">Pregunta al pase el pescado del día</div></div>
+      <div class="tipo"><h3>Fondos de carne</h3><div class="d">Lomo saltado, seco de cordero, anticuchos, osobuco. Aquí es clave el término de cocción y la guarnición que acompaña.</div><div class="s">Confirma siempre el término</div></div>
+      <div class="tipo"><h3>Pastas y risottos</h3><div class="d">En casa italiana: fettuccine, ravioles rellenos, risotto. Ojo con los rellenos y las salsas cremosas: esconden lácteos, huevo y gluten.</div><div class="s">Revisa relleno y salsa</div></div>
+      <div class="tipo"><h3>Postres</h3><div class="d">Suspiro, tres leches, tiramisú, helados de la casa. Casi todos cargan lácteos, huevo y gluten; ten a la mano la opción para intolerantes.</div><div class="s">Ten lista 1 opción sin gluten/lácteo</div></div>
+      <div class="tipo"><h3>Bar y bebidas</h3><div class="d">Pisco sours, chilcanos, vinos por copa, sin alcohol. El sour lleva clara de huevo; los vinos, sulfitos. Aprende 3 maridajes de memoria.</div><div class="s">Sour = clara de huevo</div></div>
+    </div>
+    <div class="callout"><b>Rutina de pre-servicio:</b> antes de cada turno pregunta en el line-up tres cosas: qué plato está 86 (agotado), cuál es el pescado del día y si cambió alguna preparación. Llegar a la mesa y decir "eso ya no lo tenemos" después de venderlo es el peor arranque posible.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Ingredientes y preparaciones que debes conocer</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">No hace falta que cocines, pero sí que sepas qué hay dentro de cada plato y cómo se hizo. El comensal preguntará "¿qué lleva?", "¿es muy picante?", "¿viene crudo?". Estas son las preparaciones base que cualquier mesero de nivel maneja de memoria, con su técnica y sus puntos de atención.</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>Plato</th><th>Qué lleva (lo esencial)</th><th>Técnica / punto</th><th>Ojo con</th></tr></thead>
+      <tbody>
+        <tr><td><b>Ceviche clásico</b></td><td>Pescado blanco fresco, limón, ají limo, cebolla, culantro, camote y choclo</td><td>El pescado se "cocina" en el ácido del limón (leche de tigre), no al fuego</td><td>Pescado y va crudo-curado; camote suaviza el picante</td></tr>
+        <tr><td><b>Tiradito</b></td><td>Láminas finas de pescado, crema de ají amarillo o rocoto, sin cebolla</td><td>Corte tipo sashimi, salsa emulsionada encima al momento</td><td>Pescado; la crema amarilla puede llevar ajo y aceite</td></tr>
+        <tr><td><b>Causa</b></td><td>Papa amarilla prensada con ají y limón, rellena de pollo, atún o cangrejo, con mayonesa</td><td>Se monta en frío en capas</td><td>Huevo (mayonesa), pescado/mariscos según relleno</td></tr>
+        <tr><td><b>Ají de gallina</b></td><td>Pollo deshilachado en crema de ají amarillo, pan, leche, pecanas y queso</td><td>Salsa ligada con pan remojado en leche</td><td>Lácteos, gluten (pan), frutos secos (pecana)</td></tr>
+        <tr><td><b>Lomo saltado</b></td><td>Lomo de res salteado con cebolla, tomate, sillao, papas fritas y arroz</td><td>Salteado a fuego alto en wok, término a pedido</td><td>Soja y gluten (sillao/salsa de ostión), confirmar término</td></tr>
+        <tr><td><b>Risotto</b></td><td>Arroz arborio cocido lento con caldo, mantequilla y queso parmesano</td><td>Se liga cremoso (mantecatura) al final</td><td>Lácteos; el caldo puede no ser vegetariano</td></tr>
+        <tr><td><b>Ravioles</b></td><td>Pasta rellena (ricotta, espinaca, carne) con salsa a elección</td><td>Masa fresca al huevo</td><td>Gluten, huevo, lácteos; salsa suma alérgenos</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>Frase que salva:</b> si no estás 100% seguro de qué lleva un plato, nunca adivines. Di "déjame confirmarlo con la cocina para darte el dato exacto" y ve a preguntar. Un mesero que verifica genera más confianza que uno que inventa.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Describir un plato que da hambre</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Describir bien es la diferencia entre "el lomo saltado" y "nuestro lomo saltado, con lomo fino salteado al wok bien jugoso, la papa dorada por fuera y ese toque ahumado del sillao". La segunda vende sola. Sigue esta estructura y sonará natural, no memorizado.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">restaurant</span></div>
+      <div><div class="t">1 · Protagonista</div><h4>Empieza por el ingrediente estrella</h4><p>Nombra primero lo que importa: "pulpo al olivo", "cordero de las alturas", "pescado del día". Da protagonismo al producto, no a la guarnición.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_fire_department</span></div>
+      <div><div class="t">2 · Técnica</div><h4>Cuenta cómo se cocina</h4><p>"A la brasa", "curado en limón", "cocción lenta de 8 horas". La técnica transmite oficio y justifica el precio. Es lo que no pueden hacer en casa.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">grain</span></div>
+      <div><div class="t">3 · Textura y sabor</div><h4>Apela a los sentidos</h4><p>"Crocante por fuera, jugoso por dentro", "cremoso", "un picante que sube suave". Palabras con temperatura y textura hacen salivar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">handshake</span></div>
+      <div><div class="t">4 · Cierre con criterio</div><h4>Da tu recomendación honesta</h4><p>"Es de mis favoritos", "va perfecto para compartir", "si es tu primera vez, este es el plato". Una opinión sincera cierra la venta sin presionar.</p></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí describe así</h4><ul>
+        <li>"El tiradito viene en láminas finas con crema de ají amarillo, fresco y suave de picante."</li>
+        <li>"El seco de cordero es cocción lenta, se deshace solo, con su frejol y arroz."</li>
+        <li>"El suspiro es cremoso, dulce justo, con su merengue al oporto encima."</li>
+      </ul></div>
+      <div class="box no"><h4>No describas así</h4><ul>
+        <li>"El tiradito es pescado con salsa." (frío, no vende)</li>
+        <li>"El cordero está rico." (opinión vacía, sin detalle)</li>
+        <li>"El postre es normal, dulce." (mata la venta)</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cuida el nivel de detalle:</b> describe con hambre pero no recites un ensayo. Dos o tres frases bien puestas bastan. Si el comensal quiere más, preguntará. Lee la mesa: al apurado dale lo esencial, al curioso regálale la historia.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Alérgenos: los que no puedes fallar</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Un alérgeno mal manejado no es una queja: es una emergencia médica. Estos son los alérgenos más frecuentes y dónde se esconden en una carta peruana e italiana. Memorízalos, porque muchos viven en salsas y bases que no se ven.</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>Alérgeno</th><th>Dónde se esconde en la carta</th><th>Reacción posible</th></tr></thead>
+      <tbody>
+        <tr><td><b>Gluten</b> (trigo)</td><td>Pan, pastas, empanizados, sillao común, cerveza, harina en salsas para espesar</td><td>Desde molestia digestiva hasta daño en celíacos</td></tr>
+        <tr><td><b>Lácteos</b></td><td>Ají de gallina, huancaína, risottos, cremas, postres, mantequilla, parmesano</td><td>Intolerancia o alergia (esta última grave)</td></tr>
+        <tr><td><b>Huevo</b></td><td>Mayonesa/causa, pisco sour (clara), pastas frescas, merengues, empanizados</td><td>Alergia, frecuente en niños</td></tr>
+        <tr><td><b>Pescado</b></td><td>Ceviches, tiraditos, salsa de anchoas, fondos de caldo de pescado</td><td>Anafilaxia posible</td></tr>
+        <tr><td><b>Mariscos</b> (crustáceos y moluscos)</td><td>Ceviche mixto, arroz con mariscos, chupes, causas de cangrejo, salsas</td><td>De las alergias más graves y comunes</td></tr>
+        <tr><td><b>Frutos secos</b></td><td>Pecanas en ají de gallina, salsas de pesto (nueces), postres, turrones</td><td>Anafilaxia; muy sensible</td></tr>
+        <tr><td><b>Maní</b></td><td>Salsas tipo huancaína "reforzada", algunos anticuchos, postres, tallarín saltado</td><td>Anafilaxia; el más letal, se maneja aparte del resto</td></tr>
+        <tr><td><b>Soja</b></td><td>Sillao, salsa de ostión, tofu, marinados nikkei, saltados</td><td>Alergia, común en cocina de fusión</td></tr>
+        <tr><td><b>Sésamo / ajonjolí</b></td><td>Terminado de platos nikkei, panes, aceite de ajonjolí en saltados</td><td>Alergia en aumento</td></tr>
+        <tr><td><b>Sulfitos</b></td><td>Vinos, pisco, frutos secos, algunos conservados</td><td>Asma y reacciones respiratorias</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="tipo"><h3>Alergia ≠ preferencia</h3><div class="d">"No como picante" es un gusto. "Soy alérgico al maní" es un riesgo de vida. Trata cada palabra "alérgico" como una alerta roja, no como un capricho.</div></div>
+      <div class="tipo"><h3>Contaminación cruzada</h3><div class="d">Un plato "sin gluten" deja de serlo si se cocina en la misma parrilla o con el mismo aceite que un empanizado. Avísalo a cocina: no basta con quitar el ingrediente visible.</div></div>
+      <div class="tipo"><h3>La cadena de aviso</h3><div class="d">El alérgeno viaja: comensal → tú → comanda escrita → cocina → chequeo al entregar. Si se rompe un eslabón, falla todo. Escríbelo siempre, nunca solo de palabra.</div></div>
+    </div>
+    <div class="callout"><b>Protocolo ante una alergia declarada:</b> 1) Escúchala y repítela en voz alta. 2) Anótala en la comanda de forma visible (en Prep! va por silla). 3) Confírmala con cocina antes de mandar el plato. 4) Al entregar, avisa "este es el plato sin maní que pediste". Nunca respondas "creo que no lleva". Si dudas, es "no" hasta confirmarlo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Restricciones y dietas: responder con seguridad</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cada vez más comensales llegan con una restricción: por salud, ética, religión o etapa de vida. No tienes que estar de acuerdo ni entenderla; tienes que respetarla y tener una respuesta lista. Conocer 2 o 3 opciones firmes de cada tipo te vuelve el mesero al que piden mesa.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Vegetariano</h3><div class="d">No come carne ni pescado, pero sí huevo y lácteos. Ofrece risotto de hongos, ravioles de ricotta, ensaladas. Confirma que el caldo base no sea de carne.</div><div class="s">Ojo: caldos ocultos</div></div>
+      <div class="tipo"><h3>Vegano</h3><div class="d">Nada de origen animal: ni huevo, ni lácteos, ni miel. Pasta al pomodoro sin queso, verduras a la parrilla. Avisa a cocina de saltar mantequilla y parmesano.</div><div class="s">Sin mantequilla ni queso</div></div>
+      <div class="tipo"><h3>Celíaco / sin gluten</h3><div class="d">No es moda: es una enfermedad. Nada de pan, pasta común ni empanizados, y sin contaminación cruzada. Ofrece ceviche, carnes a la parrilla, arroces.</div><div class="s">Cuida la cruzada</div></div>
+      <div class="tipo"><h3>Intolerante a la lactosa</h3><div class="d">Tolera trazas mejor que un alérgico, pero evita cremas y quesos. Sugiere platos a la brasa o al limón. Ofrece la versión sin crema si existe.</div><div class="s">Menos crema, más brasa</div></div>
+      <div class="tipo"><h3>Embarazada</h3><div class="d">Evita pescado crudo (ceviche, tiradito), embutidos y alcohol. Recomienda pescado cocido, sudados, un chilcano sin pisco. Nunca insistas con el sour.</div><div class="s">Nada crudo ni alcohol</div></div>
+      <div class="tipo"><h3>Restricción religiosa</h3><div class="d">Sin cerdo (halal/kosher), sin res, o ayunos. Pregunta con naturalidad "¿alguna preferencia que deba cuidar?" y ofrece opciones de mar o pollo.</div><div class="s">Pregunta sin incomodar</div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Haz esto</h4><ul>
+        <li>Pregunta al sentarse: "¿alguna alergia o algo que deba cuidar en el grupo?"</li>
+        <li>Ofrece alternativas concretas, no un "casi todo se puede adaptar".</li>
+        <li>Confirma con cocina si un plato se puede modificar antes de prometerlo.</li>
+        <li>Trata la restricción con la misma naturalidad que un término de carne.</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca hagas esto</h4><ul>
+        <li>Poner cara o cuestionar la dieta del comensal ("¿en serio nada de queso?").</li>
+        <li>Prometer una adaptación sin haberla confirmado en cocina.</li>
+        <li>Asumir que "un poquito no le hace" a un alérgico o celíaco.</li>
+        <li>Dejar la restricción solo en tu memoria sin anotarla en la comanda.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Recomendar y sugerir con criterio</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Recomendar bien sube el ticket y mejora la experiencia a la vez, sin que se sienta como venta forzada. El secreto es leer la mesa y sugerir lo que de verdad encaja con ese comensal, no lo más caro. La venta sugestiva honesta es un servicio, no un truco.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">groups</span></div>
+      <div><div class="t">Lee la mesa</div><h4>¿Quién es este comensal?</h4><p>Pareja que celebra, ejecutivos con prisa, familia con niños, turista curioso. Cada perfil quiere algo distinto: al apurado, plato rápido; al que celebra, algo para compartir y un postre memorable.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">star</span></div>
+      <div><div class="t">Guía la decisión</div><h4>Recomienda 2, no 20</h4><p>Ante la duda, no leas toda la carta. Ofrece dos opciones concretas: "de mar te llevaría el ceviche del día; de carne, el lomo saltado". Menos opciones, decisión más fácil y más rápida.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">wine_bar</span></div>
+      <div><div class="t">Sugiere el maridaje</div><h4>Une plato y bebida</h4><p>"Con el ceviche, un chilcano bien helado corta perfecto"; "para el cordero, una copa de malbec". Un maridaje sugerido con criterio sube el ticket y eleva el plato.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">cake</span></div>
+      <div><div class="t">Cierra la experiencia</div><h4>Ofrece postre y café</h4><p>No preguntes "¿algo más?" (invita al "no"). Sugiere: "¿les tiento con el suspiro de la casa para compartir?". Nombrar el postre lo hace apetecible; el "algo más" lo mata.</p></div>
+    </div>
+    <div class="callout"><b>Regla del vendedor honesto:</b> recomienda lo que tú pagarías. Si un plato está flojo hoy o no encaja con lo que pidió el comensal, no lo sugieras aunque sea el más caro. Una recomendación acertada trae al comensal de vuelta; una forzada lo pierde para siempre. Tu prestigio en la mesa vale más que un plato extra en la cuenta.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Leche de tigre</b><span>El jugo del ceviche: limón, ají, pescado y sazón. Se sirve aparte como shot y "cocina" el pescado por acidez.</span></div>
+      <div class="gterm"><b>Tiradito</b><span>Pescado crudo en láminas finas (corte sashimi) con salsa emulsionada encima, sin cebolla. Influencia nikkei.</span></div>
+      <div class="gterm"><b>Nikkei</b><span>Fusión de cocina peruana y japonesa: ceviches con toques de soja, sésamo y técnica de corte japonesa.</span></div>
+      <div class="gterm"><b>Mantecatura</b><span>Paso final del risotto: se liga con mantequilla y queso fuera del fuego para dejarlo cremoso. Lleva lácteos.</span></div>
+      <div class="gterm"><b>86</b><span>Código de cocina: un plato o insumo se agotó. "El pulpo está 86" = ya no lo ofrezcas.</span></div>
+      <div class="gterm"><b>Alérgeno</b><span>Ingrediente que puede provocar una reacción del sistema inmune, de leve a mortal. Se declara y se cuida siempre.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Cuando un alimento seguro toca un alérgeno por compartir tabla, aceite, parrilla o utensilio. Invisible pero real.</span></div>
+      <div class="gterm"><b>Anafilaxia</b><span>Reacción alérgica grave y rápida (hinchazón, ahogo, shock). Es una emergencia médica: se llama a soporte de inmediato.</span></div>
+      <div class="gterm"><b>Celíaco</b><span>Persona con enfermedad autoinmune que daña su intestino con el gluten. No es dieta ni moda: cero gluten y cero cruzada.</span></div>
+      <div class="gterm"><b>Sillao</b><span>Salsa de soja usada en saltados peruanos. Contiene soja y, la común, gluten (trigo). Alérgeno doble oculto.</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Combinación pensada de un plato con una bebida (vino, pisco, cerveza) para que ambos se realcen.</span></div>
+      <div class="gterm"><b>Venta sugestiva</b><span>Recomendar entradas, maridajes o postres con criterio para mejorar la experiencia y el ticket, sin presionar.</span></div>
+      <div class="gterm"><b>Term / término</b><span>Punto de cocción de la carne: azul, rojo/rare, medio, tres cuartos, bien cocido. Siempre se pregunta.</span></div>
+      <div class="gterm"><b>Line-up</b><span>Reunión breve del equipo antes del turno: platos 86, pescado del día, cambios y foco de servicio.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Carta y alérgenos · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Antes del turno (line-up)</h4><ul>
+          <li>Pregunta qué está 86 (agotado)</li>
+          <li>Anota el pescado del día</li>
+          <li>Chequea cambios de preparación</li>
+          <li>Ten 1 opción sin gluten y 1 sin lácteos a la mano</li>
+        </ul></div>
+        <div class="op-box"><h4>Describir con hambre</h4><ul>
+          <li>Protagonista → técnica → textura → tu recomendación</li>
+          <li>2 o 3 frases, no un ensayo</li>
+          <li>"Crocante por fuera, jugoso por dentro"</li>
+          <li>Si no sabes, verifica; no inventes</li>
+        </ul></div>
+        <div class="op-box"><h4>Alérgenos que se esconden</h4><ul>
+          <li>Gluten: pan, pasta, sillao, empanizados</li>
+          <li>Lácteos: ají de gallina, cremas, risotto</li>
+          <li>Huevo: mayonesa, sour (clara), pastas</li>
+          <li>Maní / frutos secos: huancaína, pecanas, pesto</li>
+          <li>Mar: ceviches, mariscos, caldos de pescado</li>
+        </ul></div>
+        <div class="op-box"><h4>Protocolo de alergia</h4><ul>
+          <li>Escucha y repite en voz alta</li>
+          <li>Anótala visible en la comanda (por silla)</li>
+          <li>Confirma con cocina antes de mandar</li>
+          <li>Al entregar: "este es el plato sin ___"</li>
+          <li>Ante la duda, es "no" hasta confirmar</li>
+        </ul></div>
+        <div class="op-box"><h4>Dietas: respuesta lista</h4><ul>
+          <li>Vegetariano: risotto, ravioles de ricotta</li>
+          <li>Vegano: sin huevo/lácteo/miel; pasta al pomodoro</li>
+          <li>Celíaco: sin gluten + sin cruzada</li>
+          <li>Embarazada: nada crudo ni alcohol</li>
+          <li>Ofrece alternativas concretas, no "casi todo"</li>
+        </ul></div>
+        <div class="op-box"><h4>Recomendar con criterio</h4><ul>
+          <li>Lee la mesa: apurado, celebra, niños, turista</li>
+          <li>Sugiere 2 opciones, no 20</li>
+          <li>Propón el maridaje (chilcano, copa de vino)</li>
+          <li>Nombra el postre, no digas "¿algo más?"</li>
+          <li>Recomienda lo que tú pagarías</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Conocimiento de carta y alérgenos · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

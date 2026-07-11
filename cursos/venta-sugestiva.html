@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Venta sugestiva y lectura de mesa · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b8452e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Venta sugestiva</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:var(--wine)">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Venta sugestiva y lectura de mesa</h1>
+    <p>Vender más sin que se note el vendedor. Aprende a sugerir una entrada, un maridaje o un postre en el momento justo, leyendo si la mesa vino a una cita, a cerrar un negocio o a celebrar. El objetivo no es empujar: es hacer que la experiencia —y la cuenta— sean mejores para todos.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Mesero</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una sugerencia bien hecha sube el ticket promedio entre 15% y 25% sin costar una mesa más. Una copa de vino, una causa para compartir y dos cafés al cierre pueden significar S/ 70 extra por mesa. Multiplícalo por tus mesas del turno: es la diferencia entre un mozo del montón y el que la casa cuida. Y como la propina va con el ticket, ese dinero también es tuyo.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es vender sugiriendo (y qué no)</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Venta sugestiva no es recitar la carta ni presionar para que gasten más. Es recomendar con criterio lo que de verdad va a mejorar la experiencia de esa mesa en particular. El invitado gana un mejor plato; la casa gana ticket; tú ganas propina. Los tres, o no es venta sugestiva.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Recomendar, no empujar</h3><div class="d">Sugieres algo concreto que le va a gustar a esa persona, no lo más caro de la carta. La confianza se construye una vez y se pierde en una recomendación forzada.</div><div class="s">criterio &gt; comisión</div></div>
+      <div class="tipo"><h3>Conocer para poder sugerir</h3><div class="d">No puedes vender lo que no probaste. Domina los favoritos de la casa, los maridajes y qué lleva cada plato. Sin conocimiento, sugerir es adivinar.</div><div class="s">saber lo que sirves</div></div>
+      <div class="tipo"><h3>El momento manda</h3><div class="d">La misma frase suena perfecta o invasiva según cuándo la dices. Ofrecer postre cuando aún no terminan el fondo es apurarlos; ofrecerlo con los cubiertos cruzados es leer la mesa.</div><div class="s">timing lo es todo</div></div>
+      <div class="tipo"><h3>Describir, no listar</h3><div class="d">"Tenemos postres" no vende. "El suspiro a la limeña que hacemos, con su merengue al oporto, es de los que la gente se lleva grabado" sí. Palabras que dan hambre.</div><div class="s">sensorial vende</div></div>
+      <div class="tipo"><h3>Leer antes de hablar</h3><div class="d">Una cita quiere intimidad; un almuerzo de negocios quiere agilidad; una celebración quiere protagonismo. La misma carta se ofrece distinto según quién esté en la mesa.</div><div class="s">lectura de mesa</div></div>
+      <div class="tipo"><h3>Un "no" también gana</h3><div class="d">Si el invitado ya está satisfecho y le insistes, arruinas la despedida. Aceptar el "no" con gracia deja la puerta abierta para que vuelva. Respetar también fideliza.</div><div class="s">respeto que fideliza</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Esto es venta sugestiva</h4><ul>
+        <li>"Con el ceviche, un chilcano de pisco limpia el paladar increíble. ¿Se lo traigo?"</li>
+        <li>Ver que piden un solo fondo entre dos y proponer una entrada para compartir mientras esperan.</li>
+        <li>Notar que celebran y ofrecer el postre de la casa con una vela.</li>
+      </ul></div>
+      <div class="box no"><h4>Esto es presionar (no lo hagas)</h4><ul>
+        <li>"¿Seguro que no quieren la botella? Es solo un poco más que dos copas."</li>
+        <li>Recitar toda la carta de postres cuando ya pidieron la cuenta.</li>
+        <li>Insistir con el plato más caro sin saber qué le gusta a la mesa.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de oro:</b> antes de sugerir algo, pregúntate "¿esto mejora su noche o solo mi ticket?". Si la respuesta honesta es lo segundo, no lo digas. La venta sugestiva sana siempre beneficia primero al invitado.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Leer la mesa: quién vino y a qué</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Antes de abrir la boca, lee. En los primeros segundos —cómo se sientan, cómo se hablan, qué llevan puesto, quién manda la conversación— la mesa te dice qué tipo de ocasión es. Cada ocasión se atiende y se sugiere distinto.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cita romántica</h3><div class="d">Se sientan cerca, hablan bajo, poco celular. Quieren intimidad y tiempo. Sugiere para compartir (un tiradito, una tabla), una copa de vino, y da espacio. No interrumpas cada cinco minutos.</div><div class="s">intimidad + ritmo lento</div></div>
+      <div class="tipo"><h3>Almuerzo de negocios</h3><div class="d">Ropa formal, laptops o carpetas, uno lidera. Quieren agilidad y no quedar mal frente al invitado. Sugiere platos que salgan rápido, agua para la mesa y sé discreto con la cuenta.</div><div class="s">rapidez + discreción</div></div>
+      <div class="tipo"><h3>Celebración</h3><div class="d">Grupo animado, globos, alguien es el homenajeado. Quieren que se note la fiesta. Aquí sí van piqueos para compartir, una botella, brindis y postre con vela. Hazlos sentir protagonistas.</div><div class="s">protagonismo + volumen</div></div>
+      <div class="tipo"><h3>Familia con niños</h3><div class="d">Coche, silla alta, papás cansados. Quieren rapidez y que el niño esté cómodo. Adelanta algo para el pequeño, sugiere platos para compartir y postres que gusten a todos.</div><div class="s">agilidad + comodidad</div></div>
+      <div class="tipo"><h3>Turista / primera vez</h3><div class="d">Miran todo, preguntan, fotos a los platos. Quieren la experiencia peruana completa. Guíalos por los clásicos de la casa y arma un recorrido: entrada, fondo emblemático, pisco y postre típico.</div><div class="s">guía + clásicos</div></div>
+      <div class="tipo"><h3>Habitual de la casa</h3><div class="d">Saluda por su nombre, tiene su mesa. Quiere sentirse reconocido. Ofrécele "lo de siempre" o una novedad pensada para él: "Chef sacó un tiradito nuevo, sé que le va a encantar".</div><div class="s">reconocimiento</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Señal que ves</th><th>Probablemente es…</th><th>Qué sugieres primero</th></tr></thead>
+      <tbody>
+        <tr><td>Se sientan juntos, luz baja, hablan bajito</td><td>Cita</td><td>Algo para compartir + una copa; luego los dejas en paz</td></tr>
+        <tr><td>Formales, uno atiende a otro, poco tiempo</td><td>Negocio</td><td>Entradas rápidas + agua; cuenta discreta al anfitrión</td></tr>
+        <tr><td>Ríen fuerte, hay un homenajeado</td><td>Celebración</td><td>Piqueos + botella + brindis; postre con vela al final</td></tr>
+        <tr><td>Miran la carta con dudas, preguntan mucho</td><td>Turista o primera vez</td><td>Clásicos de la casa: ceviche, lomo saltado, pisco sour</td></tr>
+        <tr><td>Papás apurados, niño inquieto</td><td>Familia</td><td>Algo rápido para el niño + platos para compartir</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Ojo:</b> lee, no supongas. Confirma con una pregunta abierta antes de asumir. "¿Celebran algo especial hoy?" te da la información y, si la respuesta es sí, la puerta para sugerir el brindis y el postre.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>El recorrido de la venta: cuándo sugerir</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Cada visita tiene momentos naturales para sugerir. Sugerir en el momento correcto se siente como un buen consejo; hacerlo fuera de tiempo se siente como una venta. Este es el recorrido, minuto a minuto.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">💧</div><div><div class="t">Al sentarse · primeros 2 min</div><h4>La bebida abre la cuenta</h4><p>Antes de la carta, ofrece algo de tomar: "¿Les provoca un pisco sour para empezar, o prefieren una limonada de la casa?". Dar dos opciones concretas vende más que preguntar "¿algo de tomar?". La primera bebida marca el ritmo de todo el ticket.</p></div></div>
+      <div class="paso"><div class="ico">🥂</div><div><div class="t">Mientras leen la carta</div><h4>La entrada para compartir</h4><p>"Mientras deciden el fondo, ¿les traigo unas causas o un tiradito para picar? Salen rápido y abren el apetito." Llena el tiempo de espera y agrega un plato sin que se sienta forzado.</p></div></div>
+      <div class="paso"><div class="ico">🍷</div><div><div class="t">Al tomar el pedido del fondo</div><h4>El maridaje que eleva el plato</h4><p>Cuando ya eligieron el fondo, ata la bebida al plato: "Con ese lomo saltado, una copa de malbec le va perfecto". Sugerir la bebida junto al plato es más natural que ofrecerla suelta.</p></div></div>
+      <div class="paso"><div class="ico">🍮</div><div><div class="t">Al retirar los fondos · cubiertos cruzados</div><h4>El postre y el café</h4><p>Retira, haz una pausa y ofrece con imagen: "Guardé espacio para contarles del suspiro a la limeña… y un café pasado le queda de lujo". Postre + café es el cierre que más sube el ticket y casi nadie ofrece.</p></div></div>
+      <div class="paso"><div class="ico">🥃</div><div><div class="t">Sobremesa · si se quedan conversando</div><h4>El digestivo o la segunda ronda</h4><p>Si la mesa está relajada y sigue la charla, ofrece un digestivo o repetir la bebida: "¿Otra ronda mientras conversan?". En celebraciones y sobremesas largas es donde se cierra la última venta del turno.</p></div></div>
+    </div>
+    <div class="callout"><b>La regla del "guardé espacio":</b> nunca preguntes "¿algo de postre?" (invita al no). Di "guardé espacio para contarles del postre de la casa" y descríbelo. Cambiar la pregunta cerrada por una descripción sensorial duplica el sí.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Cómo sugerir sin que se sienta presión</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La diferencia entre un consejo y una venta agresiva está en las palabras, el tono y saber parar. Estas son las técnicas concretas para que tu sugerencia se sienta como un favor, no como un empujón.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Dos opciones, no una lista</h3><div class="d">"¿Malbec o un tannat?" es fácil de responder. Recitar diez etiquetas abruma y termina en "solo agua". Ofrece dos y deja que elijan.</div><div class="s">técnica de la alternativa</div></div>
+      <div class="tipo"><h3>Habla en primera persona</h3><div class="d">"Mi favorito es…" o "yo pediría…" baja la guardia. Es una recomendación de persona a persona, no un guion de venta.</div><div class="s">recomendación honesta</div></div>
+      <div class="tipo"><h3>Palabras que dan hambre</h3><div class="d">"Crocante", "recién salido del horno", "cremoso", "ahumado". El lenguaje sensorial hace que el plato se antoje antes de verlo.</div><div class="s">describe, no nombres</div></div>
+      <div class="tipo"><h3>Ancla en lo popular</h3><div class="d">"Es lo que más sale" o "el plato de la casa" reduce el riesgo para el que no sabe qué pedir. La prueba social vende sola.</div><div class="s">lo que todos piden</div></div>
+      <div class="tipo"><h3>Sugiere y suelta</h3><div class="d">Ofrece una vez, con una sonrisa, y si dicen que no, cambia de tema sin cara. Insistir mata la propina y la vuelta.</div><div class="s">una vez, sin drama</div></div>
+      <div class="tipo"><h3>Lee la señal de parada</h3><div class="d">Mano que cubre la copa, "estamos bien así", miradas entre ellos. Cuando la mesa dice basta, se acabó la venta y empieza el servicio.</div><div class="s">respeta el freno</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Frases que suman</h4><ul>
+        <li>"Yo de acá me caso con el ají de gallina, es de otro nivel."</li>
+        <li>"Para compartir entre los tres, una tabla de piqueos cae perfecta."</li>
+        <li>"El pulpo al olivo sale crocante por fuera y suave adentro, es de los más pedidos."</li>
+        <li>"¿Un café pasado o un té para cerrar la noche?"</li>
+      </ul></div>
+      <div class="box no"><h4>Frases que restan</h4><ul>
+        <li>"¿No van a pedir entrada?" (hace sentir mal al que ya decidió)</li>
+        <li>"El plato más caro es el mejor, créame."</li>
+        <li>"¿Seguro que no quieren postre? ¿Seguros seguros?"</li>
+        <li>"Todo el mundo pide la botella, no la copa." (presiona a gastar)</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El tono lo es todo:</b> la misma sugerencia con prisa suena a venta y con calma suena a consejo. Baja el ritmo, mira a los ojos y sonríe. Nadie se siente presionado por alguien que parece de verdad querer que la pase bien.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Subir el ticket con criterio</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Subir el ticket no es vender lo más caro: es completar la experiencia. Un maridaje, una entrada para compartir, un postre y un café convierten una comida en una salida memorable. Esta es la guía práctica de qué sugerir con qué.</p>
+    <table class="t">
+      <thead><tr><th>Si piden…</th><th>Sugiere</th><th>Por qué funciona</th></tr></thead>
+      <tbody>
+        <tr><td>Ceviche o tiradito</td><td>Chilcano de pisco o una copa de sauvignon blanc</td><td>La acidez y el fresco limpian el paladar; maridaje clásico peruano</td></tr>
+        <tr><td>Lomo saltado o carnes</td><td>Copa de malbec o tannat</td><td>El tinto con cuerpo acompaña la carne y el sabor a wok</td></tr>
+        <tr><td>Un solo fondo entre dos</td><td>Una entrada para compartir (causa, tabla, anticuchos)</td><td>Nadie se queda con hambre y la espera se hace más corta</td></tr>
+        <tr><td>Pisco sour de entrada</td><td>Piqueo para acompañar (yuquitas, tequeños, canchita premium)</td><td>El trago pide algo salado; sube el ticket desde el inicio</td></tr>
+        <tr><td>Solo fondos, sin bebida</td><td>Limonada de la casa, chicha morada o agua con gas para la mesa</td><td>Casi nadie come sin tomar; ofrecerlo evita la venta perdida</td></tr>
+        <tr><td>Terminaron el fondo</td><td>Postre de la casa + café pasado o té</td><td>El cierre dulce es la venta que más se olvida y más rinde</td></tr>
+        <tr><td>Celebración o sobremesa larga</td><td>Botella (vino o espumante) y digestivo</td><td>El grupo animado gasta más; el brindis es parte de la fiesta</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="tipo"><h3>Vender arriba con tacto</h3><div class="d">Si dudan entre dos platos, describe el de mayor valor con más detalle: "El de fondo marino trae langostinos y pulpo, es más completo". Informas, no impones.</div><div class="s">upselling suave</div></div>
+      <div class="tipo"><h3>Vender al lado (complementos)</h3><div class="d">Suma lo que acompaña: una porción extra de arroz chaufa, pan de la casa, una guarnición. Pequeños agregados que casi nadie rechaza y suben el ticket sin fricción.</div><div class="s">cross-selling</div></div>
+      <div class="tipo"><h3>De copa a botella, con criterio</h3><div class="d">Si la mesa ya pidió tres copas del mismo vino, la botella les conviene y a la casa también: "Con lo que van a tomar, la botella les sale a cuenta". Solo cuando de verdad conviene.</div><div class="s">cuando suma a ambos</div></div>
+    </div>
+    <div class="callout"><b>Cuenta rápida:</b> una copa de vino (S/ 28), una causa para compartir (S/ 24) y dos cafés (S/ 18) suman S/ 70 extra en una sola mesa. En un turno de 10 mesas, eso es S/ 700 de ticket adicional sin una silla más ocupada. Ese es el poder de sugerir bien.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Objeciones, errores y buen cierre</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Sugerir bien también es saber cuándo un "no" es de verdad no y cuándo solo necesita otra opción. Y sobre todo, es cerrar la mesa tan bien como la abriste, para que la última impresión —y la propina— sean altas.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🙂</div><div><div class="t">"Estamos llenos, gracias"</div><h4>Acepta y baja a algo ligero</h4><p>No insistas con otro fondo. Ofrece algo pequeño: "Perfecto. ¿Un café o un té para cerrar, entonces?". Le das una salida ligera sin presionar, y muchas veces ese café sí entra.</p></div></div>
+      <div class="paso"><div class="ico">💰</div><div><div class="t">"Está un poco caro"</div><h4>Ofrece la alternativa, no discutas</h4><p>Nunca defiendas el precio. Redirige: "Le entiendo. El tiradito clásico es más ligero y también es de los favoritos". Muestras opciones, no justificas la carta.</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">"Estamos apurados"</div><h4>Sugiere lo rápido y sé su aliado</h4><p>Cambia el chip: "Entonces les recomiendo lo que sale al toque —el risotto y la pasta están listos rápido". Te vuelves quien los ayuda a salir a tiempo, no quien los retrasa.</p></div></div>
+      <div class="paso"><div class="ico">🚪</div><div><div class="t">Al cerrar la mesa</div><h4>Despide con la puerta abierta</h4><p>Agradece por nombre, pregunta cómo estuvo todo y deja una invitación: "Fue un gusto, los esperamos pronto —la próxima tienen que probar el pulpo". Siembras la próxima visita y cierras en alto.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Buenas prácticas de cierre</h4><ul>
+        <li>Ofrecer postre y café siempre, con descripción, no con pregunta cerrada.</li>
+        <li>Aceptar el primer "no de verdad" con una sonrisa.</li>
+        <li>Presentar la cuenta al anfitrión con discreción, sin comentar el monto.</li>
+        <li>Agradecer por nombre e invitar a volver.</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que cuestan propina</h4><ul>
+        <li>Insistir tres veces con el postre después del "no".</li>
+        <li>Sugerir siempre lo más caro sin leer a la mesa.</li>
+        <li>Ofrecer más cuando ya pidieron la cuenta (se siente a venta desesperada).</li>
+        <li>Cantar el total en voz alta frente a los invitados.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cierra el círculo:</b> la venta sugestiva empieza en la bienvenida y termina en la despedida. Si abriste con una buena bebida y cerraste con un postre y una invitación sincera, la mesa se va contenta, deja mejor propina y vuelve. Ese es el verdadero ticket alto.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Venta sugestiva</b><span>Recomendar con criterio lo que mejora la experiencia del invitado y, de paso, sube el ticket. Nunca es presionar.</span></div>
+      <div class="gterm"><b>Lectura de mesa</b><span>Interpretar quién vino y a qué (cita, negocio, celebración, familia) para ajustar el trato y las sugerencias.</span></div>
+      <div class="gterm"><b>Ticket promedio</b><span>Lo que gasta en promedio cada mesa o comensal. Subirlo con buenas sugerencias es el objetivo del curso.</span></div>
+      <div class="gterm"><b>Upselling</b><span>Sugerir una versión superior o más completa de lo que el invitado ya iba a pedir, con tacto y sin imponer.</span></div>
+      <div class="gterm"><b>Cross-selling</b><span>Sugerir algo que complementa el pedido: una guarnición, un piqueo, un café. Suma al lado, no arriba.</span></div>
+      <div class="gterm"><b>Maridaje</b><span>Combinar un plato con la bebida que lo realza (ceviche + chilcano, carne + malbec). Base para sugerir bebidas.</span></div>
+      <div class="gterm"><b>Técnica de la alternativa</b><span>Ofrecer dos opciones concretas en vez de una lista abierta. "¿Pisco sour o chilcano?" vende más que "¿algo de tomar?".</span></div>
+      <div class="gterm"><b>Prueba social</b><span>Anclar la sugerencia en lo que otros piden: "es el plato de la casa", "es lo que más sale". Reduce la duda.</span></div>
+      <div class="gterm"><b>Lenguaje sensorial</b><span>Describir texturas y sabores (crocante, cremoso, ahumado) para que el plato se antoje antes de verlo.</span></div>
+      <div class="gterm"><b>Señal de parada</b><span>Gesto o frase con que la mesa dice "basta" (mano sobre la copa, "estamos bien"). Ahí termina la sugerencia.</span></div>
+      <div class="gterm"><b>Piqueo</b><span>Bocado salado para compartir o acompañar un trago (tequeños, yuquitas, tabla). Ideal para abrir cuenta y celebraciones.</span></div>
+      <div class="gterm"><b>Sobremesa</b><span>El rato en que la mesa conversa tras comer. Momento clave para digestivos, cafés y segundas rondas.</span></div>
+      <div class="gterm"><b>Anfitrión de la mesa</b><span>Quien invita o lidera el grupo. A él se le presenta la cuenta con discreción y se le consulta lo delicado.</span></div>
+      <div class="gterm"><b>Manejo de objeciones</b><span>Responder un "no" o un "está caro" ofreciendo una alternativa, sin discutir ni justificar el precio.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Venta sugestiva · Chuleta de sala</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>La regla de oro</h4><ul>
+          <li>¿Esto mejora su noche o solo mi ticket? Si es lo 2°, no lo digas.</li>
+          <li>Recomienda con criterio, no lo más caro.</li>
+          <li>Sugiere una vez; acepta el "no" con una sonrisa.</li>
+        </ul></div>
+        <div class="op-box"><h4>Lee la mesa</h4><ul>
+          <li>Cita → compartir + copa, luego dales espacio.</li>
+          <li>Negocio → rápido + discreto, cuenta al anfitrión.</li>
+          <li>Celebración → piqueos + botella + postre con vela.</li>
+          <li>Familia → algo rápido para el niño + compartir.</li>
+        </ul></div>
+        <div class="op-box"><h4>Cuándo sugerir (el recorrido)</h4><ul>
+          <li>Al sentarse → la bebida (2 opciones).</li>
+          <li>Leyendo la carta → entrada para compartir.</li>
+          <li>Con el fondo → el maridaje (bebida + plato).</li>
+          <li>Cubiertos cruzados → postre + café.</li>
+          <li>Sobremesa → digestivo o segunda ronda.</li>
+        </ul></div>
+        <div class="op-box"><h4>Cómo decirlo</h4><ul>
+          <li>"Guardé espacio para contarles del postre…" (no "¿algo de postre?").</li>
+          <li>"Mi favorito es…", "es lo que más sale".</li>
+          <li>Palabras con hambre: crocante, cremoso, recién salido.</li>
+          <li>Dos opciones, no una lista.</li>
+        </ul></div>
+        <div class="op-box"><h4>Maridajes que salen solos</h4><ul>
+          <li>Ceviche/tiradito → chilcano o sauvignon blanc.</li>
+          <li>Lomo/carnes → malbec o tannat.</li>
+          <li>Pisco sour → piqueo salado.</li>
+          <li>Fondo sin bebida → limonada, chicha o agua con gas.</li>
+        </ul></div>
+        <div class="op-box"><h4>Objeciones y cierre</h4><ul>
+          <li>"Llenos" → baja a café o té.</li>
+          <li>"Caro" → ofrece alternativa, no discutas.</li>
+          <li>"Apurados" → sugiere lo rápido, sé su aliado.</li>
+          <li>Cierra: agradece por nombre + invita a volver.</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Venta sugestiva y lectura de mesa · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

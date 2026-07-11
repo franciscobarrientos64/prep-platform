@@ -1,0 +1,268 @@
+<!-- Curso: Coctelería clásica y de autor (bartender) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Coctelería clásica y de autor · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23a8521c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Coctelería</span>
+    <nav class="nav">
+      <a href="#m1">1 · La barra</a><a href="#m2">2 · Estructura y balance</a><a href="#m3">3 · Técnicas</a><a href="#m4">4 · Clásicos</a><a href="#m5">5 · Autor</a><a href="#m6">6 · Presentación</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#a8521c">
+    <div class="k">Academia Prep! · Bar</div>
+    <h1>Coctelería clásica y de autor</h1>
+    <p>Detrás de la barra no se improvisa: se mide, se balancea y se repite. Aquí aprendes a montar tu estación, a leer la estructura de cualquier trago, a dominar las técnicas base y a preparar los clásicos imprescindibles siempre iguales. Y cuando ya los tengas en la mano, a crear cócteles de autor con producto peruano que la gente pida por su nombre.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Bartender</span><span>🍸 Bar</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el bar es el margen más alto de la carta y la primera impresión del invitado que espera su mesa. Un trago mal balanceado o servido a distinta temperatura cada noche mata la confianza y la propina; uno consistente y bien presentado se vuelve la razón por la que vuelven. Tu barra es un show y una cocina a la vez: se ve todo y no perdona errores.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La barra: estación, herramientas y mise en place</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Un buen trago empieza antes del primer pedido: en una estación fría, ordenada y con todo al alcance de la mano dominante. En hora pico no hay tiempo de buscar; lo que no está montado, no existe. Tu mise en place decide si sacas 40 tragos por hora o te trabas en el tercero.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Herramientas base</h3><div class="d">Coctelera Boston (lata + lata o lata + vaso), jigger doble (30/45 ml con marcas internas de 15/22 ml), cucharilla bar larga, colador Hawthorne y colador fino de malla, prensa-cítricos, mortero (muddler), pinzas y tabla de garnish.</div></div>
+      <div class="tipo"><h3>Hielo, tu ingrediente #1</h3><div class="d">Hielo limpio, seco y duro. Cubo grande (roca) para tragos on the rocks porque diluye lento; cubo estándar para batir y refrescar; hielo picado o frappé solo para juleps y tropicales. Nunca uses hielo del pozo de botellas: sabe a metal.</div></div>
+      <div class="tipo"><h3>Cristalería a mano</h3><div class="d">Copa coupe (sour, daiquiri), copa Martini, vaso old fashioned/rocks (negroni, whiskies), highball/collins (gin tonic, tragos largos), copa balón (gin premium), flauta (espumantes). Fría las copas de servir sin hielo en congelador o con hielo + agua.</div></div>
+      <div class="tipo"><h3>Estación de cítricos</h3><div class="d">Jugo de limón y de lima exprimido del día, colado, en botella dosificadora y sobre hielo. El cítrico oxida en horas: se pardea y amarga. En un bar peruano el limón sutil manda; prueba cada tanda porque su acidez varía con la estación.</div></div>
+      <div class="tipo"><h3>Jarabes y modificadores</h3><div class="d">Jarabe simple 1:1 (azúcar:agua), goma 2:1 para más cuerpo, jarabe de goma, granadina real, orgeat. Rotúlalos con fecha; el simple dura ~2 semanas refrigerado, menos si huele agrio. Bitters (Angostura, orange) siempre a mano.</div></div>
+      <div class="tipo"><h3>Speed rail ordenado</h3><div class="d">Los destilados de mayor rotación en el riel frontal, siempre en el mismo orden (pisco, ron, vodka, gin, whisky, tequila). Etiqueta al frente. Botella medio vacía atrás, llena adelante. El orden fijo te deja servir sin mirar.</div></div>
+    </div>
+    <div class="callout"><b>Regla de la barra limpia:</b> trabaja siempre sobre superficie seca, con un paño para la barra y otro solo para cristalería. Enjuaga la coctelera entre trago y trago; los restos de un daiquiri en el próximo negroni se notan. Barra pegajosa = bar sucio a los ojos del invitado.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Estructura y balance de un trago</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Casi todos los cócteles son variaciones de unas pocas plantillas. Si entiendes las tres partes de un trago —base, ácido/dulce, modificadores— puedes reproducir cualquier receta, ajustarla al producto que tienes y arreglar uno desbalanceado sin adivinar.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>1 · Base (el alcohol)</h3><div class="d">El destilado protagonista: pisco, ron, gin, whisky, vodka, tequila. Aporta carácter y fuerza. Suele ser la mayor proporción. Si la base no se siente, el trago quedó "aguado"; si tapa todo, quedó "caliente" (alcohólico).</div></div>
+      <div class="tipo"><h3>2 · Ácido y dulce</h3><div class="d">El eje del balance. Ácido = cítrico (limón, lima) o vermut/vino. Dulce = jarabe, licor, azúcar. Se contrapesan entre sí: más ácido pide más dulce. Este par decide si el trago es "redondo" o "corta".</div></div>
+      <div class="tipo"><h3>3 · Modificadores</h3><div class="d">Detalles que dan complejidad: bitters, un dash de licor, clara de huevo por textura, una hierba, sal. Poco cambia mucho. Son la firma que separa un sour correcto de uno memorable.</div></div>
+    </div>
+    <p class="lead" style="margin-top:16px">Las tres familias que cubren el 80% de tu carta. Aprende las proporciones y sabrás construir casi cualquier cosa:</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>Familia</th><th>Plantilla (base : ácido : dulce)</th><th>Ejemplo</th><th>Técnica</th></tr></thead>
+      <tbody>
+        <tr><td><b>Sour</b></td><td>60 : 30 : 20 (más cítrico y jarabe)</td><td>Pisco sour, whisky sour, daiquiri, margarita</td><td>Batido</td></tr>
+        <tr><td><b>Spirit-forward</b></td><td>Partes iguales o base dominante, sin cítrico</td><td>Negroni, Manhattan, martini, old fashioned</td><td>Refrescado</td></tr>
+        <tr><td><b>Highball / largo</b></td><td>45 ml base + 90–120 ml mixer</td><td>Gin tonic, cuba libre, mule</td><td>Build en vaso</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>Diagnóstico rápido de balance:</b> prueba con bombilla antes de servir. ¿Corta / muy fuerte? falta dulce o cuerpo. ¿Empalaga? sube el ácido o baja el jarabe. ¿Plano y aburrido? le falta un dash de bitters o una pizca de sal. ¿Aguado? demasiada dilución: batiste de más o el hielo estaba mojado.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Técnicas base: batir, refrescar, construir</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La técnica define dilución, temperatura y textura, tres cosas que el invitado siente aunque no sepa nombrarlas. La regla de oro: se bate lo que lleva cítrico, jugo, huevo o crema (sale turbio y frío); se refresca lo que es solo alcohol (sale cristalino y sedoso).</p>
+    <div class="paso"><div class="ico">🥤</div><div><div class="t">TÉCNICA 1</div><h4>Batido (shake)</h4><p>Para sours y todo lo que lleve cítrico o clara. Carga la lata con líquidos, llena de hielo, sella y bate fuerte y horizontal 10–15 seg hasta que la lata escarche por fuera. Doble colado (Hawthorne + malla) para dejar fuera astillas de hielo y pulpa. Con clara de huevo: haz primero un dry shake sin hielo para montar la espuma, luego con hielo.</p></div></div>
+    <div class="paso"><div class="ico">🥄</div><div><div class="t">TÉCNICA 2</div><h4>Refrescado (stir)</h4><p>Para negroni, martini, Manhattan: tragos solo de alcohol que deben quedar límpidos y con textura de seda. En vaso mezclador con hielo, gira la cucharilla pegada a la pared 20–30 seg. No agites: batir mete aire y burbujas que enturbian y aguan el trago. Cuela con Hawthorne a la copa fría.</p></div></div>
+    <div class="paso"><div class="ico">🍹</div><div><div class="t">TÉCNICA 3</div><h4>Build (armar en el vaso)</h4><p>Para highballs y tragos largos: se construye directo en el vaso de servicio sobre hielo, de menos a más denso, y se da un giro suave con la cucharilla. El gaseante (tónica, soda, ginger) va al final y casi no se mezcla, para no perder gas. Ej.: gin, hielo, tónica bien fría, giro corto.</p></div></div>
+    <div class="paso"><div class="ico">🌿</div><div><div class="t">TÉCNICA 4</div><h4>Muddle (macerar)</h4><p>Para liberar aceites y jugos de frutas y hierbas (mojito, caipiriña). Presiona y gira suave; no machaques la menta como si fuera ajo: rompes la nervadura y suelta clorofila amarga. A la hierba, un toque; a la fruta firme, con ganas.</p></div></div>
+    <div class="paso"><div class="ico">❄️</div><div><div class="t">TÉCNICA 5</div><h4>Manejo del hielo</h4><p>Hielo fresco para servir, siempre. Nunca reutilices el hielo con que batiste (está aguado y roto). Cubo grande para on the rocks (diluye lento y luce), estándar para batir. Escurre el exceso de agua del hielo antes de cargar la coctelera.</p></div></div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Medir con jigger cada ingrediente, siempre</li>
+        <li>Batir hasta que la lata escarche por fuera</li>
+        <li>Copa fría antes de colar un trago sin hielo</li>
+        <li>Doble colado en sours y tragos con pulpa</li>
+        <li>Probar con bombilla antes de servir</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Servir "a ojo" o con el pico de la botella</li>
+        <li>Batir un negroni o un martini (deben ir cristalinos)</li>
+        <li>Reusar hielo de la coctelera en el vaso final</li>
+        <li>Machacar la menta hasta destrozarla</li>
+        <li>Dejar el gaseante mucho rato o revolverlo fuerte</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Clásicos imprescindibles</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Estos son los tragos que todo bartender debe saber de memoria y sacar iguales a las 6 pm y a la 1 am. Domina estas recetas patrón y tendrás la base de casi toda tu carta. Las medidas son de referencia: calíbralas al cítrico y al destilado de tu casa.</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>Cóctel</th><th>Receta base</th><th>Técnica · Cristal</th><th>Garnish</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pisco Sour</b></td><td>60 ml pisco quebranta · 30 ml limón · 20 ml jarabe · 1 clara · 3 gotas amargo de Angostura encima</td><td>Batido (dry shake) · Coupe</td><td>Gotas de amargo dibujadas</td></tr>
+        <tr><td><b>Daiquiri</b></td><td>60 ml ron blanco · 25 ml lima · 15 ml jarabe</td><td>Batido · Coupe fría</td><td>Twist de lima</td></tr>
+        <tr><td><b>Whisky Sour</b></td><td>50 ml whisky · 25 ml limón · 20 ml jarabe · 1 clara (opc.)</td><td>Batido · Rocks o coupe</td><td>Cereza + naranja</td></tr>
+        <tr><td><b>Margarita</b></td><td>50 ml tequila · 25 ml lima · 20 ml triple sec</td><td>Batido · Rocks con sal</td><td>Escarchado de sal, lima</td></tr>
+        <tr><td><b>Negroni</b></td><td>30 ml gin · 30 ml Campari · 30 ml vermut rojo</td><td>Refrescado · Rocks + cubo grande</td><td>Twist de naranja</td></tr>
+        <tr><td><b>Manhattan</b></td><td>60 ml whisky de centeno · 30 ml vermut rojo · 2 dashes Angostura</td><td>Refrescado · Coupe</td><td>Cereza al marrasquino</td></tr>
+        <tr><td><b>Old Fashioned</b></td><td>60 ml whisky · 1 terrón/8 ml jarabe · 2 dashes Angostura</td><td>Build/refrescado · Rocks + cubo grande</td><td>Twist de naranja</td></tr>
+        <tr><td><b>Dry Martini</b></td><td>60 ml gin · 10 ml vermut seco</td><td>Refrescado · Copa Martini fría</td><td>Twist de limón u oliva</td></tr>
+        <tr><td><b>Mojito</b></td><td>50 ml ron · 25 ml lima · 2 cdtas azúcar · menta · soda</td><td>Muddle + build · Collins</td><td>Ramo de menta fresca</td></tr>
+        <tr><td><b>Gin Tonic</b></td><td>50 ml gin · 150 ml tónica fría · mucho hielo</td><td>Build · Copa balón</td><td>Cáscara cítrica o botánico</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>El pisco sour, tu carta de presentación:</b> en un restaurante peruano lo van a pedir de primera y con él te miden. Usa quebranta para el clásico, dry shake para montar bien la clara, y las tres gotas de amargo van al final, sobre la espuma, nunca dentro. Sírvelo apenas hecho: la espuma se cae en minutos.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Cócteles de autor con producto peruano</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Un cóctel de autor no es inventar por inventar: es tomar una plantilla que ya funciona y vestirla con producto e identidad de la casa. Perú te da una despensa enorme —aguaymanto, maracuyá, coca, muña, chicha morada, ají— para crear tragos que solo se toman aquí y que la gente pide por su nombre.</p>
+    <div class="paso"><div class="ico">🧩</div><div><div class="t">PASO 1</div><h4>Parte de una plantilla conocida</h4><p>No arranques de cero. Elige un esqueleto que ya balancea: un sour, un highball, un spirit-forward. Ej.: "voy a hacer un sour, pero con maracuyá y pisco acholado". Ya tienes el 70% resuelto y solo ajustas.</p></div></div>
+    <div class="paso"><div class="ico">🍎</div><div><div class="t">PASO 2</div><h4>Elige un producto con historia</h4><p>Que aporte sabor y relato: aguaymanto, camu camu, maracuyá, muña, hoja de coca, algarrobina, chicha morada, ají amarillo, hierbaluisa. Piensa qué le va a la base: cítricos ácidos con destilados fuertes, frutas dulces para equilibrar tragos secos.</p></div></div>
+    <div class="paso"><div class="ico">⚗️</div><div><div class="t">PASO 3</div><h4>Prepara el modificador</h4><p>Convierte el producto en algo dosificable: jarabe infusionado (muña, hierbaluisa), shrub (vinagre + fruta + azúcar), puré colado (aguaymanto, maracuyá) o infusión del destilado (pisco macerado en ají amarillo sin venas). Así sale igual cada vez, no depende de la fruta del día.</p></div></div>
+    <div class="paso"><div class="ico">⚖️</div><div><div class="t">PASO 4</div><h4>Balancea y estandariza</h4><p>Ajusta ácido/dulce con la plantilla como guía y prueba. Cuando esté redondo, anota la receta exacta en ml y la técnica. Un trago de autor sin ficha no es un producto: es un accidente que no vas a poder repetir mañana.</p></div></div>
+    <div class="paso"><div class="ico">📸</div><div><div class="t">PASO 5</div><h4>Ponle nombre, precio y ficha</h4><p>Un buen nombre (local, con guiño) y un garnish reconocible lo vuelven pedible. Registra la receta y su costeo en Recetas de Prep! para saber tu food cost del trago y fijar precio. Un cóctel de autor bien costeado es de los ítems más rentables de la carta.</p></div></div>
+    <div class="callout"><b>Ejemplo de la casa — "Aguaymanto Sour":</b> 60 ml pisco acholado · 20 ml puré de aguaymanto colado · 25 ml limón · 15 ml jarabe · 1 clara · dry shake y batido. Garnish: aguaymanto abierto en el borde. Es un pisco sour con identidad, cuesta centavos más y se vende como especialidad de autor.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Presentación, servicio y consistencia</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El invitado bebe con los ojos primero. Un trago bien balanceado servido en copa tibia, con garnish mustio y a destiempo, se percibe como malo. La presentación y el ritmo de salida son parte de la receta, no un adorno.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Copa y temperatura correctas</h3><div class="d">Cada trago en su cristal y a su temperatura: coupe/Martini bien frías para lo colado sin hielo, rocks con cubo grande para spirit-forward. Una copa tibia sube el trago varios grados al instante y lo arruina. Fría las copas de servir siempre.</div></div>
+      <div class="tipo"><h3>Garnish que aporta, no decora</h3><div class="d">El garnish debe oler o saber a algo del trago: twist de naranja al negroni (expresa aceite cítrico), menta al mojito, sal a la margarita. Siempre fresco y cortado al momento. Un twist se exprime sobre la superficie para soltar el aceite, luego se coloca.</div></div>
+      <div class="tipo"><h3>Nivel de llenado y limpieza</h3><div class="d">Llena a la línea correcta: ni al borde (se derrama al llevar) ni a media copa (se ve tacaño). Limpia goteos del pie y del borde exterior antes de entregar. Bombilla/removedor y servilleta según el trago.</div></div>
+      <div class="tipo"><h3>Velocidad y tandas</h3><div class="d">En una comanda de varios tragos, sácalos juntos y a la vez, no de uno en uno. Prioriza lo que se cae rápido (espumas, espumantes) para el final del armado. Un sour que espera 5 min en el pase pierde la espuma.</div></div>
+      <div class="tipo"><h3>Consistencia = receta escrita</h3><div class="d">El mismo trago debe saber igual lo prepares tú o el ayudante, hoy o el mes que viene. Eso solo se logra con ficha estándar en ml y jigger siempre. "A ojo" es la causa #1 de quejas de bar y de reclamos de que "hoy salió distinto".</div></div>
+      <div class="tipo"><h3>Servicio responsable</h3><div class="d">Ofrece agua junto a los destilados, controla graduación en rondas largas y sabe decir que no a un invitado pasado, con tacto y ofreciendo alternativa sin alcohol. Cuida al invitado: es parte del oficio y de la reputación de la casa.</div></div>
+    </div>
+    <div class="callout"><b>El detalle que fideliza:</b> recuerda el trago del habitual y tenlo casi listo cuando se sienta en la barra. Un "¿su negroni de siempre?" vale más que cualquier promoción. La barra es el lugar del restaurante donde más se conversa: tu carisma es parte de la receta.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Jigger</b><span>Medidor de doble cono (30/45 ml, con marcas internas). La herramienta que garantiza que cada trago salga igual.</span></div>
+      <div class="gterm"><b>Batir (shake)</b><span>Agitar con hielo en coctelera. Enfría, diluye y airea. Se usa con cítrico, jugo, huevo o crema. Deja el trago turbio y muy frío.</span></div>
+      <div class="gterm"><b>Refrescar (stir)</b><span>Revolver con cucharilla y hielo en vaso mezclador. Enfría sin airear. Para tragos solo de alcohol que deben quedar cristalinos.</span></div>
+      <div class="gterm"><b>Build</b><span>Armar el trago directo en el vaso de servicio sobre hielo, sin coctelera. Típico de highballs y tragos largos.</span></div>
+      <div class="gterm"><b>Muddle</b><span>Macerar fruta o hierba con el mortero para liberar jugos y aceites esenciales (mojito, caipiriña).</span></div>
+      <div class="gterm"><b>Dilución</b><span>Agua que aporta el hielo al enfriar. Necesaria: un trago sin dilución quema. De más, aguado. La controla la técnica y el tiempo.</span></div>
+      <div class="gterm"><b>Dry shake</b><span>Batir sin hielo primero (con clara de huevo) para montar la espuma; luego se bate otra vez con hielo para enfriar.</span></div>
+      <div class="gterm"><b>Doble colado</b><span>Colar con Hawthorne y además con colador de malla fina, para dejar fuera astillas de hielo y pulpa.</span></div>
+      <div class="gterm"><b>Twist</b><span>Cáscara de cítrico exprimida sobre el trago para soltar su aceite aromático; luego se coloca como garnish.</span></div>
+      <div class="gterm"><b>Jarabe simple</b><span>Azúcar y agua a partes iguales (1:1). El endulzante base de la coctelería. Goma es 2:1, más denso y con cuerpo.</span></div>
+      <div class="gterm"><b>Shrub</b><span>Jarabe agridulce de fruta macerada en azúcar y vinagre. Modificador de autor que aporta acidez y sabor a la vez.</span></div>
+      <div class="gterm"><b>Spirit-forward</b><span>Familia de cócteles dominados por el destilado, sin cítrico (negroni, Manhattan, martini). Van refrescados y fuertes.</span></div>
+      <div class="gterm"><b>Highball</b><span>Trago largo de un destilado + un gaseante en vaso alto con hielo (gin tonic, cuba libre). Fácil, refrescante, alta rotación.</span></div>
+      <div class="gterm"><b>Escarchado</b><span>Borde de la copa cubierto de sal o azúcar (margarita). Se humedece con lima y se apoya el borde en el plato de sal.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Coctelería · Chuleta de barra</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Estructura de un trago</h4><ul>
+          <li>Base (alcohol) + ácido/dulce + modificadores</li>
+          <li>Sour ≈ 60 : 30 : 20 (base : cítrico : jarabe)</li>
+          <li>Spirit-forward: partes iguales, sin cítrico</li>
+          <li>Highball: 45 ml base + 90–120 ml mixer</li>
+        </ul></div>
+        <div class="op-box"><h4>Batir vs refrescar</h4><ul>
+          <li>Bate lo que lleva cítrico, jugo, huevo o crema</li>
+          <li>Refresca lo que es solo alcohol (queda cristalino)</li>
+          <li>Bate hasta que la lata escarche por fuera</li>
+          <li>Refresca 20–30 seg pegado a la pared del vaso</li>
+        </ul></div>
+        <div class="op-box"><h4>Clásicos de memoria</h4><ul>
+          <li>Pisco sour: 60 pisco · 30 limón · 20 jarabe · clara</li>
+          <li>Daiquiri: 60 ron · 25 lima · 15 jarabe</li>
+          <li>Negroni: 30 gin · 30 Campari · 30 vermut</li>
+          <li>Manhattan: 60 whisky · 30 vermut · 2 Angostura</li>
+        </ul></div>
+        <div class="op-box"><h4>Reglas de oro</h4><ul>
+          <li>Mide con jigger siempre — nunca "a ojo"</li>
+          <li>Hielo fresco al servir; nunca el de batir</li>
+          <li>Copa fría + garnish fresco + trago apenas hecho</li>
+          <li>Ficha escrita en ml = mismo trago siempre</li>
+        </ul></div>
+        <div class="op-box"><h4>Diagnóstico de balance</h4><ul>
+          <li>Corta / fuerte → falta dulce o cuerpo</li>
+          <li>Empalaga → sube ácido o baja jarabe</li>
+          <li>Plano → un dash de bitters o pizca de sal</li>
+          <li>Aguado → menos batido / hielo escurrido</li>
+        </ul></div>
+        <div class="op-box"><h4>Autor con producto peruano</h4><ul>
+          <li>Parte de una plantilla que ya balancea</li>
+          <li>Aguaymanto, maracuyá, muña, ají, algarrobina</li>
+          <li>Vuélvelo dosificable: jarabe, shrub, puré, infusión</li>
+          <li>Nómbralo, coséalo en Recetas y fija precio</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Coctelería clásica y de autor · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

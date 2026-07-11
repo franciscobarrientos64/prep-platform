@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Secuencia de servicio del mesero · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235a3d9a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Secuencia de servicio</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#5a3d9a">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Secuencia de servicio del mesero</h1>
+    <p>La coreografía completa de una mesa, del "buenas noches" al "vuelvan pronto". Este curso es para meseros de salón: aquí aprendes los pasos exactos, en qué segundo va cada uno y los cuatro hábitos que separan a un mesero bueno de uno excepcional.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Mesero de salón</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el invitado no ve tu esfuerzo, ve el ritmo. Cuando la secuencia fluye —saludo a tiempo, tiempos marcados, chequeo a los dos bocados, manos siempre llenas— la mesa se relaja y gasta más sin darse cuenta. Cuando falla, ni el mejor tiradito la salva. Dominar la secuencia es lo que te convierte de "el que trae los platos" en el anfitrión de la noche.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La secuencia completa, paso a paso</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Toda mesa sigue la misma coreografía, tenga 2 comensales o 10. Memorízala como una receta: si te saltas un paso, se nota. Aquí está la secuencia entera con el tiempo objetivo de cada punto.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">👋</div><div><div class="t">0:00 – 0:45</div><h4>Saludo y bienvenida</h4><p>Llegas a la mesa en menos de un minuto desde que se sientan. Bienvenida, agua, carta y una lectura rápida de quién es esta mesa.</p></div></div>
+      <div class="paso"><div class="ico">🍹</div><div><div class="t">2 a 4 min</div><h4>Toma de bebidas</h4><p>Vuelves por las bebidas mientras leen la carta. En Perú casi siempre arranca por acá: pisco sour, chilcano, una limonada, agua con o sin gas.</p></div></div>
+      <div class="paso"><div class="ico">📝</div><div><div class="t">Al servir la bebida</div><h4>Toma del pedido y recomendación</h4><p>Sirves la bebida y tomas la comida. Recomiendas por familias (una entrada para compartir, un fondo estrella), anotas alergias y términos, y confirmas repitiendo el pedido.</p></div></div>
+      <div class="paso"><div class="ico">🔥</div><div><div class="t">Inmediato</div><h4>Ingresas y marcas tiempos</h4><p>Cargas el pedido en el POS con los tiempos correctos: qué sale ya, qué se marcha después. Cocina y barra empiezan a trabajar con tu orden, no adivinando.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">Según coursing</div><h4>Corres entradas y fondos</h4><p>Entregas por la derecha, retiras por la izquierda (o como mande la casa, pero siempre igual). Nombras el plato al dejarlo. Marcas el siguiente tiempo apenas la mesa va terminando.</p></div></div>
+      <div class="paso"><div class="ico">✌️</div><div><div class="t">A los 2 bocados</div><h4>Chequeo de satisfacción</h4><p>Vuelves cuando ya probaron —ni antes ni cuando terminaron— para confirmar que todo está bien mientras aún se puede corregir.</p></div></div>
+      <div class="paso"><div class="ico">🧹</div><div><div class="t">Constante</div><h4>Mantenimiento y pre-bus</h4><p>Retiras platos vacíos, migajeas si aplica, rellenas agua, cambias ceniceros de copa. La mesa siempre limpia, tú siempre con las manos llenas.</p></div></div>
+      <div class="paso"><div class="ico">🍰</div><div><div class="t">Tras retirar fondos</div><h4>Pre-cierre: postres y digestivos</h4><p>Antes de que pidan la cuenta ofreces el cierre dulce: carta de postres, café, un digestivo. Es el último empujón de ticket de la noche.</p></div></div>
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">Cuando la piden</div><h4>Cuenta y cobro</h4><p>Traes la pre-cuenta rápido, cobras sin apuro, ofreces boleta o factura. El cobro lento arruina una gran noche justo al final.</p></div></div>
+      <div class="paso"><div class="ico">🚪</div><div><div class="t">Al salir</div><h4>Despedida</h4><p>Agradeces por nombre, invitas a volver. La última impresión es la que se cuentan en el carro camino a casa.</p></div></div>
+    </div>
+    <div class="callout"><b>La regla de oro:</b> nunca cruces el salón con las manos vacías. Al ir a una mesa, lleva algo (agua, pan, cubiertos); al volver, trae algo (una copa vacía, un plato sucio). Cada viaje hace dos trabajos.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>El saludo en menos de un minuto</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El reloj arranca cuando el invitado toca la silla, no cuando tú estás libre. Los primeros 60 segundos deciden si la mesa se siente atendida o abandonada. Un saludo tardío es la queja número uno de servicio, por encima de la comida.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La regla del minuto</h3><div class="d">Un contacto —aunque sea "ya vengo con ustedes, bienvenidos"— antes de los 60 segundos. Estar ocupado no cuenta como excusa: el invitado sentado no ve tu otra mesa.</div><div class="s">&lt; 60 segundos</div></div>
+      <div class="tipo"><h3>Contacto visual primero</h3><div class="d">Si vas cargado y no puedes llegar, una mirada y un gesto de "los vi, ya voy" compra 2 minutos de paciencia. Lo que mata es sentirse invisible.</div><div class="s">te vieron = te esperan</div></div>
+      <div class="tipo"><h3>Agua y pan de una</h3><div class="d">Llega con agua para todos ya en la mano. Servir agua da algo que hacer con las manos y compra tiempo mientras leen la carta.</div><div class="s">manos llenas al entrar</div></div>
+      <div class="tipo"><h3>Lee la mesa</h3><div class="d">¿Cierre de negocio, primera cita, cumpleaños, familia con niños? El tono y el ritmo cambian. A la familia adelanta algo para el niño; a la cita, discreción.</div><div class="s">tono según la mesa</div></div>
+      <div class="tipo"><h3>Preséntate por nombre</h3><div class="d">"Buenas noches, soy Diego y los acompaño esta noche." Un nombre convierte al "mozo" en una persona y sube la propina sin trucos.</div><div class="s">nombre = confianza</div></div>
+      <div class="tipo"><h3>Nunca "¿ya saben qué van a pedir?"</h3><div class="d">Presiona. Mejor: "¿Les provoca algo de tomar mientras ven la carta?". Abres con bebida, das tiempo y ya sumaste al ticket.</div><div class="s">abrir por la bebida</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Un buen saludo</h4><ul>
+        <li>"Buenas noches, bienvenidos a la casa. Soy Karla. Les dejo agua mientras ven la carta."</li>
+        <li>Miras a los ojos, sonríes, y a los que llegan con reserva los recibes por su nombre.</li>
+        <li>Notas la coche de bebé y ofreces mover la silla o una periquera de una.</li>
+        <li>Si estás cargado, una mirada + "en un minuto estoy con ustedes".</li>
+      </ul></div>
+      <div class="box no"><h4>Un saludo que resta</h4><ul>
+        <li>Pasar 4 veces al lado de la mesa sin mirarla porque "no es tu sección".</li>
+        <li>Llegar con "¿ya decidieron?" antes de que abran la carta.</li>
+        <li>Recitar los especiales de corrido, sin mirar a nadie, como robot.</li>
+        <li>Dejar las cartas y desaparecer 8 minutos sin ofrecer nada de tomar.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Truco de sala:</b> si te sientan una mesa cuando ya tienes tres pedidos encima, no la ignores: acércate solo a dejar agua y decir "ya les traigo la carta, denme un minutito". Ese minuto reconocido vale más que cinco minutos de silencio.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Toma de pedido y marcar los tiempos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Aquí está el corazón técnico del servicio: tomar bien el pedido y marchar los tiempos para que cada plato salga cuando la mesa lo necesita, no cuando cocina lo terminó. Un tiempo mal marcado hunde a toda la mesa.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🔢</div><div><div class="t">Al tomar</div><h4>Usa números de silla</h4><p>Empieza siempre por el mismo asiento (la silla 1 es la que da la espalda a la entrada, o como diga la casa) y sigues en sentido horario. Así entregas sin preguntar "¿de quién era el lomo?".</p></div></div>
+      <div class="paso"><div class="ico">🥗</div><div><div class="t">Ordena por familias</div><h4>Entradas, fondos, para compartir</h4><p>Anota agrupando: qué va de entrada, qué de fondo, qué es para el centro. Eso es lo que cocina necesita para armar los tiempos. Marca términos de carne y modificadores pegados al plato.</p></div></div>
+      <div class="paso"><div class="ico">🌰</div><div><div class="t">Sin excepción</div><h4>Pregunta por alergias y restricciones</h4><p>"¿Alguna alergia o algo que no coman?" en toda mesa. Anótalo en la comanda ligado a la silla exacta. En Prep! el POS deja registrar la alergia por posición de silla.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">Antes de irte</div><h4>Repite el pedido completo</h4><p>Lees de vuelta silla por silla. Corriges ahí, no en cocina. 30 segundos de confirmación te ahorran un plato devuelto y una mesa molesta.</p></div></div>
+      <div class="paso"><div class="ico">🔥</div><div><div class="t">En el POS</div><h4>Marca los tiempos correctos</h4><p>Ingresas separando: "entra" (sale ya) y "espera / marchar" para lo que va después. Un tiradito de entrada sale de una; el fondo lo dejas en marchar hasta que estén acabando la entrada.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Situación en la mesa</th><th>Qué marcas en el POS</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Piden entrada + fondo</td><td>Entrada "entra", fondo "marchar"</td><td>El fondo no debe salir con la entrada ni enfriarse esperando</td></tr>
+        <tr><td>Mesa apurada (van al teatro / almuerzo de oficina)</td><td>Todo "entra" + avisas "van con tiempo"</td><td>Priorizas velocidad sobre el ritmo de cursos</td></tr>
+        <tr><td>Mesa que quiere tomar su tiempo</td><td>Marchas fondos recién cuando retiras entradas</td><td>Nadie siente que lo apuran a comer</td></tr>
+        <tr><td>Un plato tarda más (risotto, pescado entero)</td><td>Lo mandas "entra" antes que el resto del curso</td><td>Que todos los fondos salgan juntos aunque uno demore</td></tr>
+        <tr><td>Un ingrediente se acabó</td><td>Marcas el ítem como <b>86</b> y avisas a la mesa</td><td>Cocina y tus compañeros dejan de venderlo al instante</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Marchar es un verbo, no un adorno:</b> "marchar la mesa 7" significa avisarle a cocina "empiecen los fondos, ya casi terminan la entrada". Si no marchas a tiempo, o la mesa espera de más entre platos o el fondo llega mientras aún comen la causa. Tú controlas el reloj de la cocina desde el salón.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>El chequeo a los dos bocados</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El "two-bite check" es el hábito más rentable del servicio: volver cuando ya probaron —no antes, no después— para confirmar que todo está bien mientras todavía se puede arreglar. Un problema detectado al segundo bocado se soluciona; el mismo problema descubierto en la cuenta es una mala reseña.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El timing exacto</h3><div class="d">Entre 90 segundos y 2 minutos después de dejar el plato. Ya probaron el primer par de bocados y tienen opinión, pero aún queda comida para corregir.</div><div class="s">~2 minutos después</div></div>
+      <div class="tipo"><h3>Pregunta cerrada, no de cortesía</h3><div class="d">No "¿todo bien?" (a lo que todos dicen sí por educación). Mejor: "¿El punto de la carne les quedó como lo pidieron?". Preguntas por algo específico y corregible.</div><div class="s">específico > genérico</div></div>
+      <div class="tipo"><h3>Lee el lenguaje del cuerpo</h3><div class="d">Plato apenas tocado, caras raras, algo empujado al borde: no esperes a que hablen. Acércate: "Veo que el ají de gallina casi no lo tocó, ¿le cambio algo?".</div><div class="s">el plato habla</div></div>
+      <div class="tipo"><h3>Si algo está mal, actúa</h3><div class="d">No discutas ni justifiques. "Con todo gusto se lo cambio ahora mismo." Avisa a cocina, marca el reemplazo urgente y escala al gerente si toca cortesía.</div><div class="s">resolver, no explicar</div></div>
+      <div class="tipo"><h3>No interrumpas el bocado</h3><div class="d">Si alguien tiene el tenedor en la boca o está en plena conversación, espera dos segundos o pregunta a quien sí puede responder. Chequear no es molestar.</div><div class="s">momento oportuno</div></div>
+      <div class="tipo"><h3>Cierra el bucle</h3><div class="d">Si cambiaste un plato, vuelve a los dos bocados del nuevo. El invitado tiene que sentir que su queja se tomó en serio hasta el final.</div><div class="s">seguimiento del arreglo</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Chequeo que funciona</h4><ul>
+        <li>Vuelves a la mesa 6 a los 2 minutos: "¿El lomo saltado quedó a su gusto?".</li>
+        <li>Notas la pasta casi intacta y ofreces cambiarla antes de que se quejen.</li>
+        <li>Un pescado llegó frío: lo retiras al toque y marcas el reemplazo urgente.</li>
+        <li>Preguntas a quien no está masticando ni en medio de la charla.</li>
+      </ul></div>
+      <div class="box no"><h4>Chequeo que falla</h4><ul>
+        <li>Preguntar "¿todo bien?" de pasada, sin frenar, sin esperar respuesta.</li>
+        <li>Aparecer justo cuando dejaste el plato: aún no probaron nada.</li>
+        <li>Enterarte de que "estaba salado" recién cuando pagan y ya no hay arreglo.</li>
+        <li>Ante una queja, explicar por qué la cocina lo hizo así en vez de resolver.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El dato que convence:</b> una mesa a la que le arreglaste un plato mal salido y quedó feliz deja mejor propina y mejor reseña que una mesa donde nada falló. No es el error lo que se recuerda: es cómo lo resolviste. El chequeo a los dos bocados es tu única ventana para eso.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Manos llenas al entrar y salir</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">"Full hands in, full hands out" es la ley de eficiencia del salón. Cada vez que caminas, mueves algo útil en las dos direcciones. Bien hecho, esto te ahorra la mitad de los pasos de la noche y mantiene todas tus mesas limpias sin esfuerzo extra.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">➡️</div><div><div class="t">Hacia el salón</div><h4>Nunca salgas de la cocina con las manos vacías</h4><p>¿Vas a la mesa 4 a tomar un pedido? Lleva el pan de la 6 que está en el pase, o el agua de la 2. Un solo viaje resuelve dos mesas.</p></div></div>
+      <div class="paso"><div class="ico">⬅️</div><div><div class="t">Hacia la cocina</div><h4>Nunca vuelvas con las manos vacías</h4><p>Al regresar, barre copas vacías, un plato de pan terminado, cubiertos usados de una mesa que ya cerró un curso. El pre-bus se hace de paso, no como tarea aparte.</p></div></div>
+      <div class="paso"><div class="ico">🧽</div><div><div class="t">Pre-bus continuo</div><h4>Retira apenas terminan, no cuando piden</h4><p>Cubiertos cruzados o juntos sobre el plato = terminó. Retiras (siempre después de que el último del curso acabe, para no apurar a nadie) y liberas la mesa antes del siguiente plato.</p></div></div>
+      <div class="paso"><div class="ico">🍞</div><div><div class="t">Reposición</div><h4>Rellena antes de que se acabe</h4><p>Agua a la mitad, canasta de pan casi vacía, copa de vino baja: repones antes de que lo pidan. Que nunca tengan que levantar la mano por lo básico.</p></div></div>
+      <div class="paso"><div class="ico">🔀</div><div><div class="t">Ruta mental</div><h4>Agrupa tus viajes</h4><p>Antes de caminar, piensa: "en este viaje dejo esto, recojo aquello, chequeo aquella mesa". Un mesero eficiente no camina más rápido: camina menos veces.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Vas a…</th><th>Qué llevas de ida</th><th>Qué traes de vuelta</th></tr></thead>
+      <tbody>
+        <tr><td>Tomar el pedido de la mesa 5</td><td>Agua o pan que espera en el pase</td><td>Copas vacías de la mesa 5 o vecina</td></tr>
+        <tr><td>Dejar los fondos de la mesa 8</td><td>Los platos + la salsa que pidieron</td><td>Los platos de la entrada ya terminados</td></tr>
+        <tr><td>Cobrar la mesa 2</td><td>La pre-cuenta y el datáfono</td><td>Cristalería y vajilla de la mesa que se va</td></tr>
+        <tr><td>Pasar por la cocina</td><td>Comanda o loza limpia para montar</td><td>Cualquier plato sucio en tu camino</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El secreto que no se ve:</b> un mesero con las manos siempre llenas parece que hace menos porque nunca corre. La calma que proyecta es justamente el resultado de no dar viajes en vano. El invitado percibe control, no prisa.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Pre-cierre, cuenta y despedida</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El final define el recuerdo. El pre-cierre es tu última oportunidad de sumar al ticket, y un cobro ágil más una despedida cálida son la diferencia entre una comida buena y una noche que van a contar. No aflojes el ritmo justo cuando más pesa.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Ofrece el cierre dulce</h3><div class="d">Apenas retiras los fondos: "¿Les traigo la carta de postres? El suspiro a la limeña y el cheesecake de lúcuma salen buenísimos hoy." No preguntes si quieren cuenta todavía.</div><div class="s">postre antes que cuenta</div></div>
+      <div class="tipo"><h3>Sugiere café y digestivo</h3><div class="d">Aunque no quieran postre: "¿Un cafecito, un té, o algo digestivo?". Un espresso y un amaro suben el ticket y alargan la sobremesa feliz.</div><div class="s">último empujón de ticket</div></div>
+      <div class="tipo"><h3>Pre-cuenta rápida y clara</h3><div class="d">Cuando la piden, la traes en menos de 2 minutos. Revísala antes de llevarla: nada peor que un cobro con un error o el plato de otra mesa.</div><div class="s">&lt; 2 min y sin errores</div></div>
+      <div class="tipo"><h3>Boleta o factura, siempre</h3><div class="d">Pregunta antes de cobrar: "¿Boleta o factura?". Si es factura, pide RUC y razón social. En Perú esto no se improvisa después del cobro.</div><div class="s">comprobante correcto</div></div>
+      <div class="tipo"><h3>Cobra sin apuro visible</h3><div class="d">Ágil pero sin que sientan que los echas. Ofrece los medios (efectivo, Yape, Plin, tarjeta) y da el vuelto o el datáfono sin hacerlos esperar parados.</div><div class="s">rápido, no apurado</div></div>
+      <div class="tipo"><h3>Despide por nombre</h3><div class="d">Acompaña hacia la puerta si puedes: "Fue un gusto, señor Ramírez, los esperamos pronto." La última frase es la que repiten en el carro.</div><div class="s">cierra como abriste</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Un cierre que deja huella</h4><ul>
+        <li>Ofreces postres y café antes de que piensen en irse.</li>
+        <li>Traes la cuenta revisada, correcta y rápida cuando la piden.</li>
+        <li>Preguntas boleta o factura y tienes el RUC listo si hace falta.</li>
+        <li>Despides por nombre y con una invitación real a volver.</li>
+      </ul></div>
+      <div class="box no"><h4>Un cierre que enfría la noche</h4><ul>
+        <li>Saltar directo a la cuenta sin ofrecer postre ni café.</li>
+        <li>Demorar 10 minutos en traer la pre-cuenta que ya pidieron.</li>
+        <li>Traer la cuenta con un error o un ítem de otra mesa.</li>
+        <li>Cobrar y desaparecer, sin despedida ni contacto visual.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla del final:</b> la energía con la que cierras tiene que ser la misma con la que saludaste. Muchos meseros dan un saludo de diez y una despedida de tres porque ya vienen otras mesas. El invitado no recuerda el promedio: recuerda cómo se sintió al levantarse de la silla.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Secuencia de servicio</b><span>La coreografía fija de una mesa, del saludo a la despedida. Se sigue igual en toda mesa; saltarse un paso se nota.</span></div>
+      <div class="gterm"><b>Marchar</b><span>Dar la orden a cocina de empezar el siguiente curso ("marchar los fondos de la 7") para que salgan justo cuando la mesa termina el anterior.</span></div>
+      <div class="gterm"><b>Coursing / tiempos</b><span>Servir la comida en tandas (entradas, fondos, postres) con el ritmo adecuado, en vez de sacar todo junto.</span></div>
+      <div class="gterm"><b>Chequeo a los dos bocados</b><span>Volver ~2 min después de dejar el plato, cuando ya probaron pero aún se puede corregir. También "two-bite check".</span></div>
+      <div class="gterm"><b>Manos llenas (full hands)</b><span>Regla de moverse siempre con algo útil en las dos direcciones: llevas algo al entrar, traes algo al salir.</span></div>
+      <div class="gterm"><b>Pre-bus</b><span>Retirar loza, copas y cubiertos usados de paso, sin esperar a que la mesa lo pida, para mantenerla despejada.</span></div>
+      <div class="gterm"><b>Pre-cierre</b><span>Ofrecer postres, café y digestivos antes de que pidan la cuenta. Último punto para sumar al ticket.</span></div>
+      <div class="gterm"><b>Pre-cuenta</b><span>El detalle del consumo que se entrega antes de cobrar, para que revisen el total. Aún no es comprobante fiscal.</span></div>
+      <div class="gterm"><b>86</b><span>Código de cocina para "se acabó" un ítem. "86 el pulpo" = dejen de venderlo ya. Se avisa a toda la sala.</span></div>
+      <div class="gterm"><b>Número de silla</b><span>Sistema de numerar los asientos (empezando por uno fijo, en sentido horario) para entregar cada plato sin preguntar de quién es.</span></div>
+      <div class="gterm"><b>Cubierto (cover)</b><span>Cada comensal sentado. "Mesa de 4 cubiertos" = 4 personas. Se usa para pronósticos y montaje.</span></div>
+      <div class="gterm"><b>Runner / corredor</b><span>Quien lleva los platos de cocina a la mesa. En equipo, el mesero toma y marca; el runner corre la comida.</span></div>
+      <div class="gterm"><b>Mise en place</b><span>Tener todo listo antes del servicio: estaciones surtidas, sal, servilletas, cartas limpias. "Todo en su lugar".</span></div>
+      <div class="gterm"><b>Regla del minuto</b><span>Hacer contacto con toda mesa recién sentada en menos de 60 segundos, aunque sea para decir "ya vengo".</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Secuencia de servicio · Chuleta del mesero</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>La secuencia (en orden)</h4><ul>
+          <li>Saludo &lt; 1 min + agua</li>
+          <li>Bebidas → toma del pedido</li>
+          <li>Ingresa y marca tiempos</li>
+          <li>Corre entradas → marcha fondos</li>
+          <li>Chequeo a los 2 bocados</li>
+          <li>Pre-bus + reposición constante</li>
+          <li>Pre-cierre: postre y café</li>
+          <li>Cuenta rápida → despedida</li>
+        </ul></div>
+        <div class="op-box"><h4>El saludo (&lt; 60 seg)</h4><ul>
+          <li>Contacto visual aunque estés cargado</li>
+          <li>Llega con agua en la mano</li>
+          <li>Preséntate por tu nombre</li>
+          <li>Lee la mesa (cita, negocio, familia)</li>
+          <li>Abre por la bebida, no por "¿ya saben?"</li>
+        </ul></div>
+        <div class="op-box"><h4>Toma y tiempos</h4><ul>
+          <li>Numera sillas, sentido horario</li>
+          <li>Pregunta alergias en toda mesa</li>
+          <li>Repite el pedido antes de irte</li>
+          <li>Entrada "entra", fondo "marchar"</li>
+          <li>Marca la mesa al retirar entradas</li>
+          <li>Ítem agotado = 86, avisa a todos</li>
+        </ul></div>
+        <div class="op-box"><h4>Chequeo a los 2 bocados</h4><ul>
+          <li>Vuelve ~2 min después del plato</li>
+          <li>Pregunta específica, no "¿todo bien?"</li>
+          <li>Lee el plato: si no lo tocan, actúa</li>
+          <li>Resuelve, no expliques</li>
+          <li>Re-chequea el plato que cambiaste</li>
+        </ul></div>
+        <div class="op-box"><h4>Manos llenas</h4><ul>
+          <li>Nunca salgas de cocina con las manos vacías</li>
+          <li>Nunca vuelvas sin recoger algo</li>
+          <li>Pre-bus de paso, no como tarea aparte</li>
+          <li>Rellena agua/pan antes de que se acabe</li>
+          <li>Agrupa viajes: camina menos, no más rápido</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre</h4><ul>
+          <li>Ofrece postre + café antes de la cuenta</li>
+          <li>Pre-cuenta &lt; 2 min y revisada</li>
+          <li>Pregunta boleta o factura (RUC listo)</li>
+          <li>Cobra ágil, sin apuro visible</li>
+          <li>Despide por nombre, invita a volver</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Secuencia de servicio del mesero · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

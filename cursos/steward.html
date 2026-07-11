@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Steward y limpieza profunda · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230e7490'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Steward</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0e7490">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Steward y limpieza profunda</h1>
+    <p>El oficio que sostiene toda la cocina: lavar y desinfectar bien, dejar los equipos como nuevos, manejar los químicos sin miedo pero con respeto, y tener el área en orden para que la línea nunca frene. Nada de esto se ve en el plato, pero sin ti no hay servicio.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Steward</span><span>📄 One-pager imprimible</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una copa mal enjuagada con resto de detergente arruina el maridaje que el sommelier armó; un plato con grasa vieja del lavavajillas frena el pase en plena hora pico; una tabla mal desinfectada contamina el ceviche del día. El steward es la barrera silenciosa entre la cocina y una intoxicación, una queja o una copa devuelta. Se hace bien la primera vez, siempre.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Tu puesto sostiene la cocina</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">El steward no "lava platos": administra el flujo de vajilla, la inocuidad del menaje y el orden del back. Este módulo te muestra por qué tu ritmo marca el ritmo del servicio y qué se espera de ti en un restaurante de nivel.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Eres el motor del pase</h3><div class="d">Si el pizzaiolo no tiene platos calientes o el garde manger no tiene bowls limpios, el pase se detiene. Tu velocidad de reposición es la velocidad de salida de la cocina.</div><div class="s">Sin vajilla no hay plato</div></div>
+      <div class="tipo"><h3>Primera barrera de inocuidad</h3><div class="d">Tú desinfectas tablas, cuchillos y menaje que tocan alimento crudo y cocido. Un mal enjuague tuyo se transforma en contaminación cruzada en la línea.</div><div class="s">Lo que sale limpio, sale seguro</div></div>
+      <div class="tipo"><h3>Cuidas el patrimonio</h3><div class="d">Una copa de cristal, un plato de autor o una olla de cobre valen mucho. Manejarlos con técnica evita roturas que salen del presupuesto del local.</div><div class="s">Menos roturas = más margen</div></div>
+      <div class="tipo"><h3>Dueño de tres zonas</h3><div class="d">Área de lavado, zona de basura y almacén de limpieza. Las tres deben estar impecables y ordenadas a toda hora, no solo al cierre.</div><div class="s">Tu área habla de ti</div></div>
+      <div class="tipo"><h3>Trabajas contra el reloj</h3><div class="d">Vajilla sucia se acumula rápido en hora pico. Lavar en tandas parejas y no dejar que se junte todo evita el cuello de botella que hunde el servicio.</div><div class="s">Tandas parejas, no montañas</div></div>
+      <div class="tipo"><h3>Comunicas lo que ves</h3><div class="d">Eres el primero en notar una copa trizada, una olla con el mango flojo o un desagüe tapado. Reportarlo a tiempo evita accidentes y paradas mayores.</div><div class="s">Ves algo, avisas al chef</div></div>
+    </div>
+    <div class="callout"><b>En una frase:</b> el comensal nunca entra a tu área, pero come en tu plato, bebe en tu copa y confía en tu tabla. Tu trabajo se juzga por lo que NO pasa: sin quejas, sin frenos, sin roturas.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Lavado y desinfección de vajilla</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Lavar no es solo quitar la mancha visible: es dejar el menaje inocuo. Sigue siempre el orden de las fases y no te saltes el enjuague ni la desinfección, que son lo invisible que protege al comensal.</p>
+    <div class="paso"><div class="ico">🍽️</div><div><span class="t">FASE 1 · DESBARRE</span><h4>Raspa y bota los residuos primero</h4><p>Vacía restos de comida al tacho antes de tocar el agua. Sin este paso, la grasa y el arroz tapan el filtro del lavavajillas y ensucian el agua para todo lo demás. Nunca metas un plato con comida entera a la máquina.</p></div></div>
+    <div class="paso"><div class="ico">🚿</div><div><span class="t">FASE 2 · PRE-ENJUAGUE</span><h4>Afloja la grasa con agua tibia</h4><p>Enjuaga con la ducha de presión para arrastrar lo que quedó pegado. Agua tibia, no hirviendo: el agua muy caliente cuaja la clara de huevo y el queso fundido de la pizza, y cuesta más sacarlos después.</p></div></div>
+    <div class="paso"><div class="ico">🧽</div><div><span class="t">FASE 3 · LAVADO</span><h4>Detergente y acción mecánica</h4><p>Lava con detergente lavavajillas a la dilución correcta. En máquina, el ciclo llega a ~60 °C; a mano, usa agua caliente y esponja (nunca esponja de metal en antiadherente ni cristal). El detergente desprende, el frote termina el trabajo.</p></div></div>
+    <div class="paso"><div class="ico">💧</div><div><span class="t">FASE 4 · ENJUAGUE</span><h4>Cero rastro de químico</h4><p>Enjuaga hasta que no quede espuma ni película. Una copa con resto de detergente arruina la nariz y el sabor del vino, y en un plato deja gusto a jabón. Este es el error que más devoluciones causa: si dudas, enjuaga de nuevo.</p></div></div>
+    <div class="paso"><div class="ico">🧪</div><div><span class="t">FASE 5 · DESINFECCIÓN</span><h4>Calor o sanitizante, no ambos al azar</h4><p>En máquina, el enjuague final a 82–85 °C desinfecta por calor. A mano, sumerge en solución sanitizante (amonio cuaternario o cloro a la dilución de la etiqueta) el tiempo indicado. La desinfección mata lo que el lavado no ve.</p></div></div>
+    <div class="paso"><div class="ico">🌬️</div><div><span class="t">FASE 6 · SECADO</span><h4>Al aire, nunca con trapo sucio</h4><p>Deja escurrir y secar al aire en rejilla limpia. Secar con un paño reutilizado vuelve a contaminar lo que acabas de desinfectar. Guarda la vajilla solo cuando está totalmente seca para evitar hongos y malos olores.</p></div></div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Menaje</th><th>Cómo tratarlo</th><th>Ojo con</th></tr></thead>
+      <tbody>
+        <tr><td>Copas de cristal</td><td>Lavado suave, enjuague doble, secado con paño de microfibra limpio solo para copas</td><td>Choque térmico las triza; cero olor a detergente</td></tr>
+        <tr><td>Cuchillos de chef</td><td>A mano, uno por uno, filo hacia abajo; secar de inmediato</td><td>Nunca al fondo del fregadero sumergidos: cortan a ciegas</td></tr>
+        <tr><td>Ollas de cobre / aluminio</td><td>Sin cloro (mancha el metal); desengrasante suave y frote</td><td>El cloro pica el aluminio y opaca el cobre</td></tr>
+        <tr><td>Antiadherentes (sartén, plancha)</td><td>Esponja blanda, jamás estropajo de metal</td><td>Un rayón arruina la capa y pega la comida</td></tr>
+        <tr><td>Tablas y utensilios de crudo</td><td>Lavado + desinfección obligatoria entre usos</td><td>Contaminación cruzada crudo→cocido</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Ejemplo real:</b> en pleno pase de un viernes salen 40 copas de la mesa del reservado. Si las metes todas juntas calientes al agua fría, la mitad se triza. Van por tandas, temperatura pareja, enjuague doble y microfibra. Vuelven a la barra brillantes y sin una sola marca de dedo.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Manejo seguro de químicos</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Los químicos de limpieza son herramientas potentes: bien usados desinfectan y desengrasan; mal usados intoxican, queman o arruinan equipos. La regla madre: respeta la dilución de la etiqueta y nunca mezcles.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Lee la etiqueta siempre</h3><div class="d">Cada producto trae su dilución (ej. una tapa por litro), tiempo de acción y para qué sirve. "Más producto" no limpia mejor: deja residuo, cuesta más y puede dañar la superficie.</div><div class="s">Dilución exacta, no "a ojo"</div></div>
+      <div class="tipo"><h3>Nunca mezcles productos</h3><div class="d">Cloro + amoniaco o cloro + ácido (desincrustante) liberan un gas tóxico que manda a Emergencias. Un producto a la vez, enjuagando entre uno y otro. Esta es la regla que salva vidas.</div><div class="s">Un químico a la vez</div></div>
+      <div class="tipo"><h3>EPP según el producto</h3><div class="d">Guantes siempre; para desengrasante de campana o desincrustante, además lentes y ventilación. El desengrasante caliente salpica y quema; protégete antes de empezar.</div><div class="s">Guantes, lentes, aire</div></div>
+      <div class="tipo"><h3>Envases rotulados</h3><div class="d">Todo producto trasvasado a un rociador va rotulado con su nombre y dilución. Un líquido sin etiqueta es un accidente esperando: nadie sabe si es agua, desengrasante o sanitizante.</div><div class="s">Sin rótulo, no se usa</div></div>
+      <div class="tipo"><h3>Guárdalos lejos del alimento</h3><div class="d">Los químicos van en su estante propio, cerrado, separado de insumos, vajilla y zona de preparación. Jamás en una botella de gaseosa reusada: se confunde y se ingiere.</div><div class="s">Químico y comida, aparte</div></div>
+      <div class="tipo"><h3>Tiempo de contacto</h3><div class="d">El sanitizante necesita segundos o minutos actuando para matar bacteria; si lo enjuagas al toque no sirvió. Aplica, deja actuar el tiempo de la etiqueta, luego enjuaga o deja secar según indique.</div><div class="s">Deja que actúe</div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Producto</th><th>Para qué</th><th>Cuidado clave</th></tr></thead>
+      <tbody>
+        <tr><td>Detergente lavavajillas</td><td>Lavar menaje y vajilla</td><td>Dilución exacta; enjuagar bien para que no quede sabor</td></tr>
+        <tr><td>Desengrasante alcalino</td><td>Campana, freidora, planchas, forno</td><td>Guantes + lentes; salpica caliente; no en aluminio sin diluir</td></tr>
+        <tr><td>Sanitizante (amonio cuaternario)</td><td>Desinfectar tablas, mesas, superficies de contacto</td><td>Respetar tiempo de contacto; no enjuagar antes de tiempo</td></tr>
+        <tr><td>Cloro / hipoclorito</td><td>Desinfección de pisos, tachos, desagües</td><td>NUNCA mezclar con ácido o amoniaco; diluir siempre</td></tr>
+        <tr><td>Desincrustante ácido</td><td>Sarro de lavavajillas, cal en griferías</td><td>Ácido: lentes obligatorios; jamás junto al cloro</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Alerta de vida o muerte:</b> si limpiaste el desagüe con cloro y encima echas un desincrustante ácido para el sarro, se genera gas cloro. Nariz que arde, tos, mareo = sal al aire de inmediato y avisa. Regla simple: un producto, enjuagas, recién el siguiente.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Limpieza profunda de equipos</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La limpieza profunda va más allá del trapo del cierre: es desarmar, desengrasar y desinfectar lo que en el día a día solo se seca por encima. Se programa por equipo y se hace con el equipo frío y desenchufado.</p>
+    <div class="paso"><div class="ico">🔥</div><div><span class="t">CAMPANA Y FILTROS</span><h4>Trampa de grasa del aire</h4><p>Los filtros de la campana se saturan de grasa y son riesgo de incendio. Desmóntalos, remójalos en agua caliente con desengrasante, frota y enjuaga. Semanal como mínimo; en cocina con forno y frituras, más seguido. La grasa acumulada arriba es lo que prende fuego.</p></div></div>
+    <div class="paso"><div class="ico">🍳</div><div><span class="t">FREIDORA</span><h4>Vaciado, filtrado y hervido</h4><p>Con el aceite frío, drénalo y filtra o descártalo según el plan. Hierve agua con desengrasante dentro de la cuba para soltar la costra carbonizada, frota, enjuaga y seca antes de reponer aceite. Aceite quemado da mal sabor y humea en servicio.</p></div></div>
+    <div class="paso"><div class="ico">🧊</div><div><span class="t">CÁMARAS Y REFRIGERADORES</span><h4>Frío limpio, frío seguro</h4><p>Vacía por zonas, retira parrillas, lava con sanitizante suave y seca. Limpia el sello de goma de la puerta (junta) donde se pega el moho, y revisa el desagüe interno. Un derrame viejo en cámara contamina todo lo que guarda y da olor al insumo.</p></div></div>
+    <div class="paso"><div class="ico">🍕</div><div><span class="t">PLANCHA, FORNO Y HORNOS</span><h4>Costra fuera, sin rayar</h4><p>Plancha tibia: raspa con espátula en el sentido del grano, aplica desengrasante, frota y seca; una pasada final de aceite protege el acero. El forno se cepilla en frío. Nunca eches agua fría a una plancha caliente: se deforma y salta vapor.</p></div></div>
+    <div class="paso"><div class="ico">🕳️</div><div><span class="t">TRAMPA DE GRASA Y DESAGÜES</span><h4>Lo que nadie quiere, pero frena todo</h4><p>La trampa de grasa retiene la grasa antes del desagüe municipal. Se destapa y limpia con la periodicidad del plan y EPP completo (guantes largos, mascarilla). Un desagüe tapado inunda la cocina en pleno servicio. Retira sólidos, no los empujes hacia adentro.</p></div></div>
+    <div class="paso"><div class="ico">🧱</div><div><span class="t">PISOS, PAREDES Y REJILLAS</span><h4>El piso que no resbala</h4><p>Barre, luego trapea con desengrasante en zonas de grasa y sanitizante en el resto. Levanta las rejillas del canal de desagüe y lávalas: ahí se junta lo peor. Piso seco o señalizado con el cono de "piso mojado" para que nadie resbale.</p></div></div>
+    <div class="callout"><b>Programa, no improvises:</b> la limpieza profunda vive en un cronograma (diaria / semanal / mensual). Ejemplo Casa Italia — Diaria: planchas, superficies, pisos, tachos. Semanal: filtros de campana, cámaras, detrás de equipos. Mensual: trampa de grasa, desincrustado del lavavajillas, ductos accesibles. Lo que se agenda, se hace.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Orden del área y flujo de trabajo</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Un área ordenada trabaja el doble de rápido y no genera accidentes. La clave es separar lo sucio de lo limpio y que la vajilla fluya en una sola dirección, sin cruzarse.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Zona sucia y zona limpia</h3><div class="d">Un lado recibe lo sucio, el otro entrega lo limpio, y nunca se cruzan. Si el plato limpio pasa por donde estuvo el sucio, todo tu trabajo de desinfección se pierde.</div><div class="s">Flujo en un solo sentido</div></div>
+      <div class="tipo"><h3>Cada cosa en su sitio</h3><div class="d">Vajilla, copas, cubiertos y ollas tienen su estante fijo. La brigada debe encontrar todo a ciegas en hora pico. Un menaje "perdido" frena a un cocinero.</div><div class="s">Ubicación fija, todos saben</div></div>
+      <div class="tipo"><h3>PEPS también en menaje</h3><div class="d">Lo primero que se lava, primero se usa. Rota las pilas de platos: saca del fondo, repone arriba. Evita que un plato "duerma" días juntando polvo en la base de la torre.</div><div class="s">Primero limpio, primero sale</div></div>
+      <div class="tipo"><h3>Basura controlada</h3><div class="d">Tachos con bolsa y tapa, separados por tipo (orgánico, reciclable, vidrio). Se sacan antes de que rebosen, no cuando ya gotean. Bolsa nueva de inmediato.</div><div class="s">Tacho lleno = se saca ya</div></div>
+      <div class="tipo"><h3>Limpieza sobre la marcha</h3><div class="d">"Clean as you go": seca el charco al instante, recoge el vidrio roto ahora, limpia la salpicadura antes de que se seque. No dejes todo para el cierre.</div><div class="s">Ordena mientras trabajas</div></div>
+      <div class="tipo"><h3>Cierre que habilita apertura</h3><div class="d">El área queda lista para que el turno siguiente arranque sin limpiar primero. Rejillas escurriendo, químicos guardados, piso seco, tachos vacíos.</div><div class="s">Entregas listo, no a medias</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Lavar por tandas parejas durante todo el servicio</li>
+        <li>Mantener seco y despejado el piso alrededor del fregadero</li>
+        <li>Devolver cada olla y utensilio a su estante apenas seca</li>
+        <li>Avisar al chef si un equipo quedó chico para el volumen</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Dejar que la vajilla sucia se apile hasta desbordar</li>
+        <li>Apoyar platos limpios en la zona sucia "un ratito"</li>
+        <li>Tapar el desagüe con restos en vez de botarlos al tacho</li>
+        <li>Guardar menaje húmedo (genera hongos y mal olor)</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Ejemplo real:</b> son las 21:30, entra el reservado de 12 y el pase pide vajilla ya. Si lavaste parejo toda la noche, tienes torres limpias listas y respondes en segundos. Si dejaste que se acumulara, ahora hay una montaña, la línea espera y el error entra por el apuro. El orden se construye antes de la ola, no durante.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Seguridad personal y del área</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Tu área tiene agua, calor, filos, químicos y peso. La mayoría de accidentes de cocina pasan aquí y todos son evitables. Cierra el curso cuidándote a ti y a quien camina cerca.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Resbalones y caídas</h3><div class="d">Calzado antideslizante siempre, piso seco, y el cono de "piso mojado" cuando trapeas. El agua con grasa es la superficie más traicionera de la cocina.</div><div class="s">Seco o señalizado</div></div>
+      <div class="tipo"><h3>Cortes con vidrio y filos</h3><div class="d">Nunca metas la mano al fondo del agua turbia buscando a ciegas: puede haber un cuchillo o una copa trizada. Vidrio roto se recoge con escoba y recogedor, jamás con la mano.</div><div class="s">Sin manos a ciegas</div></div>
+      <div class="tipo"><h3>Quemaduras</h3><div class="d">El agua del enjuague sale a 82–85 °C y el vapor quema. Usa guante térmico para sacar bandejas del lavavajillas y abre la puerta dejando salir el vapor antes de meter la cara.</div><div class="s">Vapor primero, cara después</div></div>
+      <div class="tipo"><h3>Salpicaduras de químico</h3><div class="d">Lentes al diluir o rociar desengrasante y desincrustante. Si cae en el ojo, lava con agua abundante varios minutos y avisa. Ten a mano dónde está la ficha del producto.</div><div class="s">Ojos protegidos</div></div>
+      <div class="tipo"><h3>Levanta con las piernas</h3><div class="d">Ollas de fondo, cajas de vajilla y bolsas de basura pesan. Dobla rodillas, espalda recta, carga pegado al cuerpo. Pide ayuda con lo muy pesado; la espalda no se recupera fácil.</div><div class="s">Piernas, no espalda</div></div>
+      <div class="tipo"><h3>Eléctrico y agua</h3><div class="d">No manipules enchufes ni equipos con las manos mojadas. Desenchufa antes de limpiar a fondo un equipo. Reporta un cable pelado o un tomacorriente que chispea de inmediato.</div><div class="s">Manos secas, equipo apagado</div></div>
+    </div>
+    <div class="paso" style="margin-top:8px"><div class="ico">🧤</div><div><span class="t">SI HAY UN CORTE</span><h4>Actúa rápido y avisa</h4><p>Lava la herida, presiona con gasa, cubre con curita impermeable y, si sigue sangrando o es profundo, avisa al chef o supervisor. Retira el vidrio roto del área antes de que corte a otro. Nunca sigas manipulando vajilla con una herida abierta sin cubrir.</p></div></div>
+    <div class="paso"><div class="ico">🔥</div><div><span class="t">SI TE QUEMAS</span><h4>Agua fría, no hielo ni pasta</h4><p>Pon la zona bajo agua fría corriente 10–15 minutos. Nada de hielo directo, pasta de dientes ni remedios caseros. Si la quemadura es grande o con ampolla, avisa para atención. La rapidez baja el daño.</p></div></div>
+    <div class="paso"><div class="ico">☣️</div><div><span class="t">SI SALPICA QUÍMICO</span><h4>Enjuaga abundante y reporta</h4><p>En piel u ojo, agua abundante por varios minutos. Consulta la ficha de seguridad del producto y avisa al supervisor. Si hubo mezcla accidental y hay gas u olor fuerte, evacúa el área y ventila antes de volver.</p></div></div>
+    <div class="callout"><b>Cierre del curso:</b> el mejor steward no es el que lava más rápido, sino el que termina el turno sin un accidente, sin una copa devuelta y con el área lista para el siguiente. Tu trabajo se mide en lo que evitas. Impecable, seguro y a tiempo — cada servicio.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Steward</b><span>Encargado del lavado, la desinfección del menaje, la limpieza profunda de equipos y el orden del área de cocina (BOH).</span></div>
+      <div class="gterm"><b>BOH (Back of House)</b><span>La cocina y áreas internas que el comensal no ve. Es tu territorio principal de trabajo.</span></div>
+      <div class="gterm"><b>Inocuidad</b><span>Garantía de que el alimento no dañará al comensal. Tu desinfección del menaje es una de sus primeras barreras.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Paso de bacterias de una superficie o alimento a otro (ej. tabla de crudo a menaje de cocido). Se corta lavando y desinfectando entre usos.</span></div>
+      <div class="gterm"><b>Desbarre</b><span>Retirar los residuos sólidos de comida del plato antes de lavar. Primer paso siempre, protege el filtro y el agua.</span></div>
+      <div class="gterm"><b>Sanitizante</b><span>Producto que desinfecta superficies (amonio cuaternario, cloro diluido). Necesita tiempo de contacto para actuar.</span></div>
+      <div class="gterm"><b>Desengrasante</b><span>Producto alcalino que disuelve la grasa de campanas, freidoras y planchas. Requiere guantes y lentes.</span></div>
+      <div class="gterm"><b>Desincrustante</b><span>Producto ácido que quita sarro y cal del lavavajillas y griferías. NUNCA se mezcla con cloro.</span></div>
+      <div class="gterm"><b>Dilución</b><span>Proporción exacta de producto y agua que indica la etiqueta (ej. una tapa por litro). Ni más ni menos.</span></div>
+      <div class="gterm"><b>Tiempo de contacto</b><span>Los segundos o minutos que un sanitizante debe actuar sobre la superficie para desinfectar. Si lo enjuagas antes, no sirvió.</span></div>
+      <div class="gterm"><b>EPP</b><span>Equipo de Protección Personal: guantes, lentes, mascarilla, botas antideslizantes. Se usa según el químico y la tarea.</span></div>
+      <div class="gterm"><b>Trampa de grasa</b><span>Depósito que retiene la grasa antes de que llegue al desagüe municipal. Se limpia según el plan, con EPP completo.</span></div>
+      <div class="gterm"><b>Choque térmico</b><span>Cambio brusco de temperatura que triza el cristal o deforma el metal (copa caliente al agua fría, agua fría a plancha caliente).</span></div>
+      <div class="gterm"><b>PEPS</b><span>Primero Entra, Primero Sale. En menaje: la vajilla lavada primero se usa primero; rota las torres para que nada "duerma".</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Steward y limpieza profunda · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Fases de lavado</h4><ul>
+          <li>1. Desbarre (bota residuos al tacho)</li>
+          <li>2. Pre-enjuague con agua tibia</li>
+          <li>3. Lavado con detergente + frote</li>
+          <li>4. Enjuague total, cero espuma</li>
+          <li>5. Desinfección (82–85 °C o sanitizante)</li>
+          <li>6. Secado al aire en rejilla limpia</li>
+        </ul></div>
+        <div class="op-box"><h4>Químicos: reglas de oro</h4><ul>
+          <li>Respeta la dilución de la etiqueta</li>
+          <li>NUNCA mezcles (cloro + ácido/amoniaco = gas tóxico)</li>
+          <li>Un producto, enjuagas, recién el siguiente</li>
+          <li>Envases rotulados; sin rótulo no se usa</li>
+          <li>Químicos separados del alimento y la vajilla</li>
+        </ul></div>
+        <div class="op-box"><h4>Limpieza profunda</h4><ul>
+          <li>Equipo frío y desenchufado antes de empezar</li>
+          <li>Filtros de campana semanal (riesgo de incendio)</li>
+          <li>Freidora: aceite frío, hervir con desengrasante</li>
+          <li>Cámaras: junta de goma y desagüe interno</li>
+          <li>Trampa de grasa según plan, con EPP completo</li>
+          <li>Sigue el cronograma diario / semanal / mensual</li>
+        </ul></div>
+        <div class="op-box"><h4>Orden y seguridad</h4><ul>
+          <li>Zona sucia y limpia separadas, flujo en un sentido</li>
+          <li>Lava por tandas parejas, no dejes que se acumule</li>
+          <li>Piso seco o cono de "piso mojado"; calzado antideslizante</li>
+          <li>Sin manos a ciegas al agua; vidrio con escoba</li>
+          <li>Levanta con las piernas; guante térmico contra vapor</li>
+          <li>Quemadura: agua fría 10–15 min. Corte: cubre y avisa</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Steward y limpieza profunda · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

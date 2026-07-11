@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Despedida y cierre de cuenta · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23c2410c'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Despedida y cierre</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#c2410c">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Despedida y cierre de cuenta</h1>
+    <p>Los últimos diez minutos de una mesa valen tanto como los primeros diez. Este curso es para meseros y anfitriones: aquí aprendes a llevar la pre-cuenta ágil, cobrar sin fricción, despedir en la puerta, invitar a volver de verdad y dejar la encuesta post-visita sembrada. El cierre no es el final del trabajo: es donde se decide la propina y la próxima reserva.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Mesero / anfitrión</span><span>📄 One-pager incluido</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el comensal olvida un plato que tardó, pero no olvida una cuenta que tardó veinte minutos ni una despedida en la que nadie lo miró. El cierre es la última impresión —la que se cuentan en el carro camino a casa y la que escriben en Google al día siguiente—. Un cierre ágil y cálido levanta la propina, dispara las reseñas de 5 estrellas y hace que la mesa reserve otra vez antes de salir del local. Un cierre torpe hunde una noche que hasta ese momento era perfecta.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La pre-cuenta ágil</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La pre-cuenta es el detalle del consumo que entregas antes de cobrar, para que revisen el total. Traerla rápido, correcta y en el momento justo es lo que separa un cierre elegante de una espera incómoda. Aquí el reloj corre a tu favor solo si te adelantas.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Léela antes de pedirla</h3><div class="d">Cuando ya retiraste postres o rechazaron el cafecito, la cuenta viene en camino en su cabeza. Adelántate: ten la mesa cuadrada en el POS antes de que levanten la mano.</div><div class="s">anticipa la señal</div></div>
+      <div class="tipo"><h3>La regla de los 3 minutos</h3><div class="d">Desde que la piden hasta que la dejas en la mesa: máximo 3 minutos en un fine dining. Cada minuto de más borra el buen sabor de la sobremesa.</div><div class="s">&lt; 3 min a la mesa</div></div>
+      <div class="tipo"><h3>Revísala antes de llevarla</h3><div class="d">Un ítem de otra mesa, un pisco que no tomaron, una cortesía que no se descontó: revisa línea por línea. Un error en la cuenta pesa más que cualquier plato de la noche.</div><div class="s">cero errores</div></div>
+      <div class="tipo"><h3>Nunca la pongas encima de nadie</h3><div class="d">Va en el centro de la mesa o en una carpeta neutral, jamás frente a la mujer ni frente al invitado. Quien paga la toma solo; tú no decides quién paga.</div><div class="s">al centro, discreta</div></div>
+      <div class="tipo"><h3>No apures con el gesto</h3><div class="d">Déjala y retírate. Rondar mirando la carpeta apura y molesta. Vuelve recién cuando veas la tarjeta, el efectivo o el celular con Yape listo.</div><div class="s">deja y suelta</div></div>
+      <div class="tipo"><h3>Cuadra propina y servicio</h3><div class="d">Si la casa incluye 10% de servicio, que esté visible y explicado. Si no, no lo insinúes con incomodidad. La transparencia evita el peor momento de la noche.</div><div class="s">servicio claro</div></div>
+    </div>
+    <div class="callout"><b>Truco de sala:</b> en Prep! el POS imprime la pre-cuenta de una desde la pantalla de cobro (CA-23) y trae ya el QR de la encuesta impreso. No la escribas a mano ni sumes de cabeza: dejas la carpeta, ellos revisan un total claro y tú ganas los tres minutos más delicados de la mesa.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Cobrar sin fricción</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El cobro es el único momento en que el invitado saca la billetera: hazlo invisible. En Perú conviven efectivo, Yape, Plin, tarjeta y, cada vez más, factura de empresa. Dominar los medios y el comprobante correcto es lo que hace que pagar se sienta fácil y no un trámite.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">💬</div><div><div class="t">Antes de tocar el POS</div><h4>Pregunta boleta o factura</h4><p>"¿La hacemos con boleta o necesita factura?" Si es factura, pide RUC y razón social AHÍ, no después de cobrar. En Perú un comprobante mal emitido no se corrige con un clic.</p></div></div>
+      <div class="paso"><div class="ico">📱</div><div><div class="t">Ofrece los medios</div><h4>Efectivo, Yape, Plin o tarjeta</h4><p>"Puede ser en efectivo, Yape, Plin o tarjeta, como le acomode." Ten el QR de Yape/Plin a mano y el datáfono cargado. Nunca hagas que el invitado adivine si aceptas su medio.</p></div></div>
+      <div class="paso"><div class="ico">➗</div><div><div class="t">Si van a dividir</div><h4>Divide sin drama</h4><p>"¿Va todo junto o lo dividimos?" El POS de Prep! separa por ítem o por partes iguales (CA-03). Divide en el sistema, no de memoria: evitas el cálculo mental frente a la mesa y el error.</p></div></div>
+      <div class="paso"><div class="ico">💳</div><div><div class="t">Con tarjeta</div><h4>Cobra en la mesa, a la vista</h4><p>Lleva el datáfono a la mesa; no te lleves la tarjeta a caja. Confirma el monto en voz baja antes de pasarla y pregunta por la propina si el equipo la ofrece en pantalla.</p></div></div>
+      <div class="paso"><div class="ico">🪙</div><div><div class="t">Con efectivo</div><h4>Vuelto exacto y rápido</h4><p>Cuenta el billete a la vista, di el monto en voz alta y trae el vuelto completo, sin "redondear" a tu favor. Un vuelto lento o incompleto arruina toda la noche en un segundo.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>El invitado dice…</th><th>Qué haces</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>"¿Aceptan Yape?"</td><td>Muestras el QR o das el número, confirmas el nombre al que llega</td><td>Yape y Plin ya son tan comunes como el efectivo en Lima</td></tr>
+        <tr><td>"Necesito factura para la empresa"</td><td>Pides RUC y razón social antes de emitir</td><td>La factura mal emitida obliga a nota de crédito y molesta</td></tr>
+        <tr><td>"Divídelo entre nosotros tres"</td><td>Split por partes iguales en el POS, tres cobros</td><td>Cero cálculo mental, cero discusión en la mesa</td></tr>
+        <tr><td>"Yo invito, tráemela a mí"</td><td>Cobras discreto a esa persona, sin anunciarlo al resto</td><td>El anfitrión queda bien; nadie más ve el monto</td></tr>
+        <tr><td>"¿Está incluida la propina?"</td><td>Respondes claro qué incluye la cuenta y qué es voluntario</td><td>La transparencia sobre el servicio evita la incomodidad final</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>La regla del cobro:</b> ágil no es apurado. Cobra rápido para que no esperen, pero nunca de forma que sientan que los echas de la mesa. La sobremesa es del invitado; el cobro es tu trabajo hecho para que no la interrumpa.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Cerrar la cuenta en el POS</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El cierre técnico en Prep! sigue un flujo secuencial (CA-23) que existe justamente para que no te saltes ningún paso ni cometas errores de plata. Aquí va la ruta exacta dentro del sistema, del botón "Cobrar" hasta liberar la mesa para el siguiente turno.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">Paso 1</div><h4>Cobrar → total y dividir</h4><p>Tocas "Cobrar" en la mesa. El POS arma el total y te deja dividir por ítem o por proporción antes de seguir. Aquí decides si va una sola cuenta o varias.</p></div></div>
+      <div class="paso"><div class="ico">🖨️</div><div><div class="t">Paso 2</div><h4>Imprime la pre-cuenta</h4><p>Sale la pre-cuenta en 80mm con el detalle y el QR de la encuesta ya impreso. La llevas a la mesa para que revisen. Todavía no es comprobante fiscal.</p></div></div>
+      <div class="paso"><div class="ico">📄</div><div><div class="t">Paso 3</div><h4>Boleta o factura</h4><p>Confirmas el comprobante en el sistema. Si es factura, cargas RUC y razón social antes de emitir. El POS lo deja listo para SUNAT según el cliente.</p></div></div>
+      <div class="paso"><div class="ico">💰</div><div><div class="t">Paso 4</div><h4>Método de pago</h4><p>Registras cómo pagan: efectivo, Yape, Plin, tarjeta o multipago si mezclan medios (CA-08). El sistema soporta varios métodos en una misma cuenta.</p></div></div>
+      <div class="paso"><div class="ico">✋</div><div><div class="t">Cortesías (si aplica)</div><h4>Descuento con aprobación</h4><p>Si vas a invitar el postre o descontar un plato que salió mal, pásalo como cortesía: requiere aprobación de gerente (CA-07) y queda en el audit log. Nunca lo "arregles" por fuera del sistema.</p></div></div>
+      <div class="paso"><div class="ico">✅</div><div><div class="t">Paso 5</div><h4>Registro + propina → liberar mesa</h4><p>Confirmas el pago y capturas la propina (CA-11). Al cerrar, la mesa se libera en el floor plan y el pedido cierra: se registra la visita del comensal para el CRM (guest 360).</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Cierre limpio en el sistema</h4><ul>
+        <li>Revisas el total en pantalla antes de imprimir la pre-cuenta.</li>
+        <li>Cargas el RUC en el POS cuando piden factura, no después.</li>
+        <li>La cortesía va con aprobación del gerente y queda registrada.</li>
+        <li>Cierras la cuenta y la mesa se libera sola para el siguiente turno.</li>
+      </ul></div>
+      <div class="box no"><h4>Cierre que genera líos</h4><ul>
+        <li>Cobrar de memoria y "cuadrar" la caja al final de la noche.</li>
+        <li>Emitir boleta y que después pidan factura ya cobrada.</li>
+        <li>Descontar un plato por fuera sin registrarlo como cortesía.</li>
+        <li>Dejar la mesa "ocupada" en el sistema tras cobrar y frenar el turno.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Por qué el flujo importa:</b> cada paso del POS existe para que no te saltes uno bajo presión. El audit log (CA-12) registra quién abrió, cobró y descontó cada cuenta: no es para vigilarte, es tu respaldo. Si mañana alguien pregunta por esa mesa, el sistema responde por ti.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Agradecer en la puerta e invitar a volver</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La despedida es la última impresión, y la última impresión es la que más se recuerda. En un fine dining nadie debería salir sin que alguien lo mire a los ojos, lo agradezca por su nombre y lo invite a volver de verdad. Cobrar y desaparecer es tirar a la basura toda la noche de trabajo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Acompaña a la puerta</h3><div class="d">Si tu sección lo permite, camina con ellos hacia la salida. El anfitrión ideal recibe y despide en la puerta. Aunque sean tres pasos, el gesto se siente.</div><div class="s">del cobro a la puerta</div></div>
+      <div class="tipo"><h3>Agradece por nombre</h3><div class="d">"Fue un gusto, señor Ramírez, gracias por venir." Si tomaste el nombre en la reserva o en el pago, úsalo. Un nombre convierte una despedida genérica en personal.</div><div class="s">nombre = cercanía</div></div>
+      <div class="tipo"><h3>Invita a volver con motivo</h3><div class="d">No un "vuelvan pronto" vacío. "La próxima tienen que probar el menú de temporada" o "en septiembre entra el festival de causas". Das una razón concreta para regresar.</div><div class="s">invitación con gancho</div></div>
+      <div class="tipo"><h3>Ofrece la reserva ahí mismo</h3><div class="d">Si celebraron algo o preguntaron por otra fecha: "¿Le agendo para el próximo viernes?". La mejor reserva se cierra cuando aún están felices, no por WhatsApp tres días después.</div><div class="s">cierra la próxima visita</div></div>
+      <div class="tipo"><h3>Detalles de despedida</h3><div class="d">Ayuda con el abrigo, avisa al valet, ofrece un taxi seguro, entrega el delivery de las sobras bien empacado. Los últimos 30 segundos son puro cuidado.</div><div class="s">cuidado hasta el final</div></div>
+      <div class="tipo"><h3>Misma energía que el saludo</h3><div class="d">Recibiste con un diez; no despidas con un tres porque ya vienen otras mesas. El invitado no recuerda el promedio de la noche: recuerda cómo se sintió al levantarse.</div><div class="s">cierra como abriste</div></div>
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Una despedida que deja huella</h4><ul>
+        <li>Los acompañas a la puerta y les abres la salida.</li>
+        <li>"Gracias por celebrar con nosotros, señora Torres, la esperamos."</li>
+        <li>Les recuerdas el plato de temporada que no alcanzaron a probar.</li>
+        <li>Le agendas la reserva del aniversario ahí mismo, felices como están.</li>
+      </ul></div>
+      <div class="box no"><h4>Una despedida que enfría todo</h4><ul>
+        <li>Cobrar, dar el vuelto y darte media vuelta sin mirarlos.</li>
+        <li>Un "gracias" de espaldas mientras levantas la mesa de al lado.</li>
+        <li>Dejar que se paren, busquen la salida y nadie los despida.</li>
+        <li>"Vuelvan pronto" mecánico, igual para todos, sin nombre ni motivo.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El dato que convence:</b> la propina se decide en dos momentos —el chequeo a los dos bocados y la despedida— más que en la comida misma. Una salida cálida, por nombre y con invitación real, es literalmente el gesto mejor pagado de tu turno. Treinta segundos en la puerta valen más que la carrera de toda la noche.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>La encuesta post-visita</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La encuesta post-visita convierte una buena noche en información que mejora el restaurante y en una reseña de 5 estrellas. En Prep! el QR viene impreso en la pre-cuenta y la encuesta se responde desde el celular del invitado en segundos. Tu trabajo es sembrarla sin que se sienta como un formulario.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🔳</div><div><div class="t">Ya está en la pre-cuenta</div><h4>El QR viaja con la cuenta</h4><p>La encuesta activa ("Experiencia Casa Italia": NPS + satisfacción + un comentario abierto) se imprime como QR en la pre-cuenta desde el POS. No tienes que traer nada extra: ya está en sus manos.</p></div></div>
+      <div class="paso"><div class="ico">🗣️</div><div><div class="t">Al dejar la carpeta</div><h4>Menciónala en una frase</h4><p>"Ahí abajo hay un QR, si nos regala 30 segundos de opinión nos ayuda un montón." Una invitación humana rinde diez veces más que el QR a secas.</p></div></div>
+      <div class="paso"><div class="ico">📲</div><div><div class="t">Si prefieren después</div><h4>WhatsApp post-visita</h4><p>Si dejaron su número en la reserva, el sistema puede mandar la encuesta por WhatsApp al cerrar la cuenta (VC-06). El comensal responde tranquilo desde el carro o en casa.</p></div></div>
+      <div class="paso"><div class="ico">⭐</div><div><div class="t">Cuando quedaron felices</div><h4>Encamínalos a la reseña</h4><p>Si la mesa fue un éxito, esa es la mejor reseña de Google que vas a conseguir. "Si les provoca dejarnos una reseña, nos hace el día." Se pide en caliente, no al día siguiente.</p></div></div>
+      <div class="paso"><div class="ico">🚨</div><div><div class="t">Cierra el bucle</div><h4>La respuesta negativa se atiende ya</h4><p>Una respuesta con NPS bajo (≤6) enciende una alerta en el sistema con la mesa y tu nombre (VC-09). No es para culparte: es para que el gerente contacte y recupere al comensal antes de que se vuelva una mala reseña pública.</p></div></div>
+    </div>
+    <table class="t" style="margin-top:14px">
+      <thead><tr><th>Sigla</th><th>Qué mide</th><th>Qué significa para ti en la mesa</th></tr></thead>
+      <tbody>
+        <tr><td><b>NPS</b></td><td>Si recomendaría el restaurante (0 a 10)</td><td>La pregunta reina: un 9 o 10 es un promotor que trae amigos</td></tr>
+        <tr><td><b>CSAT</b></td><td>Satisfacción con algo puntual (comida, servicio, tiempos)</td><td>Te dice exactamente qué parte del servicio cuidar</td></tr>
+        <tr><td>Comentario abierto</td><td>Lo que el invitado quiera contar en sus palabras</td><td>Aquí sale tu nombre cuando hiciste un gran trabajo</td></tr>
+        <tr><td>Alerta (NPS ≤6)</td><td>Respuesta negativa que dispara seguimiento inmediato</td><td>El gerente recupera al comensal antes de que reseñe mal</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Por qué te conviene a ti:</b> la encuesta y la reseña muchas veces mencionan al mesero por su nombre. Un cierre cálido no solo levanta la propina de esa mesa: te construye una reputación medible dentro del restaurante. Cuando el reporte muestra tus mesas con mejor NPS, eso pesa en tu carrera de servicio.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cuando algo sale mal al final</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">A veces el problema aparece justo en el cierre: un error en la cuenta, una tarjeta que rebota, una queja que guardaron para el final. Cómo lo resuelves en ese instante define si la noche termina en 5 estrellas o en una mala reseña. La recuperación de servicio es tu red de seguridad.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Error en la cuenta</h3><div class="d">Si detectan un cobro que no es, no discutas: "Tiene toda la razón, lo corrijo ahora mismo." Reimprimes la pre-cuenta corregida en el POS. El error admitido rápido casi no cuesta.</div><div class="s">admite y corrige</div></div>
+      <div class="tipo"><h3>Tarjeta rechazada</h3><div class="d">Manéjalo en voz baja y sin cara de juicio: "La máquina a veces falla, ¿probamos otra o con Yape?". Discreción total: que nadie más en la mesa se entere.</div><div class="s">discreción absoluta</div></div>
+      <div class="tipo"><h3>Queja guardada para el final</h3><div class="d">"El lomo estaba salado" recién al pagar. Escucha, no te defiendas, escala al gerente. Una cortesía o descuento aprobado convierte una queja tardía en un cliente que vuelve.</div><div class="s">escuchar &gt; justificar</div></div>
+      <div class="tipo"><h3>La espera se hizo larga</h3><div class="d">Si el cobro demoró por caja o sistema, reconócelo: "Disculpe la demora con la cuenta, gracias por la paciencia." Nombrar el error desactiva la molestia.</div><div class="s">reconoce la demora</div></div>
+      <div class="tipo"><h3>Propina cero o baja</h3><div class="d">Jamás lo comentes, jamás cambies el trato. La despedida es idéntica de cálida. Tu profesionalismo no depende de la propina de esa mesa en particular.</div><div class="s">misma calidez, siempre</div></div>
+      <div class="tipo"><h3>Se van molestos igual</h3><div class="d">Si no lograste recuperarlos, que el gerente pida los datos y haga seguimiento. Un comensal molesto contactado al día siguiente muchas veces vuelve; ignorado, nunca.</div><div class="s">seguimiento posterior</div></div>
+    </div>
+    <div class="callout"><b>La regla de la recuperación:</b> no es el error lo que se recuerda, es cómo lo resolviste. Un problema en el cierre bien manejado —admitido, corregido y con un gesto— genera más lealtad que una noche donde nada falló. La cortesía siempre va por el sistema, con aprobación del gerente y registrada en el audit log: así el arreglo queda hecho de forma limpia y nadie carga el error solo.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Pre-cuenta</b><span>El detalle del consumo que se entrega antes de cobrar, para que el invitado revise el total. Aún no es comprobante fiscal.</span></div>
+      <div class="gterm"><b>Pre-cierre</b><span>Ofrecer postres, café y digestivos antes de que pidan la cuenta. Es el último punto para sumar al ticket de la noche.</span></div>
+      <div class="gterm"><b>Boleta / Factura</b><span>Comprobantes de pago en Perú. La factura requiere RUC y razón social y se pide antes de emitir; se usa para gasto de empresa.</span></div>
+      <div class="gterm"><b>RUC</b><span>Registro Único de Contribuyentes: el número tributario de una empresa o persona. Imprescindible para emitir una factura.</span></div>
+      <div class="gterm"><b>Yape / Plin</b><span>Billeteras móviles peruanas para pagar por celular al instante con un QR o número. Hoy tan comunes como el efectivo en Lima.</span></div>
+      <div class="gterm"><b>Split / dividir</b><span>Separar la cuenta entre varios comensales, por ítem o en partes iguales. En Prep! se hace en el POS (CA-03), no de memoria.</span></div>
+      <div class="gterm"><b>Multipago</b><span>Pagar una misma cuenta mezclando medios (por ejemplo parte en efectivo y parte con tarjeta). El POS lo soporta en un solo cierre (CA-08).</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Descuento o invitación (un postre, un plato que salió mal). En Prep! requiere aprobación de gerente y queda en el audit log (CA-07).</span></div>
+      <div class="gterm"><b>Propina</b><span>Reconocimiento voluntario al servicio. En Perú suele ser aparte del 10% de servicio si la casa lo incluye. Se captura en el cobro (CA-11).</span></div>
+      <div class="gterm"><b>Liberar la mesa</b><span>Cerrar la cuenta en el POS para que la mesa vuelva a estar disponible en el floor plan y entre el siguiente turno.</span></div>
+      <div class="gterm"><b>NPS</b><span>Net Promoter Score: pregunta de 0 a 10 sobre si recomendaría el restaurante. La métrica reina de la encuesta post-visita.</span></div>
+      <div class="gterm"><b>CSAT</b><span>Customer Satisfaction: satisfacción con algo puntual (comida, servicio, tiempos). Señala qué parte del servicio cuidar.</span></div>
+      <div class="gterm"><b>Encuesta post-visita</b><span>Formulario breve que el comensal responde por QR o WhatsApp tras la visita. Mide la experiencia y alimenta las reseñas.</span></div>
+      <div class="gterm"><b>Recuperación de servicio</b><span>Resolver bien un problema que aparece en el momento (error, queja, tarjeta rechazada) para salvar la relación con el comensal.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Despedida y cierre · Chuleta del cierre</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Pre-cuenta ágil</h4><ul>
+          <li>Cuadra la mesa antes de que la pidan</li>
+          <li>&lt; 3 min desde que la piden a la mesa</li>
+          <li>Revísala línea por línea: cero errores</li>
+          <li>Al centro, nunca frente a alguien</li>
+          <li>Déjala y suelta, no rondes apurando</li>
+        </ul></div>
+        <div class="op-box"><h4>Cobro sin fricción</h4><ul>
+          <li>Pregunta boleta o factura ANTES de cobrar</li>
+          <li>Factura = RUC y razón social al toque</li>
+          <li>Ofrece efectivo, Yape, Plin o tarjeta</li>
+          <li>Divide en el POS, no de memoria</li>
+          <li>Datáfono en la mesa; vuelto exacto</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre en el POS</h4><ul>
+          <li>Cobrar → total y dividir</li>
+          <li>Imprime pre-cuenta (trae el QR)</li>
+          <li>Boleta/factura → método de pago</li>
+          <li>Cortesía = aprobación del gerente</li>
+          <li>Registro + propina → libera la mesa</li>
+        </ul></div>
+        <div class="op-box"><h4>Despedida en la puerta</h4><ul>
+          <li>Acompaña a la salida si puedes</li>
+          <li>Agradece por nombre</li>
+          <li>Invita a volver con un motivo real</li>
+          <li>Ofrece la próxima reserva ahí mismo</li>
+          <li>Misma energía que el saludo</li>
+        </ul></div>
+        <div class="op-box"><h4>Encuesta post-visita</h4><ul>
+          <li>El QR ya va en la pre-cuenta</li>
+          <li>Menciónala en una frase humana</li>
+          <li>Si dejaron número, va por WhatsApp</li>
+          <li>Mesa feliz = pide reseña en caliente</li>
+          <li>NPS bajo = alerta, el gerente contacta</li>
+        </ul></div>
+        <div class="op-box"><h4>Si algo sale mal</h4><ul>
+          <li>Error en la cuenta: admite y corrige</li>
+          <li>Tarjeta rechazada: discreción total</li>
+          <li>Queja al final: escucha y escala</li>
+          <li>Demora: reconócela, no la ignores</li>
+          <li>Cortesía siempre por el sistema</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Despedida y cierre de cuenta · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

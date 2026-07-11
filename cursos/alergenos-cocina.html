@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Alérgenos y contaminación cruzada · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237c3aed'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Alérgenos</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#7c3aed">
+    <div class="k">Academia Prep! · Cocina / BOH</div>
+    <h1>Alérgenos y contaminación cruzada</h1>
+    <p>Cómo proteger al comensal alérgico desde la mise en place hasta el pase: identificar los 14 alérgenos, blindar tu estación contra el trazo cruzado, montar platos sin gluten y veganos de verdad, y avisar a sala sin errores.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Cocina / línea</span><span>📄 One-pager imprimible</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> para un celíaco o un alérgico al maní, un plato "casi bien" es un plato peligroso. Una miga de pan que cae en la ensalada, la misma pinza que tocó el langostino y luego el vegano, o un aceite donde se frió el rebozado: cualquiera de esos descuidos puede mandar a un comensal al hospital y cerrar la reputación del restaurante en una reseña. La alergia no se cocina "al gusto": es cero contacto o nada.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Alergia, intolerancia y contaminación cruzada</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de tocar una sartén hay que entender contra qué peleas. No todas las restricciones son iguales, y la que puede matar necesita el protocolo más estricto.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Alergia</h3><div class="d">Reacción del sistema inmune. Puede ser inmediata y grave: ronchas, hinchazón de labios y lengua, dificultad para respirar, anafilaxia. Basta una traza (unos miligramos) para dispararla.</div><div class="s">Regla: cero contacto</div></div>
+      <div class="tipo"><h3>Intolerancia</h3><div class="d">El cuerpo no digiere bien algo (ej. lactosa). Da malestar digestivo, no anafilaxia. Molesta, pero no es una urgencia médica como la alergia.</div><div class="s">Menos grave, igual se respeta</div></div>
+      <div class="tipo"><h3>Enfermedad celíaca</h3><div class="d">El gluten daña el intestino del celíaco aunque no dé síntomas al toque. Una miga contamina. Se trata con el mismo rigor que una alergia grave.</div><div class="s">Sin gluten = sin trazas</div></div>
+      <div class="tipo"><h3>Contaminación cruzada</h3><div class="d">El alérgeno viaja de un alimento a otro por contacto: tabla, cuchillo, pinza, aceite de fritura, mano, paño, gota que salpica. El plato se ve limpio pero ya no lo es.</div><div class="s">El enemigo invisible</div></div>
+      <div class="tipo"><h3>Anafilaxia</h3><div class="d">La reacción más grave: cierra la vía aérea en minutos. Si un comensal se hincha o le cuesta respirar tras comer, es 105 y epinefrina, no "espera a ver".</div><div class="s">Emergencia real</div></div>
+      <div class="tipo"><h3>"Sin" no es preferencia</h3><div class="d">"Sin gluten" o "sin frutos secos" en la comanda no es un capricho ni una dieta: trátalo como una instrucción médica. Ante la duda, preguntas; nunca asumes.</div><div class="s">Comanda médica</div></div>
+    </div>
+    <div class="callout"><b>Piénsalo así:</b> a la intolerancia le puedes pedir disculpas; a la alergia grave le llamas ambulancia. Por eso el protocolo se diseña para el peor caso, siempre.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Los 14 alérgenos que debes conocer</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Estos son los grupos de declaración obligatoria en gastronomía. Memoriza dónde se esconden: casi siempre están en salsas, panes y fondos, no en la estrella del plato.</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>Alérgeno</th><th>Dónde se esconde en nuestra carta</th><th>Trampa frecuente</th></tr></thead>
+      <tbody>
+        <tr><td><b>Gluten</b> (trigo, cebada, centeno)</td><td>Pasta, ñoquis, pan de la canasta, rebozados, focaccia, masa de pizza</td><td>Sémola para estirar pasta que vuela por toda la línea</td></tr>
+        <tr><td><b>Crustáceos</b></td><td>Langostino, camarón, cangrejo en risotto y antipasti</td><td>Fondo de mariscos usado como base "neutra"</td></tr>
+        <tr><td><b>Huevo</b></td><td>Pasta fresca, mayonesa, alioli, merengue, pastas de dolci, pinceladas de dorado</td><td>Mayonesa casera en salsas que parecen "solo vegetales"</td></tr>
+        <tr><td><b>Pescado</b></td><td>Carpaccio, tiradito, salsa puttanesca (anchoa), colatura</td><td>Anchoa oculta en la salsa Caesar y en la puttanesca</td></tr>
+        <tr><td><b>Maní</b></td><td>Salsas de inspiración oriental, algunos postres y granolas</td><td>Aceite de maní en fritura compartida</td></tr>
+        <tr><td><b>Soya</b></td><td>Salsa de soya, edamame, algunas margarinas y caldos</td><td>Lecitina de soya en chocolate y panes industriales</td></tr>
+        <tr><td><b>Lácteos</b></td><td>Mantequilla, crema, parmesano, mozzarella, burrata, helados</td><td>Parmesano rallado "de terminación" sobre un plato pedido sin lácteos</td></tr>
+        <tr><td><b>Frutos secos</b> (nuez, almendra, pistacho, castaña)</td><td>Pesto, semifríos, praliné, decoración de postres, panes especiales</td><td>Piñón/nuez en el pesto genovés</td></tr>
+        <tr><td><b>Apio</b></td><td>Mirepoix de fondos, sopas, minestrone, algunos caldos base</td><td>Apio en el fondo de verduras que sirve de base "sin alérgenos"</td></tr>
+        <tr><td><b>Mostaza</b></td><td>Vinagretas, salsas para carnes, encurtidos</td><td>Mostaza en la vinagreta de la ensalada de la casa</td></tr>
+        <tr><td><b>Sésamo (ajonjolí)</b></td><td>Panes, grisines, hummus, tahini, coberturas</td><td>Semillas de sésamo sobre el pan que va a la canasta común</td></tr>
+        <tr><td><b>Sulfitos</b></td><td>Vino, vinagre, frutos secos, algunos embutidos y conservas</td><td>Vino de cocción en un risotto pedido "sin sulfitos"</td></tr>
+        <tr><td><b>Moluscos</b></td><td>Pulpo, calamar, mejillón, almeja, vongole</td><td>Vongole en la salsa de una pasta de mar</td></tr>
+        <tr><td><b>Altramuces (lupino)</b></td><td>Harinas mixtas sin gluten, algunos panes y snacks</td><td>Harina de lupino en preparaciones "sin gluten" industriales</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><b>Regla de la línea:</b> cuando entra una comanda con alérgeno, no pienses "qué lleva el plato principal", piensa "qué lleva cada salsa, cada fondo y cada terminación". El 80% de los accidentes está en lo que se agrega al final: el rallado, el crocante, la pincelada.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Protocolo anti-contaminación cruzada</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Cuando cae una comanda "alérgico", la estación cambia de modo. Estos son los pasos, en orden, sin saltarse ninguno.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🔔</div><div><div class="t">Paso 1 · Se canta en voz alta</div><h4>"¡Alérgico a X en mesa 7!"</h4><p>El expedidor lo repite y toda la línea lo confirma. La comanda del POS ya trae el flag de alergia por silla (Prep! CA-22); nadie empieza a montar hasta oír el eco.</p></div></div>
+      <div class="paso"><div class="ico">🧼</div><div><div class="t">Paso 2 · Manos y estación</div><h4>Lavado y superficie limpia</h4><p>Lavado de manos completo (no solo enjuague), tabla desinfectada y zona de montaje despejada de migas, harina y salpicaduras. Cambia el paño: el trapo sucio arrastra el alérgeno.</p></div></div>
+      <div class="paso"><div class="ico">🎨</div><div><div class="t">Paso 3 · Utensilios dedicados</div><h4>Tabla, cuchillo y pinza limpios y aparte</h4><p>Usa el set de color o el juego recién lavado, no el que estaba en uso. Una pinza que tocó langostino no vuelve al plato del alérgico ni "después de sacudirla".</p></div></div>
+      <div class="paso"><div class="ico">💧</div><div><div class="t">Paso 4 · Agua, aceite y superficies exclusivas</div><h4>Nada compartido</h4><p>Olla de agua nueva para pasta sin gluten (la de la pasta normal está llena de gluten). Nunca frías el sin-gluten en el aceite del rebozado. Plancha limpia, no la que tiene restos.</p></div></div>
+      <div class="paso"><div class="ico">🧱</div><div><div class="t">Paso 5 · Primero y aislado</div><h4>Se cocina antes y separado</h4><p>Monta el plato del alérgico primero o en un extremo despejado, tapado si espera. Evita que una salsa vecina salpique o que el rallador del parmesano pase por encima.</p></div></div>
+      <div class="paso"><div class="ico">🏷️</div><div><div class="t">Paso 6 · Se marca y se entrega en mano</div><h4>Identificado hasta la mesa</h4><p>Plato señalizado (banderín, plato distinto o pase directo). El expedidor avisa al mozo cuál es y a quién va. No se deja en la barra del pase mezclado con el resto.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí</h4><ul>
+        <li>Lavar manos entre el plato normal y el del alérgico</li>
+        <li>Agua y aceite nuevos para sin gluten</li>
+        <li>Tabla y utensilios dedicados o recién lavados</li>
+        <li>Cantar la alergia y esperar el eco de la línea</li>
+        <li>Montar primero, tapar y marcar el plato</li>
+        <li>Ante la mínima duda, preguntar al chef o rehacer</li>
+      </ul></div>
+      <div class="box no"><h4>No</h4><ul>
+        <li>Sacudir la pinza y seguir usándola</li>
+        <li>Retirar el crocante de encima y "servir igual"</li>
+        <li>Rallar parmesano cerca del plato sin lácteos</li>
+        <li>Reutilizar el agua de la pasta con gluten</li>
+        <li>Freír el sin gluten en el aceite del rebozado</li>
+        <li>Asumir "seguro no le hace nada"</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La regla del rescate imposible:</b> un alérgeno no se saca. Si una miga tocó el plato del celíaco o el crocante de nuez cayó sobre el postre, no se retira: se bota y se rehace. Quitar lo visible deja la traza invisible.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Preparaciones sin gluten de verdad</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">"Sin gluten" no es "le quito el pan". El gluten está en el aire de la línea (harina y sémola vuelan), en el agua de la pasta y en salsas que ni sospechas. Así se hace bien.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>El aire también contamina</h3><div class="d">Estirar pasta con sémola levanta polvo de gluten que se posa en todo. Prepara lo sin gluten lejos de la zona de harinas o en otro momento del servicio.</div><div class="s">Harina = polvo invisible</div></div>
+      <div class="tipo"><h3>Agua de cocción propia</h3><div class="d">La olla donde hierve la pasta común está saturada de gluten. La pasta o ñoqui sin gluten van en agua nueva, colador limpio y cuchara aparte.</div><div class="s">Olla y colador nuevos</div></div>
+      <div class="tipo"><h3>Salsas bajo sospecha</h3><div class="d">Salsas espesadas con harina, roux, cerveza, salsa de soya o caldos comerciales pueden llevar gluten. Usa versiones verificadas o espesa con maicena/almidón.</div><div class="s">Lee la etiqueta del fondo</div></div>
+      <div class="tipo"><h3>Rebozados y frituras</h3><div class="d">El aceite donde se frió algo apanado tiene gluten disuelto. El sin gluten se fríe en aceite limpio o se cocina a la plancha limpia, jamás en la freidora compartida.</div><div class="s">Freidora exclusiva</div></div>
+      <div class="tipo"><h3>Pan y canasta aparte</h3><div class="d">Ofrece pan sin gluten sellado, tostado en superficie limpia. Nunca lo cortes con el cuchillo del pan común ni lo dejes en la misma canasta.</div><div class="s">Cuchillo y tostadora limpios</div></div>
+      <div class="tipo"><h3>Terminaciones traicioneras</h3><div class="d">Grisines, crocantes, pan rallado de gratín, cerveza en el risotto: todo lo que va al final. Repasa el montaje completo antes de mandar el plato.</div><div class="s">Revisa la última capa</div></div>
+    </div>
+    <div class="callout"><b>Ejemplo de la casa:</b> una "pasta al pomodoro sin gluten" mal hecha es pasta sin gluten hervida en el agua de la pasta normal. El tomate está bien, pero el agua ya la contaminó. Hecha bien: fideo sin gluten, olla nueva, colador limpio, salsa verificada sin harina y sin parmesano si además pidió sin lácteos.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Preparaciones veganas sin descuidos</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Vegano es a veces ética y a veces alergia (a lácteos o huevo). En cualquier caso el estándar es el mismo: cero producto animal y cero contacto con él. Los deslices casi siempre están en la grasa y en la terminación.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La grasa oculta</h3><div class="d">Mantequilla para saltear, manteca, fondo de pollo o res "para dar sabor" rompen el plato. Saltea en aceite de oliva y usa fondos de verdura verificados.</div><div class="s">Aceite, no mantequilla</div></div>
+      <div class="tipo"><h3>Quesos y lácteos furtivos</h3><div class="d">Parmesano en el risotto, crema en la salsa, mantequilla montada al final. Un vegano por alergia a lácteos reacciona igual que un intolerante grave.</div><div class="s">Sin rallado de terminación</div></div>
+      <div class="tipo"><h3>Huevo escondido</h3><div class="d">Pasta fresca al huevo, mayonesa, pinceladas de dorado, algunos panes. Para vegano usa pasta seca de sémola sin huevo o preparación específica.</div><div class="s">Pasta seca, no fresca</div></div>
+      <div class="tipo"><h3>Anchoa y colatura</h3><div class="d">La puttanesca, la Caesar y varios fondos italianos llevan anchoa o colatura de pescado. No es vegano ni vegetariano aunque "se vea de vegetales".</div><div class="s">Ojo con las salsas "rojas"</div></div>
+      <div class="tipo"><h3>Utensilios y planchas</h3><div class="d">La plancha donde se selló la carne o la tabla del queso contaminan el plato vegano por alergia. Superficie limpia y utensilios aparte, igual que con alérgenos.</div><div class="s">Plancha y tabla limpias</div></div>
+      <div class="tipo"><h3>Caldo y gelatinas</h3><div class="d">Caldos comerciales con pollo, gelatina animal en postres, miel en aderezos. Verifica el rotulado; ante la duda, se cambia por alternativa vegetal.</div><div class="s">Fondo vegetal verificado</div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Vegano bien hecho</h4><ul>
+        <li>Saltear en aceite de oliva</li>
+        <li>Fondo de verduras verificado</li>
+        <li>Pasta seca de sémola sin huevo</li>
+        <li>Superficie y utensilios limpios</li>
+        <li>Confirmar si es por ética o por alergia</li>
+      </ul></div>
+      <div class="box no"><h4>Errores típicos</h4><ul>
+        <li>Un toque de mantequilla "para brillo"</li>
+        <li>Parmesano de terminación</li>
+        <li>Fondo de pollo "porque da sabor"</li>
+        <li>Anchoa en la salsa</li>
+        <li>Miel o gelatina animal en el postre</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Pregunta que salva:</b> "¿vegano por elección o por alergia?" cambia el nivel de rigor. Si es por alergia a lácteos o huevo, aplica el protocolo completo del Módulo 3, no solo la sustitución de ingredientes.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Comunicación con sala y cierre del ciclo</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La seguridad del comensal depende de que cocina y sala hablen el mismo idioma. Un dato que se pierde entre la comanda y el pase es un accidente esperando.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">📝</div><div><div class="t">Sala → Cocina</div><h4>La alergia entra clara en la comanda</h4><p>El mozo registra el alérgeno por silla en Prep! (no en un papelito). La comanda impresa en la estación llega con el flag visible. Si llega ambigua ("es alérgica a algo"), cocina la devuelve a preguntar antes de cocinar.</p></div></div>
+      <div class="paso"><div class="ico">🙋</div><div><div class="t">Ante la duda</div><h4>Preguntar no es debilidad, es protocolo</h4><p>Si no sabes con certeza si un fondo o una salsa lleva el alérgeno, no adivines: pregunta al chef o revisa la ficha técnica de la receta (Prep! RC-08 muestra alérgenos por receta). Un "creo que no lleva" no existe en esta cocina.</p></div></div>
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">Cocina → Sala</div><h4>El pase identifica el plato</h4><p>El expedidor le dice al mozo cuál es el plato del alérgico y a qué silla va. El mozo lo entrega en mano a esa persona y lo confirma: "este es su plato sin gluten". Nunca se deja al azar en una bandeja común.</p></div></div>
+      <div class="paso"><div class="ico">🚑</div><div><div class="t">Si algo sale mal</div><h4>Reacción = emergencia, no discusión</h4><p>Si un comensal presenta hinchazón, ronchas o dificultad para respirar tras comer, se avisa al gerente, se llama a emergencias (SAMU 106 / línea del local) y no se le da nada más de comer. Guarda el plato: ayuda a identificar la causa.</p></div></div>
+    </div>
+    <div class="callout"><b>Cerrar el ciclo:</b> un plato con alergia bien resuelto se cuenta con el mozo y se registra. Si hubo un casi-error (una miga que se detectó a tiempo), se reporta en El Libro como eventualidad para que el equipo aprenda. La transparencia previene el próximo accidente.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Alérgeno</b><span>Sustancia que dispara una reacción del sistema inmune. Basta una traza para provocarla en una persona sensible.</span></div>
+      <div class="gterm"><b>Contaminación cruzada</b><span>Paso de un alérgeno de un alimento a otro por contacto: utensilios, superficies, aceite, manos o salpicaduras.</span></div>
+      <div class="gterm"><b>Traza</b><span>Cantidad mínima de alérgeno, invisible al ojo. En una alergia grave, una traza es suficiente para reaccionar.</span></div>
+      <div class="gterm"><b>Anafilaxia</b><span>Reacción alérgica grave y rápida que puede cerrar la vía aérea. Requiere epinefrina y atención médica inmediata.</span></div>
+      <div class="gterm"><b>Enfermedad celíaca</b><span>Trastorno en el que el gluten daña el intestino. Exige ausencia total de gluten, incluidas las trazas.</span></div>
+      <div class="gterm"><b>Gluten</b><span>Proteína del trigo, cebada y centeno. Presente en pasta, pan, rebozados, sémola y muchas salsas espesadas.</span></div>
+      <div class="gterm"><b>Intolerancia</b><span>Dificultad para digerir un alimento (ej. lactosa). Da malestar digestivo, no una reacción inmune grave.</span></div>
+      <div class="gterm"><b>Sulfitos</b><span>Conservantes presentes en vino, vinagre y algunas conservas. Pueden causar reacciones respiratorias.</span></div>
+      <div class="gterm"><b>Colatura</b><span>Salsa italiana de anchoa fermentada. Alérgeno de pescado oculto en fondos y salsas que parecen vegetales.</span></div>
+      <div class="gterm"><b>Vegano</b><span>Sin ningún producto animal: carne, pescado, lácteos, huevo, miel. A veces por ética, a veces por alergia.</span></div>
+      <div class="gterm"><b>Utensilio dedicado</b><span>Tabla, cuchillo o pinza reservados y limpios para el plato del alérgico, sin contacto previo con el alérgeno.</span></div>
+      <div class="gterm"><b>Flag de alergia</b><span>Marca de alerta por silla en la comanda de Prep! (CA-22) que avisa a la línea que hay un comensal alérgico.</span></div>
+      <div class="gterm"><b>Ficha técnica</b><span>Detalle de ingredientes y alérgenos de cada receta (Prep! RC-08). La fuente de verdad ante cualquier duda.</span></div>
+      <div class="gterm"><b>Cantar la comanda</b><span>Anunciar en voz alta en la línea, incluida la alergia, para que toda la brigada la confirme antes de montar.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en línea</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Alérgenos · Chuleta de línea</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Regla de oro</h4><ul>
+          <li>Alergia = cero contacto, no "poco"</li>
+          <li>El alérgeno no se saca: se bota y se rehace</li>
+          <li>Ante la duda, preguntas; nunca asumes</li>
+          <li>"Sin gluten" es orden médica, no dieta</li>
+        </ul></div>
+        <div class="op-box"><h4>Protocolo (6 pasos)</h4><ul>
+          <li>Cantar la alergia y esperar el eco</li>
+          <li>Lavar manos + estación despejada</li>
+          <li>Tabla, cuchillo y pinza dedicados</li>
+          <li>Agua y aceite nuevos</li>
+          <li>Montar primero y aislado</li>
+          <li>Marcar el plato y entregar en mano</li>
+        </ul></div>
+        <div class="op-box"><h4>Los 14 (memoriza)</h4><ul>
+          <li>Gluten · crustáceos · huevo · pescado</li>
+          <li>Maní · soya · lácteos · frutos secos</li>
+          <li>Apio · mostaza · sésamo · sulfitos</li>
+          <li>Moluscos · altramuces (lupino)</li>
+        </ul></div>
+        <div class="op-box"><h4>Trampas de la casa</h4><ul>
+          <li>Anchoa en Caesar y puttanesca</li>
+          <li>Piñón/nuez en el pesto</li>
+          <li>Parmesano de terminación</li>
+          <li>Agua de pasta y freidora compartidas</li>
+        </ul></div>
+        <div class="op-box"><h4>Sin gluten / vegano</h4><ul>
+          <li>Olla, colador y freidora exclusivos</li>
+          <li>Saltear en aceite, no mantequilla</li>
+          <li>Fondo verificado, sin harina ni anchoa</li>
+          <li>Revisa la última capa del montaje</li>
+        </ul></div>
+        <div class="op-box"><h4>Si hay reacción</h4><ul>
+          <li>No dar más de comer</li>
+          <li>Avisar al gerente</li>
+          <li>Llamar a emergencias (SAMU 106)</li>
+          <li>Guardar el plato para identificar la causa</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Alérgenos y contaminación cruzada · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

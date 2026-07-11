@@ -1,0 +1,308 @@
+<!-- Curso: Café, té y sobremesa (mesero) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Café, té y sobremesa · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236b4423'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Café &amp; Sobremesa</span>
+    <nav class="nav">
+      <a href="#m1">1 · La estación</a><a href="#m2">2 · Café de especialidad</a><a href="#m3">3 · Té e infusiones</a><a href="#m4">4 · Digestivos</a><a href="#m5">5 · La sobremesa</a><a href="#m6">6 · Secuencia y cierre</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#6b4423">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Café, té y sobremesa</h1>
+    <p>El último acto del servicio, y el que más se recuerda. Aquí aprendes a servir un café y un té de especialidad como se debe, a recomendar un buen digestivo y a sostener la sobremesa con ritmo: presente cuando te necesitan, invisible cuando quieren conversar. Nunca apurando al invitado a que se vaya.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~40 min</span><span>🎯 Mesero</span><span>☕ Sala / FOH</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el café es lo último que prueba el invitado y lo primero que va a contar mañana. Una comida de diez se cae si el café llega frío, aguado o con la taza sucia; y una sobremesa bien llevada es donde nacen la propina generosa, la reserva de vuelta y la reseña de cinco estrellas. Este es tu cierre: hazlo memorable.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La estación de bebidas calientes</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Un buen café empieza mucho antes de la comanda: en una estación limpia, ordenada y con todo a mano. Tu mise en place decide si el cierre fluye o se traba justo cuando el salón está lleno.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Máquina caliente y purgada</h3><div class="d">La espresso debe estar encendida y estable 20–30 min antes de abrir. Antes del primer café, purga el grupo (deja correr agua 2–3 seg) para arrastrar residuos del shot anterior y estabilizar la temperatura.</div></div>
+      <div class="tipo"><h3>Molino calibrado del día</h3><div class="d">El grano cambia con la humedad de Lima. Cada mañana el barista calibra la molienda con un shot de prueba: un espresso doble debe correr en 25–30 seg. Si sale en 15 seg está aguado; si pasa de 35, amargo.</div></div>
+      <div class="tipo"><h3>Agua para el té</h3><div class="d">Ten un hervidor aparte, nunca uses el vapor de la espresso para "calentar" agua de té. El agua debe ser fresca, no rehervida diez veces (pierde oxígeno y sabe plana). Idealmente filtrada.</div></div>
+      <div class="tipo"><h3>Tazas templadas y secas</h3><div class="d">La taza fría roba calor y baja el café 10 °C al instante. Mantén las tazas sobre el calientatazas de la máquina o pásalas por agua caliente y sécalas. Nunca sirvas en taza recién salida del lavavajillas, mojada.</div></div>
+      <div class="tipo"><h3>Leche fría y fresca</h3><div class="d">Leche entera bien fría (4 °C) espuma mejor. Usa un jarro por tanda, no recicles leche calentada: la ya vaporizada no vuelve a montar bien y sabe a cocido. Ten a mano alternativas: almendra, avena, sin lactosa.</div></div>
+      <div class="tipo"><h3>Kit de sobremesa listo</h3><div class="d">Azúcar blanca y rubia, edulcorante, endulzante de stevia, cucharillas pulidas, servilletas, y el infaltable vaso de agua. Ten también el carrito o bandeja de digestivos y la carta de postres a la vista.</div></div>
+    </div>
+    <div class="callout"><b>Prueba de estación en 30 segundos:</b> antes del servicio pregúntate: ¿máquina purgada?, ¿molino calibrado hoy?, ¿tazas templadas?, ¿leche fría y alternativas vegetales?, ¿hervidor con agua fresca?, ¿tés surtidos y a la vista?, ¿carta de digestivos y postres en la mano? Si todo es sí, el cierre va a fluir.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Café de especialidad al servicio</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">No necesitas ser barista, pero sí saber qué llevas a la mesa. En el Perú tenemos cafés de altura excelentes (Villa Rica, Jaén, Cusco, Cajamarca). Sabe describirlos, conoce las preparaciones y detecta un café mal hecho antes de que salga de la barra.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Bebida</th><th>Qué es</th><th>Taza / vaso</th><th>Cómo describirla en mesa</th></tr></thead>
+        <tbody>
+          <tr><td><b>Espresso</b></td><td>Shot de ~30 ml, base de todo. Crema color avellana.</td><td>Taza demi (60–90 ml)</td><td>"Intenso y corto, para sentir el grano tal cual."</td></tr>
+          <tr><td><b>Ristretto</b></td><td>Espresso "corto" (~20 ml), más concentrado y dulce.</td><td>Taza demi</td><td>"Más concentrado, menos amargo, el corazón del shot."</td></tr>
+          <tr><td><b>Americano</b></td><td>Espresso + agua caliente. Alarga sin diluir el sabor.</td><td>Taza grande</td><td>"Suave y largo, como un café de filtro pero con cuerpo."</td></tr>
+          <tr><td><b>Cortado</b></td><td>Espresso + poca leche vaporizada (1:1).</td><td>Taza pequeña / vaso</td><td>"Corta la acidez con un toque de leche, sin llenarse."</td></tr>
+          <tr><td><b>Flat white</b></td><td>Doble espresso + leche sedosa, poca espuma.</td><td>Taza 160 ml</td><td>"Más café que un capuchino, textura aterciopelada."</td></tr>
+          <tr><td><b>Capuchino</b></td><td>Espresso + leche + espuma en tercios.</td><td>Taza 180–220 ml</td><td>"Clásico, cremoso, con su capa de espuma."</td></tr>
+          <tr><td><b>Filtrado / V60</b></td><td>Café por goteo, limpio y aromático. Resalta el origen.</td><td>Jarra + taza</td><td>"Para apreciar las notas frutales del grano de altura."</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="lead" style="margin-top:2px">Cómo detectar un café que <b>no</b> debe salir a la mesa:</p>
+    <div class="do2">
+      <div class="box yes"><h4>Un buen espresso</h4><ul>
+        <li>Crema pareja color avellana que dura 1–2 min</li>
+        <li>Corre lento y sedoso, como miel tibia</li>
+        <li>Aroma dulce, a caramelo o chocolate</li>
+        <li>Servido de inmediato, la crema no espera</li>
+      </ul></div>
+      <div class="box no"><h4>Devuélvelo a la barra</h4><ul>
+        <li>Sin crema o crema pálida y con burbujas grandes</li>
+        <li>Salió a chorro rápido (aguado) o goteando (quemado)</li>
+        <li>Huele a quemado o a rancio</li>
+        <li>Lleva parado en la barra más de 30 seg antes de llevarlo</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Regla de oro del servicio:</b> el café se lleva y se toma de inmediato. Un espresso pierde su crema y su alma en un minuto. Si la mesa aún no terminó el postre, pregunta cuándo lo quiere; no lo mandes a preparar "por adelantar" para que llegue frío. Asa siempre con el <b>asa hacia la derecha del invitado y la cucharilla al frente</b>, sobre el plato de la taza.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Té e infusiones de especialidad</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El té mal servido es el error más común de la sala: agua hirviendo sobre un té verde lo vuelve amargo en segundos. Cada té tiene su temperatura y su tiempo. Y en el Perú los mates de hierbas (muña, hierba luisa, manzanilla) son un cierre perfecto y muy pedido: apréndelos.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Tipo</th><th>Temp. de agua</th><th>Infusión</th><th>Notas de servicio</th></tr></thead>
+        <tbody>
+          <tr><td><b>Té verde</b></td><td>70–80 °C</td><td>2–3 min</td><td>Nunca agua hirviendo: se pone amargo y verdoso. Deja enfriar el hervidor 1 min.</td></tr>
+          <tr><td><b>Té blanco</b></td><td>75–85 °C</td><td>3–4 min</td><td>Delicado, floral. Agua no muy caliente para no "quemar" la hoja.</td></tr>
+          <tr><td><b>Oolong</b></td><td>85–90 °C</td><td>3–4 min</td><td>Intermedio, aromático. Aguanta un segundo servido.</td></tr>
+          <tr><td><b>Té negro</b></td><td>90–95 °C</td><td>3–5 min</td><td>El más robusto. Va bien con leche aparte si el invitado la pide.</td></tr>
+          <tr><td><b>Infusión / mate</b></td><td>95–100 °C</td><td>5–7 min</td><td>Muña, hierba luisa, manzanilla, anís. Sin cafeína, ideal de noche.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="paso"><div class="ico">🍃</div><div><div class="t">PASO 1 · RECOMENDAR</div><h4>Ofrece según el momento</h4><p>Después de una comida pesada, sugiere una <b>muña</b> o una <b>manzanilla</b> (digestivas). Si quiere algo aromático sin cafeína, <b>hierba luisa</b>. Si busca sobremesa larga y despierta, un <b>té negro</b> o un <b>oolong</b>.</p></div></div>
+      <div class="paso"><div class="ico">🫖</div><div><div class="t">PASO 2 · SERVIR EN TETERA</div><h4>Agua, hoja y reloj</h4><p>Lleva la tetera con el agua a la temperatura correcta y la hoja o el saquito aparte, o ya en infusión avisando la hora. Trae siempre un <b>plato para el saquito o infusor usado</b>: el invitado no debe buscar dónde ponerlo.</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">PASO 3 · CONTROLAR EL TIEMPO</div><h4>Retira la hoja a tiempo</h4><p>Si dejas el saquito dentro, a los 6–7 min amarga. Ofrece retirarlo o cambiar la hoja. Deja al costado <b>agua caliente extra</b> para un segundo servicio: los buenos tés dan para dos tazas.</p></div></div>
+      <div class="paso"><div class="ico">🍯</div><div><div class="t">PASO 4 · ACOMPAÑAR</div><h4>Miel, limón y su tiempo</h4><p>Ofrece miel de abeja, rodaja de limón o naranja según el té. Nunca apures: el té es una bebida de sobremesa larga. Rellena el agua sin que la tengan que pedir.</p></div></div>
+    </div>
+    <div class="callout"><b>Error clásico en Lima:</b> mandar el "agua de té" hervida directa de la espresso o pasada de hervor. Un té verde con agua a 100 °C es intomable. Toma diez segundos hacerlo bien y es la diferencia entre un invitado que repite y uno que jamás vuelve a pedir té en tu casa.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Digestivos y bajativos</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El digestivo es venta de alto margen y experiencia pura: es lo que estira la mesa con gusto y sube el ticket sin que nadie se sienta presionado. Conoce la carta de bajativos y aprende a recomendarlos con criterio, no como quien quiere vender por vender.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Pisco de guarda</h3><div class="d">Un pisco puro (quebranta, italia, acholado) servido solo, a temperatura ambiente en copa de pisco. Orgullo peruano y cierre perfecto para quien no quiere algo dulce.</div></div>
+      <div class="tipo"><h3>Macerados</h3><div class="d">Pisco macerado en frutas o hierbas: hierba luisa, muña, sauco, aguaymanto. Aromáticos y digestivos. Perfectos para presumir producto local a un turista.</div></div>
+      <div class="tipo"><h3>Algarrobina y cremas</h3><div class="d">Para quien quiere algo dulce en vez de postre: crema de algarrobina, baileys, licor de café. Se sirven fríos, en copa pequeña.</div></div>
+      <div class="tipo"><h3>Amaros y digestivi</h3><div class="d">En casa italiana: amaro, limoncello (bien frío), grappa, fernet. Amargos herbales que de verdad asientan el estómago después de una comida grande.</div></div>
+      <div class="tipo"><h3>Destilados de guarda</h3><div class="d">Whisky, coñac, brandy o ron añejo, servidos solos o con una piedra de hielo grande. Copa balón para el coñac, que se calienta con la mano.</div></div>
+      <div class="tipo"><h3>Sin alcohol también</h3><div class="d">No todos toman. Ten listo un buen descafeinado, un mate de muña o un chai. Ofrecer siempre la opción sin alcohol es servicio de nivel, no un descuido.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Si el invitado…</th><th>Recomienda</th><th>Cómo lo dices</th></tr></thead>
+        <tbody>
+          <tr><td>Comió pesado y está lleno</td><td>Amaro, fernet o mate de muña</td><td>"Un amaro le va a asentar perfecto, es amargo y digestivo."</td></tr>
+          <tr><td>Quiere algo dulce sin postre completo</td><td>Limoncello, crema de algarrobina</td><td>"Un limoncello bien frío, dulce y ligero para cerrar."</td></tr>
+          <tr><td>Es turista, quiere lo peruano</td><td>Pisco puro o macerado</td><td>"Le traigo un pisco italia de guarda, para sentir el nuestro."</td></tr>
+          <tr><td>Toma whisky / coñac</td><td>Añejo solo o con hielo</td><td>"¿Lo prefiere solo o con una piedra de hielo?"</td></tr>
+          <tr><td>No toma alcohol</td><td>Muña, chai, descafeinado</td><td>"Tenemos una muña de la sierra, ideal para bajar la comida."</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="callout"><b>Cómo ofrecer sin presionar:</b> nunca preguntes "¿algo más?" (invita al no). Ofrece concreto y con imagen: "¿Los acompaño con un café y un digestivo? Tenemos un limoncello de la casa que cierra muy bien." Si dicen que no, sonríe y sigue. El objetivo es <b>alargar el placer</b>, no vaciarles el bolsillo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>La sobremesa: presente sin apurar</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La sobremesa es un arte de lectura. El invitado quiere sentir que puede quedarse todo el tiempo que desee, y a la vez que lo atienden cuando levanta la mirada. Apurar la salida (por rotar la mesa) es el pecado que más mata la propina y la reseña. Aprende a leer la mesa.</p>
+    <div class="do2">
+      <div class="box yes"><h4>Sostener la sobremesa</h4><ul>
+        <li>Retirar platos de postre y despejar la mesa (menos vajilla = más aire)</li>
+        <li>Rellenar agua y café sin que lo pidan</li>
+        <li>Pasar cerca cada 8–10 min por si te necesitan</li>
+        <li>Leer el lenguaje corporal: contacto visual = quieren algo</li>
+        <li>Dejar la cuenta solo cuando la pidan, y sin prisa</li>
+        <li>Agradecer la visita con nombre al despedir</li>
+      </ul></div>
+      <div class="box no"><h4>Lo que apura y molesta</h4><ul>
+        <li>Traer la cuenta sin que la pidan ("indirecta" de vete)</li>
+        <li>Barrer o apilar sillas cerca de la mesa</li>
+        <li>Preguntar "¿algo más?" cada dos minutos</li>
+        <li>Quedarte parado mirando fijo la mesa</li>
+        <li>Apagar luces o música mientras aún hay gente</li>
+        <li>Retirar la copa o la taza que todavía usa</li>
+      </ul></div>
+    </div>
+    <div class="callout" style="margin-bottom:12px"><b>Leer la mesa:</b> una mesa que sigue conversando animada y con las copas servidas <b>quiere quedarse</b>: no la toques, solo mantén el agua lleno. Una mesa callada, con el celular en la mano, que mira alrededor o se acomoda para pararse, <b>ya quiere la cuenta</b>: acércate tú. La señal universal de "la cuenta, por favor" es el gesto de firmar en el aire o buscarte con la mirada.</div>
+    <div class="card">
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">MOMENTO 1</div><h4>Despeja y ofrece el cierre</h4><p>Retira postres y vajilla sucia. Ofrece café, té o digestivo. Ese es el momento de la recomendación del módulo 4, no antes.</p></div></div>
+      <div class="paso"><div class="ico">💧</div><div><div class="t">MOMENTO 2</div><h4>Mantén sin invadir</h4><p>Rellena agua y café. Pasa cerca sin frenar la conversación. Estás disponible, no encima. Si te miran, acude en segundos.</p></div></div>
+      <div class="paso"><div class="ico">🧾</div><div><div class="t">MOMENTO 3</div><h4>La cuenta, solo cuando la pidan</h4><p>Al pedirla, tráela pronto pero sin correr. En Prep! cierras desde <b>/pos</b>: pre-cuenta, división si la piden y método de pago. Nunca dejes al invitado esperando la cuenta que ya pidió: eso sí molesta de verdad.</p></div></div>
+      <div class="paso"><div class="ico">🙏</div><div><div class="t">MOMENTO 4</div><h4>Despedida cálida</h4><p>Acompaña a la puerta si puedes. "Gracias por venir, señor Prado, lo esperamos pronto." La última frase pesa tanto como la primera.</p></div></div>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>La secuencia completa y el cierre</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Todo junto, en orden. Así se ve un cierre de servicio impecable, del último bocado a la puerta. Memoriza esta secuencia: es tu guion para cada mesa que termina de cenar.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div class="paso"><div class="ico">1️⃣</div><div><div class="t">TRAS EL PLATO FUERTE</div><h4>Despeja y sondea</h4><p>Retira platos, migas y cubiertos sucios. "¿Les provoca ver la carta de postres, o prefieren pasar directo al café?"</p></div></div>
+      <div class="paso"><div class="ico">2️⃣</div><div><div class="t">POSTRE</div><h4>Toma la comanda de dulce</h4><p>Recomienda un postre de la casa. Ingresa en <b>/pos</b>. Si comparten, ofrece cucharas extra sin que las pidan.</p></div></div>
+      <div class="paso"><div class="ico">3️⃣</div><div><div class="t">CAFÉ, TÉ Y DIGESTIVO</div><h4>Ofrece el cierre completo</h4><p>"¿Los acompaño con un café, un té o un digestivo?" Sirve el café recién hecho y caliente, el té a su temperatura, el bajativo con criterio.</p></div></div>
+      <div class="paso"><div class="ico">4️⃣</div><div><div class="t">SOBREMESA</div><h4>Presente, sin apurar</h4><p>Rellena agua y café. Lee la mesa. Deja que la conversación fluya. No traigas la cuenta hasta que la pidan.</p></div></div>
+      <div class="paso"><div class="ico">5️⃣</div><div><div class="t">LA CUENTA</div><h4>Rápida y sin errores</h4><p>Al pedirla, cierra en <b>/pos</b>: pre-cuenta, división, boleta o factura, método de pago y propina. Verifica antes de llevarla.</p></div></div>
+      <div class="paso"><div class="ico">6️⃣</div><div><div class="t">DESPEDIDA</div><h4>Cierra con calidez</h4><p>Agradece con el nombre, invita a volver. Si tienes su ficha en <b>/bienvenida</b>, deja anotado qué tomaron para la próxima visita.</p></div></div>
+    </div>
+    <div class="grid g3">
+      <div class="tipo"><h3>Café frío o esperado</h3><div class="d">Nunca "adelantes" el café. Se prepara y se lleva de inmediato. Si la mesa aún no pide, espera; un espresso que esperó 3 minutos ya no sirve.</div></div>
+      <div class="tipo"><h3>Té con agua hirviendo</h3><div class="d">Respeta la temperatura por tipo. Un té verde a 100 °C es un error que el invitado nota al primer sorbo. Baja el hervor un minuto.</div></div>
+      <div class="tipo"><h3>La cuenta anticipada</h3><div class="d">Traerla sin que la pidan comunica "apúrate". Espera la señal. La única excepción: si el invitado avisó que tiene prisa.</div></div>
+      <div class="tipo"><h3>Taza o cucharilla sucia</h3><div class="d">Revisa la vajilla antes de servir. Una mancha de labial o una cucharilla con agua tira abajo todo el cierre. Pulir es parte del servicio.</div></div>
+    </div>
+    <div class="callout"><b>Tu firma:</b> el invitado no va a recordar el gramaje del café ni la temperatura exacta del té. Va a recordar que se sintió bienvenido hasta el último minuto, que nadie lo apuró y que el mesero le recomendó algo rico para cerrar. Ese recuerdo es tu trabajo y es lo que hace que vuelvan.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Espresso</b><span>Café concentrado de ~30 ml extraído a presión. Base de casi todas las bebidas de barra.</span></div>
+      <div class="gterm"><b>Crema</b><span>Capa color avellana sobre el espresso. Señal de un shot bien extraído; si falta, algo salió mal.</span></div>
+      <div class="gterm"><b>Ristretto</b><span>Espresso "corto" (~20 ml), más concentrado, dulce y menos amargo.</span></div>
+      <div class="gterm"><b>Cortado</b><span>Espresso con un toque de leche vaporizada (1:1) que corta la acidez sin llenar.</span></div>
+      <div class="gterm"><b>Flat white</b><span>Doble espresso con leche sedosa y poca espuma. Más café que un capuchino.</span></div>
+      <div class="gterm"><b>Purgar</b><span>Dejar correr agua por el grupo de la máquina antes de un café, para limpiar y estabilizar la temperatura.</span></div>
+      <div class="gterm"><b>V60 / filtrado</b><span>Método de café por goteo, limpio y aromático, que resalta las notas del grano de origen.</span></div>
+      <div class="gterm"><b>Infusión</b><span>Bebida caliente de hierbas o frutas sin hoja de té: muña, hierba luisa, manzanilla, anís. Sin cafeína.</span></div>
+      <div class="gterm"><b>Muña</b><span>Hierba andina aromática, muy digestiva. Mate ideal para cerrar una comida pesada.</span></div>
+      <div class="gterm"><b>Digestivo / bajativo</b><span>Bebida que se sirve después de comer para asentar el estómago o cerrar: pisco, amaro, limoncello, macerado.</span></div>
+      <div class="gterm"><b>Macerado</b><span>Pisco reposado con frutas o hierbas (sauco, aguaymanto, hierba luisa). Aromático y peruano.</span></div>
+      <div class="gterm"><b>Amaro</b><span>Licor italiano amargo de hierbas. Digestivo por excelencia tras una comida grande.</span></div>
+      <div class="gterm"><b>Sobremesa</b><span>El tiempo que la mesa se queda conversando tras comer. Se cuida, no se apura.</span></div>
+      <div class="gterm"><b>Leer la mesa</b><span>Interpretar el lenguaje corporal del invitado para saber si quiere quedarse, algo más o la cuenta.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Café, té y sobremesa · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Mise en place de estación</h4><ul>
+          <li>Máquina purgada, molino calibrado hoy</li>
+          <li>Tazas templadas y secas</li>
+          <li>Leche fría + alternativa vegetal</li>
+          <li>Hervidor con agua fresca para té</li>
+          <li>Tés surtidos, carta de digestivos y postres a la vista</li>
+        </ul></div>
+        <div class="op-box"><h4>Café: llévalo YA</h4><ul>
+          <li>Espresso: crema avellana, corre en 25–30 seg</li>
+          <li>Sin crema o quemado = de vuelta a barra</li>
+          <li>Se sirve y se toma al instante, no lo adelantes</li>
+          <li>Asa a la derecha, cucharilla al frente</li>
+        </ul></div>
+        <div class="op-box"><h4>Té: cada uno su temperatura</h4><ul>
+          <li>Verde 70–80 °C · blanco 75–85 °C</li>
+          <li>Negro 90–95 °C · infusión 95–100 °C</li>
+          <li>Nunca agua hirviendo sobre té verde</li>
+          <li>Plato para el saquito + agua extra para 2ª taza</li>
+        </ul></div>
+        <div class="op-box"><h4>Digestivos: ofrece concreto</h4><ul>
+          <li>Lleno: amaro, fernet, muña</li>
+          <li>Dulce ligero: limoncello, algarrobina</li>
+          <li>Turista: pisco puro o macerado</li>
+          <li>No toma: muña, chai, descafeinado</li>
+        </ul></div>
+        <div class="op-box"><h4>Sobremesa sin apurar</h4><ul>
+          <li>Despeja la mesa, rellena agua y café</li>
+          <li>Pasa cada 8–10 min, disponible no encima</li>
+          <li>Cuenta SOLO cuando la piden</li>
+          <li>Nada de barrer, apilar sillas ni apagar luces</li>
+        </ul></div>
+        <div class="op-box"><h4>Cierre en Prep!</h4><ul>
+          <li>Postre y café → comanda en /pos</li>
+          <li>Cuenta → pre-cuenta, división, pago, propina en /pos</li>
+          <li>Anota qué tomaron en la ficha /bienvenida</li>
+          <li>Despide con el nombre e invita a volver</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Café, té y sobremesa · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

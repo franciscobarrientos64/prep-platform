@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Liderazgo de piso (jefe de sala) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23107569'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Liderazgo de piso</span>
+    <nav class="nav">
+      <a href="#m1">Módulo 1</a><a href="#m2">Módulo 2</a><a href="#m3">Módulo 3</a><a href="#m4">Módulo 4</a><a href="#m5">Módulo 5</a><a href="#m6">Módulo 6</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#107569">
+    <div class="k">Academia Prep! · Administración · Liderazgo</div>
+    <h1>Liderazgo de piso (jefe de sala)</h1>
+    <p>El jefe de sala no es el que más corre: es el que hace que todos corran en la misma dirección. Este curso te da el método para leer el turno, coordinar a tu equipo, tocar la mesa de tus clientes clave, decidir en caliente y dar el ejemplo, noche tras noche.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Jefe de sala</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> una sala de 60 cubiertos se cae o se sostiene por una sola persona. El comensal no ve la cocina, ve tu piso: si el jefe de sala está tranquilo, presente y decidiendo, el equipo se contagia de esa calma y el servicio vuela. Si el jefe está perdido en una mesa mientras otras cinco se hunden, no hay carta ni cocina que lo salve.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es liderar el piso (y qué no es)</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de las técnicas, cambia el chip. Dejaste de ser el mejor mozo del salón para volverte el que hace que todos los mozos sean buenos. Tu producto ya no es una mesa bien atendida: es un turno completo que salió redondo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Diriges, no atiendes</h3><div class="d">Tu instinto de mozo te dice "voy yo". Frénalo. Si tomas tú la comanda de la 12, dejaste de ver las otras 11 mesas. Tu lugar es el que ve todo el mapa.</div><div class="s">Ojos arriba, no en una mesa</div></div>
+      <div class="tipo"><h3>El barómetro de la sala</h3><div class="d">Tu ánimo se reparte a todo el equipo. Si entras tenso, la sala se tensa. Calma visible bajo presión es tu herramienta número uno.</div><div class="s">Tu cara es el clima del piso</div></div>
+      <div class="tipo"><h3>Dueño del resultado</h3><div class="d">Un plato tardó, un mozo falló, faltó una reserva: es tuyo. No "fue cocina" ni "fue el nuevo". El jefe de sala responde por el turno entero.</div><div class="s">Sin excusas hacia afuera</div></div>
+      <div class="tipo"><h3>Presente, no encima</h3><div class="d">Liderar no es vigilar cada paso. Es estar visible, disponible y confiar. Un equipo que se siente vigilado se congela; uno que se siente respaldado se suelta.</div><div class="s">Respaldo, no cámara de seguridad</div></div>
+      <div class="tipo"><h3>Traduces entre mundos</h3><div class="d">Eres el puente entre el dueño (números, costos), la cocina (tiempos, 86) y el mozo (piso real). Tu trabajo es que los tres se entiendan.</div><div class="s">Puente cocina–sala–gerencia</div></div>
+      <div class="tipo"><h3>Formas gente, no solo turnos</h3><div class="d">Cada servicio deja a tu equipo un poco mejor o un poco peor. El buen jefe sale del turno habiendo enseñado algo a alguien.</div><div class="s">Dejas equipo, no solo caja</div></div>
+    </div>
+    <div class="callout"><b>La prueba del buen jefe:</b> si el servicio funciona igual de bien cuando sales cinco minutos al baño, lideraste bien. Si todo se cae sin ti, no armaste un equipo, armaste una dependencia.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>El pre-servicio: se gana antes de abrir puertas</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">El 70% de un buen turno se decide en los 30 minutos antes de que entre el primer comensal. El jefe de sala que improvisa a las 8 p.m. es el que no preparó a las 6. Arma el piso, alinea al equipo y anticipa la noche.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">event_note</span></div><div><div class="t">Paso 1 · Lee la noche antes de vivirla</div><h4>Reservas, VIP, tiempos y presión por franja</h4><p>Abre Bienvenida en Prep!: cuántos cubiertos, a qué hora entran, qué mesas VIP, cumpleaños o aniversarios, alergias registradas. Marca la hora pico (ej. 9:00–10:00 p.m., 45 cubiertos de golpe) para tener refuerzo listo.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">grid_view</span></div><div><div class="t">Paso 2 · Asigna estaciones y rangos</div><h4>Cada mozo sabe sus mesas antes de empezar</h4><p>Reparte el salón por rangos según experiencia: al mozo senior, la zona VIP y la terraza llena; al nuevo, un rango chico y controlado. Nadie debe preguntar "¿cuáles son mis mesas?" cuando ya hay gente sentada.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">restaurant_menu</span></div><div><div class="t">Paso 3 · Alinea con cocina</div><h4>86 del día, platos nuevos y plato estrella a empujar</h4><p>Pasa por la cocina antes del servicio: qué está fuera (86), qué sale lento hoy, qué hay de sobra que conviene vender (ese osobuco que no puede quedar para mañana). Eso define qué recomienda tu equipo esta noche.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">groups</span></div><div><div class="t">Paso 4 · Briefing de 5 minutos, de pie</div><h4>Todo el equipo, mismo mensaje, misma energía</h4><p>Reúne a la sala: reservas y VIP de hoy, 86, un plato a empujar, un foco de servicio ("hoy afinamos los tiempos del segundo tiempo") y un reconocimiento del turno anterior. Cierras con energía, no con regaños.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">checklist</span></div><div><div class="t">Paso 5 · Camina el salón (walk-through)</div><h4>Ves con tus ojos lo que el equipo montó</h4><p>Mesas niveladas, cubiertos alineados, copas sin marcas, servilletas, velas, música y temperatura. La carta cargada bien en el POS. Un baño limpio a las 6 sigue limpio a las 8 solo si alguien lo revisó.</p></div></div>
+    </div>
+    <div class="callout"><b>Anticipa, no reacciones:</b> si sabes que a las 9 entran tres reservas de 8 personas casi juntas, no esperes a que exploten. Adelanta el mise en place del office, ten mozos de refuerzo asignados y avisa a cocina que viene una ola. El caos casi siempre estaba en la agenda.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Dirigir el turno en vivo: leer la sala y decidir</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Con las puertas abiertas, tu trabajo es uno: mantener el pulso de toda la sala a la vez y actuar antes de que un problema se vuelva una queja. No corres a apagar incendios; te mueves para que no se prendan.</p>
+    <table class="t">
+      <thead><tr><th>Señal en la sala</th><th>Qué te está diciendo</th><th>Decisión del jefe de sala</th></tr></thead>
+      <tbody>
+        <tr><td>Mesa mira alrededor, cubiertos juntos</td><td>Terminaron y nadie recogió</td><td>Mandas al mozo o levantas tú el plato y disparas el postre / la cuenta.</td></tr>
+        <tr><td>Copas de agua vacías en tres mesas</td><td>El rango se saturó, el mozo va tapado</td><td>Reasignas una mesa a otro mozo o entras tú a servir agua y liberar.</td></tr>
+        <tr><td>Cocina se atrasó, pase lleno</td><td>Vienen esperas de 25+ minutos</td><td>Avisas tú a las mesas antes de que reclamen y ofreces un pan o una copa de cortesía.</td></tr>
+        <tr><td>Mesa VIP recién sentada</td><td>Espera un trato distinto</td><td>Vas tú a saludar en el primer minuto (toque de mesa, Módulo 4).</td></tr>
+        <tr><td>Un mozo con cara tensa o cortante</td><td>Está sobrepasado o molesto</td><td>Te acercas en corto: "¿Qué necesitas?" y le sacas una mesa de encima.</td></tr>
+        <tr><td>Fila en la puerta, waitlist crece</td><td>Rotación lenta, mesas ocupadas sin consumir</td><td>Identificas mesas que ya pagaron, aceleras el bacheo y avisas tiempos reales en la puerta.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla de las tres mesas:</b> si tienes tres o más problemas a la vez, no los resuelvas en orden de llegada. Resuelve primero el que se convierte en queja pública (la mesa que ya está molesta y la escuchan las de al lado), luego el VIP, luego lo operativo. Prioriza por impacto, no por cercanía.</div>
+    <div class="do2">
+      <div class="box yes"><h4>Así lidera el piso</h4><ul>
+        <li>Te paras en un punto donde ves el 80% del salón y la puerta.</li>
+        <li>Decides rápido con la info que tienes: "reasigno la 14 a Rosa, ya".</li>
+        <li>Delegas en voz clara: "Luis, encárgate del cobro de la 7, yo veo la 3".</li>
+        <li>Entras a la operación solo para destrabar, y luego vuelves a dirigir.</li>
+        <li>Comunicas la mala noticia tú mismo (una demora, un 86 de última hora).</li>
+      </ul></div>
+      <div class="box no"><h4>Así se hunde el turno</h4><ul>
+        <li>Te quedas atrapado 15 minutos en una mesa mientras el resto arde.</li>
+        <li>Esperas a tener toda la información perfecta para mover algo.</li>
+        <li>Haces todo tú porque "es más rápido"; el equipo se apaga.</li>
+        <li>Entras a correr platos y te olvidas de que nadie está mirando el mapa.</li>
+        <li>Mandas al mozo nuevo a dar la cara por un error que es tuyo o de cocina.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Toque de mesa: presencia con el cliente clave</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El toque de mesa (table touch) es cuando el jefe de sala se acerca a una mesa a saludar, leer cómo va la experiencia y hacer sentir importante al comensal. Bien hecho, convierte a un cliente en un habitual. Mal hecho, interrumpe y molesta. No es para todas las mesas: es para las que importan y en el momento correcto.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>A quién y cuándo</h3><div class="d">VIP, habituales, celebraciones, mesas de negocio, primera visita evidente y cualquier mesa que ya mostró una molestia. El momento: después del primer bocado del fondo, nunca con la boca llena ni a mitad de una conversación intensa.</div><div class="s">Momento correcto {'>'} muchas veces</div></div>
+      <div class="tipo"><h3>Cómo te acercas</h3><div class="d">Lees la mesa dos segundos antes de hablar. Contacto visual, sonrisa, te presentas por tu nombre y rol. "Buenas noches, soy Andrea, jefa de sala. ¿Cómo los estamos tratando esta noche?"</div><div class="s">Nombre + rol + pregunta abierta</div></div>
+      <div class="tipo"><h3>Qué preguntas</h3><div class="d">Preguntas abiertas, no de "sí/no". "¿Cómo estuvo el ravioli?" invita a hablar; "¿todo bien?" cierra la conversación. Escuchas de verdad y lees el lenguaje corporal.</div><div class="s">Pregunta abierta = información real</div></div>
+      <div class="tipo"><h3>El dato que fideliza</h3><div class="d">Si el comensal celebra un aniversario, mándale un postre con vela y su nombre. Si es habitual, recuerda su mesa o su vino. En Prep! esa info vive en la ficha del comensal (Bienvenida): úsala.</div><div class="s">Detalle recordado = cliente de por vida</div></div>
+      <div class="tipo"><h3>Cierra y agradece</h3><div class="d">Antes de que se vayan, pásate de nuevo: "Fue un gusto tenerlos, los esperamos pronto". Un buen cierre pesa más que un buen inicio en el recuerdo.</div><div class="s">La despedida es la última foto</div></div>
+      <div class="tipo"><h3>Registra después</h3><div class="d">Terminado el toque, anota en la ficha lo que aprendiste: alergia, preferencia de vino, que viene cada viernes. La próxima vez el trato "mágico" en realidad es memoria bien guardada.</div><div class="s">Lo que no se anota, se pierde</div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Toque de mesa que suma</h4><ul>
+        <li>Te acercas cuando la mesa está relajada, tras probar el plato.</li>
+        <li>Usas el nombre del comensal si lo tienes en la ficha.</li>
+        <li>Si hay una queja, la resuelves ahí mismo y agradeces el comentario.</li>
+        <li>Recomiendas con criterio: un digestivo, el postre de la casa, un pisco.</li>
+        <li>Te retiras cuando notas que quieren seguir su conversación.</li>
+      </ul></div>
+      <div class="box no"><h4>Toque de mesa que resta</h4><ul>
+        <li>Interrumpes a media conversación o cuando están comiendo.</li>
+        <li>Preguntas "¿todo bien?" de pasada, sin mirar ni esperar respuesta.</li>
+        <li>Te quedas de más y la mesa deja de sentirse a solas.</li>
+        <li>Prometes algo ("les mando una cortesía") y luego no llega.</li>
+        <li>Solo apareces para cobrar; nunca para preguntar cómo estuvo.</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>El toque salva quejas antes de que existan:</b> una mesa a la que el jefe de sala se acercó a tiempo casi nunca pone una mala reseña. Sintió que alguien con autoridad se ocupó de ella. Ese acercamiento de 40 segundos vale más que cualquier campaña de marketing.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Coordinar al equipo: delegar, corregir, dar el ejemplo</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Tu equipo hace lo que tú haces, no lo que tú dices. Un jefe que grita orden pero llega tarde no tiene equipo, tiene resentimiento. Coordinar es repartir bien el trabajo, corregir sin humillar y ser el estándar vivo del salón.</p>
+    <div class="card">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">assignment_ind</span></div><div><div class="t">Delegar</div><h4>Instrucción clara, con responsable y tiempo</h4><p>"Alguien que vea la 9" no es delegar. "Luis, cobra la 9 en los próximos 5 minutos, ya pidieron la cuenta" sí lo es. Nombre, tarea y plazo. Delega la tarea completa, no la mitad, y confía en que la haga.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">volume_up</span></div><div><div class="t">Corregir en caliente</div><h4>En corto, en privado, sobre el hecho</h4><p>Si un mozo se equivoca en pleno servicio, lo llamas aparte dos segundos: "Recuerda ofrecer el vino antes del fondo, ¿ok?". Nunca lo regañas frente al comensal ni frente al equipo. Corriges el acto, no a la persona.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">front_hand</span></div><div><div class="t">Dar el ejemplo</div><h4>El estándar lo pones con tu cuerpo</h4><p>Levantas un plato al pasar, saludas a cada comensal, mantienes la calma cuando todo arde, no comes en el salón, no revisas el celular en el piso. Lo que tú toleras en ti, el equipo lo toma como permiso.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">favorite</span></div><div><div class="t">Reconocer</div><h4>Nombra el buen trabajo, en el momento</h4><p>"Buen manejo de la mesa 12, la calmaste sola." El reconocimiento sincero en pleno turno rinde más que cualquier bono. Cuesta cero y sube a todo el equipo. Reconoce en público, corrige en privado.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">shield</span></div><div><div class="t">Respaldar</div><h4>Das la cara por tu equipo</h4><p>Si un comensal maltrata a un mozo, tú te paras adelante. Si cocina falló, tú absorbes el golpe con la mesa y luego lo resuelves con el chef. El equipo que se siente respaldado da el doble.</p></div></div>
+    </div>
+    <div class="callout"><b>Corrige el acto, cuida a la persona:</b> "el segundo tiempo de la 5 salió tarde" resuelve; "eres un lento" destruye. Después del turno, en frío, cierra lo que quedó pendiente. Nunca dejes que un mozo se vaya a casa humillado: al día siguiente vuelve peor, o no vuelve.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Cierre, decisiones difíciles y mejora continua</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El turno no termina cuando sale el último comensal: termina cuando dejaste al equipo y al local listos para mañana, y cuando aprendiste algo de la noche. Y en el camino tomarás decisiones incómodas; el jefe de sala también se mide por cómo maneja lo difícil.</p>
+    <table class="t">
+      <thead><tr><th>Situación difícil</th><th>Decisión firme y justa del jefe de sala</th></tr></thead>
+      <tbody>
+        <tr><td>Comensal se niega a pagar por una demora real</td><td>Escuchas, reconoces la falla, ofreces cortesía o descuento razonable, cierras sin discusión pública. Autorizas tú, no lo peleas.</td></tr>
+        <tr><td>Cliente pasado de tragos incomoda a otras mesas</td><td>Cortas el alcohol con tacto, ofreces agua o café, y si escala, pides apoyo. La seguridad del resto del salón manda.</td></tr>
+        <tr><td>Un mozo llegó tarde otra vez</td><td>Cubres el turno primero; la conversación seria es después, en privado y con registro en RRHH (El Libro). No lo dejas pasar ni lo humillas.</td></tr>
+        <tr><td>Cocina y sala se echan la culpa de un plato devuelto</td><td>Frenas la discusión ("después lo vemos"), salvas la mesa ahora, y en el cierre reconstruyes qué falló sin buscar culpable.</td></tr>
+        <tr><td>Overbooking: llegaron más reservas que mesas</td><td>Priorizas confirmadas y VIP, das tiempos reales y honestos en la puerta, ofreces la barra o una copa mientras esperan.</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">door_front</span></div><div><div class="t">Cierre operativo</div><h4>Local listo para mañana</h4><p>Caja cuadrada, propinas repartidas con transparencia, mesas rearmadas, cocina y barra cerradas, 86 y faltantes anotados. El turno de mañana empieza con lo que dejaste hoy.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">rate_review</span></div><div><div class="t">Post-mortem de 3 preguntas</div><h4>Qué salió bien / qué falló / qué cambiamos</h4><p>Dos minutos con el equipo o en la bitácora de El Libro: el plato estrella se vendió bien, la 9 esperó 30 minutos por un error del POS, mañana probamos otra asignación de la terraza. Sin bitácora, el mismo error se repite el viernes.</p></div></div>
+      <div class="paso"><div class="ico"><span class="material-symbols-outlined">trending_up</span></div><div><div class="t">Mejora continua</div><h4>Un foco por semana, no diez a la vez</h4><p>Elige una cosa que mejorar (tiempos del segundo tiempo, venta de postres, saludo en la puerta), entrénala toda la semana y mídela. Un equipo mejora por hábitos pequeños y constantes, no por sermones.</p></div></div>
+    </div>
+    <div class="callout"><b>El cierre define al líder:</b> cualquiera está bien al inicio del turno, con energía y sala vacía. El jefe de sala se ve a las 11:30 p.m., cansado, cuadrando caja, repartiendo propinas con justicia y dejándole a su equipo la sensación de que la noche valió la pena. Esa constancia, no un buen día, es liderazgo.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Jefe de sala</b><span>Responsable del piso durante el servicio: coordina al equipo de sala, cuida al comensal y toma las decisiones del turno.</span></div>
+      <div class="gterm"><b>Toque de mesa (table touch)</b><span>Acercamiento del jefe de sala a una mesa clave para saludar, leer la experiencia y hacer sentir importante al comensal.</span></div>
+      <div class="gterm"><b>Briefing</b><span>Reunión corta de pie antes del servicio para alinear reservas, VIP, 86, foco del turno y energía del equipo.</span></div>
+      <div class="gterm"><b>Rango / estación</b><span>Conjunto de mesas asignadas a un mozo. El jefe de sala reparte los rangos según experiencia y presión esperada.</span></div>
+      <div class="gterm"><b>Walk-through</b><span>Recorrido del salón antes de abrir para revisar montaje, limpieza, temperatura, música y carta cargada en el POS.</span></div>
+      <div class="gterm"><b>86</b><span>Código para "se acabó". Un plato o insumo fuera de carta que la sala deja de ofrecer de inmediato.</span></div>
+      <div class="gterm"><b>Bacheo / rotación</b><span>Rearmar y volver a sentar una mesa. Buena rotación libera mesas sin apurar de más al comensal.</span></div>
+      <div class="gterm"><b>Waitlist</b><span>Lista de espera cuando el salón está lleno. Se gestiona con tiempos reales y prioridad (confirmadas, VIP, salud).</span></div>
+      <div class="gterm"><b>VIP</b><span>Comensal de trato preferente: habitual, autoridad, prensa o cuenta importante. En Prep! está marcado en su ficha.</span></div>
+      <div class="gterm"><b>Cortesía</b><span>Detalle sin cargo (copa, postre, descuento) que el jefe de sala autoriza para reparar una falla o celebrar una ocasión.</span></div>
+      <div class="gterm"><b>Delegar</b><span>Asignar una tarea completa a alguien con nombre, instrucción clara y plazo, y confiar en que la ejecute.</span></div>
+      <div class="gterm"><b>Post-mortem</b><span>Revisión rápida al cerrar el turno: qué salió bien, qué falló y qué cambiar. Se registra en la bitácora de El Libro.</span></div>
+      <div class="gterm"><b>Ficha del comensal</b><span>Registro en Prep! (Bienvenida) con historial, alergias, preferencias y celebraciones. Convierte el buen trato en memoria, no en suerte.</span></div>
+      <div class="gterm"><b>Overbooking</b><span>Más reservas que mesas disponibles. Se maneja priorizando confirmadas y VIP, con tiempos honestos en la puerta.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en office</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Liderazgo de piso · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>El chip del jefe</h4><ul><li>Diriges, no atiendes: ojos en el mapa</li><li>Tu calma es el clima de la sala</li><li>El resultado del turno es tuyo</li></ul></div>
+        <div class="op-box"><h4>Pre-servicio</h4><ul><li>Lee reservas, VIP, alergias y hora pico</li><li>Asigna rangos antes de abrir</li><li>Briefing de 5 min + walk-through</li></ul></div>
+        <div class="op-box"><h4>Turno en vivo</h4><ul><li>Párate donde veas el 80% del salón</li><li>Prioriza por impacto, no por cercanía</li><li>Entra a destrabar, luego vuelve a dirigir</li></ul></div>
+        <div class="op-box"><h4>Toque de mesa</h4><ul><li>Tras el primer bocado, no interrumpas</li><li>Pregunta abierta: "¿cómo estuvo?"</li><li>Anota el detalle en la ficha del comensal</li></ul></div>
+        <div class="op-box"><h4>Coordinar al equipo</h4><ul><li>Delega: nombre + tarea + plazo</li><li>Reconoce en público, corrige en privado</li><li>Da el ejemplo; respalda a tu gente</li></ul></div>
+        <div class="op-box"><h4>Cierre</h4><ul><li>Caja, propinas justas, local listo</li><li>Post-mortem: bien / falló / cambiamos</li><li>Un foco de mejora por semana</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Liderazgo de piso (jefe de sala) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

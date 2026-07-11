@@ -1,0 +1,329 @@
+<!-- Curso: Pisco y destilados del Perú (bartender / mesero) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Pisco y destilados del Perú · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b5651d'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Pisco &amp; Destilados</span>
+    <nav class="nav">
+      <a href="#m1">1 · Qué es el pisco</a><a href="#m2">2 · Uvas y tipos</a><a href="#m3">3 · Pisco Sour</a><a href="#m4">4 · Chilcano y más</a><a href="#m5">5 · Otros destilados</a><a href="#m6">6 · Servicio y venta</a><a href="#glosario">Glosario</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#b5651d">
+    <div class="k">Academia Prep! · Bar</div>
+    <h1>Pisco y destilados del Perú</h1>
+    <p>El pisco es la bandera líquida del Perú, y tú lo pones en la mano del invitado. Este curso te da lo que un bartender o mesero de nivel necesita saber: qué es de verdad el pisco, sus uvas y tipos, cómo clavar un Pisco Sour y un Chilcano cada vez, y cómo contarlo en mesa para que el invitado pida el segundo. Sin humo: técnica y palabras que venden.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Bartender / Mesero</span><span>🥃 Bar</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el pisco es la primera y la última impresión de una mesa peruana. Un Sour bien montado, con espuma firme y su gota de amargo, sube el ticket y la propina; uno cortado o ácido tumba toda la comida que viene después. Saber de dónde viene el pisco y por qué no lleva agua ni madera te vuelve el que asesora, no el que solo sirve. Eso es lo que el invitado recuerda y recomienda.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Qué es el pisco (y qué no es)</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de agitar nada, entiende el producto. El pisco es un aguardiente de uva con Denominación de Origen peruana: reglas estrictas sobre dónde, con qué uva y cómo se hace. Conocer esas reglas es lo que separa una respuesta que suena a experto de un "es como un tequila de uva".</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Aguardiente de uva</h3><div class="d">Se destila del mosto (jugo fermentado) de uvas pisqueras. No es un brandy común: no se le añade nada después de destilar.</div></div>
+      <div class="tipo"><h3>Una sola destilación</h3><div class="d">Se destila una vez hasta su grado final (38–48% alc.). No se rebaja con agua después: sale del alambique listo para embotellar. Por eso es tan aromático.</div></div>
+      <div class="tipo"><h3>Sin madera, sin añadidos</h3><div class="d">Reposa mínimo 3 meses en recipientes neutros (vidrio, acero, arcilla). Nada de barrica, ni azúcar, ni colorante, ni agua. Siempre transparente.</div></div>
+      <div class="tipo"><h3>Denominación de Origen</h3><div class="d">Reconocida en 1991. Solo puede llamarse pisco lo hecho en las 5 regiones autorizadas: <b>Lima, Ica, Arequipa, Moquegua y Tacna</b>.</div></div>
+      <div class="tipo"><h3>Alambique o falca de cobre</h3><div class="d">Se destila en olla de cobre a fuego directo. El corte de cabezas, cuerpo y colas lo hace el maestro pisquero a mano, sin rectificar.</div></div>
+      <div class="tipo"><h3>Grado natural, no diluido</h3><div class="d">Un vodka o ron se ajustan con agua a 40°. El pisco llega al grado que dio la destilación. Por eso dos piscos del mismo tipo saben distinto.</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Las diferencias que el invitado suele preguntar, resueltas en una frase:</p>
+    <div class="do2">
+      <div class="box yes"><h4>Lo que el pisco SÍ es</h4><ul>
+        <li>100% uva, sin nada agregado después de destilar</li>
+        <li>Transparente, brillante, nunca amarillo</li>
+        <li>Aromático en copa aun sin haberlo probado</li>
+        <li>Producto con Denominación de Origen protegida</li>
+        <li>Hecho para tomarse solo, en cata, o en cóctel</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que NO debes decir</h4><ul>
+        <li>"Es un tequila de uva" (nada que ver, otra planta y proceso)</li>
+        <li>"Se añeja en barrica" (el pisco no ve madera)</li>
+        <li>"Le echan agua para bajar el grado" (falso)</li>
+        <li>"Pisco y singani son lo mismo" (el singani es boliviano)</li>
+        <li>"Mientras más viejo, mejor" (no se añeja, se estabiliza)</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Dato de barra:</b> si un invitado extranjero pregunta por la disputa Perú–Chile, sé cordial y factual: "Ambos países producen destilados de uva que llaman pisco, pero el peruano tiene Denominación de Origen, se destila una sola vez y no se le agrega agua. Son productos distintos." Nunca entres en discusión política en la mesa.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Uvas pisqueras y tipos de pisco</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Ocho uvas autorizadas y cuatro tipos de pisco. Si dominas esto, puedes recomendar el pisco correcto para cada gusto y cada cóctel. Divide las uvas en dos familias: no aromáticas (perfil seco, ideales para cóctel) y aromáticas (florales y frutales, para catar solas).</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Familia</th><th>Uva</th><th>Perfil en boca</th><th>Cuándo recomendarla</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4"><b>No aromáticas</b></td><td><b>Quebranta</b></td><td>Seca, con cuerpo, notas a plátano y pecana. La emblemática.</td><td>El pisco del Sour por excelencia. La base más versátil.</td></tr>
+          <tr><td><b>Negra Criolla</b></td><td>Suave, redonda, ligeros tostados.</td><td>Sours suaves, invitados que empiezan en el pisco.</td></tr>
+          <tr><td><b>Mollar</b></td><td>Cuerpo medio, discreta, un dejo mineral.</td><td>Acholados y macerados.</td></tr>
+          <tr><td><b>Uvina</b></td><td>Rústica, herbal; solo se cultiva en Lunahuaná (Cañete).</td><td>Curiosidad regional para el invitado conocedor.</td></tr>
+          <tr><td rowspan="4"><b>Aromáticas</b></td><td><b>Italia</b></td><td>Muy floral y cítrica, a azahar y toronja. La más popular.</td><td>Catar sola, Chilcano aromático, invitado que quiere "algo perfumado".</td></tr>
+          <tr><td><b>Moscatel</b></td><td>Dulce en nariz, uva madura y flores.</td><td>Después de comida, para quien no quiere algo seco.</td></tr>
+          <tr><td><b>Torontel</b></td><td>Floral intenso, jazmín y frutas blancas.</td><td>Chilcano floral, cata para novatos que dicen "no me gusta el trago fuerte".</td></tr>
+          <tr><td><b>Albilla</b></td><td>Elegante, sutil, manzana y almendra.</td><td>Cata para paladar fino, marida con postres.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="lead" style="margin-top:2px">Los cuatro tipos que verás en la carta:</p>
+    <div class="grid g2">
+      <div class="tipo"><h3>Puro</h3><div class="d">Hecho de una sola uva. Si dice "Puro Quebranta", es 100% quebranta. Muestra el carácter limpio de esa variedad.</div><div class="s">// base recomendada para Pisco Sour clásico</div></div>
+      <div class="tipo"><h3>Acholado</h3><div class="d">Mezcla (blend) de dos o más uvas, aromáticas y no aromáticas. Buscado equilibrio: cuerpo + aroma. Palabra 100% peruana.</div><div class="s">// el todoterreno de la barra, gran para cócteles</div></div>
+      <div class="tipo"><h3>Mosto Verde</h3><div class="d">Se destila el mosto <b>antes</b> de que fermente todo el azúcar. Más suave, sedoso y aromático; rinde menos uva, por eso es más caro.</div><div class="s">// para catar solo o un Sour premium</div></div>
+      <div class="tipo"><h3>Aromático</h3><div class="d">Puro hecho solo con uva aromática (Italia, Torontel, Moscatel, Albilla). Nariz explosiva a flores y cítricos.</div><div class="s">// estrella del Chilcano y de la cata</div></div>
+    </div>
+    <div class="callout"><b>Truco para vender:</b> si el invitado duda entre dos piscos, pregúntale "¿lo quieres para catar solito o para un cóctel?". Solo → Mosto Verde o un aromático. Para Sour → Quebranta o un buen Acholado. Con dos preguntas suenas a sommelier de pisco.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Pisco Sour: la receta que no falla</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Es el trago más pedido de la casa y el más fácil de arruinar. La regla de oro es <b>3–1–1</b>: tres de pisco, uno de limón, uno de jarabe. Memorízala y no vuelves a servir un Sour ácido ni aguado. Rinde una copa generosa.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Ingrediente</th><th>Medida</th><th>Nota de barra</th></tr></thead>
+        <tbody>
+          <tr><td><b>Pisco Quebranta o Acholado</b></td><td>3 oz (90 ml)</td><td>Nunca aromático: tapa el balance. La base seca aguanta el limón.</td></tr>
+          <tr><td><b>Jugo de limón peruano</b></td><td>1 oz (30 ml)</td><td>Limón sutil (verde chico), exprimido al momento. No de botella.</td></tr>
+          <tr><td><b>Jarabe de goma</b></td><td>1 oz (30 ml)</td><td>Azúcar y agua 1:1. Da textura y equilibra la acidez.</td></tr>
+          <tr><td><b>Clara de huevo</b></td><td>1 unidad (o ~1 oz)</td><td>Da la espuma firme. Huevo fresco y frío, refrigerado.</td></tr>
+          <tr><td><b>Hielo</b></td><td>4–5 cubos</td><td>Cubos duros y limpios, no picado (aguaría el trago).</td></tr>
+          <tr><td><b>Amargo de angostura</b></td><td>3–4 gotas</td><td>Se pone al final, sobre la espuma. Aroma y decoración.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="paso"><div class="ico">🥃</div><div><div class="t">PASO 1 · Sin hielo primero</div><h4>Dry shake (batido en seco)</h4><p>Echa pisco, limón, jarabe y clara al vaso de la coctelera <b>sin hielo</b>. Bate fuerte 10 segundos. Esto monta la clara y arma la espuma sedosa.</p></div></div>
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">PASO 2 · Ahora con hielo</div><h4>Segundo batido, con hielo</h4><p>Agrega los cubos y bate enérgico otros 12–15 segundos, hasta que la coctelera escarche por fuera. Enfría e integra sin diluir de más.</p></div></div>
+      <div class="paso"><div class="ico">🍸</div><div><div class="t">PASO 3 · Servir colado</div><h4>Cuela a la copa</h4><p>Usa el colador para retener el hielo. Sirve en copa Sour o de vino fría. La espuma debe quedar arriba, blanca y compacta, coronando el trago.</p></div></div>
+      <div class="paso"><div class="ico">💧</div><div><div class="t">PASO 4 · La firma</div><h4>Las gotas de angostura</h4><p>Deja caer 3–4 gotas de amargo sobre la espuma. Si el invitado quiere, dibuja con un palillo. Sirve de inmediato: la espuma no espera.</p></div></div>
+    </div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Un Pisco Sour correcto</h4><ul>
+        <li>Espuma blanca, firme, de ~1.5 cm que aguanta la gota</li>
+        <li>Equilibrio: se siente el pisco pero no quema</li>
+        <li>Frío, cremoso, ni ácido ni empalagoso</li>
+        <li>Servido apenas montado, en copa fría</li>
+        <li>Angostura recién puesta, aroma perceptible</li>
+      </ul></div>
+      <div class="box no"><h4>Rehazlo si…</h4><ul>
+        <li>No tiene espuma o se deshace en segundos (poca clara / mal batido)</li>
+        <li>Está aguado y pálido (hielo derretido, batido largo)</li>
+        <li>Pica de ácido (exceso de limón o poco jarabe)</li>
+        <li>Sabe a huevo (clara pasada o mal batida en seco)</li>
+        <li>La copa está tibia o el trago llegó tarde a la mesa</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Alergias y seguridad:</b> el Pisco Sour lleva <b>clara de huevo cruda</b>. Avísalo siempre a mesas con niños, embarazadas o alérgicos. Alternativa sin huevo: reemplaza la clara por espumante vegetal (aquafaba) o sírvelo como Chilcano. Nunca ocultes el huevo al invitado.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Chilcano, macerados y clásicos de la casa</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">El Pisco Sour no es el único. El Chilcano es el trago largo más fácil y refrescante del Perú, ideal para acompañar toda una comida. Súmale los macerados y los clásicos y tienes una carta de pisco completa para cualquier momento de la mesa.</p>
+    <div class="grid g2">
+      <div class="tipo"><h3>Chilcano clásico</h3><div class="d">En un vaso largo con hielo: 2 oz de pisco (ideal aromático o acholado), jugo de medio limón, 2 gotas de angostura y completar con ginger ale. Rodaja de limón. Refrescante, bajo en alcohol percibido, marida con todo.</div><div class="s">// el trago para toda la comida</div></div>
+      <div class="tipo"><h3>Capitán</h3><div class="d">El "martini peruano": 2 oz de pisco + 1 oz de vermút rojo, removido con hielo y colado a copa fría. Amargo elegante, para el invitado que pide algo seco tipo aperitivo.</div><div class="s">// aperitivo, antes de comer</div></div>
+      <div class="tipo"><h3>Coctel de algarrobina</h3><div class="d">Pisco + algarrobina (jarabe del algarrobo) + leche evaporada + clara + jarabe, batido y con canela espolvoreada. Dulce, postre en copa.</div><div class="s">// cierre dulce, alternativa al postre</div></div>
+      <div class="tipo"><h3>Macerados</h3><div class="d">Pisco infusionado con fruta: guinda (el más clásico), aguaymanto, maracuyá, membrillo. Semanas de reposo. Se sirve solo, en las rocas, o realza un chilcano de la casa.</div><div class="s">// digestivo o cortesía de la casa</div></div>
+    </div>
+    <p class="lead" style="margin-top:14px">Cómo armar un Chilcano perfecto en 15 segundos, incluso en hora pico:</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🧊</div><div><div class="t">PASO 1</div><h4>Vaso largo con hielo hasta arriba</h4><p>Más hielo enfría más rápido y se derrite menos. Vaso frío si se puede.</p></div></div>
+      <div class="paso"><div class="ico">🍶</div><div><div class="t">PASO 2</div><h4>Pisco, limón y amargo</h4><p>2 oz de pisco, el jugo de medio limón y 2 gotas de angostura directo al vaso.</p></div></div>
+      <div class="paso"><div class="ico">🫧</div><div><div class="t">PASO 3</div><h4>Ginger ale y remover suave</h4><p>Completa con ginger ale bien frío. Remueve una vez, sin perder el gas. Rodaja de limón y a la mesa.</p></div></div>
+    </div>
+    <div class="callout"><b>Venta cruzada:</b> el Chilcano es tu mejor aliado para vender una segunda ronda. Es ligero, se toma en toda la comida y no llena como una cerveza. Ofrécelo así: "¿Le preparo un chilcano de Italia para acompañar? Es fresco y va perfecto con los piqueos." Suave, específico, difícil de rechazar.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Otros destilados: ubica el pisco en el mapa</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">El invitado a veces compara el pisco con otros destilados. Saber en qué se parece y en qué se diferencia te da autoridad y te ayuda a recomendar cuando alguien "no toma pisco". También hay otros destilados peruanos que vale la pena conocer.</p>
+    <div class="card" style="margin-bottom:12px">
+      <div style="overflow-x:auto"><table class="t">
+        <thead><tr><th>Destilado</th><th>Materia prima</th><th>Clave</th><th>Vs. pisco</th></tr></thead>
+        <tbody>
+          <tr><td><b>Pisco (Perú)</b></td><td>Uva pisquera</td><td>1 destilación, sin agua, sin madera</td><td>—</td></tr>
+          <tr><td><b>Cañazo / aguardiente de caña</b></td><td>Caña de azúcar</td><td>Destilado andino, rústico, base de la caña con limón</td><td>Otro peruano, pero de caña, no de uva; más áspero</td></tr>
+          <tr><td><b>Singani (Bolivia)</b></td><td>Uva Moscatel de Alejandría</td><td>Primo de altura, aromático</td><td>Parecido en origen de uva, pero es boliviano</td></tr>
+          <tr><td><b>Tequila / Mezcal (México)</b></td><td>Agave</td><td>Planta, no fruta; el mezcal es ahumado</td><td>Nada que ver con la uva; no confundir jamás</td></tr>
+          <tr><td><b>Ron</b></td><td>Caña de azúcar</td><td>Suele añejarse en barrica, dulce</td><td>El pisco no se añeja ni endulza</td></tr>
+          <tr><td><b>Brandy / Coñac</b></td><td>Uva (vino destilado)</td><td>Sí es de uva, pero añejado en roble</td><td>El pisco es de uva pero transparente, sin madera</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cañazo</h3><div class="d">Aguardiente de caña de la sierra. Base de tragos como la "caña con limón" o el ponche. Rústico y potente; gánate al invitado curioso ofreciéndolo como dato local.</div></div>
+      <div class="tipo"><h3>Macerados de pisco</h3><div class="d">Técnicamente pisco, pero funcionan como categoría propia en carta. Guinda, hierbas, frutas nativas. Muéstralos como el "digestivo de la casa".</div></div>
+      <div class="tipo"><h3>Si no toma pisco…</h3><div class="d">Ofrece un macerado suave, un chilcano de aromático (parece más un refresco) o un coctel de algarrobina si busca dulce. Rara vez alguien odia las tres opciones.</div></div>
+    </div>
+    <div class="callout"><b>Regla de oro al comparar:</b> nunca digas que un destilado es "mejor" que otro. Di en qué se distingue. "El pisco es de uva y sin madera, por eso es tan frutal y limpio; el ron es de caña y se añeja, por eso es dulce." El invitado aprende, tú quedas como experto y nadie se siente corregido.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Servicio, cata y venta en mesa</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">Saber de pisco no sirve de nada si no lo llevas bien a la mesa. Copa correcta, temperatura, el guion de tres frases y el ojo para leer al invitado: eso convierte tu conocimiento en propina y en una segunda ronda.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La copa correcta</h3><div class="d">Pisco solo → copa tipo catavino o copa de pisco (tulipa que concentra aroma). Sour → copa Sour o de vino. Chilcano → vaso largo (highball). Nunca sirvas un Sour en vaso corto.</div></div>
+      <div class="tipo"><h3>Temperatura</h3><div class="d">El pisco para catar, a 15–18 °C (fresco, no helado: el frío mata el aroma). Sour y chilcano bien fríos por el hielo. Copas de cóctel siempre frías de la nevera.</div></div>
+      <div class="tipo"><h3>La cata en 3 pasos</h3><div class="d">Vista (transparente y brillante), nariz (acércala sin agitar, busca flores/fruta), boca (sorbo pequeño). Guía al invitado con estas tres palabras y vive una experiencia, no solo un trago.</div></div>
+      <div class="tipo"><h3>Lee al invitado</h3><div class="d">¿Turista? Cuéntale la DO y las regiones. ¿Habitual? Ofrécele un Mosto Verde nuevo. ¿Grupo joven? Chilcanos para la mesa. Ajusta el pitch a quién tienes enfrente.</div></div>
+      <div class="tipo"><h3>Maridaje rápido</h3><div class="d">Ceviche y tiraditos → Chilcano de Italia o Sour. Piqueos y causas → Acholado. Postres → Moscatel, Torontel o algarrobina. Nunca dejes la mesa sin sugerir la bebida.</div></div>
+      <div class="tipo"><h3>Responsabilidad</h3><div class="d">El pisco es fuerte (hasta 48°). Ofrece siempre agua, no apures rondas, y sabe decir que no con tacto a quien ya tomó de más. Cuidar al invitado también vende: vuelve.</div></div>
+    </div>
+    <div class="callout"><b>El guion de tres frases que sube el ticket:</b> (1) Recomienda con nombre propio — "Este mes tenemos un Quebranta de Ica buenísimo para el Sour." (2) Da una razón sensorial — "Es sequito y con cuerpo, aguanta perfecto el limón." (3) Cierra con una pregunta fácil — "¿Le preparo uno mientras ve la carta?". Nombre, razón, pregunta. Funciona casi siempre.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Servicio que deja huella</h4><ul>
+        <li>Copa fría y limpia, sin marcas de dedos</li>
+        <li>Sour montado a la vista, angostura fresca</li>
+        <li>Nombras el pisco y de dónde viene</li>
+        <li>Ofreces agua junto a cada ronda</li>
+        <li>Sugieres la bebida antes de que la pidan</li>
+      </ul></div>
+      <div class="box no"><h4>Detalles que lo arruinan</h4><ul>
+        <li>Servir el Sour tibio o con la espuma caída</li>
+        <li>"¿Algo de tomar?" en vez de sugerir algo puntual</li>
+        <li>No avisar del huevo crudo en el Sour</li>
+        <li>Pisco de catar servido helado (pierde aroma)</li>
+        <li>Presionar por otra ronda a quien ya tomó de más</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Aguardiente</b><span>Bebida alcohólica obtenida por destilación de un fermentado. El pisco es un aguardiente de uva.</span></div>
+      <div class="gterm"><b>Mosto</b><span>Jugo de la uva que, al fermentar, se destila para hacer pisco.</span></div>
+      <div class="gterm"><b>Mosto Verde</b><span>Pisco destilado antes de que fermente todo el azúcar del mosto. Más suave, sedoso y caro; rinde menos uva.</span></div>
+      <div class="gterm"><b>Acholado</b><span>Pisco mezcla de dos o más uvas (aromáticas y no aromáticas). Versátil, ideal para cócteles.</span></div>
+      <div class="gterm"><b>Puro</b><span>Pisco hecho de una sola variedad de uva (ej. Puro Quebranta).</span></div>
+      <div class="gterm"><b>Quebranta</b><span>Uva no aromática emblemática del pisco. Seca, con cuerpo; la base clásica del Pisco Sour.</span></div>
+      <div class="gterm"><b>Uvas aromáticas</b><span>Italia, Moscatel, Torontel y Albilla. Florales y frutales; brillan solas y en el Chilcano.</span></div>
+      <div class="gterm"><b>Denominación de Origen (DO)</b><span>Protección legal que limita el nombre "pisco" a lo producido en Lima, Ica, Arequipa, Moquegua y Tacna bajo reglas estrictas.</span></div>
+      <div class="gterm"><b>Alambique / Falca</b><span>Ollas de cobre donde se destila el pisco a fuego directo. La falca es más rústica y antigua.</span></div>
+      <div class="gterm"><b>Jarabe de goma</b><span>Jarabe de azúcar y agua (1:1) que da dulzor y textura al Pisco Sour.</span></div>
+      <div class="gterm"><b>Dry shake</b><span>Batir el Sour sin hielo primero para montar la clara de huevo y lograr espuma firme.</span></div>
+      <div class="gterm"><b>Angostura</b><span>Amargo aromático concentrado. Las gotas sobre la espuma del Sour aportan aroma y decoración.</span></div>
+      <div class="gterm"><b>Chilcano</b><span>Trago largo de pisco con ginger ale, limón y angostura. Refrescante y fácil de tomar durante la comida.</span></div>
+      <div class="gterm"><b>Macerado</b><span>Pisco infusionado semanas con fruta o hierbas (guinda, aguaymanto). Se sirve como digestivo de la casa.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en la barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Pisco &amp; Destilados · Chuleta de barra</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Qué es el pisco</h4><ul>
+          <li>Aguardiente 100% de uva peruana</li>
+          <li>1 destilación, sin agua ni madera ni añadidos</li>
+          <li>Transparente, 38–48° de alcohol</li>
+          <li>DO: Lima, Ica, Arequipa, Moquegua, Tacna</li>
+        </ul></div>
+        <div class="op-box"><h4>Tipos en carta</h4><ul>
+          <li>Puro: una sola uva</li>
+          <li>Acholado: blend, gran para cóctel</li>
+          <li>Mosto Verde: suave, premium, para catar</li>
+          <li>Aromático: floral, para Chilcano y cata</li>
+        </ul></div>
+        <div class="op-box"><h4>Pisco Sour (regla 3-1-1)</h4><ul>
+          <li>3 oz pisco Quebranta/Acholado</li>
+          <li>1 oz limón + 1 oz jarabe de goma</li>
+          <li>1 clara + hielo · dry shake, luego con hielo</li>
+          <li>Colar a copa fría + 3-4 gotas angostura</li>
+        </ul></div>
+        <div class="op-box"><h4>Chilcano</h4><ul>
+          <li>Vaso largo con hielo hasta arriba</li>
+          <li>2 oz pisco (aromático) + ½ limón + 2 gotas angostura</li>
+          <li>Completar con ginger ale, remover suave</li>
+          <li>Rodaja de limón · va con toda la comida</li>
+        </ul></div>
+        <div class="op-box"><h4>Uvas clave</h4><ul>
+          <li>No aromáticas: Quebranta, Negra Criolla, Mollar, Uvina</li>
+          <li>Aromáticas: Italia, Moscatel, Torontel, Albilla</li>
+          <li>Sour → Quebranta · Chilcano → Italia/Torontel</li>
+        </ul></div>
+        <div class="op-box"><h4>Venta + cuidados</h4><ul>
+          <li>Guion: nombre + razón sensorial + pregunta fácil</li>
+          <li>Avisa: el Sour lleva huevo crudo</li>
+          <li>Pisco de catar fresco (15-18°), no helado</li>
+          <li>Ofrece agua, no apures rondas</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Pisco y destilados del Perú · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

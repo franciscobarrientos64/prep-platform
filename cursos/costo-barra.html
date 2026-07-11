@@ -1,0 +1,358 @@
+<!-- Curso: Control de mermas y costo de barra (bartender / admin) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Control de mermas y costo de barra · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f5d5a'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Costo de Barra</span>
+    <nav class="nav">
+      <a href="#m1">1 · Pour cost</a><a href="#m2">2 · Recetas estándar</a><a href="#m3">3 · Inventario</a><a href="#m4">4 · Mermas</a><a href="#m5">5 · Robo</a><a href="#m6">6 · Rutina</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:#0f5d5a">
+    <div class="k">Academia Prep! · Bar / Barra</div>
+    <h1>Control de mermas y costo de barra</h1>
+    <p>La barra es el rincón del restaurante con mejor margen y con más fugas. Un chorro de más, una botella mal medida, una cortesía sin registrar o un descuadre al cierre se comen la utilidad sin que nadie lo note. Aquí aprendes a medir tu pour cost, estandarizar cada trago, cuadrar el inventario y cerrar la puerta al robo y al desperdicio. Con números reales de una barra en Lima.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~45 min</span><span>🎯 Bartender / Admin</span><span>🍸 Bar / Barra</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> cada botella de pisco de S/45 rinde 25 tragos si mides, o 18 si sirves "a ojo". Esos 7 tragos perdidos por botella son S/196 de venta que se evaporan. En un mes de 40 botellas es una utilidad de cuatro cifras que desaparece del cajón. Controlar la barra no es tacañería: es cobrar por todo lo que sirves.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Pour cost: el número que manda</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">El <b>pour cost</b> (costo de vertido) es qué porcentaje del precio de venta te cuesta el líquido que sirves. Es el food cost de la barra. Si no sabes cuánto te cuesta cada trago, estás fijando precios a ciegas. La meta en una barra sana es entre <b>18% y 24%</b>: por debajo ganas mucho pero puede que estés caro; por encima estás regalando margen.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La fórmula</h3><div class="d">Pour cost = (costo de ingredientes ÷ precio de venta) × 100. Si un Pisco Sour te cuesta S/7 en insumos y lo vendes a S/28, tu pour cost es 25%. Cada punto que baja es plata directa a la utilidad.</div></div>
+      <div class="tipo"><h3>Costo por onza</h3><div class="d">Divide el precio de la botella entre su contenido. Pisco de S/45 en botella de 750 ml = S/0,06 por ml = S/1,80 por onza (30 ml). Este número por insumo es la base de todo el costeo.</div></div>
+      <div class="tipo"><h3>Precio ideal desde el costo</h3><div class="d">Si quieres 22% de pour cost y el trago cuesta S/7, el precio ideal es 7 ÷ 0,22 = S/32. Así fijas carta con criterio, no copiando al vecino.</div></div>
+      <div class="tipo"><h3>Rendimiento por botella</h3><div class="d">750 ml ÷ porción de la receta = tragos por botella. A 3 oz (90 ml) rinde 8 tragos; a 1,5 oz rinde 16. Sirviendo "generoso" bajas el rendimiento y sube tu costo real.</div></div>
+      <div class="tipo"><h3>Costo teórico vs real</h3><div class="d">El teórico es lo que deberías gastar según recetas y ventas. El real es lo que de verdad se fue del stock. La diferencia es tu merma: si el real supera al teórico en más de 3-4 puntos, algo se está fugando.</div></div>
+      <div class="tipo"><h3>Costo pesado (blended)</h3><div class="d">No mires solo un trago: mezcla la carta. Cerveza rinde ~55% de pour cost, un clásico bien costeado ~15%. El promedio ponderado por lo que más vendes es tu verdadero costo de barra.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Trago</th><th>Costo insumos</th><th>Precio carta</th><th>Pour cost</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pisco Sour</b></td><td>S/7,00</td><td>S/28</td><td>25%</td><td>Ok, en el límite alto</td></tr>
+        <tr><td><b>Chilcano de pisco</b></td><td>S/4,20</td><td>S/24</td><td>17,5%</td><td>Excelente margen</td></tr>
+        <tr><td><b>Gin tonic (gin importado)</b></td><td>S/9,50</td><td>S/34</td><td>28%</td><td>Alto — revisar porción o precio</td></tr>
+        <tr><td><b>Copa vino tinto de la casa</b></td><td>S/8,00</td><td>S/26</td><td>31%</td><td>Alto — recalcular precio de copa</td></tr>
+        <tr><td><b>Cerveza artesanal 330 ml</b></td><td>S/6,50</td><td>S/18</td><td>36%</td><td>Normal en cerveza, compensa por volumen</td></tr>
+        <tr><td><b>Cusqueña (355 ml)</b></td><td>S/3,80</td><td>S/12</td><td>32%</td><td>Normal, es tráfico y rotación</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="callout"><b>Ejemplo real, botella de pisco de S/45:</b> a 3 oz por trago rinde 8 tragos → costo pisco S/5,63/trago. Pero muchos bartenders sirven ~3,5 oz "a ojo" → solo 7 tragos, y el octavo trago que pagaste nunca se cobra. En una noche de 40 pisco sours eso son ~5 tragos regalados = <b>S/140 menos por servicio</b>, más de S/4.000 al mes.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Recetas estandarizadas y porcionado</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Un trago solo cuesta lo que la receta dice si todos lo hacen igual, todos los turnos. La receta estandarizada fija los mililitros exactos de cada ingrediente, el cristal, el hielo y la guarnición. Sin ella, tu costeo es ficción y cada bartender inventa su propio Pisco Sour.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">straighten</span></div>
+      <div><div class="t">Regla 1</div><h4>Mide siempre: jigger, no "a ojo"</h4><p>El free pour (servir sin medir) parece pro pero es la fuga #1 de la barra. Usa jigger de doble cara (1 oz / 2 oz) o pourer con dosificador. Un bartender sin jigger se pasa en promedio 20-25% por trago: eso es un cuarto de tu utilidad por el caño.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">description</span></div>
+      <div><div class="t">Regla 2</div><h4>Ficha técnica por trago, visible en barra</h4><p>Cada cóctel de la carta tiene su ficha: ingredientes en ml, orden, técnica (batido/refrescado/directo), cristalería, hielo, guarnición y foto. Plastificada bajo la barra o en la app de Recetas. El bartender nuevo debe poder replicar sin preguntar.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">scale</span></div>
+      <div><div class="t">Regla 3</div><h4>Costea cada línea de la receta</h4><p>Suma el costo de cada ingrediente (licor, jarabe, cítrico, garnish, incluso el hielo y la clara). No olvides el 3-5% de merma natural por evaporación y derrame. Ese total es tu costo base para fijar precio.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">local_bar</span></div>
+      <div><div class="t">Regla 4</div><h4>Cristalería y hielo también son la receta</h4><p>Un vaso más grande "pide" más trago. Fija el cristal exacto por cóctel y el tipo de hielo (cubo grande para old fashioned, frappé para chilcano). Cambiar el vaso descuadra la porción y el costo sin que nadie lo escriba.</p></div>
+    </div>
+    <div class="card" style="margin-top:8px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Pisco Sour — ficha de costeo</th><th>Cantidad</th><th>Costo</th></tr></thead>
+      <tbody>
+        <tr><td>Pisco quebranta (botella S/45 / 750 ml)</td><td>3 oz (90 ml)</td><td>S/5,40</td></tr>
+        <tr><td>Jugo de limón fresco</td><td>1 oz (30 ml)</td><td>S/0,70</td></tr>
+        <tr><td>Jarabe de goma</td><td>0,75 oz</td><td>S/0,35</td></tr>
+        <tr><td>Clara de huevo</td><td>1 unidad</td><td>S/0,40</td></tr>
+        <tr><td>Amargo de angostura + hielo</td><td>3 gotas</td><td>S/0,15</td></tr>
+        <tr><td><b>Total costo</b></td><td></td><td><b>S/7,00</b></td></tr>
+        <tr><td><b>Precio carta / pour cost</b></td><td>S/28</td><td><b>25%</b></td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Barra estandarizada</h4><ul>
+        <li>Jigger o dosificador en cada trago</li>
+        <li>Fichas técnicas visibles y actualizadas</li>
+        <li>Mismo Pisco Sour en turno mañana y noche</li>
+        <li>Jarabes y mixes con receta y fecha de preparación</li>
+        <li>Batch de clásicos medido para el rush</li>
+      </ul></div>
+      <div class="box no"><h4>Barra "a ojo"</h4><ul>
+        <li>Free pour "porque soy rápido"</li>
+        <li>Cada bartender con su propia receta</li>
+        <li>Vasos que cambian según lo que haya limpio</li>
+        <li>"Un chorrito más" para el cliente conocido</li>
+        <li>Guarniciones y jugos sin control de porción</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Inventario de barra: par, conteo y valorización</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">La barra se controla contando. El inventario te dice cuánto tienes, cuánto vale y cuánto se movió de verdad. Bien hecho toma 20-30 minutos y es lo que revela si tu costo teórico coincide con la realidad. Se cuenta con la barra cerrada y siempre la misma persona en el mismo orden.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Nivel PAR por botella</h3><div class="d">El PAR es el stock máximo que debes tener de cada ítem para cubrir hasta la próxima compra sin quedarte corto ni sobrestockear. Pisco quebranta PAR 6, gin importado PAR 3, vermouth PAR 2. Pides para volver al PAR, no "lo que parezca".</div></div>
+      <div class="tipo"><h3>Conteo por décimos</h3><div class="d">Las botellas abiertas se cuentan en décimos (0,1 = casi vacía, 0,5 = mitad, 1,0 = llena) o con balanza (peso lleno − peso vacío). "A ojo" del nivel es la fuente #1 de descuadre en el conteo.</div></div>
+      <div class="tipo"><h3>Valorización</h3><div class="d">Inventario valorizado = suma de (unidades × costo). No cuentes solo botellas: cuenta plata. Una barra bien surtida guarda S/8.000-15.000 en licor parado; saber su valor es saber cuánto capital duerme ahí.</div></div>
+      <div class="tipo"><h3>Rotación (sell-through)</h3><div class="d">Inventario inicial + compras − inventario final = consumo del período. Cruza ese consumo con lo que el POS vendió: si consumiste 5 botellas de gin pero el POS solo cobró 4, falta una botella entera de tragos.</div></div>
+      <div class="tipo"><h3>FIFO y vencimientos</h3><div class="d">Primero entra, primero sale. Rota vermouths, cremas, jugos y cervezas por fecha. Un vermouth abierto se oxida en 3-4 semanas: refrigéralo y márcalo. Botellas polvorientas al frente, nuevas atrás.</div></div>
+      <div class="tipo"><h3>Frecuencia</h3><div class="d">Licores fuertes y vinos: semanal. Perecibles (jugos, cremas, garnish, cerveza): diario o cada dos días. Cierre de mes: conteo completo valorizado para el food cost real de barra.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Ítem</th><th>PAR</th><th>Conteo hoy</th><th>Pedir</th><th>Costo unit.</th><th>Valor en stock</th></tr></thead>
+      <tbody>
+        <tr><td>Pisco quebranta 750 ml</td><td>6</td><td>2,4</td><td>4</td><td>S/45</td><td>S/108</td></tr>
+        <tr><td>Pisco acholado 750 ml</td><td>4</td><td>3,1</td><td>1</td><td>S/52</td><td>S/161</td></tr>
+        <tr><td>Gin importado 700 ml</td><td>3</td><td>0,8</td><td>2</td><td>S/95</td><td>S/76</td></tr>
+        <tr><td>Vermouth rosso 1 L</td><td>2</td><td>1,5</td><td>0</td><td>S/38</td><td>S/57</td></tr>
+        <tr><td>Vino tinto casa (caja x6)</td><td>12</td><td>7</td><td>5</td><td>S/32</td><td>S/224</td></tr>
+        <tr><td>Cusqueña 355 ml</td><td>48</td><td>20</td><td>28</td><td>S/3,80</td><td>S/76</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="callout"><b>La prueba que nunca miente:</b> al cierre de semana calcula el consumo por licor (inicial + compras − final) y compáralo con las ventas del POS convertidas a onzas. Si el POS dice que vendiste 60 pisco sours (180 oz = 2,4 botellas) pero consumiste 3 botellas, se fueron 0,6 botellas ≈ S/168 en tragos que salieron de la barra y nunca entraron a la caja. Ese número es tu alerta roja.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Control de mermas y desperdicio</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Merma es todo lo que sale del stock y no se cobra: derrames, sobre-vertido, tragos rehechos, roturas, cortesías, evaporación, jugos que se picaron. No toda merma es robo, pero toda merma no registrada se ve igual en el descuadre. La regla de oro: <b>si se va del stock, se anota — siempre.</b></p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Over-pour (sobre-vertido)</h3><div class="d">La merma silenciosa más grande. Servir 3,5 oz donde la receta pide 3. El remedio es jigger obligatorio y auditorías sorpresa: pesa 5 tragos servidos por el bartender y compara con la receta.</div></div>
+      <div class="tipo"><h3>Derrames y roturas</h3><div class="d">Copa que se rompe, botella que se cae, batch que se derrama. Anótalo al momento en el registro de mermas con motivo. No para castigar: para que el conteo cuadre y no parezca robo.</div></div>
+      <div class="tipo"><h3>Tragos rehechos / devueltos</h3><div class="d">"Salió flojo", "no era lo que pedí". El líquido ya se gastó. Regístralo como merma con motivo. Si un trago se rehace mucho, el problema es la receta o la técnica, no el cliente.</div></div>
+      <div class="tipo"><h3>Cortesías e invitaciones</h3><div class="d">La copa de cortesía al cliente frecuente es marketing válido — pero se registra como cortesía con aprobación del gerente, nunca "por fuera". Una cortesía sin registrar es indistinguible de un robo en el inventario.</div></div>
+      <div class="tipo"><h3>Perecibles vencidos</h3><div class="d">Jugos exprimidos que no se usaron, jarabes caseros picados, garnish marchito, cremas cortadas. Prepara jugos y mixes en cantidad calculada al pronóstico del día, no "un balde por si acaso".</div></div>
+      <div class="tipo"><h3>Colas de botella</h3><div class="d">Los últimos mililitros que "no alcanzan" y se botan. Combínalos con la botella nueva del mismo producto (misma marca/lote) o úsalos en batcheo. No los tires: son onzas que pagaste.</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>Fecha</th><th>Ítem</th><th>Cantidad</th><th>Motivo</th><th>Responsable</th><th>Aprobó</th></tr></thead>
+      <tbody>
+        <tr><td>10/07</td><td>Copa vino tinto</td><td>1 (150 ml)</td><td>Rotura al servir</td><td>Bartender A</td><td>—</td></tr>
+        <tr><td>10/07</td><td>Pisco Sour</td><td>1 trago</td><td>Rehecho — cliente pidió sin clara</td><td>Bartender A</td><td>Gerente</td></tr>
+        <tr><td>10/07</td><td>Chilcano</td><td>2 tragos</td><td>Cortesía mesa cumpleaños</td><td>Barra</td><td>Gerente</td></tr>
+        <tr><td>10/07</td><td>Jugo de limón</td><td>400 ml</td><td>Sobró del turno, se picó</td><td>Barback</td><td>—</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Merma bajo control</h4><ul>
+        <li>Registro de mermas abierto en cada turno</li>
+        <li>Cortesías siempre con aprobación del gerente</li>
+        <li>Jugos y mixes preparados al pronóstico del día</li>
+        <li>Colas de botella combinadas, no botadas</li>
+        <li>Merma total del mes bajo 3-4% del consumo</li>
+      </ul></div>
+      <div class="box no"><h4>Merma que se dispara</h4><ul>
+        <li>"Ya me acuerdo al cierre" (nunca te acuerdas)</li>
+        <li>Cortesías repartidas sin avisar a nadie</li>
+        <li>Baldes de jugo que se botan cada noche</li>
+        <li>Roturas que "mejor no digo para no quedar mal"</li>
+        <li>Descuadre grande y nadie sabe de dónde salió</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Prevenir robo y descuadre</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">La mayoría del personal es honesto, pero la barra maneja producto de alto valor, efectivo y baja supervisión: hay que cerrar las puertas por diseño, no por desconfianza. El sistema no acusa a nadie; simplemente hace que todo trago servido pase por la caja. Cuando cada onza se registra, el robo se vuelve visible y deja de tener sentido.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Sin comanda no hay trago</h3><div class="d">Regla dura: nada sale de la barra sin estar registrado en el POS. El truco clásico del robo es servir sin comandar y quedarse con el efectivo. Si todo trago genera un ticket, la venta fantasma desaparece.</div></div>
+      <div class="tipo"><h3>El "vuelto invita la casa"</h3><div class="d">Servir un trago real, cobrarlo, pero anularlo después y embolsar el efectivo. Se detecta revisando anulaciones y cortesías en el audit log: si un bartender concentra las anulaciones, prende la alerta.</div></div>
+      <div class="tipo"><h3>Botella propia (BYO fraude)</h3><div class="d">Traer su propia botella de licor barato, venderlo como del local y quedarse con la plata. Contra esto: solo entran botellas selladas por almacén, marcadas, y el conteo cuadra consumo con ventas.</div></div>
+      <div class="tipo"><h3>Sobre-vertido "por propina"</h3><div class="d">Servir de más a cambio de mejor propina. Cuesta al local aunque el bartender no robe efectivo. Jigger obligatorio y pour cost por bartender lo controlan.</div></div>
+      <div class="tipo"><h3>Cierre de caja a ciegas</h3><div class="d">Cuenta el efectivo sin ver el total del sistema primero (blind drop). Si el cajón siempre "sobra" o "falta" con el mismo bartender, hay patrón. Sobrar tampoco es bueno: suele ser preparar el terreno para sacar.</div></div>
+      <div class="tipo"><h3>Audit log y cámara</h3><div class="d">La barra bajo cámara enfocando la caja y el POS con registro de quién anula, corteja y comanda. No es vigilar: es que el sistema recuerde por ti. El personal honesto agradece que los números lo respalden.</div></div>
+    </div>
+    <div class="callout"><b>El principio que lo resume todo:</b> no persigas ladrones, cierra huecos. Cuando cada trago necesita comanda, cada anulación queda registrada, cada botella entra sellada por almacén y el consumo se cruza con las ventas cada semana, robar deja de ser fácil y deja de valer la pena. El control protege también al bartender honesto: si el número cuadra, nadie sospecha de él.</div>
+    <div class="do2" style="margin-top:12px">
+      <div class="box yes"><h4>Barra blindada</h4><ul>
+        <li>Comanda obligatoria antes de servir</li>
+        <li>Anulaciones y cortesías con aprobación y log</li>
+        <li>Solo botellas selladas y marcadas por almacén</li>
+        <li>Arqueo de caja a ciegas contra el POS</li>
+        <li>Consumo vs ventas cruzado cada semana</li>
+      </ul></div>
+      <div class="box no"><h4>Barra con fugas</h4><ul>
+        <li>"Después lo comando, ahorita hay rush"</li>
+        <li>Cualquiera anula sin que quede rastro</li>
+        <li>Botellas que aparecen sin pasar por almacén</li>
+        <li>Cajón que cuadra "más o menos" y nadie revisa</li>
+        <li>Inventario que se cuenta "cuando se puede"</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Rutina de control y KPIs</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">El control no es un evento de fin de mes: es un hábito diario de pocos minutos. Una barra que cuadra todos los días nunca tiene una sorpresa grande al cierre. Estos son los ritmos y los números que debes vigilar.</p>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">wb_twilight</span></div>
+      <div><div class="t">Apertura · 10 min</div><h4>Mise en place de control</h4><p>Recibe el stock del turno anterior, revisa jugos y mixes frescos, confirma PAR de lo perecible, chequea que el jigger y los pourers estén, y abre el registro de mermas del turno. Anota el conteo de apertura de los licores premium.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">nightlife</span></div>
+      <div><div class="t">Durante el servicio</div><h4>Comanda, mide, registra</h4><p>Todo trago se comanda antes de servirse. Se mide con jigger. Cada rotura, cortesía o rehecho va al registro en el momento. Nada de "lo anoto después".</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">bedtime</span></div>
+      <div><div class="t">Cierre · 20 min</div><h4>Conteo, arqueo y cuadre</h4><p>Cuenta perecibles y premium, arquea la caja a ciegas contra el POS, cierra el registro de mermas y deja el stock listo para mañana. Cualquier descuadre mayor a S/20 se investiga hoy, no la próxima semana.</p></div>
+    </div>
+    <div class="paso">
+      <div class="ico"><span class="material-symbols-outlined">calendar_month</span></div>
+      <div><div class="t">Semanal / Mensual</div><h4>Inventario valorizado y pour cost</h4><p>Semanal: inventario completo, consumo vs ventas, pour cost por familia. Mensual: food cost de barra real, ranking de tragos por margen (menu engineering), ajuste de PAR y de precios de carta.</p></div>
+    </div>
+    <div class="card" style="margin-top:8px"><div style="overflow-x:auto"><table class="t">
+      <thead><tr><th>KPI</th><th>Qué mide</th><th>Meta sana</th><th>Alerta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pour cost promedio</b></td><td>Costo líquido ÷ ventas de barra</td><td>18-24%</td><td>&gt; 26% o &lt; 15%</td></tr>
+        <tr><td><b>Varianza (teórico vs real)</b></td><td>Brecha entre consumo esperado y real</td><td>&lt; 3%</td><td>&gt; 4-5%</td></tr>
+        <tr><td><b>Merma registrada</b></td><td>Roturas + rehechos + vencidos</td><td>&lt; 3% del consumo</td><td>&gt; 4%</td></tr>
+        <tr><td><b>Descuadre de caja</b></td><td>Efectivo real vs POS por turno</td><td>± S/10</td><td>Patrón con misma persona</td></tr>
+        <tr><td><b>Rotación de inventario</b></td><td>Veces que gira el stock al mes</td><td>Licor 1-2×, perecible diario</td><td>Botellas paradas &gt; 60 días</td></tr>
+        <tr><td><b>Costo por trago (top 5)</b></td><td>Costo real de tus más vendidos</td><td>Igual a la ficha ± 5%</td><td>Se dispara sobre la ficha</td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="callout"><b>Regla del 3%:</b> una barra bien controlada tiene una varianza (lo que se fue del stock menos lo que se vendió) por debajo del 3%. Si un mes te da 6%, no busques culpables: revisa primero porciones y registro de mermas — casi siempre el "robo" resulta ser sobre-vertido y cortesías sin anotar. Arregla el sistema y el número baja solo.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Pour cost</b><span>Costo del líquido de un trago como % de su precio de venta. El food cost de la barra. Meta: 18-24%.</span></div>
+      <div class="gterm"><b>Free pour</b><span>Servir licor sin medir, calculando "a ojo". Rápido pero es la principal fuga de margen de la barra.</span></div>
+      <div class="gterm"><b>Jigger</b><span>Medidor de doble cara (1 oz / 2 oz) para servir la porción exacta de cada receta.</span></div>
+      <div class="gterm"><b>Over-pour</b><span>Sobre-vertido: servir más onzas de las que pide la receta. Merma silenciosa que se come la utilidad.</span></div>
+      <div class="gterm"><b>Onza (oz)</b><span>Unidad de barra ≈ 30 ml. Una botella de 750 ml rinde 25 oz. Base para costear por trago.</span></div>
+      <div class="gterm"><b>PAR</b><span>Nivel máximo de stock que debes tener de cada ítem para cubrir hasta la próxima compra. Pides para volver al PAR.</span></div>
+      <div class="gterm"><b>Merma</b><span>Todo producto que sale del stock y no se cobra: roturas, rehechos, cortesías, vencidos, evaporación.</span></div>
+      <div class="gterm"><b>Varianza</b><span>Diferencia entre el consumo teórico (según recetas y ventas) y el consumo real (según inventario). Sana &lt; 3%.</span></div>
+      <div class="gterm"><b>Costo teórico</b><span>Lo que la barra debería haber consumido según las recetas y lo que el POS vendió.</span></div>
+      <div class="gterm"><b>FIFO</b><span>First in, first out: primero entra, primero sale. Rotar por fecha para no vencer perecibles.</span></div>
+      <div class="gterm"><b>Batch / batcheo</b><span>Preparar un cóctel clásico en volumen y medido, para servir rápido en el rush sin perder porción.</span></div>
+      <div class="gterm"><b>Arqueo a ciegas</b><span>Contar el efectivo del cajón sin ver antes el total del POS, para detectar descuadres reales.</span></div>
+      <div class="gterm"><b>Menu engineering</b><span>Ranking de tragos por margen y popularidad para decidir qué empujar, rescostear o quitar de la carta.</span></div>
+      <div class="gterm"><b>Cola de botella</b><span>Los últimos mililitros de una botella. Se combinan con la nueva del mismo producto, no se botan.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en barra</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Costo de Barra · Chuleta</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>La fórmula</h4><ul>
+          <li>Pour cost = costo insumos ÷ precio × 100</li>
+          <li>Meta: 18-24%</li>
+          <li>Costo/oz = precio botella ÷ ml × 30</li>
+          <li>Precio ideal = costo ÷ pour cost meta</li>
+        </ul></div>
+        <div class="op-box"><h4>Reglas de oro</h4><ul>
+          <li>Mide siempre con jigger, nada de free pour</li>
+          <li>Sin comanda no sale trago</li>
+          <li>Si sale del stock, se anota</li>
+          <li>Cortesías: solo con aprobación del gerente</li>
+        </ul></div>
+        <div class="op-box"><h4>Rutina diaria</h4><ul>
+          <li>Apertura: PAR, mixes frescos, abrir registro merma</li>
+          <li>Servicio: comanda → mide → registra</li>
+          <li>Cierre: conteo + arqueo a ciegas vs POS</li>
+          <li>Descuadre &gt; S/20 se investiga hoy</li>
+        </ul></div>
+        <div class="op-box"><h4>KPIs a vigilar</h4><ul>
+          <li>Pour cost 18-24%</li>
+          <li>Varianza teórico vs real &lt; 3%</li>
+          <li>Merma &lt; 3% del consumo</li>
+          <li>Caja ± S/10 por turno</li>
+        </ul></div>
+        <div class="op-box"><h4>Fugas más comunes</h4><ul>
+          <li>Over-pour "a ojo" (la #1)</li>
+          <li>Servir sin comandar</li>
+          <li>Cortesías sin registrar</li>
+          <li>Jugos preparados de más que se pican</li>
+        </ul></div>
+        <div class="op-box"><h4>Dato que no miente</h4><ul>
+          <li>Botella pisco S/45 = 8 tragos a 3 oz</li>
+          <li>Servir 3,5 oz = 1 trago regalado/botella</li>
+          <li>Cruza consumo (inventario) vs ventas (POS)</li>
+          <li>La brecha = tu alerta roja semanal</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Control de mermas y costo de barra · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!-- Curso: Recepción y bienvenida (anfitrión) · Academia Prep! -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Recepción y bienvenida (anfitrión) · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f766e'/><text x='50' y='72' font-family='sans-serif' font-weight='900' font-size='56' fill='%23fcf9f8' text-anchor='middle'>P!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Anfitrión</span>
+    <nav class="nav">
+      <a href="#m1">1 · La puerta</a><a href="#m2">2 · El saludo</a><a href="#m3">3 · A la mesa</a><a href="#m4">4 · Primera impresión</a><a href="#m5">5 · Lista de espera</a><a href="#m6">6 · Despedida</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero" style="background:var(--wine);background:#0f766e">
+    <div class="k">Academia Prep! · Sala / FOH</div>
+    <h1>Recepción y bienvenida</h1>
+    <p>El curso del anfitrión. La puerta es el primer plato del restaurante: se sirve con presencia, con el nombre de la reserva en la boca y con una sonrisa que no se finge. En 35 minutos vas a manejar la puerta como un profesional, aun con el salón lleno y tres mesas esperando.</p>
+    <div class="meta"><span>📚 6 módulos</span><span>⏱️ ~35 min</span><span>🎯 Anfitrión / host</span><span>🚪 Sala / FOH</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> el invitado decide si la va a pasar bien en los primeros 30 segundos, antes de ver la carta o probar un bocado. Esos 30 segundos son tuyos. Un recibimiento tibio ya no lo arregla ni el mejor plato; uno cálido y ordenado le da permiso de relajarse y disfrutar toda la noche.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La puerta: tu presencia</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">Antes de decir una palabra ya estás comunicando. Cómo estás parado, hacia dónde miras y cuánto demoras en notar a quien entra dicen más que cualquier saludo. La puerta nunca se deja sola.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Puesto, no escondido</h3><div class="d">Tu lugar es el atril o pódium con vista a la puerta y al salón a la vez. Nunca de espaldas a la entrada ni metido en la conversación con un compañero. Si te alejas, alguien cubre la puerta.</div></div>
+      <div class="tipo"><h3>Postura abierta</h3><div class="d">Erguido, hombros atrás, manos visibles y quietas (no en los bolsillos ni cruzadas). El cuerpo dice "te espero y me alegra que vengas", no "estoy ocupado".</div></div>
+      <div class="tipo"><h3>La regla de los 5 segundos</h3><div class="d">Nadie cruza la puerta sin recibir contacto visual y una sonrisa en 5 segundos, aunque estés al teléfono o con otra mesa. Un gesto de "ya lo atiendo" vale oro.</div></div>
+      <div class="tipo"><h3>Sonrisa real</h3><div class="d">La sonrisa se ve en los ojos, no solo en la boca. Antes de abrir, respira y "resetea" la cara: el invitado no tiene la culpa de que la reserva anterior te haya complicado.</div></div>
+      <div class="tipo"><h3>Presentación impecable</h3><div class="d">Uniforme planchado, aliento fresco, manos y uñas limpias, cero perfume invasivo. Eres la portada del restaurante: si tú estás pulcro, el invitado asume que la cocina también.</div></div>
+      <div class="tipo"><h3>La voz correcta</h3><div class="d">Tono cálido, volumen medio, ritmo pausado. En un fine dining no se grita ni por el salón ni por la reserva. Si hay bulla, te acercas, no subes la voz.</div></div>
+    </div>
+    <div class="callout"><b>Tu mise en place de puerta:</b> antes del servicio revisa el <b>libro de reservas del día en Prep! (/bienvenida → Agenda)</b>, imprime o ten a la vista quién llega y a qué hora, confirma qué mesas están listas, ubica el paragüero, el guardarropa y el menú del día. Un anfitrión que arranca sin ver la agenda va a improvisar toda la noche.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>El saludo con nombre</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Recibir por el nombre de la reserva es el gesto que separa un restaurante correcto de uno memorable. "Buenas noches, señor Prado, lo esperábamos" convierte a un desconocido en un invitado en dos segundos.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">👋</div><div><div class="t">SEGUNDO 0</div><h4>Saludo cálido y contacto visual</h4><p>"Buenas noches, bienvenidos a [restaurante]." Sonríe, mira a los ojos de quien encabeza el grupo. Nunca un "¿reservó?" seco como primera frase.</p></div></div>
+      <div class="paso"><div class="ico">📖</div><div><div class="t">SEGUNDO 3</div><h4>Pregunta por la reserva</h4><p>"¿Tienen reserva con nosotros? ¿A nombre de quién, por favor?" Si dicen "Prado, para dos", ya tienes el nombre. Si es walk-in, pasas al módulo 5.</p></div></div>
+      <div class="paso"><div class="ico">🔎</div><div><div class="t">SEGUNDO 8</div><h4>Confirma en Prep!</h4><p>Buscas en <b>/bienvenida → Agenda</b> por apellido. Verificas cantidad de personas, hora y las notas: si es <b>VIP</b>, si hay <b>alergias</b>, si celebra un <b>cumpleaños o aniversario</b>. La ficha te lo muestra en la tarjeta.</p></div></div>
+      <div class="paso"><div class="ico">🎉</div><div><div class="t">SEGUNDO 12</div><h4>Personaliza si hay contexto</h4><p>"Señor Prado, veo que celebran su aniversario, felicidades." O "Le tenemos la mesa de la ventana que pidió." Ese detalle recordado es lo que hace que vuelvan.</p></div></div>
+      <div class="paso"><div class="ico">🧥</div><div><div class="t">SEGUNDO 15</div><h4>Ofrece guardarropa y guía</h4><p>"¿Me permiten sus abrigos? Síganme por aquí, por favor." Tomas la delantera y arrancas el acompañamiento a la mesa (módulo 3).</p></div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Quién llega</th><th>Cómo lo recibes</th><th>Dónde lo confirmas en Prep!</th></tr></thead>
+      <tbody>
+        <tr><td>Reserva a nombre conocido</td><td>Por su apellido: "Señor Prado, bienvenido"</td><td>/bienvenida → Agenda (busca apellido)</td></tr>
+        <tr><td>Reserva VIP o cliente frecuente</td><td>Por su nombre + un guiño a su preferencia habitual</td><td>Ficha del invitado (tag VIP, zona preferida)</td></tr>
+        <tr><td>Reserva con celebración</td><td>Felicitación discreta + coordinas el detalle con el equipo</td><td>Ficha → nota de cumpleaños/aniversario</td></tr>
+        <tr><td>Reserva con alergia registrada</td><td>Sin alarmar: "Ya avisamos a cocina de su alergia"</td><td>Ficha → alérgenos (superficie roja)</td></tr>
+        <tr><td>Walk-in (sin reserva)</td><td>"Con gusto, permítame ver disponibilidad"</td><td>Mapa / Waitlist según haya mesa o no</td></tr>
+        <tr><td>Un invitado que llega antes que el resto</td><td>Ofreces la barra o esperar en la mesa; avisas al mozo</td><td>Marcas la reserva como "llegó parcial"</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>El nombre es sagrado:</b> si no lo entendiste, pregunta una vez con naturalidad ("¿Prado con P?"), no dos. Y jamás inventes un apellido ni digas "¿usted es el de la reserva de las 8?" en voz alta frente a otros: la discreción también es hospitalidad.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Acompañar a la mesa</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">Llevar a la mesa no es caminar adelante y ya. Es marcar el ritmo, cuidar al grupo y entregarlo al mozo con la información justa. El invitado no debería sentirse arreado ni perdido.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">🍽️</div><div><div class="t">ANTES DE SALIR</div><h4>Elige la mesa correcta</h4><p>No la primera libre: la mejor para ese grupo. Pareja en aniversario → rincón tranquilo. Adulto mayor o coche de bebé → cerca de la entrada, sin escaleras. Grupo ruidoso → lejos de la pareja romántica. Consulta el <b>Mapa (/bienvenida)</b>.</p></div></div>
+      <div class="paso"><div class="ico">🚶</div><div><div class="t">EN CAMINO</div><h4>Camina medio paso adelante</h4><p>A un ritmo que el grupo siga sin apurarse. Miras atrás una o dos veces para no perderlos. Llevas los menús en la mano. Si hay un escalón o piso mojado, lo avisas: "Cuidado con el escalón".</p></div></div>
+      <div class="paso"><div class="ico">💺</div><div><div class="t">EN LA MESA</div><h4>Presenta la mesa y ayuda a sentarse</h4><p>"Aquí tienen su mesa." Retiras la silla para la dama, el adulto mayor o el invitado de honor. Entregas las cartas abiertas, la de vinos a quien la pida, y retiras los cubiertos que sobren si el grupo es menor a lo montado.</p></div></div>
+      <div class="paso"><div class="ico">🙋</div><div><div class="t">ANTES DE IRTE</div><h4>Entrega al mozo</h4><p>"Enseguida los atiende Lucía." Le pasas al mozo el dato clave: número de personas, si hay alergia, si celebran algo, si tienen prisa. Ese traspaso evita que el invitado repita todo.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí hacemos</h4><ul>
+        <li>Confirmar que la mesa esté limpia y montada antes de llevar al grupo</li>
+        <li>Adaptar la mesa a la persona (bebé, silla de ruedas, muletas)</li>
+        <li>Avisar los desniveles y ceder el paso en puertas</li>
+        <li>Sentar primero a quien más lo necesita y retirar su silla</li>
+        <li>Traspasar al mozo las notas de la reserva</li>
+        <li>Ofrecer agua o carta de aperitivos si el mozo demora</li>
+      </ul></div>
+      <div class="box no"><h4>No hacemos</h4><ul>
+        <li>Caminar tan rápido que el grupo quede atrás</li>
+        <li>Sentar en una mesa a medio limpiar "porque ya la limpian"</li>
+        <li>Poner a una pareja al lado del baño o la puerta de cocina</li>
+        <li>Dejar al grupo plantado sin decir quién los atenderá</li>
+        <li>Señalar la mesa desde lejos con el dedo: "es esa de allá"</li>
+        <li>Repartir menús al aire sin entregarlos en mano</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>La mesa "vendida":</b> al presentar la mesa, súmale una frase que valga: "Desde aquí tienen la vista al bar de coctelería" o "esta es la mesa más tranquila del salón". El invitado la percibe como elegida para él, no asignada al azar.</div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>La primera impresión</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">La primera impresión no es solo tu saludo: es todo lo que el invitado ve, huele y siente al entrar. El anfitrión es el guardián de esa foto. Si algo está fuera de lugar en la entrada, es tuyo arreglarlo.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>La entrada, impecable</h3><div class="d">Puerta y vidrios limpios, felpudo derecho, nada de cajas ni escobas a la vista, música al volumen justo, luz correcta según la hora. Es lo primero que la vista registra.</div></div>
+      <div class="tipo"><h3>El atril ordenado</h3><div class="d">Tu pódium sin vasos, sin celular personal, sin papeles regados. Solo el libro de reservas, los menús y lo necesario. El desorden en la puerta se lee como desorden en la casa.</div></div>
+      <div class="tipo"><h3>Lee a la mesa</h3><div class="d">En segundos evalúa: ¿vienen a celebrar o a cerrar un negocio? ¿Con prisa o a disfrutar? ¿Turistas que necesitan recomendación? Ajusta tu trato y avisa al mozo.</div></div>
+      <div class="tipo"><h3>El aroma y la temperatura</h3><div class="d">Que reciba olor a comida rica, no a fritura vieja ni a lejía. Que no entre un golpe de frío o calor. Detalles que nadie elogia pero todos notan si fallan.</div></div>
+      <div class="tipo"><h3>Anticipa la necesidad</h3><div class="d">Paraguas mojado → ofreces dónde dejarlo. Llegan con torta → la recibes y la refrigeras. Bebé → pides la silla alta antes de que la pidan. Adelantarte es el lujo real.</div></div>
+      <div class="tipo"><h3>Calma bajo presión</h3><div class="d">Salón lleno, teléfono sonando, dos grupos en la puerta: el invitado no debe notar tu estrés. Una cosa a la vez, sonrisa puesta. Tu calma tranquiliza a todos.</div></div>
+    </div>
+    <table class="t" style="margin-top:12px">
+      <thead><tr><th>Lo que el invitado percibe</th><th>Qué revisa el anfitrión</th><th>Si falla…</th></tr></thead>
+      <tbody>
+        <tr><td>"Este lugar se ve cuidado"</td><td>Entrada, vidrios, atril, uniforme propio</td><td>Lo ordenas tú o avisas de inmediato</td></tr>
+        <tr><td>"Me atendieron rapidísimo"</td><td>Puerta cubierta, regla de 5 segundos</td><td>Un gesto de "ya lo atiendo" mientras terminas</td></tr>
+        <tr><td>"Se acordaron de mí"</td><td>Ficha del invitado en /bienvenida</td><td>Al menos recíbelo por el apellido de la reserva</td></tr>
+        <tr><td>"Todo huele y se siente bien"</td><td>Aroma, música, temperatura, luz</td><td>Avisas a gerencia; no es normal, no lo dejes pasar</td></tr>
+        <tr><td>"Entendieron qué venía a hacer"</td><td>Lectura de la mesa + traspaso al mozo</td><td>Preguntas con tacto: "¿celebran algo hoy?"</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Regla del anfitrión:</b> tú eres la primera y la última cara. Lo que arregles en la puerta en 10 segundos, la cocina no lo tiene que compensar con un plato en toda la noche. Ninguna primera impresión mediocre se recupera del todo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Lista de espera sin fricción</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cuando no hay mesa lista, la lista de espera es donde ganas o pierdes al invitado. Un tiempo honesto, un lugar cómodo y un aviso puntual hacen que la espera se sienta corta. Nunca prometas lo que no puedes cumplir.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">📝</div><div><div class="t">PASO 1</div><h4>Registra en la Waitlist</h4><p>Nombre, número de personas y teléfono en <b>/bienvenida → Waitlist</b>. Marca la <b>prioridad</b> obligatoria si aplica: adulto mayor, embarazada, persona con discapacidad, familia con niño pequeño. Prep! los ordena arriba.</p></div></div>
+      <div class="paso"><div class="ico">⏱️</div><div><div class="t">PASO 2</div><h4>Da un tiempo real, no optimista</h4><p>Mira el <b>Timeline</b> para estimar cuándo se libera una mesa de ese tamaño y súmale margen. "Unos 20 minutos" que se cumplen es mejor que "5 minutos" que se vuelven 25. Si no sabes, di un rango: "entre 15 y 20".</p></div></div>
+      <div class="paso"><div class="ico">🍸</div><div><div class="t">PASO 3</div><h4>Ofrece dónde esperar</h4><p>"Mientras les preparamos la mesa, ¿les provoca un aperitivo en la barra?" La barra convierte la espera en consumo y experiencia. Si no hay barra, un lugar cómodo y agua.</p></div></div>
+      <div class="paso"><div class="ico">📲</div><div><div class="t">PASO 4</div><h4>Avisa cuando esté lista</h4><p>Prep! puede notificar por <b>WhatsApp</b> desde la Waitlist, o los llamas por su nombre. Nunca grites apellidos por el salón: te acercas o usas el aviso. Confirma antes que sigan ahí.</p></div></div>
+      <div class="paso"><div class="ico">🔄</div><div><div class="t">PASO 5</div><h4>Mantén viva la espera</h4><p>Pasa a darles un estimado actualizado cada cierto tiempo: "Van adelante suyo dos mesas, unos 10 minutos más." El silencio es lo que impacienta, no la espera en sí.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Sí hacemos</h4><ul>
+        <li>Dar un tiempo con margen y cumplirlo</li>
+        <li>Respetar el orden y las prioridades de la Waitlist</li>
+        <li>Ofrecer la barra o un aperitivo para acortar la espera</li>
+        <li>Actualizar el estimado sin que lo pidan</li>
+        <li>Avisar por nombre, de cerca o por WhatsApp</li>
+        <li>Agradecer la paciencia al sentarlos por fin</li>
+      </ul></div>
+      <div class="box no"><h4>No hacemos</h4><ul>
+        <li>Prometer "5 minutos" para que no se vayan</li>
+        <li>Saltarte a alguien de la lista por conveniencia</li>
+        <li>Dejar a la gente parada sin agua ni información</li>
+        <li>Gritar apellidos de un lado a otro del salón</li>
+        <li>Perder de vista a quien espera y sentar a otro</li>
+        <li>Discutir el tiempo de espera delante de todos</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Overbooking y no-shows:</b> si una reserva no llega, espera el margen acordado por la casa (usualmente 15 min) e intenta contactarla en Prep! antes de liberar la mesa. Esa mesa liberada es justo la que le das al siguiente de la Waitlist. Todo movimiento queda registrado, nada de "de memoria".</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Situaciones y despedida</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La puerta también recibe lo incómodo: un reclamo, un grupo que no encaja, alguien que llegó tarde. Y la puerta cierra la experiencia: cómo despides pesa tanto como cómo recibiste. Aquí, la última impresión.</p>
+    <table class="t">
+      <thead><tr><th>Situación en la puerta</th><th>Qué haces</th><th>Apoyo / en Prep!</th></tr></thead>
+      <tbody>
+        <tr><td>Reserva que llega 30 min tarde y ya diste la mesa</td><td>Empatía + solución: ofreces Waitlist con prioridad o la barra; nunca lo culpas</td><td>Waitlist con prioridad; avisa al supervisor</td></tr>
+        <tr><td>Más personas de las reservadas (reservó 2, llegan 5)</td><td>Verificas si hay mesa que acomode; si no, honesto y ofreces alternativa</td><td>Mapa para ver capacidad real</td></tr>
+        <tr><td>Invitado molesto apenas entra</td><td>Escuchas, no interrumpes, bajas su tensión y llamas al supervisor</td><td>No lo resuelvas solo: cadena de mando</td></tr>
+        <tr><td>Sin reserva un viernes lleno</td><td>Ofreces Waitlist honesta o la barra; agradeces igual su visita</td><td>Waitlist; sugiere reservar la próxima</td></tr>
+        <tr><td>Piden una mesa específica ocupada</td><td>Explicas y ofreces la mejor alternativa o esperar por ella</td><td>Mapa; anota la preferencia en la ficha</td></tr>
+        <tr><td>Llega prensa, autoridad o VIP inesperado</td><td>Recibes con calma y avisas discretamente a gerencia</td><td>Ficha VIP; alerta al gerente</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:12px">
+      <div class="paso"><div class="ico">🙏</div><div><div class="t">LA DESPEDIDA</div><h4>Cierra con la misma calidez</h4><p>Cuando el invitado sale, deja lo que estés haciendo, contacto visual y una despedida real: "Gracias por venir, señor Prado, que estén muy bien." Si celebraron algo, un guiño: "Feliz aniversario otra vez."</p></div></div>
+      <div class="paso"><div class="ico">🚪</div><div><div class="t">EL ÚLTIMO GESTO</div><h4>Acompaña a la salida</h4><p>Devuelves abrigos, ayudas con la puerta, y si llueve o es tarde ofreces ayuda con el taxi. La última imagen es la que se llevan a casa y la que cuentan mañana.</p></div></div>
+      <div class="paso"><div class="ico">🔁</div><div><div class="t">LA SEMILLA DEL REGRESO</div><h4>Invita a volver</h4><p>"Los esperamos pronto, ¿quiere que le deje anotada una mesa para la próxima?" Cerrar invitando a reservar de nuevo es lo que llena tu agenda a futuro.</p></div></div>
+    </div>
+    <div class="callout"><b>Cierra el círculo en Prep!:</b> tras la visita, la ficha del invitado se enriquece sola (cuántas veces vino, qué prefiere). Si notaste algo que valga recordar —"le encanta la mesa 8", "no toma alcohol"— déjalo anotado en su ficha. El anfitrión de la próxima noche te lo va a agradecer.</div>
+  </section>
+
+  <section id="glosario"><div class="sh"><div class="n">📖</div><h2>Glosario</h2><span class="tag">Referencia</span></div>
+    <div class="glos">
+      <div class="gterm"><b>Anfitrión / Host</b><span>Quien recibe, ubica y despide al invitado. La primera y última cara del restaurante; dueño de la puerta y del salón como experiencia.</span></div>
+      <div class="gterm"><b>Atril / Pódium</b><span>El puesto de la entrada donde el anfitrión trabaja: libro de reservas, menús y vista a la puerta y al salón.</span></div>
+      <div class="gterm"><b>Reserva</b><span>Mesa apartada con anticipación a nombre de alguien, con hora, número de personas y notas. Vive en /bienvenida → Agenda.</span></div>
+      <div class="gterm"><b>Walk-in</b><span>Invitado que llega sin reserva. Se ubica si hay mesa o pasa a la lista de espera.</span></div>
+      <div class="gterm"><b>Lista de espera / Waitlist</b><span>Cola ordenada de quienes esperan mesa, con nombre, personas, teléfono y prioridad. En Prep! se avisa por WhatsApp.</span></div>
+      <div class="gterm"><b>Ficha del invitado</b><span>Perfil del comensal en Prep!: historial de visitas, VIP, alergias, celebraciones y preferencias.</span></div>
+      <div class="gterm"><b>VIP</b><span>Invitado marcado como especial: cliente frecuente, figura pública o alguien a cuidar con atención extra. Aparece en su ficha.</span></div>
+      <div class="gterm"><b>No-show</b><span>Reserva que no llega ni avisa. Tras el margen de la casa, se libera la mesa para la Waitlist.</span></div>
+      <div class="gterm"><b>Overbooking</b><span>Aceptar más reservas que mesas contando con no-shows. Exige manejo fino de la puerta y de la lista de espera.</span></div>
+      <div class="gterm"><b>Turn-time</b><span>Tiempo que una mesa está ocupada, de que se sienta a que se libera. Sirve para estimar la espera.</span></div>
+      <div class="gterm"><b>Leer la mesa</b><span>Percibir en segundos qué busca el grupo (celebrar, negocio, prisa) para ajustar el trato y avisar al mozo.</span></div>
+      <div class="gterm"><b>Traspaso / Handoff</b><span>Entregar el invitado al mozo con la info clave (personas, alergias, celebración) para que no repita nada.</span></div>
+      <div class="gterm"><b>Timeline</b><span>Vista Gantt de Prep! (mesas × horas) que muestra cuándo se libera cada mesa. Clave para estimar esperas.</span></div>
+      <div class="gterm"><b>Mesa vendida</b><span>Presentar la mesa con una frase de valor ("la más tranquila", "con vista al bar") para que se sienta elegida.</span></div>
+    </div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager · Resumen</h2><span class="tag">Imprime y pega en el atril</span></div>
+    <div class="onepager"><div class="opt"><span class="oplogo" aria-label="Prep!"></span><h3>Recepción y bienvenida · Chuleta del anfitrión</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Presencia en la puerta</h4><ul><li>Puesto con vista a puerta y salón</li><li>Postura abierta, manos visibles</li><li>Contacto visual en 5 segundos</li><li>Sonrisa real, uniforme impecable</li><li>La puerta nunca se deja sola</li></ul></div>
+        <div class="op-box"><h4>El saludo con nombre</h4><ul><li>Bienvenida cálida antes que "¿reservó?"</li><li>Pregunta el apellido de la reserva</li><li>Confirma en /bienvenida → Agenda</li><li>Revisa VIP, alergia, celebración</li><li>Personaliza con ese detalle</li></ul></div>
+        <div class="op-box"><h4>A la mesa</h4><ul><li>Elige la mesa según el grupo</li><li>Camina medio paso adelante</li><li>Avisa desniveles, ayuda a sentarse</li><li>Entrega los menús en mano</li><li>Traspaso al mozo con las notas</li></ul></div>
+        <div class="op-box"><h4>Lista de espera</h4><ul><li>Registra en Waitlist + prioridad</li><li>Tiempo real con margen, no optimista</li><li>Ofrece la barra o un aperitivo</li><li>Actualiza el estimado sin que pidan</li><li>Avisa por nombre o WhatsApp</li></ul></div>
+        <div class="op-box"><h4>Prioridades obligatorias</h4><ul><li>Adultos mayores</li><li>Embarazadas</li><li>Personas con discapacidad</li><li>Familias con niños pequeños</li><li>Van primero en la Waitlist</li></ul></div>
+        <div class="op-box"><h4>La despedida</h4><ul><li>Despide por su nombre, con calma</li><li>Devuelve abrigos, ayuda con la puerta</li><li>Invita a volver / a reservar</li><li>Anota preferencias en su ficha</li><li>Última imagen = la que cuentan</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Recepción y bienvenida (anfitrión) · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+</body>
+</html>
