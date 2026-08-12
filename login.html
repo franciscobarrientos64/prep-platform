@@ -57,29 +57,43 @@ async function loadRoster(){try{if(!MARCA||!window.PREP_BYSUB)return;const{data}
   const who=$('#who');who.innerHTML='<option value="">— Selecciona tu nombre —</option>'+data.map(u=>`<option value="${u.email}">${u.nombre}${u.puesto?' · '+u.puesto:''}</option>`).join('');
   $('#who-l').style.display='';who.style.display='';who.onchange=()=>{if(who.value){$('#email').value=who.value;$('#pass').focus();}};}catch(e){}}
 loadRoster();
+// Traduce los errores de Supabase Auth (vienen en inglés) a español claro.
+function errES(e){const m=(e&&e.message||'')+'',c=(e&&e.code||'')+'';
+  if(c==='same_password'||/different from the old/i.test(m))return'Esa ya es tu clave actual. Elige una distinta.';
+  if(/invalid login credentials/i.test(m))return'Correo o contraseña incorrectos. Revisa que el correo esté escrito tal cual te lo enviamos.';
+  if(/email not confirmed/i.test(m))return'Tu correo aún no está confirmado. Avísanos para activarlo.';
+  if(/should be at least|password should be/i.test(m))return'La clave es muy corta: usa 6 caracteres o más.';
+  if(/rate limit|too many/i.test(m))return'Demasiados intentos. Espera un minuto y vuelve a probar.';
+  if(/failed to fetch|network/i.test(m))return'Sin conexión. Revisa tu internet y vuelve a intentar.';
+  return m||'No se pudo completar. Intenta de nuevo.';}
+// Primer ingreso: pedir clave nueva SIN dejar al usuario encerrado.
+// Cualquier error muestra mensaje en español y siempre queda la salida "entrar sin cambiarla".
 function showChangePw(){
   document.querySelector('h1').textContent='Crea tu clave';
   $('#form').innerHTML=`<div class="sub" style="margin-bottom:14px">Primer ingreso: elige una contraseña nueva</div>
-   <label>Nueva contraseña</label><input id="np" type="password" placeholder="Mínimo 6 caracteres">
-   <label>Repite la contraseña</label><input id="np2" type="password" placeholder="••••••••">
-   <button class="btn" id="btn-cp">Guardar y entrar</button><div class="msg" id="msg"></div>`;
+   <label>Nueva contraseña</label><input id="np" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+   <label>Repite la contraseña</label><input id="np2" type="password" autocomplete="new-password" placeholder="••••••••">
+   <button class="btn" id="btn-cp">Guardar y entrar</button>
+   <button class="btn ghost" id="btn-skip">Entrar sin cambiarla ahora</button>
+   <div class="msg" id="msg"></div>`;
+  $('#btn-skip').onclick=()=>{location.href=next};
   $('#btn-cp').onclick=async()=>{const a=$('#np').value,b=$('#np2').value;
     if(a.length<6){msg('Mínimo 6 caracteres','err');return}if(a!==b){msg('Las contraseñas no coinciden','err');return}
-    msg('Guardando…');const{error}=await sb.auth.updateUser({password:a});if(error){msg(error.message,'err');return}
+    msg('Guardando…');const{error}=await sb.auth.updateUser({password:a});if(error){msg(errES(error),'err');return}
     try{await sb.rpc('prep_clear_must_change')}catch(e){}location.href=next;};
 }
 $('#btn-in').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||!password){msg('Completa email y contraseña','err');return}
   msg('Ingresando…');const{error}=await sb.auth.signInWithPassword({email,password});
-  if(error){msg(error.message,'err');return}
+  if(error){msg(errES(error),'err');return}
   try{const{data:u}=await sb.from('prep_usuarios').select('must_change_pw').eq('email',email.toLowerCase()).maybeSingle();if(u&&u.must_change_pw){showChangePw();return}}catch(e){}
   location.href=next};
 $('#btn-up').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||password.length<6){msg('Email válido y clave de 6+ caracteres','err');return}
   msg('Creando cuenta…');const{data,error}=await sb.auth.signUp({email,password});
-  if(error){msg(error.message,'err');return}
+  if(error){msg(errES(error),'err');return}
   if(data.session){location.href=next}else{msg('Cuenta creada. Revisa tu correo para confirmar y luego ingresa.','ok')}};
 $('#btn-magic').onclick=async()=>{const email=$('#email').value.trim();if(!email){msg('Escribe tu email','err');return}
   msg('Enviando enlace…');const{error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+next}});
-  if(error){msg(error.message,'err');return}msg('Te enviamos un enlace a tu correo ✉️','ok')};
+  if(error){msg(errES(error),'err');return}msg('Te enviamos un enlace a tu correo ✉️','ok')};
 </script>
 </body>
 </html>
