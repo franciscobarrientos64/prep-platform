@@ -69,6 +69,7 @@ td.n,th.n{text-align:center;font-family:var(--font-mono);font-weight:600}
 tr.tot td{border-top:2px solid var(--outline);border-bottom:none;font-weight:700;background:#f6f7f9}
 .sc{display:inline-block;min-width:44px;text-align:center;padding:3px 7px;border-radius:999px;border:1.5px solid var(--outline);font-family:var(--font-mono);font-size:12px;font-weight:700}
 .scroll{overflow-x:auto}
+.scroll .irow{min-width:640px}
 .dlt{font-family:var(--font-mono);font-size:11px;font-weight:700}
 .tag{display:inline-block;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1.5px solid var(--outline);vertical-align:middle}
 .tag.tv{background:var(--secondary);color:#fff}
@@ -82,12 +83,12 @@ tr.tot td{border-top:2px solid var(--outline);border-bottom:none;font-weight:700
 .mchip.on{background:var(--primary);color:#fff}
 .mchip .w{opacity:.6;font-size:9px;margin-left:4px}
 /* item rows */
-.irow{display:grid;grid-template-columns:1fr repeat(var(--nops),58px) 62px;gap:0;align-items:center;border-bottom:1.5px solid var(--gray-soft);padding:6px 0}
+.irow{display:grid;grid-template-columns:minmax(180px,1fr) repeat(var(--nops),68px) 70px;gap:0;align-items:center;border-bottom:1.5px solid var(--gray-soft);padding:6px 0}
 .irow.head{border-bottom:2px solid var(--outline);padding-bottom:8px}
 .irow .lbl{font-size:12.5px;line-height:1.35;padding-right:12px}
 .irow .lbl small{font-family:var(--font-mono);font-size:10px;opacity:.5;display:block}
 .irow .oc{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:700}
-.irow .hcol{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;text-align:center;opacity:.7;font-weight:600;line-height:1.2}
+.irow .hcol{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;text-align:center;opacity:.75;font-weight:600;line-height:1.15;padding:0 3px;overflow-wrap:anywhere;align-self:end}
 .chip100{display:inline-block;width:44px;padding:3px 0;border-radius:6px;border:1.5px solid var(--outline)}
 /* notas / recos */
 .reco{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1.5px solid var(--gray-soft)}
@@ -170,6 +171,7 @@ const r1=n=>Math.round(n*10)/10;
 function scoreColor(s){if(s==null)return['#eceff1','#9aa0a6'];if(s>=90)return['#1e5af9','#fff'];if(s>=80)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];if(s>=50)return['#ff8a3d','#3a1a00'];return['#ff3b30','#fff'];}
 function scChip(s,dec){if(s==null)return '<span class="sc" style="background:#eceff1;color:#9aa0a6">—</span>';const c=scoreColor(s);return `<span class="sc" style="background:${c[0]};color:${c[1]}">${dec?r1(s).toFixed(1):Math.round(s)}</span>`;}
 function dlt(d,suf){if(d==null)return '<span class="dlt fl">—</span>';const f=Math.abs(d)<0.15;const cls=f?'fl':(d>0?'up':'dn');const t=f?'= 0.0':(d>0?'▲ +':'▼ −')+Math.abs(d).toFixed(1);return `<span class="dlt ${cls}">${t}${suf||''}</span>`;}
+if(window.ChartDataLabels){Chart.register(ChartDataLabels);Chart.defaults.plugins.datalabels.display=false;}
 function killCharts(){CHARTS.forEach(c=>{try{c.destroy()}catch(e){}});CHARTS=[];}
 function mkChart(id,cfg){const el=document.getElementById(id);if(!el)return;cfg.options=cfg.options||{};cfg.options.responsive=true;cfg.options.maintainAspectRatio=false;cfg.options.animation={duration:420};CHARTS.push(new Chart(el,cfg));}
 
@@ -336,7 +338,7 @@ function sPortada(){
   const marcas=DB.marcas.map(m=>{
     const s=scoreMarca(m.id,PER), sp=pv?scoreMarca(m.id,pv):null;
     const n=DB.locales.filter(l=>l.marca_id===m.id).length;
-    return `<div class="mk">${m.emoji||''} ${esc(m.nombre)}<small>${n} operación${n===1?'':'es'} · ${s!=null?r1(s).toFixed(1)+'/100':'sin data'} ${s!=null&&sp!=null?(s-sp>=0?'▲':'▼')+Math.abs(s-sp).toFixed(1):''}</small></div>`;
+    return `<div class="mk">${m.emoji||''} ${esc(m.nombre)}<small>${n} ${n===1?'operación':'operaciones'} · ${s!=null?r1(s).toFixed(1)+'/100':'sin data'} ${s!=null&&sp!=null?(s-sp>=0?'▲':'▼')+Math.abs(s-sp).toFixed(1):''}</small></div>`;
   }).join('');
   return `<div class="cover">
     <div class="mono" style="font-size:12px;opacity:.6;letter-spacing:.08em">COMITÉ DE EXPERIENCIA · PREP</div>
@@ -391,7 +393,7 @@ SLIDES[1].draw=function(){
   mkChart('c-delta',{type:'bar',
     data:{labels:ds.map(x=>x.n),datasets:[{data:ds.map(x=>r1(x.d)),backgroundColor:ds.map(x=>Math.abs(x.d)<0.15?'#9aa0a6':(x.d>0?'#10b981':'#ff3b30')),borderColor:'#000',borderWidth:2,borderRadius:5}]},
     options:{indexAxis:'y',scales:{x:{suggestedMin:-2,suggestedMax:2,grid:{color:c=>c.tick.value===0?'#171c20':'rgba(0,0,0,.08)'}}},
-      plugins:{legend:{display:false},datalabels:{anchor:c=>c.dataset.data[c.dataIndex]>=0?'end':'start',align:c=>c.dataset.data[c.dataIndex]>=0?'right':'left',color:'#171c20',font:{weight:'700',size:12},formatter:v=>(v>0?'+':'')+v.toFixed(1)}}}});
+      plugins:{legend:{display:false},datalabels:{display:true,anchor:c=>c.dataset.data[c.dataIndex]>=0?'end':'start',align:c=>c.dataset.data[c.dataIndex]>=0?'right':'left',color:'#171c20',font:{weight:'700',size:12},formatter:v=>(v>0?'+':'')+v.toFixed(1)}}}});
 };
 
 /* ============ 03 · comparativo por marca ============ */
@@ -402,7 +404,7 @@ function sMarcas(){
     const ls=DB.locales.filter(l=>l.marca_id===m.id).map(l=>({l,s:scoreOp(l.id,PER)})).filter(x=>x.s!=null);
     const spread=ls.length>1?Math.max(...ls.map(x=>x.s))-Math.min(...ls.map(x=>x.s)):0;
     return `<div class="card"><h3>${m.emoji||''} ${esc(m.nombre)}</h3>
-      <div class="hint">${ls.length} operación${ls.length===1?'':'es'} evaluada${ls.length===1?'':'s'} en ${mLabel(PER)}</div>
+      <div class="hint">${ls.length} ${ls.length===1?'operación evaluada':'operaciones evaluadas'} en ${mLabel(PER)}</div>
       <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
         <div style="font-family:var(--font-display);font-size:40px;line-height:1">${s!=null?r1(s).toFixed(1):'—'}</div>
         <div>${sp!=null?dlt(s-sp,' pts'):''}</div>
@@ -528,7 +530,7 @@ SLIDES[5].draw=function(){
   mkChart('c-mundos',{type:'bar',
     data:{labels:rows.map(r=>r.mu+' ('+r.w+'%)'),datasets:[{data:rows.map(r=>Math.round(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:5}]},
     options:{indexAxis:'y',layout:{padding:{right:30}},scales:{x:{min:0,max:100,ticks:{stepSize:20}},y:{ticks:{font:{size:11}}}},
-      plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#171c20',font:{weight:'700',size:12},formatter:v=>v}}}});
+      plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'end',color:'#171c20',font:{weight:'700',size:12},formatter:v=>v}}}});
 };
 
 /* ============ 07 · dónde se pierden los puntos ============ */
@@ -646,7 +648,7 @@ function sOportunidades(){
   <div class="mbar">${chips}</div>
   <div class="card"><h3>${esc(MUNDO)} <span class="mono" style="font-size:11px;opacity:.55;font-weight:400">peso ${pesoMundo(MUNDO)}% · ${n} ítems evaluados</span></h3>
   <div class="hint">Puntaje del mundo: ${scoresMundo.map(x=>`<b>${esc(cortoOp(x.l))}</b> ${x.s!=null?Math.round(x.s):'—'}`).join(' · ')}</div>
-  ${head}${body||'<div class="empty">Este mundo está en 100% en todas las operaciones.</div>'}
+  <div class="scroll">${head}${body||'<div class="empty">Este mundo está en 100% en todas las operaciones.</div>'}</div>
   <div class="legend"><span><span class="tag tv">transversal</span> falla en 3 o más operaciones: es un problema de estándar, se corrige con capacitación y protocolo únicos</span></div>
   <div class="legend"><span><span class="tag lo">puntual</span> falla en una sola: es un problema de esa sede, se corrige con su jefe de sala</span></div>
   </div>`;
@@ -757,7 +759,7 @@ SLIDES[11].draw=function(){
     ]},
     options:{scales:{x:{stacked:true},y:{stacked:true,min:40,max:100,ticks:{stepSize:10}}},
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
-      datalabels:{color:c=>c.datasetIndex===0?'#fff':'#0b6b4f',font:{weight:'700',size:11},formatter:(v,c)=>c.datasetIndex===1?'+'+v.toFixed(1):v.toFixed(0)}}}});
+      datalabels:{display:true,color:c=>c.datasetIndex===0?'#fff':'#0b6b4f',font:{weight:'700',size:11},formatter:(v,c)=>c.datasetIndex===1?'+'+v.toFixed(1):v.toFixed(0)}}}});
 };
 
 /* ============ 13 · cierre ============ */
