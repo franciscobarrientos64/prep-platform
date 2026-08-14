@@ -256,6 +256,14 @@
     {
       "source": "/nav",
       "destination": "/nav.html"
+    },
+    {
+      "source": "/presentacion",
+      "destination": "/presentacion.html"
+    },
+    {
+      "source": "/comite",
+      "destination": "/presentacion.html"
     }
   ],
   "headers": [

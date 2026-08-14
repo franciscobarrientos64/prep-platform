@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Comité de Experiencia · Prep</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+.material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+.mono{font-family:var(--font-mono)}
+/* ---------- chrome ---------- */
+.header{background:var(--ink);color:var(--bg);border-bottom:2px solid var(--outline);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{position:relative;width:92px;height:30px;flex-shrink:0;display:block}
+.brand-logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:#fff}
+.brand-txt .cli{font-weight:700;font-size:14px;line-height:1.1}
+.brand-txt .mod{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.hinfo{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink);font-weight:600;font-size:12px;font-family:var(--font-mono);cursor:pointer;user-select:none}
+.pill:hover{background:var(--primary-soft)}
+.pill.ghost{background:transparent;color:var(--bg);border-color:#555}
+.badge-sa{font-family:var(--font-mono);font-size:10px;font-weight:700;background:var(--secondary);color:#fff;padding:5px 10px;border-radius:999px;border:2px solid #000}
+select.per{padding:6px 10px;border:2px solid var(--outline);border-radius:999px;font-family:var(--font-mono);font-size:12px;font-weight:700;background:var(--tertiary)}
+.navbar{background:var(--surface);border-bottom:2px solid var(--outline);padding:8px 16px;display:flex;gap:6px;overflow-x:auto;position:sticky;top:52px;z-index:19}
+.nchip{white-space:nowrap;font-family:var(--font-mono);font-size:11px;font-weight:600;padding:5px 11px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);cursor:pointer}
+.nchip.on{background:var(--ink);color:var(--bg)}
+.nchip .ix{opacity:.5;margin-right:5px}
+/* ---------- deck ---------- */
+.deck{max-width:1240px;margin:0 auto;padding:22px 18px 90px}
+.slide{display:none;animation:fade .25s ease}
+.slide.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stitle{font-family:var(--font-display);font-size:clamp(24px,3.2vw,34px);line-height:1.15;margin-bottom:4px}
+.ssub{font-family:var(--font-mono);font-size:12px;opacity:.6;margin-bottom:18px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-sm);padding:16px 18px;margin-bottom:14px}
+.card h3{font-size:15px;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.card .hint{font-family:var(--font-mono);font-size:11px;opacity:.55;margin-bottom:12px;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--ac,var(--primary))}
+.kpi .k{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.6}
+.kpi .v{font-family:var(--font-display);font-size:30px;line-height:1.15;margin-top:4px}
+.kpi .d{font-family:var(--font-mono);font-size:11px;font-weight:700;margin-top:2px}
+.up{color:var(--green)}.dn{color:var(--secondary)}.fl{color:#6b7280}
+/* charts */
+.cbox{position:relative;height:300px}
+.cbox.tall{height:380px}
+.cbox.short{height:230px}
+/* tablas */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 9px;border-bottom:1.5px solid var(--gray-soft);text-align:left}
+th{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;opacity:.65;font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:center;font-family:var(--font-mono);font-weight:600}
+tr.tot td{border-top:2px solid var(--outline);border-bottom:none;font-weight:700;background:#f6f7f9}
+.sc{display:inline-block;min-width:44px;text-align:center;padding:3px 7px;border-radius:999px;border:1.5px solid var(--outline);font-family:var(--font-mono);font-size:12px;font-weight:700}
+.scroll{overflow-x:auto}
+.dlt{font-family:var(--font-mono);font-size:11px;font-weight:700}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1.5px solid var(--outline);vertical-align:middle}
+.tag.tv{background:var(--secondary);color:#fff}
+.tag.lo{background:var(--tertiary)}
+.tag.pk{background:var(--primary);color:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;opacity:.75;margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border:1.5px solid #000;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* filtros de mundo */
+.mbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mchip{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:5px 11px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);cursor:pointer}
+.mchip.on{background:var(--primary);color:#fff}
+.mchip .w{opacity:.6;font-size:9px;margin-left:4px}
+/* item rows */
+.irow{display:grid;grid-template-columns:1fr repeat(var(--nops),58px) 62px;gap:0;align-items:center;border-bottom:1.5px solid var(--gray-soft);padding:6px 0}
+.irow.head{border-bottom:2px solid var(--outline);padding-bottom:8px}
+.irow .lbl{font-size:12.5px;line-height:1.35;padding-right:12px}
+.irow .lbl small{font-family:var(--font-mono);font-size:10px;opacity:.5;display:block}
+.irow .oc{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:700}
+.irow .hcol{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;text-align:center;opacity:.7;font-weight:600;line-height:1.2}
+.chip100{display:inline-block;width:44px;padding:3px 0;border-radius:6px;border:1.5px solid var(--outline)}
+/* notas / recos */
+.reco{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1.5px solid var(--gray-soft)}
+.reco:last-child{border-bottom:none}
+.reco .ico{width:38px;height:38px;flex-shrink:0;border:2px solid var(--outline);border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--ac,var(--primary-soft))}
+.reco .t{font-weight:700;font-size:14px}
+.reco .d{font-size:12.5px;opacity:.75;line-height:1.5;margin-top:2px}
+.acc{border:2px solid var(--outline);border-radius:14px;padding:12px 14px;margin-bottom:10px;background:var(--surface)}
+.acc .num{font-family:var(--font-display);font-size:20px;color:var(--primary);line-height:1}
+.acc .ttl{font-weight:700;font-size:13.5px}
+.acc .bd{font-size:12px;opacity:.72;white-space:pre-line;line-height:1.5;margin-top:5px}
+.acc .meta{font-family:var(--font-mono);font-size:10px;opacity:.6;margin-top:6px}
+/* footer nav */
+.foot{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:var(--bg);border-top:2px solid var(--outline);padding:8px 16px;display:flex;align-items:center;gap:10px;z-index:20}
+.foot .prog{flex:1;height:6px;background:#333;border-radius:999px;overflow:hidden}
+.foot .prog i{display:block;height:100%;background:var(--tertiary);transition:width .25s}
+.foot .cnt{font-family:var(--font-mono);font-size:11px;opacity:.8;min-width:52px;text-align:center}
+.boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}
+.boot.gone{opacity:0;pointer-events:none}
+.boot .l{width:220px;height:70px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
+.empty{font-family:var(--font-mono);font-size:12px;opacity:.5;padding:26px;text-align:center}
+/* portada */
+.cover{border:2px solid var(--outline);border-radius:22px;box-shadow:var(--shadow);padding:38px 34px;background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(30,90,249,.08) 23px 24px),repeating-linear-gradient(90deg,transparent 0 23px,rgba(30,90,249,.08) 23px 24px),var(--surface)}
+.cover h1{font-family:var(--font-display);font-size:clamp(30px,5.4vw,52px);line-height:1.08}
+.cover .lead{font-size:15px;opacity:.75;margin-top:10px;max-width:620px;line-height:1.6}
+.cover .marcas{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.cover .mk{border:2px solid var(--outline);border-radius:14px;padding:10px 14px;background:var(--surface);box-shadow:var(--shadow-sm);font-weight:700;font-size:14px}
+.cover .mk small{display:block;font-family:var(--font-mono);font-size:10px;opacity:.6;font-weight:500}
+body.printing .slide{display:block!important;margin-bottom:26px}
+@media print{
+  .header,.navbar,.foot,.pill,.mbar{display:none!important}
+  .slide{display:block!important;page-break-after:always;padding-top:10px}
+  .deck{max-width:none;padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+  .cbox{height:260px}
+}
+</style>
+</head>
+<body>
+<div id="boot" class="boot"><div class="l"></div></div>
+
+<header class="header">
+  <div class="brand"><div class="brand-logo"><span class="l"></span></div>
+  <div class="brand-txt"><div class="cli">Comité de Experiencia</div><div class="mod" id="hsub">Mystery Shopper</div></div></div>
+  <div class="hinfo">
+    <select class="per" id="selPer"></select>
+    <span class="pill" onclick="printAll()"><span class="material-symbols-outlined" style="font-size:16px">print</span> PDF</span>
+    <a class="pill" href="/portal" style="text-decoration:none">← Portal</a>
+    <span class="badge-sa">SUPER ADMIN</span>
+  </div>
+</header>
+<nav class="navbar" id="nav"></nav>
+<main class="deck" id="deck"></main>
+<div class="foot">
+  <span class="pill ghost" onclick="go(-1)">← Anterior</span>
+  <div class="prog"><i id="prog"></i></div>
+  <span class="cnt" id="cnt">1 / 1</span>
+  <span class="pill ghost" onclick="go(1)">Siguiente →</span>
+</div>
+
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
+const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+/* Marcas del comité. Se amplía solo, cualquier marca con data de mystery entra. */
+const MESN=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const SEDE_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9','#e11d48','#65a30d'];
+/* mundo (lenguaje del cliente en la auditoría) -> criterio (ponderado en la evaluación) */
+const M2C={'Reserva':'Reserva','Estacionamiento':'Estacionamiento','Bienvenida y despedida':'Recibimiento','Infraestructura':'Infraestructura','Mesa':'Mesa','Alimentos & Bebidas':'Comida','Mesero':'Mesero','Vino':'El vino','Pago':'Pago','Administración':'Administración','Lealtad':'Lealtad'};
+const PESO_FALLBACK={'Reserva':3,'Estacionamiento':5,'Recibimiento':8,'Infraestructura':5,'Mesa':5,'Comida':20,'Mesero':30,'El vino':8,'Pago':8,'Administración':6,'Lealtad':2};
+
+const DB={marcas:[],locales:[],visitas:[],resp:[],detalle:[],acciones:[],pesos:{}};
+let PER=null, MUNDO=null, SLIDE=0, CHARTS=[];
+const $=s=>document.querySelector(s);
+const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+const mLabel=m=>{if(!m)return'';const[y,mo]=m.split('-');return MESN[+mo]+" '"+y.slice(2);};
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const r1=n=>Math.round(n*10)/10;
+function scoreColor(s){if(s==null)return['#eceff1','#9aa0a6'];if(s>=90)return['#1e5af9','#fff'];if(s>=80)return['#10b981','#fff'];if(s>=70)return['#ffcc00','#3a2e00'];if(s>=50)return['#ff8a3d','#3a1a00'];return['#ff3b30','#fff'];}
+function scChip(s,dec){if(s==null)return '<span class="sc" style="background:#eceff1;color:#9aa0a6">—</span>';const c=scoreColor(s);return `<span class="sc" style="background:${c[0]};color:${c[1]}">${dec?r1(s).toFixed(1):Math.round(s)}</span>`;}
+function dlt(d,suf){if(d==null)return '<span class="dlt fl">—</span>';const f=Math.abs(d)<0.15;const cls=f?'fl':(d>0?'up':'dn');const t=f?'= 0.0':(d>0?'▲ +':'▼ −')+Math.abs(d).toFixed(1);return `<span class="dlt ${cls}">${t}${suf||''}</span>`;}
+function killCharts(){CHARTS.forEach(c=>{try{c.destroy()}catch(e){}});CHARTS=[];}
+function mkChart(id,cfg){const el=document.getElementById(id);if(!el)return;cfg.options=cfg.options||{};cfg.options.responsive=true;cfg.options.maintainAspectRatio=false;cfg.options.animation={duration:420};CHARTS.push(new Chart(el,cfg));}
+
+/* ============ carga ============ */
+async function guard(){
+  let s=null;try{s=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(!s||!s.user){location.href='/login?next='+encodeURIComponent(location.pathname);return false;}
+  const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle()).data;
+  if(!me||me.rol_sistema!=='superadmin'){alert('Esta vista es solo para Super Admin.');location.href='/';return false;}
+  return true;
+}
+async function pageAll(tbl,sel){
+  let all=[],from=0;const page=1000;
+  while(true){
+    const r=await sb.from(tbl).select(sel).order('id',{ascending:true}).range(from,from+page-1);
+    if(r.error)throw r.error;
+    const d=r.data||[];all=all.concat(d);
+    if(d.length<page)break;from+=page;
+  }
+  return all;
+}
+function hayAuditoria(per){return DB.detalle.some(d=>d.periodo===per);}
+function avisoAud(){return `<div class="card" style="border-color:var(--tertiary);border-width:3px"><h3><span class="material-symbols-outlined">info</span> Sin auditoría ítem por ítem en ${mLabel(PER)}</h3><div class="hint">Este mes tiene el puntaje ponderado de las visitas, pero no la matriz de ítems. Elige un mes con auditoría cargada en el selector del encabezado.</div></div>`;}
+async function load(){
+  if(!(await guard()))return;
+  const [ma,lo]=await Promise.all([
+    sb.from('inv_marcas').select('id,nombre,emoji').order('id'),
+    sb.from('inv_locales').select('id,marca_id,nombre').order('id')
+  ]);
+  const vis=await pageAll('mys_visitas','id,marca_id,local_id,fecha,turno,score_total');
+  const marcasConData=[...new Set(vis.map(v=>v.marca_id))];
+  DB.marcas=(ma.data||[]).filter(m=>marcasConData.includes(m.id));
+  DB.locales=(lo.data||[]).filter(l=>marcasConData.includes(l.marca_id));
+  DB.visitas=vis;
+  const ids=vis.map(v=>v.id);
+  const [rp,det,ac,pl]=await Promise.all([
+    ids.length?pageAll('mys_respuestas','visita_id,area,criterio,peso,puntaje'):Promise.resolve([]),
+    pageAll('mys_detalle','marca_id,local_id,periodo,mundo,orden,item,v1,v2,v3,v4'),
+    pageAll('mys_acciones','marca_id,local_id,area,descripcion,responsable,estado,due_date,created_at'),
+    sb.from('mys_criterios').select('criterio,peso')
+  ]);
+  const setIds=new Set(ids);
+  DB.resp=rp.filter(r=>setIds.has(r.visita_id));
+  const setLoc=new Set(DB.locales.map(l=>l.id));
+  DB.detalle=det.filter(d=>setLoc.has(d.local_id));
+  DB.acciones=ac.filter(a=>setLoc.has(a.local_id));
+  (pl.data||[]).forEach(c=>{if(DB.pesos[c.criterio]==null)DB.pesos[c.criterio]=+c.peso;});
+  Object.keys(PESO_FALLBACK).forEach(k=>{if(DB.pesos[k]==null)DB.pesos[k]=PESO_FALLBACK[k];});
+  const pers=periodos();
+  PER=pers[pers.length-1]||null;
+  MUNDO=mundos()[0]||null;
+  $('#selPer').innerHTML=pers.slice().reverse().map(p=>`<option value="${p}">${mLabel(p)}</option>`).join('');
+  $('#selPer').value=PER;
+  $('#selPer').onchange=e=>{PER=e.target.value;render();};
+  buildNav();render();
+  $('#boot').classList.add('gone');
+}
+
+/* ============ helpers de negocio ============ */
+const ops=()=>DB.locales.slice().sort((a,b)=>a.marca_id.localeCompare(b.marca_id)||a.id.localeCompare(b.id));
+const marcaDe=id=>DB.marcas.find(m=>m.id===id)||{nombre:id,emoji:''};
+const nombreOp=l=>{const m=marcaDe(l.marca_id);return DB.marcas.length>1?`${m.nombre} · ${l.nombre}`:l.nombre;};
+const cortoOp=l=>l.nombre;
+function meses(){return [...new Set(DB.visitas.map(v=>(v.fecha||'').slice(0,7)).filter(Boolean))].sort();}
+function periodos(){
+  const md=[...new Set(DB.detalle.map(d=>d.periodo))];
+  const mv=meses();
+  return [...new Set([...md,...mv])].sort();
+}
+function prevPer(p){const ps=periodos();const i=ps.indexOf(p);return i>0?ps[i-1]:null;}
+function mundos(){
+  const orden={};
+  DB.detalle.forEach(d=>{if(orden[d.mundo]==null||d.orden<orden[d.mundo])orden[d.mundo]=d.orden||999;});
+  return Object.keys(orden).sort((a,b)=>orden[a]-orden[b]);
+}
+function pesoMundo(mu){const c=M2C[mu];return DB.pesos[c]!=null?DB.pesos[c]:0;}
+/* score ponderado del mes (fuente: visitas) */
+function scoreOp(loc,per){
+  const vs=DB.visitas.filter(v=>v.local_id===loc&&(v.fecha||'').slice(0,7)===per&&v.score_total!=null);
+  return vs.length?avg(vs.map(v=>+v.score_total)):null;
+}
+function scoresVisita(loc,per){
+  return DB.visitas.filter(v=>v.local_id===loc&&(v.fecha||'').slice(0,7)===per&&v.score_total!=null)
+    .sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(v=>+v.score_total);
+}
+function scoreMarca(mid,per){
+  const ls=DB.locales.filter(l=>l.marca_id===mid).map(l=>scoreOp(l.id,per)).filter(x=>x!=null);
+  return ls.length?avg(ls):null;
+}
+function scoreGlobal(per){
+  const ls=DB.locales.map(l=>scoreOp(l.id,per)).filter(x=>x!=null);
+  return ls.length?avg(ls):null;
+}
+/* score de un mundo (fuente: auditoría ítem por ítem) */
+const cells=d=>[d.v1,d.v2,d.v3,d.v4].filter(v=>v!=null);
+function mundoScore(loc,mu,per){
+  let s=0,c=0;
+  DB.detalle.forEach(d=>{if(d.local_id===loc&&d.mundo===mu&&d.periodo===per)cells(d).forEach(v=>{s+=v;c++;});});
+  return c?s/c/4*100:null;
+}
+function itemsMundo(mu,per){
+  const map={};
+  DB.detalle.filter(d=>d.mundo===mu&&d.periodo===per).forEach(d=>{
+    const k=(d.orden!=null?d.orden:'')+'|'+d.item;
+    if(!map[k])map[k]={orden:d.orden,item:d.item,por:{}};
+    const xs=cells(d);
+    map[k].por[d.local_id]=xs.length?avg(xs)/4*100:null;
+  });
+  return Object.values(map).sort((a,b)=>(a.orden||0)-(b.orden||0));
+}
+/* incidencia de un ítem = peso del mundo x brecha, repartido entre los ítems del mundo */
+function incidencia(mu,pct,nItems){return pesoMundo(mu)*(100-pct)/100/Math.max(1,nItems);}
+function accionesDe(loc){
+  return DB.acciones.filter(a=>a.local_id===loc)
+    .sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+}
+
+/* ============ navegación ============ */
+const SLIDES=[
+  {k:'portada', n:'Portada',        f:sPortada},
+  {k:'panorama',n:'Panorama',       f:sPanorama},
+  {k:'marcas',  n:'Por marca',      f:sMarcas},
+  {k:'evo',     n:'Evolución',      f:sEvolucion},
+  {k:'ranking', n:'Ranking',        f:sRanking},
+  {k:'mundos',  n:'Totales x mundo',f:sMundos},
+  {k:'gap',     n:'Dónde se pierde',f:sGap},
+  {k:'consist', n:'Consistencia',   f:sConsistencia},
+  {k:'oport',   n:'Oportunidades',  f:sOportunidades},
+  {k:'trans',   n:'Transversal',    f:sTransversal},
+  {k:'plan',    n:'Plan de acción', f:sPlan},
+  {k:'proy',    n:'Proyección',     f:sProyeccion},
+  {k:'cierre',  n:'Cierre',         f:sCierre}
+];
+function buildNav(){
+  $('#nav').innerHTML=SLIDES.map((s,i)=>`<span class="nchip ${i===SLIDE?'on':''}" onclick="goTo(${i})"><span class="ix">${String(i+1).padStart(2,'0')}</span>${s.n}</span>`).join('');
+}
+function goTo(i){SLIDE=Math.max(0,Math.min(SLIDES.length-1,i));render();window.scrollTo({top:0,behavior:'instant'});}
+function go(d){goTo(SLIDE+d);}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(-1);
+});
+function render(){
+  killCharts();
+  $('#hsub').textContent='Mystery Shopper · '+(PER?mLabel(PER):'');
+  $('#deck').innerHTML=SLIDES.map((s,i)=>`<section class="slide ${i===SLIDE?'on':''}" id="sl-${s.k}">${s.f()}</section>`).join('');
+  buildNav();
+  $('#cnt').textContent=(SLIDE+1)+' / '+SLIDES.length;
+  $('#prog').style.width=((SLIDE+1)/SLIDES.length*100)+'%';
+  SLIDES.forEach((s,i)=>{if(s.draw&&i===SLIDE)s.draw();});
+  if(SLIDES[SLIDE].after)SLIDES[SLIDE].after();
+}
+
+/* ============ 01 · portada ============ */
+function sPortada(){
+  const pv=prevPer(PER), g=scoreGlobal(PER), gp=pv?scoreGlobal(pv):null;
+  const nv=DB.visitas.filter(v=>(v.fecha||'').slice(0,7)===PER).length;
+  const marcas=DB.marcas.map(m=>{
+    const s=scoreMarca(m.id,PER), sp=pv?scoreMarca(m.id,pv):null;
+    const n=DB.locales.filter(l=>l.marca_id===m.id).length;
+    return `<div class="mk">${m.emoji||''} ${esc(m.nombre)}<small>${n} operación${n===1?'':'es'} · ${s!=null?r1(s).toFixed(1)+'/100':'sin data'} ${s!=null&&sp!=null?(s-sp>=0?'▲':'▼')+Math.abs(s-sp).toFixed(1):''}</small></div>`;
+  }).join('');
+  return `<div class="cover">
+    <div class="mono" style="font-size:12px;opacity:.6;letter-spacing:.08em">COMITÉ DE EXPERIENCIA · PREP</div>
+    <h1>Mystery Shopper<br>${mLabel(PER)}</h1>
+    <div class="lead">Resultados consolidados de comprador incógnito: ${nv} evaluaciones sobre ${DB.locales.length} operaciones de ${DB.marcas.length} marca${DB.marcas.length===1?'':'s'}.
+    Puntaje consolidado <b>${g!=null?r1(g).toFixed(1):'—'}/100</b>${gp!=null?` (${g-gp>=0?'+':'−'}${Math.abs(g-gp).toFixed(1)} vs ${mLabel(pv)})`:''}.</div>
+    <div class="marcas">${marcas}</div>
+    <div class="mono" style="margin-top:26px;font-size:11px;opacity:.5">Usa ← → para navegar · el botón PDF exporta el deck completo</div>
+  </div>`;
+}
+
+/* ============ 02 · panorama ============ */
+function sPanorama(){
+  const pv=prevPer(PER);
+  const rows=ops().map(l=>({l,s:scoreOp(l.id,PER),p:pv?scoreOp(l.id,pv):null})).filter(r=>r.s!=null);
+  const g=scoreGlobal(PER), gp=pv?scoreGlobal(pv):null;
+  const best=rows.slice().sort((a,b)=>b.s-a.s)[0];
+  const worst=rows.slice().sort((a,b)=>a.s-b.s)[0];
+  const mover=rows.filter(r=>r.p!=null).slice().sort((a,b)=>(b.s-b.p)-(a.s-a.p))[0];
+  const nv=DB.visitas.filter(v=>(v.fecha||'').slice(0,7)===PER).length;
+  const nItems=DB.detalle.filter(d=>d.periodo===PER).reduce((a,d)=>a+cells(d).length,0);
+  const abiertas=DB.acciones.filter(a=>a.estado!=='hecho').length;
+  const kpi=(k,v,d,ac)=>`<div class="kpi" style="--ac:${ac}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d||''}</div></div>`;
+  return `<div class="stitle">Panorama del mes</div>
+  <div class="ssub">Puntaje ponderado por los pesos de la evaluación · fuente: ${nv} visitas de comprador incógnito</div>
+  <div class="kpis">
+    ${kpi('Consolidado',g!=null?r1(g).toFixed(1):'—',gp!=null?dlt(g-gp,' vs '+mLabel(pv)):'','#1e5af9')}
+    ${kpi('Mejor operación',best?Math.round(best.s):'—',best?esc(cortoOp(best.l)):'','#10b981')}
+    ${kpi('Mayor oportunidad',worst?Math.round(worst.s):'—',worst?esc(cortoOp(worst.l)):'','#ff3b30')}
+    ${kpi('Mayor avance',mover?dlt(mover.s-mover.p):'—',mover?esc(cortoOp(mover.l)):'','#ffcc00')}
+    ${kpi('Ítems evaluados',nItems.toLocaleString('es-PE'),'auditoría ítem por ítem','#7c3aed')}
+    ${kpi('Acciones abiertas',abiertas,'en el plan de mejora','#0ea5e9')}
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Puntaje por operación</h3><div class="hint">Barra gris = ${pv?mLabel(pv):'mes anterior'} · barra de color = ${mLabel(PER)}.</div><div class="cbox"><canvas id="c-ops"></canvas></div></div>
+    <div class="card"><h3>Movimiento del mes</h3><div class="hint">Cuántos puntos ganó o perdió cada operación frente a ${pv?mLabel(pv):'el mes anterior'}.</div><div class="cbox"><canvas id="c-delta"></canvas></div></div>
+  </div>
+  <div class="legend"><span><i style="background:#1e5af9"></i>≥90 excelente</span><span><i style="background:#10b981"></i>80–89 bueno</span><span><i style="background:#ffcc00"></i>70–79 regular</span><span><i style="background:#ff8a3d"></i>50–69 a mejorar</span><span><i style="background:#ff3b30"></i>&lt;50 crítico</span></div>`;
+}
+SLIDES[1].draw=function(){
+  const pv=prevPer(PER);
+  const rows=ops().map(l=>({l,s:scoreOp(l.id,PER),p:pv?scoreOp(l.id,pv):null})).filter(r=>r.s!=null).sort((a,b)=>b.s-a.s);
+  mkChart('c-ops',{type:'bar',
+    data:{labels:rows.map(r=>cortoOp(r.l)),datasets:[
+      {label:pv?mLabel(pv):'mes anterior',data:rows.map(r=>r.p!=null?r1(r.p):null),backgroundColor:'#cfd4d9',borderColor:'#000',borderWidth:1.5,borderRadius:4},
+      {label:mLabel(PER),data:rows.map(r=>r1(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:4}
+    ]},
+    options:{indexAxis:'y',scales:{x:{min:40,max:100,ticks:{stepSize:10}},y:{ticks:{font:{size:12,weight:'600'}}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.x+'/100'}},
+      datalabels:{display:c=>c.datasetIndex===1,anchor:'end',align:'start',offset:6,color:c=>{const v=c.dataset.data[c.dataIndex];return (v>=70&&v<80)?'#3a2e00':'#fff';},font:{weight:'700',size:11},formatter:v=>v.toFixed(1)}}}});
+  const ds=rows.filter(r=>r.p!=null).map(r=>({n:cortoOp(r.l),d:r.s-r.p})).sort((a,b)=>b.d-a.d);
+  mkChart('c-delta',{type:'bar',
+    data:{labels:ds.map(x=>x.n),datasets:[{data:ds.map(x=>r1(x.d)),backgroundColor:ds.map(x=>Math.abs(x.d)<0.15?'#9aa0a6':(x.d>0?'#10b981':'#ff3b30')),borderColor:'#000',borderWidth:2,borderRadius:5}]},
+    options:{indexAxis:'y',scales:{x:{suggestedMin:-2,suggestedMax:2,grid:{color:c=>c.tick.value===0?'#171c20':'rgba(0,0,0,.08)'}}},
+      plugins:{legend:{display:false},datalabels:{anchor:c=>c.dataset.data[c.dataIndex]>=0?'end':'start',align:c=>c.dataset.data[c.dataIndex]>=0?'right':'left',color:'#171c20',font:{weight:'700',size:12},formatter:v=>(v>0?'+':'')+v.toFixed(1)}}}});
+};
+
+/* ============ 03 · comparativo por marca ============ */
+function sMarcas(){
+  const pv=prevPer(PER);
+  const cards=DB.marcas.map(m=>{
+    const s=scoreMarca(m.id,PER),sp=pv?scoreMarca(m.id,pv):null;
+    const ls=DB.locales.filter(l=>l.marca_id===m.id).map(l=>({l,s:scoreOp(l.id,PER)})).filter(x=>x.s!=null);
+    const spread=ls.length>1?Math.max(...ls.map(x=>x.s))-Math.min(...ls.map(x=>x.s)):0;
+    return `<div class="card"><h3>${m.emoji||''} ${esc(m.nombre)}</h3>
+      <div class="hint">${ls.length} operación${ls.length===1?'':'es'} evaluada${ls.length===1?'':'s'} en ${mLabel(PER)}</div>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <div style="font-family:var(--font-display);font-size:40px;line-height:1">${s!=null?r1(s).toFixed(1):'—'}</div>
+        <div>${sp!=null?dlt(s-sp,' pts'):''}</div>
+      </div>
+      <table style="margin-top:12px"><tbody>
+      ${ls.sort((a,b)=>b.s-a.s).map(x=>`<tr><td>${esc(x.l.nombre)}</td><td class="n">${scChip(x.s,true)}</td></tr>`).join('')}
+      ${ls.length>1?`<tr class="tot"><td>Brecha interna</td><td class="n">${r1(spread).toFixed(1)} pts</td></tr>`:''}
+      </tbody></table></div>`;
+  }).join('');
+  return `<div class="stitle">Comparativo por marca</div>
+  <div class="ssub">Cada marca es un estándar de servicio distinto: se comparan entre sí y contra su propia dispersión interna</div>
+  <div class="grid${DB.marcas.length>2?'3':'2'}">${cards}</div>
+  <div class="grid2">
+    <div class="card"><h3>Marca contra marca, mes a mes</h3><div class="hint">Promedio de las operaciones de cada marca.</div><div class="cbox"><canvas id="c-mk-evo"></canvas></div></div>
+    <div class="card"><h3>Perfil por mundo</h3><div class="hint">Dónde cada marca es fuerte y dónde no. Radar sobre la auditoría de ${mLabel(PER)}.</div><div class="cbox"><canvas id="c-mk-radar"></canvas></div></div>
+  </div>`;
+}
+SLIDES[2].draw=function(){
+  const ms=meses();
+  mkChart('c-mk-evo',{type:'line',
+    data:{labels:ms.map(mLabel),datasets:DB.marcas.map((m,i)=>({label:m.nombre,data:ms.map(p=>{const s=scoreMarca(m.id,p);return s!=null?r1(s):null;}),borderColor:SEDE_COLORS[i%SEDE_COLORS.length],backgroundColor:SEDE_COLORS[i%SEDE_COLORS.length],borderWidth:3,tension:.3,pointRadius:4,pointBorderColor:'#000',spanGaps:true}))},
+    options:{scales:{y:{min:40,max:100,ticks:{stepSize:10}}},plugins:{legend:{position:'bottom',labels:{boxWidth:14,font:{size:11}}},datalabels:{display:false}}}});
+  const mus=mundos();
+  mkChart('c-mk-radar',{type:'radar',
+    data:{labels:mus,datasets:DB.marcas.map((m,i)=>{
+      const locs=DB.locales.filter(l=>l.marca_id===m.id).map(l=>l.id);
+      return {label:m.nombre,data:mus.map(mu=>{const v=locs.map(l=>mundoScore(l,mu,PER)).filter(x=>x!=null);return v.length?Math.round(avg(v)):null;}),
+        borderColor:SEDE_COLORS[i%SEDE_COLORS.length],backgroundColor:SEDE_COLORS[i%SEDE_COLORS.length]+'2e',borderWidth:2.5,pointRadius:3};
+    })},
+    options:{scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9}},pointLabels:{font:{size:10}}}},plugins:{legend:{position:'bottom',labels:{boxWidth:14,font:{size:11}}},datalabels:{display:false}}}});
+};
+
+/* ============ 04 · evolución ============ */
+function sEvolucion(){
+  const ms=meses();
+  const rows=ops().map(l=>{
+    const serie=ms.map(p=>scoreOp(l.id,p));
+    const first=serie.find(x=>x!=null), last=[...serie].reverse().find(x=>x!=null);
+    return {l,serie,first,last,tot:(last!=null&&first!=null)?last-first:null};
+  });
+  return `<div class="stitle">Evolución del puntaje</div>
+  <div class="ssub">Serie completa disponible: ${ms.length} meses (${mLabel(ms[0])} → ${mLabel(ms[ms.length-1])})</div>
+  <div class="card"><h3>Trayectoria por operación</h3><div class="hint">Cada línea es una operación. La franja verde marca la zona de servicio aceptable (≥80).</div><div class="cbox tall"><canvas id="c-evo"></canvas></div></div>
+  <div class="card"><h3>Recorrido acumulado</h3><div class="hint">Cuánto ganó o perdió cada operación desde su primera medición.</div>
+  <div class="scroll"><table><thead><tr><th>Operación</th><th class="n">Inicio</th><th class="n">${mLabel(PER)}</th><th class="n">Acumulado</th><th>Lectura</th></tr></thead><tbody>
+  ${rows.sort((a,b)=>(b.tot||-99)-(a.tot||-99)).map(r=>{
+    const lect=r.tot==null?'—':r.tot>=10?'Transformación sostenida':r.tot>=4?'Mejora consistente':r.tot>=1?'Avance leve':r.tot>-1?'Estable / meseta':'Retroceso';
+    return `<tr><td>${esc(nombreOp(r.l))}</td><td class="n">${scChip(r.first,true)}</td><td class="n">${scChip(r.last,true)}</td><td class="n">${dlt(r.tot,' pts')}</td><td style="font-size:12px;opacity:.75">${lect}</td></tr>`;
+  }).join('')}
+  </tbody></table></div></div>`;
+}
+SLIDES[3].draw=function(){
+  const ms=meses();
+  mkChart('c-evo',{type:'line',
+    data:{labels:ms.map(mLabel),datasets:ops().map((l,i)=>({label:cortoOp(l),data:ms.map(p=>{const s=scoreOp(l.id,p);return s!=null?r1(s):null;}),borderColor:SEDE_COLORS[i%SEDE_COLORS.length],backgroundColor:SEDE_COLORS[i%SEDE_COLORS.length],borderWidth:2.5,tension:.3,pointRadius:3,pointBorderColor:'#000',spanGaps:true}))},
+    options:{scales:{y:{min:40,max:100,ticks:{stepSize:10},grid:{color:c=>c.tick.value===80?'#10b981':'rgba(0,0,0,.07)',lineWidth:c=>c.tick.value===80?2:1}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:14,font:{size:11}}},datalabels:{display:false},tooltip:{mode:'index',intersect:false}}}});
+};
+
+/* ============ 05 · ranking ============ */
+function sRanking(){
+  const pv=prevPer(PER);
+  const rows=ops().map(l=>{
+    const s=scoreOp(l.id,PER), p=pv?scoreOp(l.id,pv):null;
+    const mus=mundos().map(mu=>({mu,v:mundoScore(l.id,mu,PER)})).filter(x=>x.v!=null);
+    const top=mus.slice().sort((a,b)=>b.v-a.v)[0];
+    const bot=mus.slice().sort((a,b)=>a.v-b.v)[0];
+    const vv=scoresVisita(l.id,PER);
+    const rango=vv.length>1?Math.max(...vv)-Math.min(...vv):null;
+    return {l,s,p,top,bot,rango,vv};
+  }).filter(r=>r.s!=null).sort((a,b)=>b.s-a.s);
+  return `<div class="stitle">Ranking de operaciones</div>
+  <div class="ssub">Ordenado por puntaje de ${mLabel(PER)} · fortaleza y debilidad según la auditoría ítem por ítem</div>
+  <div class="card"><div class="scroll"><table>
+  <thead><tr><th class="n">#</th><th>Operación</th><th class="n">Puntaje</th><th class="n">vs mes ant.</th><th>Mundo más fuerte</th><th>Mundo más débil</th><th class="n">Rango entre visitas</th></tr></thead>
+  <tbody>${rows.map((r,i)=>`<tr>
+    <td class="n" style="font-family:var(--font-display);font-size:17px">${i+1}</td>
+    <td><b>${esc(cortoOp(r.l))}</b><div class="mono" style="font-size:10px;opacity:.55">${esc(marcaDe(r.l.marca_id).nombre)}</div></td>
+    <td class="n">${scChip(r.s,true)}</td>
+    <td class="n">${dlt(r.p!=null?r.s-r.p:null)}</td>
+    <td style="font-size:12px">${r.top?esc(r.top.mu)+' <b>'+Math.round(r.top.v)+'</b>':'—'}</td>
+    <td style="font-size:12px">${r.bot?esc(r.bot.mu)+' <b style="color:var(--secondary)">'+Math.round(r.bot.v)+'</b>':'—'}</td>
+    <td class="n">${r.rango!=null?r1(r.rango).toFixed(1)+' pts':'—'}</td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="hint" style="margin-top:12px">El <b>rango entre visitas</b> mide qué tan parecida es una visita de otra dentro del mismo mes. Un rango alto significa que el cliente no recibe siempre la misma experiencia: es tan grave como un puntaje bajo, y se ve en detalle en la lámina de consistencia.</div>
+  </div>`;
+}
+
+/* ============ 06 · totales por mundo ============ */
+function sMundos(){
+  const O=ops(), mus=mundos(), pv=prevPer(PER);
+  if(!hayAuditoria(PER))return '<div class="stitle">Totales por mundo</div>'+avisoAud();
+  const head=`<tr><th>Mundo</th><th class="n">Peso</th>${O.map(l=>`<th class="n">${esc(cortoOp(l))}</th>`).join('')}<th class="n">Promedio</th><th class="n">vs ant.</th></tr>`;
+  const body=mus.map(mu=>{
+    const vals=O.map(l=>mundoScore(l.id,mu,PER));
+    const ok=vals.filter(v=>v!=null);
+    const prom=ok.length?avg(ok):null;
+    const prevVals=pv?O.map(l=>mundoScore(l.id,mu,pv)).filter(v=>v!=null):[];
+    const prevProm=prevVals.length?avg(prevVals):null;
+    return `<tr><td><b>${esc(mu)}</b></td><td class="n" style="opacity:.6">${pesoMundo(mu)}%</td>
+      ${vals.map(v=>`<td class="n">${scChip(v)}</td>`).join('')}
+      <td class="n">${scChip(prom,true)}</td>
+      <td class="n">${dlt(prom!=null&&prevProm!=null?prom-prevProm:null)}</td></tr>`;
+  }).join('');
+  const totRow=`<tr class="tot"><td>Consolidado auditoría</td><td class="n"></td>
+    ${O.map(l=>{const vs=mus.map(mu=>mundoScore(l.id,mu,PER)).filter(v=>v!=null);return `<td class="n">${vs.length?Math.round(avg(vs)):'—'}</td>`;}).join('')}
+    <td class="n"></td><td class="n"></td></tr>`;
+  return `<div class="stitle">Totales por mundo</div>
+  <div class="ssub">Los 11 mundos del recorrido del comensal · % de cumplimiento sobre la auditoría de ${mLabel(PER)} · el peso es la incidencia de cada mundo en el puntaje final</div>
+  <div class="card"><h3>Mapa de calor mundo × operación</h3>
+  <div class="hint">Lee las columnas para ver el perfil de una sede y las filas para ver si un mundo es problema de una sede o de toda la operación.</div>
+  <div class="scroll"><table><thead>${head}</thead><tbody>${body}${totRow}</tbody></table></div>
+  <div class="legend"><span><i style="background:#1e5af9"></i>≥90</span><span><i style="background:#10b981"></i>80–89</span><span><i style="background:#ffcc00"></i>70–79</span><span><i style="background:#ff8a3d"></i>50–69</span><span><i style="background:#ff3b30"></i>&lt;50</span></div></div>
+  <div class="card"><h3>Mundos ordenados por desempeño</h3><div class="hint">Promedio de todas las operaciones. El tamaño del problema depende del peso: un mundo de 30% en amarillo pesa más que uno de 2% en rojo.</div><div class="cbox tall"><canvas id="c-mundos"></canvas></div></div>`;
+}
+SLIDES[5].draw=function(){
+  if(!hayAuditoria(PER))return;
+  const O=ops();
+  const rows=mundos().map(mu=>{
+    const v=O.map(l=>mundoScore(l.id,mu,PER)).filter(x=>x!=null);
+    return {mu,s:v.length?avg(v):null,w:pesoMundo(mu)};
+  }).filter(r=>r.s!=null).sort((a,b)=>a.s-b.s);
+  mkChart('c-mundos',{type:'bar',
+    data:{labels:rows.map(r=>r.mu+' ('+r.w+'%)'),datasets:[{data:rows.map(r=>Math.round(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:5}]},
+    options:{indexAxis:'y',layout:{padding:{right:30}},scales:{x:{min:0,max:100,ticks:{stepSize:20}},y:{ticks:{font:{size:11}}}},
+      plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#171c20',font:{weight:'700',size:12},formatter:v=>v}}}});
+};
+
+/* ============ 07 · dónde se pierden los puntos ============ */
+function gapRows(loc){
+  return mundos().map(mu=>{
+    const s=mundoScore(loc,mu,PER);
+    return {mu,s,perdida:s==null?0:pesoMundo(mu)*(100-s)/100};
+  }).filter(r=>r.s!=null).sort((a,b)=>b.perdida-a.perdida);
+}
+function sGap(){
+  const O=ops();
+  if(!hayAuditoria(PER))return '<div class="stitle">Dónde se pierden los puntos</div>'+avisoAud();
+  const cards=O.map(l=>{
+    const rows=gapRows(l.id);
+    const tot=rows.reduce((a,r)=>a+r.perdida,0);
+    const top3=rows.slice(0,3);
+    return `<div class="card"><h3>${esc(cortoOp(l))} <span class="mono" style="font-size:11px;opacity:.5;font-weight:400">pierde ${r1(tot).toFixed(1)} pts</span></h3>
+      <div class="hint">${top3.map(r=>esc(r.mu)).join(' · ')} concentran ${r1(top3.reduce((a,r)=>a+r.perdida,0)/tot*100).toFixed(0)}% de la pérdida.</div>
+      <table><tbody>${rows.slice(0,6).map(r=>`<tr><td style="font-size:12.5px">${esc(r.mu)}</td>
+        <td style="width:46%"><div style="height:12px;border:1.5px solid #000;border-radius:999px;overflow:hidden;background:#f1f3f5"><i style="display:block;height:100%;width:${Math.min(100,r.perdida/tot*260)}%;background:${scoreColor(r.s)[0]}"></i></div></td>
+        <td class="n" style="width:62px">−${r1(r.perdida).toFixed(1)}</td></tr>`).join('')}</tbody></table></div>`;
+  }).join('');
+  return `<div class="stitle">Dónde se pierden los puntos</div>
+  <div class="ssub">Puntos perdidos sobre 100 = peso del mundo × brecha de cumplimiento. Responde "¿en qué me conviene invertir la próxima semana?"</div>
+  <div class="card"><h3>Descomposición del puntaje perdido</h3>
+  <div class="hint">Un mundo con 70% de cumplimiento y 30% de peso cuesta 9 puntos; uno con 20% de cumplimiento y 2% de peso cuesta 1.6. Esta lámina ordena por costo real, no por puntaje bajo.</div>
+  <div class="cbox tall"><canvas id="c-gap"></canvas></div></div>
+  <div class="grid3">${cards}</div>`;
+}
+SLIDES[6].draw=function(){
+  if(!hayAuditoria(PER))return;
+  const O=ops(), mus=mundos();
+  const paleta={};mus.forEach((mu,i)=>paleta[mu]=SEDE_COLORS[i%SEDE_COLORS.length]);
+  const orden=mus.slice().sort((a,b)=>{
+    const pa=avg(O.map(l=>{const s=mundoScore(l.id,a,PER);return s==null?0:pesoMundo(a)*(100-s)/100;}));
+    const pb=avg(O.map(l=>{const s=mundoScore(l.id,b,PER);return s==null?0:pesoMundo(b)*(100-s)/100;}));
+    return pb-pa;
+  });
+  mkChart('c-gap',{type:'bar',
+    data:{labels:O.map(cortoOp),datasets:orden.map(mu=>({label:mu,
+      data:O.map(l=>{const s=mundoScore(l.id,mu,PER);return s==null?0:r1(pesoMundo(mu)*(100-s)/100);}),
+      backgroundColor:paleta[mu],borderColor:'#000',borderWidth:1.5}))},
+    options:{scales:{x:{stacked:true},y:{stacked:true,title:{display:true,text:'puntos perdidos sobre 100'}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}},
+      datalabels:{display:c=>c.dataset.data[c.dataIndex]>=1.2,color:'#fff',font:{weight:'700',size:10},formatter:v=>v.toFixed(1)},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': −'+c.parsed.y+' pts'}}}}});
+};
+
+/* ============ 08 · consistencia ============ */
+function sConsistencia(){
+  const rows=ops().map(l=>{
+    const vv=scoresVisita(l.id,PER);
+    const m=vv.length?avg(vv):null;
+    const sd=vv.length>1?Math.sqrt(avg(vv.map(v=>(v-m)*(v-m)))):null;
+    return {l,vv,m,sd,min:vv.length?Math.min(...vv):null,max:vv.length?Math.max(...vv):null};
+  }).filter(r=>r.m!=null).sort((a,b)=>(a.sd??99)-(b.sd??99));
+  return `<div class="stitle">Consistencia del servicio</div>
+  <div class="ssub">Vista nueva · el promedio esconde la varianza: aquí se ve si las 4 visitas del mes recibieron la misma experiencia</div>
+  <div class="card"><h3>Dispersión entre visitas de ${mLabel(PER)}</h3>
+  <div class="hint">Cada punto es una visita. La barra une la peor con la mejor. Una operación con promedio 70 y rango de 3 puntos es más manejable que una con promedio 74 y rango de 15: la segunda depende de quién esté de turno.</div>
+  <div class="cbox tall"><canvas id="c-cons"></canvas></div></div>
+  <div class="card"><div class="scroll"><table>
+  <thead><tr><th class="n">#</th><th>Operación</th><th class="n">Promedio</th><th class="n">Peor visita</th><th class="n">Mejor visita</th><th class="n">Rango</th><th class="n">Desv.</th><th>Diagnóstico</th></tr></thead>
+  <tbody>${rows.map((r,i)=>{
+    const rango=r.max-r.min;
+    const dg=rango<4?'Servicio estandarizado':rango<8?'Variación normal':rango<13?'Depende del turno':'Experiencia impredecible';
+    const col=rango<4?'var(--green)':rango<8?'#6b7280':rango<13?'#d97706':'var(--secondary)';
+    return `<tr><td class="n">${i+1}</td><td><b>${esc(cortoOp(r.l))}</b></td>
+      <td class="n">${scChip(r.m,true)}</td><td class="n">${r1(r.min).toFixed(1)}</td><td class="n">${r1(r.max).toFixed(1)}</td>
+      <td class="n" style="color:${col};font-weight:700">${r1(rango).toFixed(1)}</td><td class="n">${r.sd!=null?r1(r.sd).toFixed(1):'—'}</td>
+      <td style="font-size:12px;color:${col};font-weight:600">${dg}</td></tr>`;
+  }).join('')}</tbody></table></div></div>`;
+}
+SLIDES[7].draw=function(){
+  const rows=ops().map(l=>({l,vv:scoresVisita(l.id,PER)})).filter(r=>r.vv.length);
+  const ds=[
+    {label:'peor → mejor visita',type:'bar',data:rows.map(r=>[r1(Math.min(...r.vv)),r1(Math.max(...r.vv))]),
+     backgroundColor:'rgba(30,90,249,.20)',borderColor:'#1e5af9',borderWidth:2,borderSkipped:false,borderRadius:4,barPercentage:.45},
+    {label:'promedio del mes',type:'line',data:rows.map(r=>r1(avg(r.vv))),showLine:false,pointRadius:7,pointStyle:'rectRot',
+     backgroundColor:'#171c20',borderColor:'#fff',pointBorderColor:'#fff',pointBorderWidth:2}
+  ];
+  mkChart('c-cons',{type:'bar',data:{labels:rows.map(r=>cortoOp(r.l)),datasets:ds},
+    options:{scales:{y:{min:40,max:100,ticks:{stepSize:10}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}},datalabels:{display:false},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+(Array.isArray(c.raw)?c.raw.join(' – '):c.parsed.y)}}}}});
+};
+
+/* ============ 09 · oportunidades por mundo ============ */
+function sOportunidades(){
+  const O=ops(), mus=mundos();
+  if(!hayAuditoria(PER))return '<div class="stitle">Oportunidades por mundo</div>'+avisoAud();
+  if(!MUNDO||!mus.includes(MUNDO))MUNDO=mus[0];
+  const items=itemsMundo(MUNDO,PER);
+  const n=items.length;
+  const conProm=items.map(it=>{
+    const vals=O.map(l=>it.por[l.id]).filter(v=>v!=null);
+    const prom=vals.length?avg(vals):null;
+    const fallan=O.filter(l=>it.por[l.id]!=null&&it.por[l.id]<=50).length;
+    return {...it,prom,fallan,inc:prom==null?0:incidencia(MUNDO,prom,n)};
+  }).sort((a,b)=>b.inc-a.inc);
+  const chips=mus.map(mu=>`<span class="mchip ${mu===MUNDO?'on':''}" onclick="setMundo('${mu.replace(/'/g,"\\'")}')">${esc(mu)}<span class="w">${pesoMundo(mu)}%</span></span>`).join('');
+  const head=`<div class="irow head" style="--nops:${O.length}"><div class="lbl mono" style="font-size:10px;text-transform:uppercase;opacity:.7">Ítem evaluado</div>
+    ${O.map(l=>`<div class="hcol">${esc(cortoOp(l))}</div>`).join('')}<div class="hcol">Prom.</div></div>`;
+  const body=conProm.filter(x=>x.prom!=null&&x.prom<100).slice(0,18).map(x=>{
+    const c=scoreColor(x.prom);
+    return `<div class="irow" style="--nops:${O.length}">
+      <div class="lbl">${esc(x.item)}${x.fallan>=3?' <span class="tag tv">transversal</span>':x.fallan===1?' <span class="tag lo">puntual</span>':''}
+      <small>#${x.orden??'—'} · incidencia ${x.inc.toFixed(2)} pts del score total</small></div>
+      ${O.map(l=>{const v=x.por[l.id];const cc=scoreColor(v);return `<div class="oc"><span class="chip100" style="background:${cc[0]};color:${cc[1]}">${v==null?'—':Math.round(v)}</span></div>`;}).join('')}
+      <div class="oc"><span class="chip100" style="background:${c[0]};color:${c[1]}">${Math.round(x.prom)}</span></div></div>`;
+  }).join('');
+  const scoresMundo=O.map(l=>({l,s:mundoScore(l.id,MUNDO,PER)}));
+  return `<div class="stitle">Oportunidades por mundo</div>
+  <div class="ssub">Ítem por ítem, operación contra operación · ordenado por incidencia en el puntaje final, no por puntaje bajo</div>
+  <div class="mbar">${chips}</div>
+  <div class="card"><h3>${esc(MUNDO)} <span class="mono" style="font-size:11px;opacity:.55;font-weight:400">peso ${pesoMundo(MUNDO)}% · ${n} ítems evaluados</span></h3>
+  <div class="hint">Puntaje del mundo: ${scoresMundo.map(x=>`<b>${esc(cortoOp(x.l))}</b> ${x.s!=null?Math.round(x.s):'—'}`).join(' · ')}</div>
+  ${head}${body||'<div class="empty">Este mundo está en 100% en todas las operaciones.</div>'}
+  <div class="legend"><span><span class="tag tv">transversal</span> falla en 3 o más operaciones: es un problema de estándar, se corrige con capacitación y protocolo únicos</span></div>
+  <div class="legend"><span><span class="tag lo">puntual</span> falla en una sola: es un problema de esa sede, se corrige con su jefe de sala</span></div>
+  </div>`;
+}
+function setMundo(mu){MUNDO=mu;render();}
+
+/* ============ 10 · transversal vs local ============ */
+function sTransversal(){
+  const O=ops(), mus=mundos(), n=O.length;
+  if(!hayAuditoria(PER))return '<div class="stitle">Problema de estándar vs problema de sede</div>'+avisoAud();
+  const all=[];
+  mus.forEach(mu=>{
+    const its=itemsMundo(mu,PER);
+    its.forEach(it=>{
+      const vals=O.map(l=>it.por[l.id]).filter(v=>v!=null);
+      if(!vals.length)return;
+      const prom=avg(vals);
+      const fallan=O.filter(l=>it.por[l.id]!=null&&it.por[l.id]<=50);
+      all.push({mu,item:it.item,orden:it.orden,prom,fallan:fallan.map(l=>cortoOp(l)),nf:fallan.length,inc:incidencia(mu,prom,its.length)});
+    });
+  });
+  const trans=all.filter(x=>x.nf>=Math.max(3,Math.ceil(n*0.6))).sort((a,b)=>b.inc-a.inc).slice(0,10);
+  const local=all.filter(x=>x.nf===1).sort((a,b)=>b.inc-a.inc).slice(0,10);
+  const fila=x=>`<tr><td><b style="font-size:12.5px">${esc(x.item)}</b><div class="mono" style="font-size:10px;opacity:.55">${esc(x.mu)} · peso ${pesoMundo(x.mu)}%</div></td>
+    <td class="n">${scChip(x.prom)}</td><td style="font-size:11px;font-family:var(--font-mono)">${x.fallan.map(esc).join(', ')}</td></tr>`;
+  return `<div class="stitle">Problema de estándar vs problema de sede</div>
+  <div class="ssub">Vista nueva · separa lo que se arregla con un protocolo único de lo que se arregla con un jefe de sala</div>
+  <div class="grid2">
+    <div class="card" style="border-color:var(--secondary);border-width:3px"><h3><span class="material-symbols-outlined" style="color:var(--secondary)">sync_problem</span> Transversales — arréglalo una vez, sirve para todos</h3>
+    <div class="hint">Ítems que fallan en la mayoría de las operaciones. No es un problema de personas: es un estándar que no existe, no se entrenó o no se audita. Son las de mejor retorno porque una sola intervención mueve todas las sedes.</div>
+    <div class="scroll"><table><thead><tr><th>Ítem</th><th class="n">Prom.</th><th>Falla en</th></tr></thead><tbody>${trans.map(fila).join('')||'<tr><td colspan="3" class="empty">Sin fallas generalizadas.</td></tr>'}</tbody></table></div></div>
+    <div class="card" style="border-color:var(--tertiary);border-width:3px"><h3><span class="material-symbols-outlined" style="color:#d97706">location_on</span> Puntuales — conversación con esa sede</h3>
+    <div class="hint">Ítems que fallan en una sola operación mientras el resto cumple. La receta ya existe en la casa: es ejecución local. Se resuelve con seguimiento del administrador, no con un proyecto.</div>
+    <div class="scroll"><table><thead><tr><th>Ítem</th><th class="n">Prom.</th><th>Falla en</th></tr></thead><tbody>${local.map(fila).join('')||'<tr><td colspan="3" class="empty">Sin fallas aisladas.</td></tr>'}</tbody></table></div></div>
+  </div>`;
+}
+
+/* ============ 11 · plan de acción ============ */
+function sPlan(){
+  const O=ops();
+  const cards=O.map(l=>{
+    const acs=accionesDe(l.id).slice(0,10);
+    return `<div class="card"><h3>${esc(cortoOp(l))} <span class="mono" style="font-size:11px;opacity:.5;font-weight:400">${acs.length} prioridades</span></h3>
+    <div class="hint">${esc(marcaDe(l.marca_id).nombre)} · puntaje ${(()=>{const s=scoreOp(l.id,PER);return s!=null?r1(s).toFixed(1):'—';})()}/100</div>
+    ${acs.map((a,i)=>{
+      const t=(a.descripcion||'').split('\n');
+      const ttl=t[0].replace(/^\d+\.\s*/,'');
+      const exito=t.find(x=>/^Exito:|^Éxito:/.test(x))||'';
+      return `<div class="acc"><div style="display:flex;gap:10px;align-items:baseline">
+        <span class="num">${String(i+1).padStart(2,'0')}</span>
+        <div style="flex:1"><div class="ttl">${esc(ttl)}</div>
+        <div class="meta"><span class="tag pk">${esc(a.area||'')}</span> ${a.responsable?esc(a.responsable)+' · ':''}${a.due_date?'vence '+a.due_date:'sin fecha'} · ${esc(a.estado||'')}</div>
+        ${exito?`<div class="bd">${esc(exito)}</div>`:''}</div></div></div>`;
+    }).join('')||'<div class="empty">Sin acciones registradas.</div>'}</div>`;
+  }).join('');
+  return `<div class="stitle">Plan de acción</div>
+  <div class="ssub">Las 10 prioridades de mayor incidencia por operación · cada una con responsable, meta medible y fecha</div>
+  <div class="grid2">${cards}</div>`;
+}
+
+/* ============ 12 · proyección ============ */
+function proyeccion(loc,meta){
+  const mus=mundos();let ganancia=0;const detalle=[];
+  mus.forEach(mu=>{
+    const its=itemsMundo(mu,PER);
+    const w=pesoMundo(mu);if(!w||!its.length)return;
+    its.forEach(it=>{
+      const v=it.por[loc];
+      if(v==null||v>=meta)return;
+      const g=w*(meta-v)/100/its.length;
+      detalle.push({mu,item:it.item,v,g});
+    });
+  });
+  detalle.sort((a,b)=>b.g-a.g);
+  const top=detalle.slice(0,10);
+  ganancia=top.reduce((a,x)=>a+x.g,0);
+  return {ganancia,top};
+}
+function sProyeccion(){
+  const O=ops(), META=85;
+  if(!hayAuditoria(PER))return '<div class="stitle">Proyección del próximo ciclo</div>'+avisoAud();
+  const rows=O.map(l=>{
+    const s=scoreOp(l.id,PER);
+    const p=proyeccion(l.id,META);
+    return {l,s,g:p.ganancia,top:p.top};
+  }).filter(r=>r.s!=null).sort((a,b)=>b.g-a.g);
+  return `<div class="stitle">Proyección del próximo ciclo</div>
+  <div class="ssub">Vista nueva · si las 10 prioridades de cada operación llegaran a ${META}% de cumplimiento, este sería el techo alcanzable en la próxima medición</div>
+  <div class="card"><h3>Techo alcanzable cerrando las 10 prioridades</h3>
+  <div class="hint">No es una promesa: es la aritmética del instrumento. Sirve para fijar la meta del mes con criterio y para discutir si las prioridades elegidas realmente mueven la aguja o son cosméticas.</div>
+  <div class="cbox tall"><canvas id="c-proy"></canvas></div></div>
+  <div class="card"><div class="scroll"><table>
+  <thead><tr><th>Operación</th><th class="n">Hoy</th><th class="n">Ganancia potencial</th><th class="n">Meta sugerida</th><th>Las 3 de mayor retorno</th></tr></thead>
+  <tbody>${rows.map(r=>`<tr><td><b>${esc(cortoOp(r.l))}</b></td><td class="n">${scChip(r.s,true)}</td>
+    <td class="n" style="color:var(--green);font-weight:700">+${r1(r.g).toFixed(1)}</td>
+    <td class="n">${scChip(r.s+r.g,true)}</td>
+    <td style="font-size:11.5px;opacity:.8">${r.top.slice(0,3).map(t=>esc(t.mu)+' · '+esc(t.item.slice(0,42))+(t.item.length>42?'…':'')).join('<br>')}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+SLIDES[11].draw=function(){
+  if(!hayAuditoria(PER))return;
+  const O=ops(),META=85;
+  const rows=O.map(l=>({l,s:scoreOp(l.id,PER),g:proyeccion(l.id,META).ganancia})).filter(r=>r.s!=null).sort((a,b)=>(b.s+b.g)-(a.s+a.g));
+  mkChart('c-proy',{type:'bar',
+    data:{labels:rows.map(r=>cortoOp(r.l)),datasets:[
+      {label:'Hoy',data:rows.map(r=>r1(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2},
+      {label:'Ganancia potencial',data:rows.map(r=>r1(r.g)),backgroundColor:'rgba(16,185,129,.45)',borderColor:'#10b981',borderWidth:2}
+    ]},
+    options:{scales:{x:{stacked:true},y:{stacked:true,min:40,max:100,ticks:{stepSize:10}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
+      datalabels:{color:c=>c.datasetIndex===0?'#fff':'#0b6b4f',font:{weight:'700',size:11},formatter:(v,c)=>c.datasetIndex===1?'+'+v.toFixed(1):v.toFixed(0)}}}});
+};
+
+/* ============ 13 · cierre ============ */
+function sCierre(){
+  const O=ops(), pv=prevPer(PER);
+  const rows=O.map(l=>({l,s:scoreOp(l.id,PER),p:pv?scoreOp(l.id,pv):null})).filter(r=>r.s!=null);
+  const suben=rows.filter(r=>r.p!=null&&r.s-r.p>0.15).length;
+  const bajan=rows.filter(r=>r.p!=null&&r.s-r.p<-0.15).length;
+  const planos=rows.length-suben-bajan;
+  const reco=[
+    ['insights','#d6e2ff','Compromiso de la próxima medición','Cada operación se lleva un número, no una intención: la meta del mes es el "techo alcanzable" de la lámina 12. Se revisa contra el mystery de agosto sin renegociar.'],
+    ['groups','#ffe8a3','Un dueño por prioridad transversal','Las fallas transversales no tienen dueño natural y por eso sobreviven meses. Asigna una sola persona por cada una, con fecha, y repórtala en este mismo comité.'],
+    ['schedule','#ffd9d6','Cadencia quincenal en la sede que retrocede','Cuando una operación cae, el mes siguiente es demasiado tarde para enterarse. Una visita a mitad de mes corta la caída antes de que se consolide.'],
+    ['workspace_premium','#d1fae5','Vino como palanca de ticket, no solo de puntaje','Es el mundo más débil de la mayoría de operaciones y el único que además mueve ingreso. Cerrarlo paga el proyecto solo.']
+  ].map(([i,c,t,d])=>`<div class="reco"><div class="ico" style="--ac:${c}"><span class="material-symbols-outlined">${i}</span></div><div><div class="t">${t}</div><div class="d">${d}</div></div></div>`).join('');
+  return `<div class="stitle">Cierre y acuerdos</div>
+  <div class="ssub">Qué nos llevamos de ${mLabel(PER)}</div>
+  <div class="kpis">
+    <div class="kpi" style="--ac:#10b981"><div class="k">Operaciones al alza</div><div class="v">${suben}</div><div class="d">de ${rows.length}</div></div>
+    <div class="kpi" style="--ac:#6b7280"><div class="k">En meseta</div><div class="v">${planos}</div><div class="d">sin cambio material</div></div>
+    <div class="kpi" style="--ac:#ff3b30"><div class="k">En retroceso</div><div class="v">${bajan}</div><div class="d">requieren plan inmediato</div></div>
+    <div class="kpi" style="--ac:#1e5af9"><div class="k">Acciones comprometidas</div><div class="v">${DB.acciones.filter(a=>a.estado!=='hecho').length}</div><div class="d">con responsable y fecha</div></div>
+  </div>
+  <div class="card"><h3>Acuerdos propuestos</h3><div class="hint">Cuatro decisiones concretas para cerrar el comité.</div>${reco}</div>
+  <div class="card"><h3>Cómo seguir esto sin esperar al próximo comité</h3>
+  <div class="hint">Esta vista se alimenta sola de la data del módulo Voz del Cliente. Cada vez que se cargue un nuevo mes de mystery, el deck se actualiza completo: no hay que rehacerlo. El detalle operativo por sede vive en <b>/voz-cliente</b>, donde el cliente ve solo su propia operación.</div></div>`;
+}
+
+/* ============ export ============ */
+function printAll(){
+  document.body.classList.add('printing');
+  killCharts();
+  SLIDES.forEach(s=>{if(s.draw)try{s.draw()}catch(e){console.warn(e)}});
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{document.body.classList.remove('printing');render();},400);
+  },500);
+}
+
+/* ============ arranque ============ */
+load().catch(e=>{console.error(e);document.getElementById('boot').innerHTML='<div class="mono" style="font-size:13px;padding:20px;text-align:center">No se pudo cargar la presentación.<br>'+esc(e.message||'')+'</div>';});
+</script>
+</body>
+</html>
