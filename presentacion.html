@@ -270,6 +270,11 @@ function mundoScore(loc,mu,per){
   DB.detalle.forEach(d=>{if(d.local_id===loc&&d.mundo===mu&&d.periodo===per)cells(d).forEach(v=>{s+=v;c++;});});
   return c?s/c/4*100:null;
 }
+function scoreAud(loc,per){
+  let s=0,c=0;
+  DB.detalle.forEach(d=>{if(d.local_id===loc&&d.periodo===per)cells(d).forEach(v=>{s+=v;c++;});});
+  return c?s/c/4*100:null;
+}
 function itemsMundo(mu,per){
   const map={};
   DB.detalle.filter(d=>d.mundo===mu&&d.periodo===per).forEach(d=>{
@@ -547,7 +552,7 @@ function sGap(){
         <td class="n" style="width:62px">−${r1(r.perdida).toFixed(1)}</td></tr>`).join('')}</tbody></table></div>`;
   }).join('');
   return `<div class="stitle">Dónde se pierden los puntos</div>
-  <div class="ssub">Puntos perdidos sobre 100 = peso del mundo × brecha de cumplimiento. Responde "¿en qué me conviene invertir la próxima semana?"</div>
+  <div class="ssub">Puntos perdidos sobre 100 = peso del mundo × brecha de la auditoría ítem por ítem. Responde "¿en qué me conviene invertir la próxima semana?"</div>
   <div class="card"><h3>Descomposición del puntaje perdido</h3>
   <div class="hint">Un mundo con 70% de cumplimiento y 30% de peso cuesta 9 puntos; uno con 20% de cumplimiento y 2% de peso cuesta 1.6. Esta lámina ordena por costo real, no por puntaje bajo.</div>
   <div class="cbox tall"><canvas id="c-gap"></canvas></div></div>
@@ -724,17 +729,17 @@ function sProyeccion(){
   const O=ops(), META=85;
   if(!hayAuditoria(PER))return '<div class="stitle">Proyección del próximo ciclo</div>'+avisoAud();
   const rows=O.map(l=>{
-    const s=scoreOp(l.id,PER);
+    const s=scoreAud(l.id,PER);
     const p=proyeccion(l.id,META);
     return {l,s,g:p.ganancia,top:p.top};
   }).filter(r=>r.s!=null).sort((a,b)=>b.g-a.g);
   return `<div class="stitle">Proyección del próximo ciclo</div>
   <div class="ssub">Vista nueva · si las 10 prioridades de cada operación llegaran a ${META}% de cumplimiento, este sería el techo alcanzable en la próxima medición</div>
   <div class="card"><h3>Techo alcanzable cerrando las 10 prioridades</h3>
-  <div class="hint">No es una promesa: es la aritmética del instrumento. Sirve para fijar la meta del mes con criterio y para discutir si las prioridades elegidas realmente mueven la aguja o son cosméticas.</div>
+  <div class="hint">No es una promesa: es la aritmética del instrumento. Sirve para fijar la meta del mes con criterio y para discutir si las prioridades elegidas realmente mueven la aguja o son cosméticas. <b>Base: cumplimiento de la auditoría ítem por ítem</b>, que corre en su propia escala y no es idéntico al puntaje ponderado de las visitas.</div>
   <div class="cbox tall"><canvas id="c-proy"></canvas></div></div>
   <div class="card"><div class="scroll"><table>
-  <thead><tr><th>Operación</th><th class="n">Hoy</th><th class="n">Ganancia potencial</th><th class="n">Meta sugerida</th><th>Las 3 de mayor retorno</th></tr></thead>
+  <thead><tr><th>Operación</th><th class="n">Auditoría hoy</th><th class="n">Ganancia potencial</th><th class="n">Meta sugerida</th><th>Las 3 de mayor retorno</th></tr></thead>
   <tbody>${rows.map(r=>`<tr><td><b>${esc(cortoOp(r.l))}</b></td><td class="n">${scChip(r.s,true)}</td>
     <td class="n" style="color:var(--green);font-weight:700">+${r1(r.g).toFixed(1)}</td>
     <td class="n">${scChip(r.s+r.g,true)}</td>
@@ -744,10 +749,10 @@ function sProyeccion(){
 SLIDES[11].draw=function(){
   if(!hayAuditoria(PER))return;
   const O=ops(),META=85;
-  const rows=O.map(l=>({l,s:scoreOp(l.id,PER),g:proyeccion(l.id,META).ganancia})).filter(r=>r.s!=null).sort((a,b)=>(b.s+b.g)-(a.s+a.g));
+  const rows=O.map(l=>({l,s:scoreAud(l.id,PER),g:proyeccion(l.id,META).ganancia})).filter(r=>r.s!=null).sort((a,b)=>(b.s+b.g)-(a.s+a.g));
   mkChart('c-proy',{type:'bar',
     data:{labels:rows.map(r=>cortoOp(r.l)),datasets:[
-      {label:'Hoy',data:rows.map(r=>r1(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2},
+      {label:'Auditoría hoy',data:rows.map(r=>r1(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2},
       {label:'Ganancia potencial',data:rows.map(r=>r1(r.g)),backgroundColor:'rgba(16,185,129,.45)',borderColor:'#10b981',borderWidth:2}
     ]},
     options:{scales:{x:{stacked:true},y:{stacked:true,min:40,max:100,ticks:{stepSize:10}}},
