@@ -61,9 +61,10 @@ document.addEventListener('DOMContentLoaded',function(){
       sel.onchange=function(){
         var mk=sel.value; if(mk===marca)return;
         var sub=SUBOF[mk];
-        // Dentro del subdominio de un cliente se salta al subdominio del otro.
-        if(window.PREP_BYSUB&&sub){location.href='https://'+sub+'.prep.rest'+location.pathname;return;}
-        if(!isSuper){if(sub)location.href='https://'+sub+'.prep.rest';return;}
+        // Cada restaurante vive en su subdominio: se salta al del otro, en la MISMA
+        // pantalla (el dueño de m7+m8 sigue en Voz del Cliente, no vuelve al hub).
+        if(sub&&(window.PREP_BYSUB||!isSuper)){location.href='https://'+sub+'.prep.rest'+location.pathname;return;}
+        if(!isSuper)return;
         // Super admin en os.prep.rest: cambia de contexto sin salir de esta pantalla.
         c.from('inv_locales').select('id').eq('marca_id',mk).order('orden',{nullsFirst:false}).order('id').limit(1).then(function(rl){
           var lc=(rl&&rl.data&&rl.data[0]&&rl.data[0].id)||'';
