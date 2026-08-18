@@ -49,28 +49,48 @@ document.addEventListener('DOMContentLoaded',function(){
       try{var base=(document.title||'').replace(/^[^·]*·\s*/,'');document.title=nom+(base?' · '+base:' · Prep!');}catch(e){}
     }).catch(function(){});
 
-    // Selector de RESTAURANTE (solo si el usuario tiene 2+ marcas asignadas)
+    // Selector de RESTAURANTE. Lo ve quien tiene 2+ marcas asignadas y, con TODAS
+    // las marcas, el super admin (para revisar los resultados de cualquier cliente).
+    function mountMarcas(ms,isSuper){
+      if(!ms||ms.length<2)return;
+      var anchor=document.querySelector('.brand-txt'); if(!anchor||document.getElementById('prep-marca-sel'))return;
+      ms.sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'');});
+      var sel=document.createElement('select');
+      sel.id='prep-marca-sel'; sel.title='Cambiar de restaurante';
+      sel.innerHTML=ms.map(function(m){return '<option value="'+m.id+'"'+(m.id===marca?' selected':'')+'>'+m.nombre+'</option>';}).join('');
+      sel.onchange=function(){
+        var mk=sel.value; if(mk===marca)return;
+        var sub=SUBOF[mk];
+        // Dentro del subdominio de un cliente se salta al subdominio del otro.
+        if(window.PREP_BYSUB&&sub){location.href='https://'+sub+'.prep.rest'+location.pathname;return;}
+        if(!isSuper){if(sub)location.href='https://'+sub+'.prep.rest';return;}
+        // Super admin en os.prep.rest: cambia de contexto sin salir de esta pantalla.
+        c.from('inv_locales').select('id').eq('marca_id',mk).order('orden',{nullsFirst:false}).order('id').limit(1).then(function(rl){
+          var lc=(rl&&rl.data&&rl.data[0]&&rl.data[0].id)||'';
+          location.href=location.pathname+'?marca='+mk+(lc?'&local='+lc:'');
+        }).catch(function(){location.href=location.pathname+'?marca='+mk;});
+      };
+      anchor.parentNode.insertBefore(makePill(sel,'storefront'),anchor.nextSibling);
+    }
     c.auth.getSession().then(function(s){
       var email=s&&s.data&&s.data.session&&s.data.session.user&&s.data.session.user.email;
       if(!email)return;
-      // Filtrar por el email del usuario: el selector muestra SOLO las marcas
-      // asignadas a ti. Sin esto, el super admin (RLS pum_self_read devuelve todo)
-      // veria las marcas de otros clientes en cualquier subdominio.
-      c.from('prep_usuario_marcas').select('marca_id').eq('email',email).then(function(r){
-        var rows=(r&&r.data)||[]; if(rows.length<2)return;
-        var ids=rows.map(function(x){return x.marca_id;});
-        c.from('inv_marcas').select('id,nombre').in('id',ids).then(function(rm){
-          var ms=(rm&&rm.data)||[]; if(ms.length<2)return;
-          var anchor=document.querySelector('.brand-txt'); if(!anchor||document.getElementById('prep-marca-sel'))return;
-          ms.sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'');});
-          var sel=document.createElement('select');
-          sel.id='prep-marca-sel'; sel.title='Cambiar de restaurante';
-          sel.innerHTML=ms.map(function(m){return '<option value="'+m.id+'"'+(m.id===marca?' selected':'')+'>'+m.nombre+'</option>';}).join('');
-          sel.onchange=function(){
-            var sub=SUBOF[sel.value]; if(!sub||sel.value===marca)return;
-            location.href='https://'+sub+'.prep.rest';   // cada restaurante = su propio subdominio
-          };
-          anchor.parentNode.insertBefore(makePill(sel,'storefront'),anchor.nextSibling);
+      c.from('prep_usuarios').select('rol_sistema').eq('email',email).maybeSingle().then(function(ru){
+        if(ru&&ru.data&&ru.data.rol_sistema==='superadmin'){
+          c.from('inv_marcas').select('id,nombre').order('id').then(function(rm){
+            mountMarcas((rm&&rm.data)||[],true);
+          }).catch(function(){});
+          return;
+        }
+        // Filtrar por el email del usuario: el selector muestra SOLO las marcas
+        // asignadas a ti. Sin esto, el super admin (RLS pum_self_read devuelve todo)
+        // veria las marcas de otros clientes en cualquier subdominio.
+        c.from('prep_usuario_marcas').select('marca_id').eq('email',email).then(function(r){
+          var rows=(r&&r.data)||[]; if(rows.length<2)return;
+          var ids=rows.map(function(x){return x.marca_id;});
+          c.from('inv_marcas').select('id,nombre').in('id',ids).then(function(rm){
+            mountMarcas((rm&&rm.data)||[],false);
+          }).catch(function(){});
         }).catch(function(){});
       }).catch(function(){});
     }).catch(function(){});

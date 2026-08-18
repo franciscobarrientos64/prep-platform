@@ -183,6 +183,7 @@ textarea.input{min-height:80px;resize:vertical}
   <div class="brand-txt"><div class="cli" data-client-name>Casa Italia</div><div class="mod" id="modName">Mystery Shopper</div></div>
   <div class="header-info">
     <span class="act" id="act-mystery">
+      <a class="btn-ico" id="btnComite" href="/presentacion" style="display:none;text-decoration:none;color:inherit" title="Deck ejecutivo del Comité de Experiencia (solo super admin)"><span class="material-symbols-outlined">co_present</span>Comité de Experiencia</a>
       <button class="btn-ico" onclick="exportarPDF()" title="Exportar reporte en PDF"><span class="material-symbols-outlined">picture_as_pdf</span>Exportar PDF</button>
       <button class="btn-ico primary" onclick="openNueva()"><span class="material-symbols-outlined">add</span>Nueva evaluación</button>
     </span>
@@ -337,6 +338,28 @@ const LEGEND=[['≥90','#1e5af9'],['80–89','#10b981'],['70–79','#ffcc00'],['
 function periodBar(ms){return `<div class="perbar"><button class="pchip ${PER==='all'?'on':''}" onclick="setPer('all')">Todos</button>`+ms.map(m=>`<button class="pchip ${PER===m?'on':''}" onclick="setPer('${m}')">${mLabel(m)}</button>`).join('')+`</div>`;}
 function setPer(p){PER=p;render();}
 
+/* Super admin: enlace al deck del Comité de Experiencia (de la marca activa) y aviso
+   si el cliente que está mirando todavía no tiene visitas cargadas. */
+async function initSuper(){
+  try{
+    const s=(await sb.auth.getSession()).data.session;
+    if(!s||!s.user)return;
+    const me=(await sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle()).data;
+    if(!me||me.rol_sistema!=='superadmin')return;
+    const b=document.getElementById('btnComite');
+    if(b){b.href='/presentacion?marca='+MARCA;b.style.display='';}
+    if(!DB.allVisitas.length){
+      const vs=await sb.from('mys_visitas').select('marca_id');
+      const otras=[...new Set((vs.data||[]).map(v=>v.marca_id))].filter(m=>m!==MARCA);
+      if(otras.length){
+        const ms=await sb.from('inv_marcas').select('id,nombre').in('id',otras);
+        const nom=(ms.data||[]).map(m=>m.nombre).join(' · ');
+        toast('Este cliente no tiene visitas cargadas. Con data: '+nom+' (cambia de restaurante en el encabezado).','warn');
+      }
+    }
+  }catch(e){}
+}
+
 async function load(){
   themeCharts();
   const [loc,pl,vi,ac]=await Promise.all([
@@ -358,6 +381,7 @@ async function load(){
   if(!booted){booted=true;if(DB.locales.length>1)TAB='consolidado';}
   buildTabs();render();
   document.getElementById('boot').classList.add('gone');
+  initSuper();
 }
 
 function buildTabs(){
