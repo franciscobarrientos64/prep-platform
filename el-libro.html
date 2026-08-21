@@ -177,7 +177,8 @@ function render(){
   $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
   $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
-  const HIDEADD=['equipo','politicas','recetario','plantillas','cursos'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';
+  const HIDEADD=['equipo','politicas','recetario','plantillas','cursos'];
+  $('#h-add').style.display=(!state.esAdmin||HIDEADD.includes(state.view))?'none':'';
   if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
@@ -279,10 +280,13 @@ async function toggleExamen(id,val){
   await loadExamenes();render();toast(val?'Servido · examen publicado al equipo':'Examen en borrador','ok');
 }
 function renderExamenes(){
-  const exs=(state.examenes||[]).filter(e=>e.activo!==false||state.esAdmin),res=state.examResult||[];
-  $('#screen').innerHTML=examPanelHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:6px 0 12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
+  const exs=(state.examenes||[]).filter(e=>e.activo!==false||state.esAdmin);
+  // Sin permiso de revisión, cada quien ve solo sus propios resultados.
+  const yo=(localStorage.getItem('lb_lector')||'').trim().toLowerCase();
+  const res=state.puedeRevisar?(state.examResult||[]):(state.examResult||[]).filter(r=>(r.persona||'').trim().toLowerCase()===yo);
+  $('#screen').innerHTML=examPanelHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:6px 0 12px">${state.esAdmin?'Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝':'Toca un examen para rendirlo. 📝'}</div>`+
     (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const nAb=preg.filter(p=>p.tipo==='abierta').length;const nMc=preg.length-nAb;const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.filter(r=>r.total).map(r=>Math.round(r.puntaje/r.total*100)).concat([0])):null;const nMis=mis.length;
-      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${nMc} de opción múltiple${nAb?(' · '+nAb+' para escribir'):''}${e.descripcion?(' · '+e.descripcion):''}${mejor?(' · mejor '+mejor+'%'):''}</div></div>${e.activo===false?'<span class="tagx alta" style="white-space:nowrap">Borrador</span>':''}${state.esAdmin?`<button class="btn-ico ${e.activo===false?'primary':''}" data-pub="${e.id}" data-val="${e.activo===false?'1':'0'}" style="width:auto;padding:9px 12px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${e.activo===false?'rocket_launch':'visibility_off'}</span>${e.activo===false?'Publicar':'Ocultar'}</button>`:''}${e.activo===false?'':`<button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button>`}</div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
+      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${nMc} de opción múltiple${nAb?(' · '+nAb+' para escribir'):''}${e.descripcion?(' · '+e.descripcion):''}${mejor?(' · mejor '+mejor+'%'):''}</div></div>${e.activo===false?'<span class="tagx alta" style="white-space:nowrap">Borrador</span>':''}${state.esAdmin?`<button class="btn-ico ${e.activo===false?'primary':''}" data-pub="${e.id}" data-val="${e.activo===false?'1':'0'}" style="width:auto;padding:9px 12px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${e.activo===false?'rocket_launch':'visibility_off'}</span>${e.activo===false?'Publicar':'Ocultar'}</button>`:''}${e.activo===false?'':`<button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button>`}</div>`}).join('')||(state.esAdmin?'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>':'<div class="empty">Todavía no hay exámenes disponibles.</div>'))+
     (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`
       +`<div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-bottom:6px">Dos puntajes por persona: conocimiento y venta sugestiva${state.puedeRevisar?' · toca un resultado para leer sus líneas':''}</div>`
       +res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);
@@ -306,8 +310,9 @@ function renderExamenes(){
 function tomarExamen(ex){
   if(!ex)return;
   const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];const resp={};
-  const persona=(prompt('Tu nombre (para registrar el resultado):')||'').trim();
+  const persona=(prompt('Tu nombre (para registrar el resultado):',localStorage.getItem('lb_lector')||'')||'').trim();
   if(!persona)return;
+  try{localStorage.setItem('lb_lector',persona)}catch(e){}
   const nMC=preg.filter(p=>p.tipo!=='abierta').length,nAB=preg.length-nMC;
   setHead('📝',ex.titulo,nMC+' de opción múltiple'+(nAB?' · '+nAB+' para escribir':''));
   const MIN_PAL=5;   // "más de 4 palabras" para que la línea cuente
