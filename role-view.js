@@ -164,44 +164,51 @@
     var sb=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
     sb.auth.getSession().then(function(r){
       var s=r&&r.data&&r.data.session; if(!s||!s.user)return;
-      sb.from('prep_usuarios').select('rol_sistema,nombre').eq('email',s.user.email).maybeSingle().then(function(ru){
-        var yo=ru&&ru.data;
+      var correo=(s.user.email||'').toLowerCase();
+      sb.from('prep_usuarios').select('rol_sistema,nombre').ilike('email',correo).limit(1).then(function(ru){
+        var yo=(ru&&ru.data&&ru.data[0])||null;
         if(!yo||yo.rol_sistema!=='superadmin'){
-          // Solo el super admin usa esta herramienta. Si quedó una llave suelta, se limpia.
           if(window.PREP_VISTA){ try{sessionStorage.removeItem(KEY)}catch(e){} }
           return;
         }
+        // El botón se monta YA. Si la consulta de roles falla o tarda, igual existe.
+        var opciones=[
+          {grupo:'Tu sesión',nombre:'Yo · Super Admin',propio:true,detalle:yo.nombre||correo},
+          {grupo:'Gerencia del restaurante',nombre:'Admin del restaurante',rol_sistema:'admin_marca',detalle:'Ve todo lo del cliente'},
+          {grupo:'Gerencia del restaurante',nombre:'Gerente',rol_sistema:'gerente',detalle:'Ve todo lo del cliente'},
+          {grupo:'Roles del equipo',nombre:'Operativo sin rol',rol_sistema:'operativo',permisos:{},detalle:'No ve ningún módulo'}
+        ];
+        montar(opciones);
+
         var marca=window.PREP_MARCA||'m6';
-        Promise.all([
-          sb.from('prep_roles').select('*').or('marca_id.eq.'+marca+',marca_id.is.null').order('nombre'),
-          sb.from('prep_marca_modulos').select('modulo,activo').eq('marca_id',marca)
-        ]).then(function(res){
-          var roles=(res[0]&&res[0].data)||[], mm=(res[1]&&res[1].data)||[];
-          var opciones=[{grupo:'Tu sesión',nombre:'Yo · Super Admin',propio:true,detalle:yo.nombre||''}];
-          opciones.push({grupo:'Gerencia del restaurante',nombre:'Admin del restaurante',rol_sistema:'admin_marca',detalle:'Ve todo lo del cliente'});
-          opciones.push({grupo:'Gerencia del restaurante',nombre:'Gerente',rol_sistema:'gerente',detalle:'Ve todo lo del cliente'});
+        // Roles del cliente: se agregan a la lista cuando llegan (la lista se lee al abrir el panel).
+        sb.from('prep_roles').select('*').eq('marca_id',marca).order('nombre').then(function(rr){
+          var roles=(rr&&rr.data)||[];
           roles.forEach(function(rl){
-            var ks=Object.keys(rl.permisos||{}).filter(function(k){return k!=='formatos'});
-            opciones.push({grupo:'Roles del equipo',nombre:rl.nombre,rol_sistema:'operativo',rol_id:rl.id,permisos:rl.permisos||{},
+            var ks=Object.keys(rl.permisos||{}).filter(function(k){return k!=='formatos'&&k!=='revisar_examenes'});
+            opciones.push({grupo:'Roles del equipo',nombre:rl.nombre,rol_sistema:'operativo',rol_id:rl.id,
+                           permisos:rl.permisos||{},
                            detalle:ks.length?(ks.length+' módulo'+(ks.length>1?'s':'')):'sin módulos asignados'});
           });
-          if(!roles.length) opciones.push({grupo:'Roles del equipo',nombre:'Operativo sin rol',rol_sistema:'operativo',permisos:{},detalle:'No ve ningún módulo'});
-          montar(opciones);
+        }).catch(function(){});
 
-          // Bloqueo de pantallas a las que el rol simulado no llega
-          var v=window.PREP_VISTA; if(!v) return;
-          if(esConsolaSuper){
-            bloquear('Solo para Prep','Esta consola es del super admin de Prep. Con el rol <b>'+v.nombre+'</b> no existe: el cliente ni siquiera la ve enlazada.');
+        // Bloqueo de pantallas a las que el rol simulado no llega
+        var v=window.PREP_VISTA; if(!v) return;
+        if(esConsolaSuper){
+          bloquear('Solo para Prep','Esta consola es del super admin de Prep. Con el rol <b>'+v.nombre+'</b> no existe: el cliente ni siquiera la ve enlazada.');
+          return;
+        }
+        if(modActual){
+          if(window.prepNivel(modActual)==='ninguno'){
+            bloquear('Sin acceso con este rol','El rol <b>'+v.nombre+'</b> no tiene permiso sobre este módulo. Puedes ajustarlo en <b>Usuarios y permisos</b>.');
             return;
           }
-          if(modActual){
-            var enPaquete=!mm.length||mm.some(function(x){return x.modulo===modActual&&x.activo});
-            if(!enPaquete){ bloquear('No incluido en el plan','Este módulo no está en el paquete contratado por el cliente, así que no lo ve nadie de su equipo.'); return; }
-            if(window.prepNivel(modActual)==='ninguno'){
-              bloquear('Sin acceso con este rol','El rol <b>'+v.nombre+'</b> no tiene permiso sobre este módulo. Puedes ajustarlo en <b>Usuarios y permisos</b>.');
-            }
-          }
-        }).catch(function(){});
+          sb.from('prep_marca_modulos').select('modulo,activo').eq('marca_id',marca).then(function(rm){
+            var mm=(rm&&rm.data)||[];
+            if(mm.length&&!mm.some(function(x){return x.modulo===modActual&&x.activo}))
+              bloquear('No incluido en el plan','Este módulo no está en el paquete contratado por el cliente, así que no lo ve nadie de su equipo.');
+          }).catch(function(){});
+        }
       }).catch(function(){});
     }).catch(function(){});
   }
