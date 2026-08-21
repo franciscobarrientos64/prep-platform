@@ -100,7 +100,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -128,14 +128,20 @@ async function loadRecetario(){
     state.prodMap={};(p.data||[]).forEach(x=>state.prodMap[x.id]=x);
   }catch(e){state.recetario=state.recetario||[];state.prodMap=state.prodMap||{}}
 }
-async function loadExamenes(){const[e,r]=await Promise.all([sb.from('rrhh_examenes').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at',{ascending:false}),sb.from('rrhh_examen_resultados').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(50)]);state.examenes=e.data||[];state.examResult=r.data||[]}
+async function loadExamenes(){const[e,r]=await Promise.all([sb.from('rrhh_examenes').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}),sb.from('rrhh_examen_resultados').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(50)]);state.examenes=e.data||[];state.examResult=r.data||[]}
 async function loadEquipo(){try{const{data}=await sb.rpc('prep_login_roster',{p_marca:MARCA});state.equipo=data||[]}catch(e){state.equipo=[]}}
 async function loadEventos(){const{data}=await sb.from('lb_eventos').select('*').eq('local_id',LOCAL).order('fecha');state.eventos=data||[]}
 async function loadExamPanel(){try{const[e,n]=await Promise.all([sb.from('lb_examenes').select('*').eq('local_id',LOCAL).order('orden'),sb.from('lb_examen_notas').select('*')]);state.examPanel=e.data||[];state.examNotas=n.data||[]}catch(e){state.examPanel=[];state.examNotas=[]}}
+/* Cursos propios del cliente (material hecho con su carta/procedimientos). Se publican
+   desde esta misma pestana: mientras estan en borrador solo los ve la gerencia. */
+async function loadCursosCasa(){try{const{data}=await sb.from('lb_cursos').select('*').eq('marca_id',MARCA).order('orden');state.cursosCasa=data||[]}catch(e){state.cursosCasa=[]}}
+async function loadRol(){try{const s0=(await sb.auth.getSession()).data.session;if(!s0||!s0.user)return;
+  const{data}=await sb.from('prep_usuarios').select('rol_sistema').eq('email',s0.user.email).maybeSingle();
+  state.esAdmin=!!data&&(data.rol_sistema==='superadmin'||data.rol_sistema==='admin_marca');}catch(e){state.esAdmin=false}}
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
 async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
@@ -206,9 +212,28 @@ const CATALOGO=[
  {g:'Administración · Liderazgo',items:[{t:'Liderazgo de piso (jefe de sala)',e:'⭐',url:'/cursos/liderazgo.html'},{t:'Briefing pre-servicio efectivo',e:'🚩',url:'/cursos/briefing.html'},{t:'The Talk: feedback 1 a 1',e:'🗣️',url:'/cursos/the-talk.html'},{t:'Manejo de quejas y crisis (avanzado)',e:'🧯',url:'/cursos/crisis.html'},{t:'Turnos, planilla y labor cost',e:'🗓️',url:'/cursos/turnos-planilla.html'},{t:'KPIs del restaurante',e:'📊',url:'/cursos/kpis.html'},{t:'Mystery shopper: cómo subir el puntaje',e:'🕵️',url:'/cursos/mystery-shopper.html'},{t:'Reclutamiento y onboarding',e:'🧲',url:'/cursos/reclutamiento.html'},{t:'Caja y prevención de fraude',e:'🔐',url:'/cursos/caja-fraude.html'},{t:'SUNAT, facturación y cumplimiento',e:'🧾',url:'/cursos/sunat.html'},{t:'Reputación online y reseñas',e:'⭐',url:'/cursos/reputacion.html'}]},
  {g:'Especialización',items:[{t:'Sommelier avanzado',e:'🍷',url:'/cursos/sommelier.html'},{t:'Mixología avanzada',e:'🍸',url:'/cursos/mixologia.html'},{t:'Atención a VIP y protocolo',e:'👑',url:'/cursos/vip.html'},{t:'Inglés para restaurantes',e:'🌎',url:'/cursos/ingles.html'},{t:'Storytelling de platos y carta',e:'📚',url:'/cursos/storytelling.html'},{t:'Sostenibilidad y residuos',e:'♻️',url:'/cursos/sostenibilidad.html'}]}
 ];
+/* Publicar / despublicar un curso de la casa. Solo gerencia y super admin. */
+async function toggleCursoCasa(id,val){
+  const{error}=await sb.from('lb_cursos').update({activo:val,publicado_at:val?nowISO():null,publicado_por:val?(localStorage.getItem('lb_lector')||null):null}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadCursosCasa();render();toast(val?'Servido · material habilitado para el equipo':'Material despublicado','ok');
+}
+function cursosCasaHTML(){
+  const cs=(state.cursosCasa||[]).filter(c=>c.activo||state.esAdmin);
+  if(!cs.length)return'';
+  const grupos=[...new Set(cs.map(c=>c.grupo||'Cursos de la casa'))];
+  return grupos.map(g=>`<div style="font-family:var(--font-display);font-size:16px;margin:4px 0 8px;border-bottom:2px solid var(--outline);padding-bottom:3px">${g}</div>`+
+    cs.filter(c=>(c.grupo||'Cursos de la casa')===g).map(c=>`<div class="clk" ${c.activo||state.esAdmin?`data-url="${c.url}"`:''}>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0"><span style="font-size:20px">${c.emoji||'📘'}</span>
+        <div style="min-width:0"><div style="font-weight:600;font-size:14px">${c.titulo}</div>${c.descripcion?`<div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6">${c.descripcion}</div>`:''}</div></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        ${c.activo?'<span class="tagx" style="background:var(--green-soft);border:1.5px solid var(--outline);white-space:nowrap">Abrir ↗</span>':'<span class="tagx alta" style="white-space:nowrap">Borrador</span>'}
+        ${state.esAdmin?`<button class="btn-ico ${c.activo?'':'primary'}" data-curso="${c.id}" data-val="${c.activo?'0':'1'}" style="width:auto;padding:6px 11px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${c.activo?'visibility_off':'rocket_launch'}</span>${c.activo?'Ocultar':'Habilitar'}</button>`:''}
+      </div></div>`).join('')).join('')+'<div style="height:10px"></div>';
+}
 function renderCursos(){
   let total=0,listos=0;CATALOGO.forEach(gr=>gr.items.forEach(it=>{total++;if(it.url)listos++;}));
-  let h=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-bottom:14px">Academia Prep! · <b>${listos} de ${total}</b> cursos listos · el resto en preparación 🎓</div>`;
+  let h=cursosCasaHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-bottom:14px">Academia Prep! · <b>${listos} de ${total}</b> cursos listos · el resto en preparación 🎓</div>`;
   CATALOGO.forEach(gr=>{
     h+=`<div style="font-family:var(--font-display);font-size:16px;margin:18px 0 8px;border-bottom:2px solid var(--outline);padding-bottom:3px">${gr.g}</div>`;
     h+=gr.items.map(it=>{const r=!!it.url;return `<div class="clk" ${r?`data-url="${it.url}"`:''} style="${r?'':'opacity:.6;cursor:default'}">
@@ -216,15 +241,23 @@ function renderCursos(){
       ${r?'<span class="tagx" style="background:var(--green-soft);border:1.5px solid var(--outline);white-space:nowrap">Abrir ↗</span>':'<span class="tagx cat" style="white-space:nowrap">En preparación</span>'}</div>`;}).join('');
   });
   $('#screen').innerHTML=h;
+  $$('#screen [data-curso]').forEach(b=>b.onclick=(ev)=>{ev.stopPropagation();toggleCursoCasa(b.dataset.curso,b.dataset.val==='1')});
   $$('#screen .clk[data-url]').forEach(c=>c.onclick=()=>window.open(c.dataset.url,'_blank','noopener'));
 }
+/* Publicar / despublicar un examen. Mientras esta en borrador solo lo ve la gerencia. */
+async function toggleExamen(id,val){
+  const{error}=await sb.from('rrhh_examenes').update({activo:val}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}
+  await loadExamenes();render();toast(val?'Servido · examen publicado al equipo':'Examen en borrador','ok');
+}
 function renderExamenes(){
-  const exs=state.examenes||[],res=state.examResult||[];
+  const exs=(state.examenes||[]).filter(e=>e.activo!==false||state.esAdmin),res=state.examResult||[];
   $('#screen').innerHTML=examPanelHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:6px 0 12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
     (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.map(r=>Math.round(r.puntaje/r.total*100))):null;
-      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${preg.length} preguntas${e.descripcion?(' · '+e.descripcion):''}${mejor!=null?(' · mejor '+mejor+'%'):''}</div></div><button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button></div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
+      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${preg.length} preguntas${e.descripcion?(' · '+e.descripcion):''}${mejor!=null?(' · mejor '+mejor+'%'):''}</div></div>${e.activo===false?'<span class="tagx alta" style="white-space:nowrap">Borrador</span>':''}${state.esAdmin?`<button class="btn-ico ${e.activo===false?'primary':''}" data-pub="${e.id}" data-val="${e.activo===false?'1':'0'}" style="width:auto;padding:9px 12px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${e.activo===false?'rocket_launch':'visibility_off'}</span>${e.activo===false?'Publicar':'Ocultar'}</button>`:''}${e.activo===false?'':`<button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button>`}</div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
     (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`+res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);const pct=Math.round(r.puntaje/r.total*100);return `<div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed var(--gray-soft);font-size:13px"><span>${r.persona||'—'} · ${ex?ex.titulo:'examen'}</span><strong style="color:${pct>=70?'var(--green)':'var(--secondary)'}">${pct}%</strong></div>`}).join(''):'');
   $$('#screen [data-take]').forEach(b=>b.onclick=()=>tomarExamen(state.examenes.find(e=>e.id===b.dataset.take)));
+  $$('#screen [data-pub]').forEach(b=>b.onclick=()=>toggleExamen(b.dataset.pub,b.dataset.val==='1'));
 }
 function tomarExamen(ex){
   if(!ex)return;const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];const resp={};

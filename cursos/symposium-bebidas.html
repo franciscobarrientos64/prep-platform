@@ -1,0 +1,534 @@
+<!-- Curso: La carta de bebidas de Symposium · Academia Prep! · cliente m7 -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>La carta de bebidas de Symposium · Prep!</title>
+<link rel="icon" type="image/png" href="/logos/m7.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--wine:#7c1f3a;--wine-soft:#f3e1e7;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#f59e0b;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.top .nav a.print{background:var(--ink);color:var(--bg)}
+.hero{background:var(--primary);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--wine-soft);color:var(--wine);border:2px solid var(--wine);border-radius:999px;padding:4px 10px}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.g3{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.tipo{border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px;background:var(--surface)}
+.tipo h3{font-size:14.5px;margin-bottom:3px}.tipo .d{font-size:12px;opacity:.85}.tipo .s{font-family:var(--font-mono);font-size:11px;margin-top:8px;opacity:.7}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--wine-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.88}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--wine);font-weight:600}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.glos{grid-template-columns:1fr}}
+.gterm{border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm);padding:10px 12px;background:var(--surface)}
+.gterm b{display:block;font-size:14px;color:var(--wine);margin-bottom:2px}.gterm span{font-size:12px;opacity:.9;line-height:1.4}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--wine);margin-bottom:7px;font-weight:700}
+.op-box ul{list-style:none;font-size:12px}.op-box li{padding:2px 0 2px 15px;position:relative}.op-box li:before{content:"•";position:absolute;left:2px;color:var(--wine);font-weight:800}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+@media print{@page{size:A4 portrait;margin:9mm}html,body{background:#fff}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .top,.foot{display:none!important}.wrap{padding:0;max-width:100%}section:not(#resumen){display:none}#resumen{margin:0}#resumen .sh{display:none}
+ .onepager{box-shadow:none;padding:11px 12px;margin:0}.op-box{padding:8px 9px}.op-box li{font-size:10px}}
+</style>
+<style>
+/* --- Symposium: paleta del cliente (azul noche + oro del sello) --- */
+:root{--sym:#14315b;--sym-soft:#e6ecf5;--oro:#c39a4e;--oro-soft:#f7efdf}
+.hero{background:var(--sym)!important}
+.hero .k{color:var(--oro);opacity:1}
+.sh .n{background:var(--oro)}
+.sh .tag{background:var(--sym-soft);color:var(--sym);border-color:var(--sym)}
+.gterm b{color:var(--sym)}
+.op-box h4{color:var(--sym)}
+.op-box li:before{color:var(--oro)}
+.paso .ico{background:var(--oro-soft)}
+.paso .t{color:var(--sym)}
+/* Ficha de trago */
+.tragos{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+@media(max-width:720px){.tragos{grid-template-columns:1fr}}
+.trago{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:13px;display:flex;flex-direction:column;gap:7px}
+.trago .nm{display:flex;align-items:baseline;gap:8px}
+.trago .nm h3{font-family:var(--font-display);font-size:16.5px;line-height:1.15;font-weight:400}
+.trago .pr{margin-left:auto;font-family:var(--font-mono);font-size:13px;font-weight:700;color:#fff;background:var(--sym);border:2px solid var(--outline);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.trago .carta{font-size:12.5px;font-style:italic;opacity:.9;border-left:3px solid var(--oro);padding-left:9px}
+.trago dl{display:grid;grid-template-columns:auto 1fr;gap:3px 8px;font-size:12px}
+.trago dt{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--sym);font-weight:700;padding-top:2px}
+.trago dd{opacity:.9}
+.trago .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:4px}
+.trago .chips span{font-family:var(--font-mono);font-size:10px;font-weight:600;border:1.5px solid var(--outline);border-radius:999px;padding:2px 8px;background:var(--oro-soft)}
+.trago .chips span.al{background:#fdecea}
+/* Barra de familia */
+.fam{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.fam b{font-family:var(--font-display);font-size:19px;font-weight:400}
+.fam .rango{font-family:var(--font-mono);font-size:11px;font-weight:700;background:var(--sym);color:#fff;border:2px solid var(--outline);border-radius:999px;padding:3px 10px}
+.fam .ln{flex:1;height:2px;background:var(--outline)}
+.precios{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.precios span{font-family:var(--font-mono);font-size:11.5px;font-weight:600;background:var(--surface);border:2px solid var(--outline);border-radius:999px;padding:4px 11px;box-shadow:2px 2px 0 0 #000}
+@media print{.trago{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Carta de bebidas</span>
+    <nav class="nav">
+      <a href="#m1">1 · La carta</a><a href="#m2">2 · Sours</a><a href="#m3">3 · Bitters</a><a href="#m4">4 · Highballs y Spritz</a><a href="#m5">5 · Mocktails</a><a href="#m6">6 · La despensa</a><a href="#m7">7 · En mesa</a><a href="#resumen">One-pager</a>
+      <a href="#" class="print" onclick="window.print();return false"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">print</span> Imprimir</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero">
+    <div class="k">Academia Prep! · Symposium · Sala y Bar</div>
+    <h1>La carta de bebidas de Symposium</h1>
+    <p>Dieciséis tragos, cuatro familias y una sola idea: nadie en esta casa recomienda algo que no sabe describir. Aquí memorizas qué lleva cada trago, a qué sabe, en qué copa sale y a quién se lo ofreces. Al terminar deberías poder pararte en cualquier mesa, escuchar dos frases del invitado y decir el nombre del trago correcto sin mirar la carta.</p>
+    <div class="meta"><span>📚 7 módulos</span><span>⏱️ ~40 min</span><span>🍸 16 tragos</span><span>🎯 Sala y Bar</span><span>📄 One-pager</span></div>
+  </div>
+  <div class="callout"><b>Por qué importa:</b> la barra es el margen más alto de la casa y el primer trago define la noche entera. Un invitado que pide "algo rico, no muy dulce" y recibe la recomendación exacta pide un segundo; el que recibe un "todos son buenos" pide una cerveza. Además, media carta está en italiano: si tú no traduces el nombre, el invitado no lo pide. Tu conocimiento de la carta <b>es</b> la venta.</div>
+
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>Cómo está armada la carta</h2><span class="tag">Módulo 1</span></div>
+    <p class="lead">La carta tiene dos mitades: <b>Cocktails</b> (con alcohol) y <b>Mocktails</b> (sin alcohol). Dentro de los cocktails hay tres familias, y cada familia es una promesa distinta de sabor. Si te aprendes la familia, ya sabes la mitad de la respuesta antes de abrir la carta.</p>
+    <div class="grid g2">
+      <div class="tipo"><h3>Sours · 6 tragos · S/40–42</h3><div class="d">La familia grande de la casa y donde vive el trabajo de autor. Todos comparten la misma columna vertebral: destilado + cítrico + un elemento dulce o aromático. Se preparan <b>batidos</b> y se sirven fríos, en copa, sin hielo o con hielo grande. Son la respuesta por defecto para quien quiere "un cóctel rico".</div><div class="s">Perfil: ácido, fresco, sedoso.</div></div>
+      <div class="tipo"><h3>Bitters · 2 tragos · S/45–59</h3><div class="d">Los dos negronis. Tragos <b>refrescados</b> (no batidos), cortos, potentes, con hielo grande y sin cítrico. Van para el bebedor experimentado, como aperitivo antes de comer o como bajativo. Aquí está el trago insignia y el más caro de la carta.</div><div class="s">Perfil: amargo, alcohólico, seco.</div></div>
+      <div class="tipo"><h3>Highballs y Spritz · 4 tragos · S/40–45</h3><div class="d">Los tragos largos con burbuja. Se montan directo en el vaso o copa, con mucho hielo, y la burbuja entra al final. Son los más fáciles de beber, los más bajos en alcohol percibido y los ideales para la primera ronda, la terraza o el que "no quiere algo fuerte".</div><div class="s">Perfil: refrescante, ligero, efervescente.</div></div>
+      <div class="tipo"><h3>Mocktails · 4 tragos · S/25–30</h3><div class="d">Sin alcohol, pero construidos con la misma técnica: cordiales de la casa, infusiones, cítrico fresco y burbuja. No son "jugos". Se ofrecen siempre, y de forma natural: al que maneja, a quien no toma, a la embarazada, al que ya va por su tercer trago y a quien quiere alargar la sobremesa.</div><div class="s">Perfil: frutal, cítrico, sin alcohol.</div></div>
+    </div>
+    <div class="precios">
+      <span>Mocktails · S/25 – S/30</span><span>Sours · S/40 – S/42</span><span>Highballs y Spritz · S/40 – S/45</span><span>Bitters · S/45 – S/59</span><span>Trago más caro: Negroni Symposium S/59</span>
+    </div>
+    <div class="callout"><b>Regla del nombre:</b> casi todos los nombres están en italiano y describen el trago. <i>Dodici</i> es doce (por el Chivas 12), <i>Agrumi</i> son cítricos, <i>Foresta e Fico</i> es bosque e higo, <i>Occhio di Strega</i> es ojo de bruja, <i>Colomba</i> es paloma, <i>Sbagliato</i> es equivocado. Traduce el nombre en voz alta cuando lo ofrezcas: es la mitad de la historia y hace que el invitado lo recuerde.</div>
+  </section>
+
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Sours de autor</h2><span class="tag">Módulo 2</span></div>
+    <p class="lead">Seis sours, seis destilados distintos: pisco, whisky escocés, ron, licor de hierbas, vodka y whiskey americano. Ninguno se repite. Eso significa que <b>siempre</b> hay un sour para el invitado, sea cual sea el destilado que prefiera: tu trabajo es preguntarle qué toma normalmente y llevarlo al suyo.</p>
+    <div class="fam"><b>Sours</b><span class="rango">S/40 – S/42</span><span class="ln"></span></div>
+    <div class="tragos">
+
+      <div class="trago">
+        <div class="nm"><h3>Amargo Mandarino</h3><span class="pr">S/40</span></div>
+        <div class="carta">"Amargo, cítrico y sedoso. El clásico italiano, pero con Pisco. Naranja amarga, hierbas y un final amargo que pide otro sorbo."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Pisco, amargo italiano, naranja amarga y hierbas.</dd>
+          <dt>Sabe a</dt><dd>Arranca cítrico y termina amargo. Textura sedosa, nada empalagoso. El amargor no molesta: limpia la boca y da ganas del siguiente sorbo.</dd>
+          <dt>La idea</dt><dd>Tomar el aperitivo amargo italiano y cambiarle el corazón por pisco. Es el puente entre Italia y Perú, y por eso abre la carta.</dd>
+          <dt>Ofréceselo a</dt><dd>Quien dice "algo que no sea dulce", al fan del Negroni o del Aperol que quiere probar algo peruano, y a quien va a comer algo graso: el amargor le prepara el paladar.</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Pisco</span><span>Amargo</span><span>Aperitivo</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Dodici Agrumi</h3><span class="pr">S/40</span></div>
+        <div class="carta">"Chivas 12, cordial cítrico house-made, limón, sal y Orange bitters. Notas de roble y miel de Chivas realzadas por la acidez y un guiño salino que potencia todo."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Chivas Regal 12 años, cordial de cítricos hecho en casa, limón, sal y bitter de naranja.</dd>
+          <dt>Sabe a</dt><dd>Whisky con roble y miel, abierto por el cítrico. La pizca de sal no lo hace salado: baja el amargor y hace que la fruta se sienta más redonda y más larga en boca.</dd>
+          <dt>La idea</dt><dd><i>Dodici</i> = doce, por el Chivas 12; <i>Agrumi</i> = cítricos. El nombre es literalmente la receta.</dd>
+          <dt>Ofréceselo a</dt><dd>Al que toma whisky solo y dice que "los cócteles son dulces". Este es el trago que le cambia la idea. También al que pide un Whisky Sour: este es el nuestro, y es mejor.</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Whisky escocés</span><span>Cítrico</span><span>Salino</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Tramonto d'Oro Rosso</h3><span class="pr">S/42</span></div>
+        <div class="carta">"Ron 7 años, limón y Malbec. Un sour donde la caña abraza al cítrico, y el vino lo cierra con elegancia. Estructura, seda y sombra."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Ron 7 años, limón y un flotado de Malbec.</dd>
+          <dt>Sabe a</dt><dd>Empieza dulce y tostado por la caña, se abre con el limón y cierra seco y con taninos cuando llega el vino. Cada sorbo cambia según cuánto vino arrastres.</dd>
+          <dt>La idea</dt><dd><i>Atardecer de oro rojo</i>: el vino tinto es más denso y se queda flotando sobre el sour, formando dos capas. Es el trago <b>más fotogénico de la carta</b>: sale a la mesa y las mesas de al lado lo piden.</dd>
+          <dt>Ofréceselo a</dt><dd>Al que toma vino tinto y no sabe qué pedir de la barra, a las mesas que están fotografiando la comida, y como primer trago de una mesa grande: vende solo.</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Ron</span><span>Vino tinto</span><span>Dos capas</span><span class="al">Sulfitos</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Occhio di Strega</h3><span class="pr">S/40</span></div>
+        <div class="carta">"Strega, Vermut blanco, ananas, limone e basilico. Dulce al inicio con final herbal, como un hechizo en copa."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Licor Strega, vermut blanco, piña, limón y albahaca.</dd>
+          <dt>Sabe a</dt><dd>Entra dulce y tropical por la piña, y se transforma: el Strega deja azafrán, menta y un fondo de hierbas que se queda. La albahaca se siente en la nariz antes que en la boca.</dd>
+          <dt>La idea</dt><dd><i>Ojo de bruja</i>. Strega significa bruja en italiano: es un licor amarillo de Benevento hecho con unas 70 hierbas y azafrán, que es lo que le da el color. De ahí el hechizo.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien quiere "algo diferente", al curioso que pregunta qué es lo más raro de la carta, y a quien le gustan los tragos herbales o el gin.</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Licor de hierbas</span><span>Piña</span><span>Herbal</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Symposium Coral</h3><span class="pr">S/40</span></div>
+        <div class="carta">"Absolut, cordial di pomodoro, Jeréz. Fresco, ligero y brillante, con el susurro de frutos secos del Jeréz."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Vodka Absolut, cordial de tomate de la casa y Jerez.</dd>
+          <dt>Sabe a</dt><dd>No sabe a Bloody Mary. El cordial de tomate se clarifica y queda limpio, brillante y con un punto salino-umami; el Jerez aporta ese fondo de almendra y nuez. Ligero, seco y muy fácil de tomar.</dd>
+          <dt>La idea</dt><dd>Es el trago que lleva el nombre de la casa y el más "de chef" de la carta: un sabor salado convertido en cóctel. Su color coral viene del tomate.</dd>
+          <dt>Ofréceselo a</dt><dd>Al invitado que ya conoce todo y busca algo que no haya probado, al que va a comer entradas saladas, y a quien pide algo "ligero y seco".</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Vodka</span><span>Umami</span><span>Ligero</span><span class="al">Sulfitos</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Foresta e Fico</h3><span class="pr">S/42</span></div>
+        <div class="carta">"Tennessee Whiskey infusionado con Shitake, miel de higos y limón. Ambar y terroso. Sabor que abraza el umami del bosque y la dulzura oscura del higo."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Tennessee whiskey infusionado con shiitake, miel de higos y limón.</dd>
+          <dt>Sabe a</dt><dd>Ámbar, terroso, profundo. El shiitake no sabe a champiñón en el vaso: deja un fondo umami que hace el whiskey más redondo. El higo pone la dulzura oscura y el limón evita que se vuelva pesado.</dd>
+          <dt>La idea</dt><dd><i>Bosque e higo</i>. Es el más técnico de la carta: el hongo se infusiona en el destilado durante días antes de servicio.</dd>
+          <dt>Ofréceselo a</dt><dd>Como trago de sobremesa o de noche fría, después del postre, y a quien pide algo "con cuerpo". Cuenta cómo se hace la infusión: esa historia vende el trago sola.</dd>
+        </dl>
+        <div class="chips"><span>Batido</span><span>Whiskey</span><span>Umami</span><span>Bajativo</span><span class="al">Miel</span><span class="al">Hongos</span></div>
+      </div>
+
+    </div>
+    <div class="callout"><b>Cómo se hace un sour (para que sepas de qué hablas):</b> se mide, se bate fuerte con hielo unos 12 segundos para enfriar, diluir y airear, y se cuela doble para que no pasen astillas de hielo ni pulpa. Por eso llega frío, con espuma fina y textura sedosa. Un sour que llega tibio o sin espuma <b>se devuelve a la barra</b>: no lo lleves a la mesa.</div>
+  </section>
+
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Bitters: los dos negronis</h2><span class="tag">Módulo 3</span></div>
+    <p class="lead">El Negroni es el aperitivo italiano por excelencia: partes iguales de destilado, bitter rojo y vermut rosso, refrescado en vaso mezclador y servido corto con un hielo grande. No lleva cítrico y no se bate nunca. Symposium tiene dos versiones y hay que saber diferenciarlas, porque una cuesta S/14 más que la otra.</p>
+    <div class="fam"><b>Bitters</b><span class="rango">S/45 – S/59</span><span class="ln"></span></div>
+    <div class="tragos">
+
+      <div class="trago">
+        <div class="nm"><h3>Negroni Symposium</h3><span class="pr">S/59</span></div>
+        <div class="carta">"Negroni con nuestro exclusivo gin Portofino, bitter y Mancino Rosso Amaranto."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Gin Portofino, bitter y vermut Mancino Rosso Amaranto.</dd>
+          <dt>Sabe a</dt><dd>Un Negroni más luminoso y mediterráneo que el clásico: el Portofino es un gin de la Riviera italiana, con cítricos y hierbas de costa, y el Mancino Amaranto es un vermut artesanal más especiado y menos azucarado. Amargo, redondo, largo.</dd>
+          <dt>Por qué cuesta S/59</dt><dd>Es el trago insignia y el único que usa dos productos italianos exclusivos de la casa. <b>No te disculpes por el precio: explica los productos.</b> Un Negroni de S/59 con ese gin es un trago de autor, no un recargo.</dd>
+          <dt>Ofréceselo a</dt><dd>Al que pide "un Negroni" a secas —ofrece este primero, siempre—, al bebedor de gin y a quien conoce de aperitivos italianos.</dd>
+        </dl>
+        <div class="chips"><span>Refrescado</span><span>Gin</span><span>Amargo</span><span>Aperitivo</span><span>Insignia</span><span class="al">Sulfitos</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Corsario Negroni</h3><span class="pr">S/45</span></div>
+        <div class="carta">"Flor de Caña 12, Bitter, Vermut Rosso y licor de Liquirizia."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Ron Flor de Caña 12 años, bitter, vermut rosso y licor de regaliz (<i>liquirizia</i>).</dd>
+          <dt>Sabe a</dt><dd>Un Negroni más dulce y oscuro. El ron añejo reemplaza al gin y le quita filo; el regaliz aporta un anisado negro que se queda al final. Más goloso y más fácil de entrar que el Symposium.</dd>
+          <dt>La idea</dt><dd><i>Corsario</i>: el pirata del Caribe metido en un trago italiano. Ron en vez de gin.</dd>
+          <dt>Ofréceselo a</dt><dd>Al que quiere probar un Negroni pero teme que sea muy amargo, al bebedor de ron añejo, y como bajativo después de comer.</dd>
+        </dl>
+        <div class="chips"><span>Refrescado</span><span>Ron</span><span>Regaliz</span><span>Bajativo</span><span class="al">Sulfitos</span></div>
+      </div>
+
+    </div>
+    <div class="do2" style="margin-top:14px">
+      <div class="box yes"><h4>Así se sirve un bitter</h4><ul>
+        <li>Vaso corto (rocks) y un solo hielo grande</li>
+        <li>Refrescado en vaso mezclador, nunca batido</li>
+        <li>Con twist de cáscara de naranja, exprimida sobre el vaso</li>
+        <li>Se toma lento: no apures al invitado ni retires el vaso</li>
+      </ul></div>
+      <div class="box no"><h4>Errores que se notan</h4><ul>
+        <li>Servirlo con hielo picado: se aguará en cinco minutos</li>
+        <li>Ofrecerlo como primer trago a quien nunca tomó amargos</li>
+        <li>Decir "es como un Campari" y dejarlo ahí</li>
+        <li>Confundir los dos: uno es de gin (S/59) y otro de ron (S/45)</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Highballs y Spritz</h2><span class="tag">Módulo 4</span></div>
+    <p class="lead">Los cuatro tragos largos de la carta. Todos llevan burbuja, todos son fáciles de tomar y todos son la respuesta correcta cuando el invitado dice "algo fresco" o "algo no muy fuerte". Se montan en el vaso o la copa con hielo hasta arriba, y la burbuja entra <b>al final</b> para que no se pierda.</p>
+    <div class="fam"><b>Highballs</b><span class="rango">S/40 – S/45</span><span class="ln"></span></div>
+    <div class="tragos">
+
+      <div class="trago">
+        <div class="nm"><h3>Colomba</h3><span class="pr">S/45</span></div>
+        <div class="carta">"Refrescante y efervescente. Tequila Jimador, limón y toronja rosada."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Tequila Jimador, limón y toronja rosada.</dd>
+          <dt>Sabe a</dt><dd>Cítrico y ligeramente amargo por la toronja, con el fondo vegetal del agave. Muy refrescante, poco dulce, se toma rápido.</dd>
+          <dt>La idea</dt><dd><i>Colomba</i> es paloma en italiano: es la Paloma mexicana con nombre italiano, el trago de tequila más tomado en México.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien pide "algo fresco", al que pediría un gin tonic por defecto, y para acompañar toda la comida: aguanta bien un plato completo.</dd>
+        </dl>
+        <div class="chips"><span>En vaso</span><span>Tequila</span><span>Toronja</span><span>Refrescante</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Amaro Tónico</h3><span class="pr">S/40</span></div>
+        <div class="carta">"Blend de amaros italianos con kalhua y burbujeante quinina."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Una mezcla de amaros italianos, licor de café (Kahlúa) y agua tónica.</dd>
+          <dt>Sabe a</dt><dd>Amargo de hierbas y café tostado, alargado por la quinina de la tónica, que es amarga y burbujeante. Seco, adulto, muy poco dulce a pesar del licor de café.</dd>
+          <dt>La idea</dt><dd>El <i>amaro</i> es el bajativo italiano de hierbas que se toma después de comer para asentar. Aquí se sirve largo y con burbuja, así que también funciona antes.</dd>
+          <dt>Ofréceselo a</dt><dd>Después del postre en vez del café, o en vez del café: hace las dos cosas. Y al que dice que le gustan los tragos amargos.</dd>
+        </dl>
+        <div class="chips"><span>En vaso</span><span>Amaro</span><span>Café</span><span>Bajativo</span></div>
+      </div>
+
+    </div>
+    <div class="fam"><b>Spritz</b><span class="rango">S/42</span><span class="ln"></span></div>
+    <div class="tragos">
+
+      <div class="trago">
+        <div class="nm"><h3>Sbagliato Spritz</h3><span class="pr">S/42</span></div>
+        <div class="carta">"Unión de dos clásicos, Aperol y Vermut Rosso, toronja rosada y burbujas."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Aperol, vermut rosso, toronja rosada y burbujas.</dd>
+          <dt>Sabe a</dt><dd>Naranja amarga y toronja sobre una base de vermut dulce, aligerado por la burbuja. Menos dulce que un Aperol Spritz normal y con más cuerpo.</dd>
+          <dt>La idea</dt><dd><i>Sbagliato</i> significa <b>equivocado</b>. El Negroni Sbagliato nació en Milán cuando un bartender agarró la botella de espumante en vez de la de gin al preparar un Negroni: el error se volvió clásico. Cuéntalo, es la mejor historia de la carta.</dd>
+          <dt>Ofréceselo a</dt><dd>Como primer trago de la mesa, a quien pide un Aperol Spritz —ofrece este, es mejor y es nuestro— y a mesas grandes: entra a todos.</dd>
+        </dl>
+        <div class="chips"><span>En copa</span><span>Aperol</span><span>Burbujas</span><span>Primer trago</span><span class="al">Sulfitos</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Rito Bianco</h3><span class="pr">S/42</span></div>
+        <div class="carta">"Vermut Bianco, Shrup de piña, tomillo y burbujas."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Vermut bianco, sirope de piña de la casa, tomillo y burbujas.</dd>
+          <dt>Sabe a</dt><dd>El spritz blanco: floral y suave, con la piña por delante y el tomillo apareciendo al final. El más ligero y el de menor graduación de todos los cocktails.</dd>
+          <dt>La idea</dt><dd><i>Rito blanco</i>, la contraparte clara del Sbagliato. Si el Sbagliato es naranja y amargo, este es dorado y suave.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien no toma amargos, a quien quiere algo suave a mediodía, y como segunda ronda para no subir la intensidad.</dd>
+        </dl>
+        <div class="chips"><span>En copa</span><span>Vermut blanco</span><span>Piña</span><span>Suave</span><span class="al">Sulfitos</span></div>
+      </div>
+
+    </div>
+    <div class="callout"><b>Regla de la burbuja:</b> un spritz o highball se sirve con el vaso <b>lleno de hielo</b>, no con tres cubos. Suena contraintuitivo, pero más hielo = menos dilución, porque el vaso se mantiene frío y el hielo se derrite más lento. Si te llega un trago largo con poco hielo, pídelo de nuevo antes de llevarlo.</div>
+  </section>
+
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Mocktails</h2><span class="tag">Módulo 5</span></div>
+    <p class="lead">Cuatro tragos sin alcohol, entre S/25 y S/30. No son un plan B ni un descuento: llevan los mismos cordiales e infusiones que los cocktails y se sirven en la misma cristalería. <b>Ofrécelos siempre en voz alta</b>, junto a los cocktails, sin esperar a que alguien diga "yo no tomo". Esa frase le ahorra el momento incómodo a un invitado y te suma un consumo que se iba a perder.</p>
+    <div class="fam"><b>Mocktails</b><span class="rango">S/25 – S/30</span><span class="ln"></span></div>
+    <div class="tragos">
+
+      <div class="trago">
+        <div class="nm"><h3>Jamaica Fizz</h3><span class="pr">S/25</span></div>
+        <div class="carta">"Infusion de flor de Jamaica, jugo de cramberry, cordial de maracuyá y agua con gas."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Infusión de flor de Jamaica (hibisco), jugo de cranberry, cordial de maracuyá y agua con gas.</dd>
+          <dt>Sabe a</dt><dd>Ácido y floral, con el punto astringente del cranberry y el maracuyá por encima. Color rojo intenso, se ve espectacular en la mesa.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien maneja, y a quien pediría un trago cítrico y ácido. Es el más "cóctel" de los cuatro.</dd>
+        </dl>
+        <div class="chips"><span>Sin alcohol</span><span>Hibisco</span><span>Ácido</span><span>Con burbuja</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Anana Fresco</h3><span class="pr">S/25</span></div>
+        <div class="carta">"Mezcla de piña golden, cordial de cítricos, maracuyá y top de agua con gas."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Piña golden, cordial de cítricos, maracuyá y agua con gas por encima.</dd>
+          <dt>Sabe a</dt><dd>Tropical y jugoso, con el cordial de cítricos —el mismo del Dodici Agrumi— dándole filo para que no quede como un jugo dulce.</dd>
+          <dt>Ofréceselo a</dt><dd>A la mesa con niños, a quien pide "algo fresco sin alcohol" y a mediodía. Es el más fácil de todos.</dd>
+        </dl>
+        <div class="chips"><span>Sin alcohol</span><span>Piña</span><span>Tropical</span><span>Con burbuja</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Pompo Menta</h3><span class="pr">S/30</span></div>
+        <div class="carta">"Sirope simple, limón Tahití, hierbabuena y gaseosa de pomelo."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Sirope simple, limón Tahití, hierbabuena y gaseosa de pomelo (toronja).</dd>
+          <dt>Sabe a</dt><dd>Herbal y muy refrescante, tipo mojito sin ron, con el amargo suave del pomelo al final. El limón Tahití es más suave y aromático que el limón peruano.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien tomaría una Colomba pero sin alcohol —el perfil de toronja es el mismo—, y a quien quiere algo largo para toda la comida.</dd>
+        </dl>
+        <div class="chips"><span>Sin alcohol</span><span>Hierbabuena</span><span>Toronja</span><span>Refrescante</span></div>
+      </div>
+
+      <div class="trago">
+        <div class="nm"><h3>Coco Ice</h3><span class="pr">S/30</span></div>
+        <div class="carta">"Leche de coco, limón y hierba buena."</div>
+        <dl>
+          <dt>Lleva</dt><dd>Leche de coco, limón y hierbabuena.</dd>
+          <dt>Sabe a</dt><dd>El único cremoso de la carta: suave, redondo y frío, con el limón cortando la grasa del coco y la hierbabuena refrescando el final.</dd>
+          <dt>Ojo</dt><dd><b>Lleva coco.</b> Es el único mocktail con un alérgeno declarado en la carta: pregúntalo siempre antes de servirlo.</dd>
+          <dt>Ofréceselo a</dt><dd>A quien busca algo dulce y cremoso, como cierre de comida en vez de postre, y a los niños.</dd>
+        </dl>
+        <div class="chips"><span>Sin alcohol</span><span>Cremoso</span><span>Sin burbuja</span><span class="al">Coco</span></div>
+      </div>
+
+    </div>
+    <div class="callout"><b>Nunca digas "es un jugo".</b> Di el nombre y descríbelo igual que un cóctel: <i>"El Jamaica Fizz es una infusión de flor de Jamaica con maracuyá y burbujas, sin alcohol"</i>. El invitado que no toma quiere sentirse parte de la mesa, no atendido aparte.</div>
+  </section>
+
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>La despensa de la casa</h2><span class="tag">Módulo 6</span></div>
+    <p class="lead">La carta repite unos pocos ingredientes en varios tragos. Si entiendes estos ocho, entiendes las dieciséis recetas — y puedes responder cualquier pregunta del invitado sin correr a la barra.</p>
+    <div class="grid g3">
+      <div class="tipo"><h3>Cordial house-made</h3><div class="d">Un cordial es un jarabe cítrico concentrado, hecho en la casa con jugo, cáscara y azúcar. Aporta acidez y aroma a la vez, con más cuerpo que el jugo solo. Aparece en el <b>Dodici Agrumi</b> (cítricos), el <b>Symposium Coral</b> (tomate) y en dos mocktails (maracuyá, cítricos).</div></div>
+      <div class="tipo"><h3>Infusión</h3><div class="d">Dejar un ingrediente sólido reposando dentro del destilado varios días para que le traspase su sabor. El <b>Foresta e Fico</b> usa Tennessee whiskey infusionado con shiitake; el <b>Jamaica Fizz</b>, una infusión de flor de Jamaica. Es trabajo que se hace días antes, no en el momento.</div></div>
+      <div class="tipo"><h3>Vermut</h3><div class="d">Vino fortificado y aromatizado con hierbas. <b>Rosso</b> (rojo, dulce y especiado): Negroni Symposium, Corsario, Sbagliato. <b>Bianco</b> (blanco, floral y más suave): Occhio di Strega, Rito Bianco. Es vino, así que <b>contiene sulfitos</b> y se guarda refrigerado.</div></div>
+      <div class="tipo"><h3>Bitter y amaro</h3><div class="d">Licores italianos amargos de hierbas y raíces. El <b>bitter</b> rojo es el corazón del Negroni; el <b>amaro</b> es el bajativo que se toma después de comer. Ambos amargan, pero el amaro suele ser más dulce y especiado. Están en los dos negronis, el Amaro Tónico y el Amargo Mandarino.</div></div>
+      <div class="tipo"><h3>Strega</h3><div class="d">Licor italiano de Benevento, amarillo brillante, hecho con unas 70 hierbas y azafrán — de ahí el color. Menta, azafrán y una dulzura herbal muy reconocible. Solo aparece en el <b>Occhio di Strega</b>, y es lo que le da el nombre.</div></div>
+      <div class="tipo"><h3>Jerez</h3><div class="d">Vino fortificado del sur de España, seco y con notas de almendra, nuez y salinidad. En el <b>Symposium Coral</b> es lo que hace que un trago de vodka y tomate tenga profundidad y ese "susurro de frutos secos" que dice la carta. También lleva sulfitos.</div></div>
+      <div class="tipo"><h3>Gin Portofino</h3><div class="d">Gin italiano de la Riviera de Liguria, con cítricos y hierbas mediterráneas. Es <b>exclusivo de la casa</b> y por él el Negroni Symposium cuesta S/59. Cuando alguien pregunte por el precio, este es el argumento.</div></div>
+      <div class="tipo"><h3>Toronja rosada</h3><div class="d">Aparece en tres tragos: <b>Colomba</b>, <b>Sbagliato Spritz</b> y (como gaseosa de pomelo) <b>Pompo Menta</b>. Aporta un amargo suave y afrutado. Si a alguien le gustó uno de los tres, ya sabes cuál ofrecerle después.</div></div>
+    </div>
+
+    <p class="lead" style="margin-top:18px">Y el italiano de la carta, para que lo traduzcas sin dudar:</p>
+    <div class="glos">
+      <div class="gterm"><b>Dodici</b><span>Doce. Por el Chivas 12 del Dodici Agrumi.</span></div>
+      <div class="gterm"><b>Agrumi</b><span>Cítricos.</span></div>
+      <div class="gterm"><b>Tramonto d'Oro Rosso</b><span>Atardecer de oro rojo. Por las dos capas del trago.</span></div>
+      <div class="gterm"><b>Occhio di Strega</b><span>Ojo de bruja. <i>Strega</i> es bruja, y también el licor.</span></div>
+      <div class="gterm"><b>Foresta e Fico</b><span>Bosque e higo. El shiitake y la miel de higos.</span></div>
+      <div class="gterm"><b>Ananas · Limone · Basilico</b><span>Piña, limón y albahaca.</span></div>
+      <div class="gterm"><b>Pomodoro</b><span>Tomate. El cordial del Symposium Coral.</span></div>
+      <div class="gterm"><b>Liquirizia</b><span>Regaliz. El licor negro y anisado del Corsario.</span></div>
+      <div class="gterm"><b>Colomba</b><span>Paloma. La Paloma mexicana, en italiano.</span></div>
+      <div class="gterm"><b>Sbagliato</b><span>Equivocado. Por el error milanés que creó el trago.</span></div>
+      <div class="gterm"><b>Rito Bianco</b><span>Rito blanco. El spritz claro de la carta.</span></div>
+      <div class="gterm"><b>Amaro</b><span>Amargo. El bajativo italiano de hierbas.</span></div>
+    </div>
+  </section>
+
+  <section id="m7"><div class="sh"><div class="n">7</div><h2>Cómo se ofrece en mesa</h2><span class="tag">Módulo 7</span></div>
+    <p class="lead">Saber la carta no sirve si el invitado no llega a escucharla. La venta de barra se gana en los primeros noventa segundos de la mesa, antes de que alguien diga "una gaseosa nomás". Esta es la secuencia.</p>
+
+    <div class="card">
+      <div class="paso"><div class="ico">1️⃣</div><div><div class="t">0:00 – 1:30 · Al sentarse</div><h4>Ofrece antes de que pregunten</h4><p>No entregues la carta y te vayas. Di dos tragos concretos y uno sin alcohol: <i>"Antes de la comida les recomiendo el Sbagliato Spritz, que es fresco y con burbujas, o el Negroni Symposium si les gusta lo amargo. Y sin alcohol tenemos el Jamaica Fizz."</i> Tres opciones, no dieciséis.</p></div></div>
+      <div class="paso"><div class="ico">2️⃣</div><div><div class="t">Si dudan</div><h4>Pregunta, no recites</h4><p>Dos preguntas bastan: <b>"¿Qué toma normalmente?"</b> y <b>"¿Lo prefiere fresco o con más cuerpo?"</b>. Con eso ya llegas al trago: whisky → Dodici Agrumi; gin → Negroni Symposium; ron → Tramonto o Corsario; vodka → Symposium Coral; vino tinto → Tramonto d'Oro Rosso; nada fuerte → Rito Bianco o un mocktail.</p></div></div>
+      <div class="paso"><div class="ico">3️⃣</div><div><div class="t">Al describir</div><h4>Nombre, traducción, tres palabras de sabor</h4><p>Siempre en ese orden: <i>"El Foresta e Fico, bosque e higo: whiskey infusionado con hongos shiitake, miel de higos y limón. Es terroso y con cuerpo."</i> Nunca leas la lista completa de ingredientes: el invitado se pierde y pide lo de siempre.</p></div></div>
+      <div class="paso"><div class="ico">4️⃣</div><div><div class="t">Antes de mandar a barra</div><h4>Pregunta por alergias y por el manejo</h4><p>"¿Alguna alergia o algo que no tome?" es parte de la comanda, no un extra. Y si alguien de la mesa maneja, ofrécele el mocktail por nombre, no como consuelo.</p></div></div>
+      <div class="paso"><div class="ico">5️⃣</div><div><div class="t">Al servir</div><h4>Presenta el trago con su nombre</h4><p>"Su Occhio di Strega." Nada más. Deja el trago con el logo o la garnitura mirando al invitado, y no te quedes esperando reacción.</p></div></div>
+      <div class="paso"><div class="ico">6️⃣</div><div><div class="t">Al terminar el primero</div><h4>Ofrece la segunda ronda a tiempo</h4><p>Cuando el vaso esté a un tercio, no vacío. Y ofrece <b>algo distinto</b>, no lo mismo: <i>"¿Le repito el Colomba o le traigo el Amaro Tónico para cerrar?"</i> La segunda ronda es donde se gana el ticket.</p></div></div>
+    </div>
+
+    <p class="lead" style="margin-top:18px">Los cuatro pedidos que más vas a escuchar, y su respuesta:</p>
+    <div class="card" style="overflow-x:auto">
+    <table class="t">
+      <thead><tr><th>El invitado dice</th><th>Ofrécele</th><th>Y si no le convence</th><th>Precio</th></tr></thead>
+      <tbody>
+        <tr><td>"Algo fresco, para empezar"</td><td>Sbagliato Spritz</td><td>Colomba o Rito Bianco</td><td>S/42</td></tr>
+        <tr><td>"Algo que no sea dulce"</td><td>Negroni Symposium</td><td>Amargo Mandarino o Amaro Tónico</td><td>S/59</td></tr>
+        <tr><td>"Yo tomo whisky nomás"</td><td>Dodici Agrumi</td><td>Foresta e Fico</td><td>S/40</td></tr>
+        <tr><td>"Yo no tomo / estoy manejando"</td><td>Jamaica Fizz</td><td>Pompo Menta o Coco Ice</td><td>S/25</td></tr>
+        <tr><td>"Quiero algo diferente"</td><td>Symposium Coral</td><td>Occhio di Strega</td><td>S/40</td></tr>
+        <tr><td>"Para cerrar la comida"</td><td>Amaro Tónico</td><td>Corsario Negroni o Foresta e Fico</td><td>S/40</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="do2" style="margin-top:16px">
+      <div class="box yes"><h4>Alérgenos y avisos que debes dar</h4><ul>
+        <li><b>Coco Ice</b> lleva leche de coco</li>
+        <li><b>Foresta e Fico</b> lleva hongos shiitake y miel</li>
+        <li><b>Symposium Coral</b> lleva tomate</li>
+        <li>Todo lo que lleva vino, vermut o Jerez tiene <b>sulfitos</b></li>
+        <li>"Sin alcohol" no es "apto para todos": igual pregunta</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca hagas esto</h4><ul>
+        <li>Decir "todos son buenos" — es no recomendar nada</li>
+        <li>Inventar un ingrediente que no conoces: consulta a la barra</li>
+        <li>Confundir los dos negronis (gin S/59 · ron S/45)</li>
+        <li>Llevar un sour tibio o sin espuma a la mesa</li>
+        <li>Ofrecer el mocktail solo cuando alguien lo pide</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Cuando no sepas:</b> "Déjeme confirmarlo con el bar y le digo" es una respuesta profesional. Inventar un ingrediente frente a un invitado con una alergia es un problema serio de verdad. Consulta siempre con el Jefe de Bar si un trago lleva algo que no figura en la carta —clara de huevo, lácteos, frutos secos— antes de afirmar que no lo lleva.</div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">📄</div><h2>One-pager para imprimir</h2><span class="tag">Resumen</span></div>
+    <p class="lead">Imprime esta hoja y déjala en la estación. Es la carta completa en una cara.</p>
+    <div class="onepager">
+      <div class="opt"><span class="oplogo"></span><h3>Carta de bebidas de Symposium · 16 tragos</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>Sours · S/40–42 · batidos</h4><ul>
+          <li><b>Amargo Mandarino</b> 40 — pisco, amargo italiano, naranja amarga. Amargo y sedoso.</li>
+          <li><b>Dodici Agrumi</b> 40 — Chivas 12, cordial cítrico, sal, orange bitters. Roble y miel.</li>
+          <li><b>Tramonto d'Oro Rosso</b> 42 — ron 7 años, limón, Malbec. Dos capas, el más fotogénico.</li>
+          <li><b>Occhio di Strega</b> 40 — Strega, vermut blanco, piña, limón, albahaca. Dulce → herbal.</li>
+          <li><b>Symposium Coral</b> 40 — Absolut, cordial de tomate, Jerez. Ligero, salino, umami.</li>
+          <li><b>Foresta e Fico</b> 42 — whiskey con shiitake, miel de higos, limón. Terroso, con cuerpo.</li>
+        </ul></div>
+        <div class="op-box"><h4>Bitters · S/45–59 · refrescados</h4><ul>
+          <li><b>Negroni Symposium</b> 59 — gin Portofino, bitter, Mancino Rosso Amaranto. El insignia.</li>
+          <li><b>Corsario Negroni</b> 45 — Flor de Caña 12, bitter, vermut rosso, regaliz. Más dulce.</li>
+        </ul>
+        <h4 style="margin-top:9px">Highballs y Spritz · S/40–45</h4><ul>
+          <li><b>Colomba</b> 45 — tequila Jimador, limón, toronja rosada. La Paloma.</li>
+          <li><b>Amaro Tónico</b> 40 — amaros italianos, Kahlúa, tónica. Bajativo.</li>
+          <li><b>Sbagliato Spritz</b> 42 — Aperol, vermut rosso, toronja, burbujas. Primer trago.</li>
+          <li><b>Rito Bianco</b> 42 — vermut bianco, piña, tomillo, burbujas. El más suave.</li>
+        </ul></div>
+        <div class="op-box"><h4>Mocktails · S/25–30 · sin alcohol</h4><ul>
+          <li><b>Jamaica Fizz</b> 25 — hibisco, cranberry, maracuyá, burbujas. Ácido y floral.</li>
+          <li><b>Anana Fresco</b> 25 — piña golden, cordial cítrico, maracuyá, burbujas. Tropical.</li>
+          <li><b>Pompo Menta</b> 30 — sirope, limón Tahití, hierbabuena, gaseosa de pomelo.</li>
+          <li><b>Coco Ice</b> 30 — leche de coco, limón, hierbabuena. Cremoso. <b>Lleva coco.</b></li>
+        </ul></div>
+        <div class="op-box"><h4>Si el invitado dice…</h4><ul>
+          <li>"Algo fresco" → <b>Sbagliato Spritz</b></li>
+          <li>"Que no sea dulce" → <b>Negroni Symposium</b></li>
+          <li>"Yo tomo whisky" → <b>Dodici Agrumi</b></li>
+          <li>"Algo diferente" → <b>Symposium Coral</b></li>
+          <li>"Estoy manejando" → <b>Jamaica Fizz</b></li>
+          <li>"Para cerrar" → <b>Amaro Tónico</b></li>
+          <li>Alérgenos: coco (Coco Ice), shiitake y miel (Foresta e Fico), tomate (Coral), sulfitos (vino, vermut, Jerez).</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Symposium · La carta de bebidas · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+<script>
+/* Este curso es del cliente Symposium (m7) y solo se abre si el dueño lo habilitó
+   en El Libro → Cursos. El super admin siempre puede verlo (para revisarlo antes). */
+(function(){
+  try{
+    var sb=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
+    sb.auth.getSession().then(function(r){
+      var s=r&&r.data&&r.data.session; if(!s||!s.user)return;
+      sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle().then(function(ru){
+        if(ru&&ru.data&&ru.data.rol_sistema==='superadmin')return;   // el super admin lo revisa siempre
+        sb.from('lb_cursos').select('activo').eq('slug','symposium-bebidas').maybeSingle().then(function(rc){
+          if(rc&&rc.data&&rc.data.activo)return;
+          document.body.innerHTML='<div style="max-width:520px;margin:16vh auto;padding:26px;text-align:center;font-family:\'IBM Plex Sans\',system-ui,sans-serif">'
+            +'<div style="font-family:\'Bagel Fat One\',system-ui;font-size:30px;margin-bottom:10px">Todavía no</div>'
+            +'<p style="font-size:15px;opacity:.85">Este material aún no está habilitado. Cuando la gerencia lo publique lo vas a ver en <b>El Libro → Cursos</b>.</p>'
+            +'<p style="margin-top:18px"><a href="/el-libro" style="display:inline-block;padding:9px 18px;border:2px solid #000;border-radius:999px;background:#14315b;color:#fff;text-decoration:none;font-weight:600">Volver a El Libro</a></p></div>';
+        }).catch(function(){});
+      }).catch(function(){});
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
