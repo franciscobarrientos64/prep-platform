@@ -15,6 +15,7 @@
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
 <script src="/client-name.js"></script>
+<script src="/role-view.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -100,7 +101,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,formatos:null,view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -135,9 +136,28 @@ async function loadExamPanel(){try{const[e,n]=await Promise.all([sb.from('lb_exa
 /* Cursos propios del cliente (material hecho con su carta/procedimientos). Se publican
    desde esta misma pestana: mientras estan en borrador solo los ve la gerencia. */
 async function loadCursosCasa(){try{const{data}=await sb.from('lb_cursos').select('*').eq('marca_id',MARCA).order('orden');state.cursosCasa=data||[]}catch(e){state.cursosCasa=[]}}
-async function loadRol(){try{const s0=(await sb.auth.getSession()).data.session;if(!s0||!s0.user)return;
-  const{data}=await sb.from('prep_usuarios').select('rol_sistema').eq('email',s0.user.email).maybeSingle();
-  state.esAdmin=!!data&&(data.rol_sistema==='superadmin'||data.rol_sistema==='admin_marca');}catch(e){state.esAdmin=false}}
+async function loadRol(){
+  try{
+    const s0=(await sb.auth.getSession()).data.session;
+    if(s0&&s0.user){
+      const{data}=await sb.from('prep_usuarios').select('rol_sistema,rol_id').eq('email',s0.user.email).maybeSingle();
+      state.esAdmin=!!data&&['superadmin','admin_marca','gerente'].includes(data.rol_sistema);
+      // Un rol operativo puede tener limitados los formatos que ve (prep_roles.permisos.formatos)
+      if(data&&data.rol_id&&!state.esAdmin){
+        const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',data.rol_id).maybeSingle();
+        const f=rl&&rl.permisos&&rl.permisos.formatos;
+        if(Array.isArray(f)&&f.length)state.formatos=f;
+      }
+    }
+  }catch(e){state.esAdmin=false}
+  // "Ver como": la vista del super admin manda sobre su rol real
+  try{
+    if(window.PREP_VISTA){
+      state.esAdmin=!!window.prepEsAdminVista();
+      state.formatos=window.prepFormatos();
+    }
+  }catch(e){}
+}
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
 async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
@@ -146,7 +166,12 @@ async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRun
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
-  $('#tabs').innerHTML=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  // Los formatos que ve cada rol se configuran en Usuarios y permisos (prep_roles.permisos.formatos).
+  // state.formatos = null significa "todos".
+  const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']];
+  const visibles=state.formatos?TABS.filter(t=>state.formatos.includes(t[0])):TABS;
+  if(visibles.length&&!visibles.some(t=>t[0]===state.view))state.view=visibles[0][0];
+  $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
   $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
   const HIDEADD=['equipo','politicas','recetario','plantillas','cursos'];$('#h-add').style.display=HIDEADD.includes(state.view)?'none':'';

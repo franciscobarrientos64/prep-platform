@@ -14,6 +14,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script src="/auth-guard.js"></script>
+<script src="/role-view.js"></script>
 <style>
 :root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--amber-soft:#fef3c7;--shadow-sm:4px 4px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -73,6 +74,8 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
 const NIVELES=['ninguno','ver','operar','aprobar','admin'];
+// Formatos de El Libro que se pueden abrir o cerrar por rol. Vacío = el rol ve todos.
+const FORMATOS=[['tablon','Tablón'],['equipo','Equipo'],['procedimientos','Procedimientos'],['recetario','Recetario'],['plantillas','Plantillas'],['cursos','Cursos'],['examenes','Exámenes'],['briefing','Briefing diario'],['checklists','Checklists'],['eventualidades','Eventualidades'],['calendario','Calendario'],['thetalk','The Talk'],['politicas','Políticas'],['bitacora','Bitácora']];
 const ROLSIS=[['superadmin','Super Admin (Prep)'],['admin_marca','Admin restaurante'],['gerente','Gerente'],['operativo','Operativo']];
 const state={usuarios:[],roles:[],marcas:[],locales:[],emp:[],view:'usuarios'};
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2200)}
@@ -227,7 +230,7 @@ function buildPDF(d){
   doc.save(`Acceso-Prep-${safe}.pdf`);
 }
 function renderRoles(){
-  $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).length;
+  $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).filter(k=>k!=='formatos').length;
     return `<div class="row" data-id="${r.id}"><div class="av"><span class="material-symbols-outlined">badge</span></div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${marcaNom(r.marca_id)}</span><span>${np} módulo(s) con acceso</span></div></div><span class="tagx op">rol</span></div>`;
   }).join('')||'<div class="empty">Sin roles</div>';
   $$('#screen .row').forEach(el=>el.onclick=()=>editarRol(state.roles.find(r=>r.id===el.dataset.id)));
@@ -238,9 +241,16 @@ function editarRol(r){
   $('#sheet-body').innerHTML=`
     <div class="sheet-section grid2"><div><div class="field-lbl">Nombre del rol</div><input class="input" id="r-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Marca</div><select class="select" id="r-marca">${state.marcas.map(m=>`<option value="${m.id}" ${c.marca_id===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select></div></div>
     <div class="sheet-section"><div class="field-lbl">Permisos por módulo</div>${MODS.map(([k,l])=>`<div class="permrow"><span class="nm">${l}</span><select data-k="${k}">${NIVELES.map(n=>`<option value="${n}" ${(c.permisos[k]||'ninguno')===n?'selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div>
+    <div class="sheet-section"><div class="field-lbl">Formatos de El Libro que ve este rol</div>
+      <div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-bottom:8px">Sin ninguno marcado, el rol ve todos los formatos.</div>
+      <div class="chips" id="r-fmt">${FORMATOS.map(([k,l])=>`<button class="chip ${(c.permisos.formatos||[]).includes(k)?'active':''}" data-f="${k}">${l}</button>`).join('')}</div></div>
     <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="r-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="r-cancel">Atrás</button>'}<button class="btn primary" id="r-save">Guardar rol</button></div></div>`;
   $('#r-nom').onchange=e=>c.nombre=e.target.value;$('#r-marca').onchange=e=>c.marca_id=e.target.value;
   $$('#sheet-body select[data-k]').forEach(s=>s.onchange=()=>{const v=s.value;if(v==='ninguno')delete c.permisos[s.dataset.k];else c.permisos[s.dataset.k]=v});
+  $$('#r-fmt .chip').forEach(b=>b.onclick=()=>{const f=new Set(c.permisos.formatos||[]);const k=b.dataset.f;
+    if(f.has(k))f.delete(k);else f.add(k);
+    if(f.size)c.permisos.formatos=[...f];else delete c.permisos.formatos;
+    b.classList.toggle('active');});
   if($('#r-cancel'))$('#r-cancel').onclick=closeSheet;
   if($('#r-del'))$('#r-del').onclick=async()=>{if(!confirm('¿Eliminar rol?'))return;await sb.from('prep_roles').delete().eq('id',r.id);closeSheet();await load();toast('Rol eliminado')};
   $('#r-save').onclick=async()=>{if(!c.nombre){toast('Falta nombre');return}const p={nombre:c.nombre,marca_id:c.marca_id,permisos:c.permisos};const{error}=ed?await sb.from('prep_roles').update(p).eq('id',r.id):await sb.from('prep_roles').insert(p);if(error){toast('Error: '+error.message);return}closeSheet();await load();toast('Rol guardado')};
