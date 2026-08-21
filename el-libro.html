@@ -17,7 +17,7 @@
 <script src="/client-name.js"></script>
 <script src="/role-view.js"></script>
 <style>
-:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--primary-soft:#d6e2ff;--gray-soft:#dfe3e8;--green:#10b981;--green-soft:#d1fae5;--amber:#b45309;--amber-soft:#fef3c7;--red-soft:#fee2e2;--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
 .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle;white-space:nowrap;word-wrap:normal;direction:ltr}.mono{font-family:var(--font-mono)}
@@ -278,24 +278,144 @@ async function toggleExamen(id,val){
 function renderExamenes(){
   const exs=(state.examenes||[]).filter(e=>e.activo!==false||state.esAdmin),res=state.examResult||[];
   $('#screen').innerHTML=examPanelHTML()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin:6px 0 12px">Evalúa el conocimiento del equipo. Toca un examen para rendirlo. 📝</div>`+
-    (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.map(r=>Math.round(r.puntaje/r.total*100))):null;
-      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${preg.length} preguntas${e.descripcion?(' · '+e.descripcion):''}${mejor!=null?(' · mejor '+mejor+'%'):''}</div></div>${e.activo===false?'<span class="tagx alta" style="white-space:nowrap">Borrador</span>':''}${state.esAdmin?`<button class="btn-ico ${e.activo===false?'primary':''}" data-pub="${e.id}" data-val="${e.activo===false?'1':'0'}" style="width:auto;padding:9px 12px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${e.activo===false?'rocket_launch':'visibility_off'}</span>${e.activo===false?'Publicar':'Ocultar'}</button>`:''}${e.activo===false?'':`<button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button>`}</div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
-    (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`+res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);const pct=Math.round(r.puntaje/r.total*100);return `<div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed var(--gray-soft);font-size:13px"><span>${r.persona||'—'} · ${ex?ex.titulo:'examen'}</span><strong style="color:${pct>=70?'var(--green)':'var(--secondary)'}">${pct}%</strong></div>`}).join(''):'');
+    (exs.map(e=>{const preg=Array.isArray(e.preguntas)?e.preguntas:[];const nAb=preg.filter(p=>p.tipo==='abierta').length;const nMc=preg.length-nAb;const mis=res.filter(r=>r.examen_id===e.id);const mejor=mis.length?Math.max(...mis.filter(r=>r.total).map(r=>Math.round(r.puntaje/r.total*100)).concat([0])):null;const nMis=mis.length;
+      return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">📝</div><div style="flex:1"><div style="font-weight:700">${e.titulo}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${nMc} de opción múltiple${nAb?(' · '+nAb+' para escribir'):''}${e.descripcion?(' · '+e.descripcion):''}${mejor?(' · mejor '+mejor+'%'):''}</div></div>${e.activo===false?'<span class="tagx alta" style="white-space:nowrap">Borrador</span>':''}${state.esAdmin?`<button class="btn-ico ${e.activo===false?'primary':''}" data-pub="${e.id}" data-val="${e.activo===false?'1':'0'}" style="width:auto;padding:9px 12px;font-size:12px"><span class="material-symbols-outlined" style="font-size:15px">${e.activo===false?'rocket_launch':'visibility_off'}</span>${e.activo===false?'Publicar':'Ocultar'}</button>`:''}${e.activo===false?'':`<button class="btn-ico primary" data-take="${e.id}" style="width:auto;padding:9px 14px"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>Rendir</button>`}</div>`}).join('')||'<div class="empty">Sin exámenes. Crea uno con "+ Examen".</div>')+
+    (res.length?`<div class="grp-t" style="margin-top:16px">Resultados recientes</div>`
+      +`<div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-bottom:6px">Dos puntajes por persona: conocimiento y venta sugestiva${state.esAdmin?' · toca un resultado para leer sus líneas':''}</div>`
+      +res.slice(0,12).map(r=>{const ex=exs.find(x=>x.id===r.examen_id);
+        const con=r.pct!=null?Math.round(Number(r.pct)):(r.total?Math.round(r.puntaje/r.total*100):null);
+        const ven=r.pct_ventas!=null?Math.round(Number(r.pct_ventas)):null;
+        const puedeVer=state.esAdmin&&r.respuestas;
+        const chip=(l,v)=>`<span style="font-family:var(--font-mono);font-size:11px;font-weight:700;white-space:nowrap;color:${v!=null&&v>=70?'var(--green)':'var(--secondary)'}">${l} ${v!=null?v+'%':'—'}</span>`;
+        return `<div ${puedeVer?`data-ent="${r.id}"`:''} style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--gray-soft);font-size:13px${puedeVer?';cursor:pointer':''}">
+          <span style="min-width:0"><b>${r.persona||'—'}</b>
+            <span style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;display:block">${ex?ex.titulo:'examen'}${r.escritas_total?' · '+(r.escritas||0)+'/'+r.escritas_total+' líneas':''}</span></span>
+          <span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">${chip('Con.',con)}${ven!=null?chip('Venta',ven):''}</span></div>`}).join(''):'');
   $$('#screen [data-take]').forEach(b=>b.onclick=()=>tomarExamen(state.examenes.find(e=>e.id===b.dataset.take)));
   $$('#screen [data-pub]').forEach(b=>b.onclick=()=>toggleExamen(b.dataset.pub,b.dataset.val==='1'));
+  $$('#screen [data-ent]').forEach(d=>d.onclick=()=>verEntrega((state.examResult||[]).find(r=>r.id===d.dataset.ent)));
 }
+/* Rendir un examen. Soporta dos tipos de pregunta:
+   - opción múltiple (por defecto): {q, opciones, correcta} → se califica sola.
+   - abierta: {q, tipo:'abierta', placeholder} → se guarda el texto; no se califica sola,
+     cuenta como "cumplida" si la persona escribió algo y la revisa el bar.
+   Al entregar sale la pantalla de resultado con el % de cumplimiento. */
 function tomarExamen(ex){
-  if(!ex)return;const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];const resp={};
-  const persona=prompt('Tu nombre (para registrar el resultado):');if(persona===null)return;
-  setHead('📝',ex.titulo,preg.length+' preguntas');
-  const draw=()=>{$('#sheet-body').innerHTML=preg.map((p,i)=>`<div class="sheet-section"><div style="font-weight:700;margin-bottom:8px">${i+1}. ${p.q}</div>${(p.opciones||[]).map((o,j)=>`<button class="btn ${resp[i]===j?'primary':'ghost'}" data-q="${i}" data-o="${j}" style="justify-content:flex-start;margin-bottom:6px">${o}</button>`).join('')}</div>`).join('')+
-    `<div class="sheet-section"><button class="btn primary" id="ex-submit" style="width:100%">Entregar examen</button></div>`;
-    $$('#sheet-body [data-q]').forEach(b=>b.onclick=()=>{resp[Number(b.dataset.q)]=Number(b.dataset.o);draw()});
-    $('#ex-submit').onclick=async()=>{let ok=0;preg.forEach((p,i)=>{if(resp[i]===p.correcta)ok++});
-      const{error}=await sb.from('rrhh_examen_resultados').insert({examen_id:ex.id,local_id:LOCAL,persona:persona||'Anónimo',puntaje:ok,total:preg.length});
-      if(error){toast('Atrás: '+error.message,'err');return}
-      closeSheet();await loadExamenes();render();const pct=Math.round(ok/preg.length*100);toast((pct>=70?'🎉 Aprobado · ':'Resultado · ')+ok+'/'+preg.length+' ('+pct+'%)',pct>=70?'ok':'warn')};
-  };draw();openSheet();
+  if(!ex)return;
+  const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];const resp={};
+  const persona=(prompt('Tu nombre (para registrar el resultado):')||'').trim();
+  if(!persona)return;
+  const nMC=preg.filter(p=>p.tipo!=='abierta').length,nAB=preg.length-nMC;
+  setHead('📝',ex.titulo,nMC+' de opción múltiple'+(nAB?' · '+nAB+' para escribir':''));
+  const MIN_PAL=5;   // "más de 4 palabras" para que la línea cuente
+  const palabras=t=>String(t||'').trim().split(/\s+/).filter(Boolean).length;
+  const lineaOK=t=>palabras(t)>=MIN_PAL;
+  const harvest=()=>{$$('#sheet-body textarea[data-a]').forEach(t=>{resp[Number(t.dataset.a)]=t.value})};
+  let secc=null;
+  $('#sheet-body').innerHTML=preg.map((p,i)=>{
+    let h='';
+    if(p.seccion&&p.seccion!==secc){secc=p.seccion;
+      h+=`<div class="grp-t" style="margin-top:20px">${p.seccion}</div>`+(p.ayuda?`<div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin:-4px 0 6px">${p.ayuda}</div>`:'');}
+    h+=`<div class="sheet-section"><div style="font-weight:700;margin-bottom:8px">${i+1}. ${p.q}</div>`;
+    if(p.tipo==='abierta')
+      h+=`<textarea class="input" data-a="${i}" style="min-height:62px" placeholder="${(p.placeholder||'Escribe tu respuesta…').replace(/"/g,'&quot;')}"></textarea>`
+         +`<div class="cuenta" data-c="${i}" style="font-family:var(--font-mono);font-size:10.5px;margin-top:4px"></div>`;
+    else
+      h+=(p.opciones||[]).map((o,j)=>`<button class="btn ghost" data-q="${i}" data-o="${j}" style="justify-content:flex-start;text-align:left;margin-bottom:6px;width:100%">${o}</button>`).join('');
+    return h+'</div>';
+  }).join('')+`<div class="sheet-section"><div id="ex-falta" style="font-family:var(--font-mono);font-size:11px;margin-bottom:8px"></div><button class="btn primary" id="ex-submit" style="width:100%">Entregar examen</button></div>`;
+
+  const pendientes=()=>{harvest();return{
+    mc:preg.filter((p,i)=>p.tipo!=='abierta'&&resp[i]==null).length,
+    ab:preg.filter((p,i)=>p.tipo==='abierta'&&!lineaOK(resp[i])).length};};
+  const pintarFalta=()=>{
+    const f=pendientes(),e=$('#ex-falta');
+    $$('#sheet-body .cuenta').forEach(c=>{const i=Number(c.dataset.c),n=palabras(resp[i]);
+      if(!n){c.textContent='';return}
+      const ok=n>=MIN_PAL;
+      c.textContent=n+(n===1?' palabra':' palabras')+(ok?' ✓':' · te faltan '+(MIN_PAL-n)+' para que cuente');
+      c.style.color=ok?'var(--green)':'var(--amber)';});
+    if(!e)return;
+    if(!f.mc&&!f.ab){e.textContent='Todo listo ✓';e.style.color='var(--green)';}
+    else{e.textContent='Te falta: '+[f.mc?f.mc+' de opción múltiple':'',f.ab?f.ab+' línea'+(f.ab>1?'s':'')+' de venta':''].filter(Boolean).join(' · ');e.style.color='var(--secondary)';}};
+  $$('#sheet-body [data-q]').forEach(b=>b.onclick=()=>{
+    const i=Number(b.dataset.q);resp[i]=Number(b.dataset.o);
+    $$('#sheet-body [data-q="'+i+'"]').forEach(x=>{x.classList.remove('primary');x.classList.add('ghost')});
+    b.classList.remove('ghost');b.classList.add('primary');pintarFalta();});
+  $$('#sheet-body textarea[data-a]').forEach(t=>t.oninput=pintarFalta);
+  pintarFalta();
+
+  $('#ex-submit').onclick=async()=>{
+    harvest();
+    const f=pendientes(),falta=f.mc+f.ab;
+    if(falta&&!confirm('Te falta responder '+falta+(falta>1?' preguntas':' pregunta')+'. Van a contar como cero. ¿Entregar así?'))return;
+    let ok=0,mc=0,ab=0,escritas=0;
+    preg.forEach((p,i)=>{
+      if(p.tipo==='abierta'){ab++;if(lineaOK(resp[i]))escritas++;}
+      else{mc++;if(resp[i]===p.correcta)ok++;}});
+    const pct=mc?Math.round(ok/mc*100):null;                 // puntaje de conocimiento
+    const pctV=ab?Math.round(escritas/ab*100):null;           // puntaje de venta sugestiva
+    const{error}=await sb.from('rrhh_examen_resultados').insert({examen_id:ex.id,local_id:LOCAL,persona,
+      puntaje:ok,total:mc,respuestas:resp,escritas,escritas_total:ab,pct,pct_ventas:pctV});
+    if(error){toast('Atrás: '+error.message,'err');return}
+    await loadExamenes();render();
+    pantallaResultado(ex,preg,resp,{ok:ok,mc:mc,escritas:escritas,ab:ab,pct:pct,pctV:pctV});
+  };
+  openSheet();
+}
+/* Pantalla de resultado: dos puntajes separados — conocimiento y venta sugestiva. */
+function pantallaResultado(ex,preg,resp,r){
+  const aprobC=r.pct==null||r.pct>=70, aprobV=r.pctV==null||r.pctV>=70;
+  setHead(aprobC&&aprobV?'🎉':'📋','Tu resultado',ex.titulo);
+  const err=preg.map((p,i)=>({p:p,i:i})).filter(x=>x.p.tipo!=='abierta'&&resp[x.i]!==x.p.correcta);
+  const marcador=(t,v,sub,ok,nota)=>`<div style="border:2px solid var(--outline);border-radius:14px;padding:14px 12px;text-align:center;background:var(--surface);box-shadow:var(--shadow-sm)">
+      <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;opacity:.6">${t}</div>
+      <div style="font-family:var(--font-display);font-size:44px;line-height:1.05;color:${ok?'var(--green)':'var(--secondary)'}">${v}</div>
+      <div style="font-size:11.5px;opacity:.75">${sub}</div>
+      <span class="tagx" style="margin-top:7px;display:inline-block;background:${ok?'var(--green-soft)':'var(--red-soft)'}">${nota}</span></div>`;
+  $('#sheet-body').innerHTML=
+   `<div class="sheet-section" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${marcador('Conocimiento',(r.pct==null?'—':r.pct+'%'),r.ok+' de '+r.mc+' correctas',aprobC,aprobC?'Aprobado':'No aprobado')}
+      ${marcador('Venta sugestiva',(r.pctV==null?'—':r.pctV+'%'),r.escritas+' de '+r.ab+' líneas válidas',aprobV,aprobV?'Aprobado':'No aprobado')}
+    </div>
+    <div class="sheet-section"><div style="font-family:var(--font-mono);font-size:10.5px;opacity:.65;text-align:center">Se aprueba cada puntaje con 70%. Una línea de venta cuenta si tiene más de 4 palabras${r.ab&&r.escritas<r.ab?' — te quedaron '+(r.ab-r.escritas)+' sin contar':''}. Las líneas las lee el bar.</div></div>
+    ${err.length?`<div class="sheet-section"><div class="field-lbl">Para repasar · lo que falló</div>`+err.map(x=>
+      `<div style="border-bottom:1px dashed var(--gray-soft);padding:9px 0">
+        <div style="font-weight:600;font-size:13px;margin-bottom:3px">${x.p.q}</div>
+        <div style="font-size:12px;color:var(--secondary)">Marcaste: ${resp[x.i]!=null?x.p.opciones[resp[x.i]]:'sin responder'}</div>
+        <div style="font-size:12px;color:var(--green)">Correcto: ${x.p.opciones[x.p.correcta]}</div></div>`).join('')+`</div>`
+     :`<div class="sheet-section"><div style="background:var(--green-soft);border:2px solid var(--outline);border-radius:12px;padding:12px;font-size:13.5px">Ni un error en los ingredientes. Te sabes la carta.</div></div>`}
+    <div class="sheet-section"><button class="btn primary" id="res-ok" style="width:100%">Listo</button></div>`;
+  $('#res-ok').onclick=closeSheet;
+  openSheet();
+}
+/* Revisión (gerencia): ver lo que escribió una persona en las preguntas abiertas. */
+function verEntrega(res){
+  const ex=(state.examenes||[]).find(x=>x.id===res.examen_id);if(!ex)return;
+  const preg=Array.isArray(ex.preguntas)?ex.preguntas:[],resp=res.respuestas||{};
+  setHead('📄',res.persona||'—',ex.titulo);
+  const abiertas=preg.map((p,i)=>({p:p,i:i})).filter(x=>x.p.tipo==='abierta');
+  const errs=preg.map((p,i)=>({p:p,i:i})).filter(x=>x.p.tipo!=='abierta'&&resp[x.i]!==x.p.correcta);
+  $('#sheet-body').innerHTML=
+   `<div class="sheet-section" style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="tagx cat">Conocimiento ${res.pct!=null?Math.round(Number(res.pct))+'%':(res.total?Math.round(res.puntaje/res.total*100)+'%':'—')}</span>
+      <span class="tagx cat">Venta sugestiva ${res.pct_ventas!=null?Math.round(Number(res.pct_ventas))+'%':'—'}</span>
+      ${res.escritas_total?`<span class="tagx cat">${res.escritas||0}/${res.escritas_total} líneas válidas</span>`:''}
+      <span class="tagx cat">${fechaCorta(res.created_at)}</span></div>`
+   +(abiertas.length?`<div class="sheet-section"><div class="field-lbl">Líneas de venta que escribió</div>`+abiertas.map(x=>{
+      const t=(resp[x.i]||'').trim();
+      return `<div style="border-bottom:1px dashed var(--gray-soft);padding:9px 0">
+        <div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6">${x.p.q.replace(/^Escribe .*?para (ofrecer|el|la) /i,'')}</div>
+        <div style="font-size:13.5px;${t?'':'opacity:.5;font-style:italic'}">${t||'— no la escribió —'}</div></div>`}).join('')+`</div>`:'')
+   +(errs.length?`<div class="sheet-section"><div class="field-lbl">Errores de conocimiento</div>`+errs.map(x=>
+      `<div style="border-bottom:1px dashed var(--gray-soft);padding:8px 0">
+        <div style="font-weight:600;font-size:12.5px">${x.p.q}</div>
+        <div style="font-size:11.5px;color:var(--secondary)">Marcó: ${resp[x.i]!=null?x.p.opciones[resp[x.i]]:'sin responder'}</div>
+        <div style="font-size:11.5px;color:var(--green)">Correcto: ${x.p.opciones[x.p.correcta]}</div></div>`).join('')+`</div>`
+     :`<div class="sheet-section"><div style="font-size:13px;opacity:.7">Sin errores en la parte de conocimiento.</div></div>`)
+   +`<div class="sheet-section"><button class="btn ghost" id="ent-ok" style="width:100%">Cerrar</button></div>`;
+  $('#ent-ok').onclick=closeSheet;
+  openSheet();
 }
 function crearExamen(){
   setHead('📝','Nuevo examen','Una pregunta por línea');
