@@ -230,7 +230,7 @@ function buildPDF(d){
   doc.save(`Acceso-Prep-${safe}.pdf`);
 }
 function renderRoles(){
-  $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).filter(k=>k!=='formatos').length;
+  $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).filter(k=>k!=='formatos'&&k!=='revisar_examenes').length;
     return `<div class="row" data-id="${r.id}"><div class="av"><span class="material-symbols-outlined">badge</span></div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${marcaNom(r.marca_id)}</span><span>${np} módulo(s) con acceso</span></div></div><span class="tagx op">rol</span></div>`;
   }).join('')||'<div class="empty">Sin roles</div>';
   $$('#screen .row').forEach(el=>el.onclick=()=>editarRol(state.roles.find(r=>r.id===el.dataset.id)));
@@ -241,12 +241,18 @@ function editarRol(r){
   $('#sheet-body').innerHTML=`
     <div class="sheet-section grid2"><div><div class="field-lbl">Nombre del rol</div><input class="input" id="r-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Marca</div><select class="select" id="r-marca">${state.marcas.map(m=>`<option value="${m.id}" ${c.marca_id===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select></div></div>
     <div class="sheet-section"><div class="field-lbl">Permisos por módulo</div>${MODS.map(([k,l])=>`<div class="permrow"><span class="nm">${l}</span><select data-k="${k}">${NIVELES.map(n=>`<option value="${n}" ${(c.permisos[k]||'ninguno')===n?'selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div>
+    <div class="sheet-section"><div class="field-lbl">Permisos especiales</div>
+      <div class="chips" id="r-esp"><button class="chip ${c.permisos.revisar_examenes===true?'active':''}" data-e="revisar_examenes">Revisar entregas de exámenes</button></div>
+      <div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-top:6px">Deja leer lo que escribió cada persona en un examen (jefes de área). No permite publicar cursos ni exámenes: eso es solo de gerencia.</div></div>
     <div class="sheet-section"><div class="field-lbl">Formatos de El Libro que ve este rol</div>
       <div style="font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-bottom:8px">Sin ninguno marcado, el rol ve todos los formatos.</div>
       <div class="chips" id="r-fmt">${FORMATOS.map(([k,l])=>`<button class="chip ${(c.permisos.formatos||[]).includes(k)?'active':''}" data-f="${k}">${l}</button>`).join('')}</div></div>
     <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="r-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="r-cancel">Atrás</button>'}<button class="btn primary" id="r-save">Guardar rol</button></div></div>`;
   $('#r-nom').onchange=e=>c.nombre=e.target.value;$('#r-marca').onchange=e=>c.marca_id=e.target.value;
   $$('#sheet-body select[data-k]').forEach(s=>s.onchange=()=>{const v=s.value;if(v==='ninguno')delete c.permisos[s.dataset.k];else c.permisos[s.dataset.k]=v});
+  $$('#r-esp .chip').forEach(b=>b.onclick=()=>{const k=b.dataset.e;
+    if(c.permisos[k]===true)delete c.permisos[k];else c.permisos[k]=true;
+    b.classList.toggle('active');});
   $$('#r-fmt .chip').forEach(b=>b.onclick=()=>{const f=new Set(c.permisos.formatos||[]);const k=b.dataset.f;
     if(f.has(k))f.delete(k);else f.add(k);
     if(f.size)c.permisos.formatos=[...f];else delete c.permisos.formatos;
