@@ -66,6 +66,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .heat .hc{display:flex;align-items:center;justify-content:center;min-height:34px;border:2px solid var(--outline);border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700}
 .heat .rl{display:flex;align-items:center;justify-content:flex-end;text-align:right;font-size:12px;font-weight:600;padding-right:8px}
 .heat .hc.dlt{font-size:11px;letter-spacing:-.02em}
+.heat .hsep{grid-column:1/-1;border-top:2px dashed var(--outline);margin:4px 0 2px;opacity:.35}
+.heat .rl.tot{font-weight:800}
+.heat .hc.tot{font-size:12px;box-shadow:2px 2px 0 0 #000}
 .heat .cl{font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.6;text-align:center;align-self:end;padding-bottom:3px}
 .dg .mh{display:flex;align-items:flex-end;gap:8px;font-family:var(--font-display);font-size:14px;margin:16px 0 4px;border-bottom:2px solid var(--outline);padding-bottom:3px}
 .dg .mh:first-child{margin-top:0}
@@ -276,14 +279,27 @@ function heat(rowDefs,cols,valFn,opts){
   rowDefs.forEach(r=>{h+=`<div class="rl">${escapeHtml(r.label)}</div>`;
     cols.forEach(c=>{const v=valFn(r,c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">${opts.nonum?'':'·'}</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc" style="background:${bg};color:${fg}">${opts.nonum?'':v.toFixed(0)+(opts.pct?'%':'')}</div>`;});
     if(dl)h+=deltaCell(dl.fn(r));});
+  // fila de puntaje total al pie (score_total ponderado, a un decimal)
+  if(opts.total){const t=opts.total;
+    h+=`<div class="hsep"></div><div class="rl tot">${escapeHtml(t.label||'Puntaje total')}</div>`;
+    cols.forEach(c=>{const v=t.fn(c);if(v==null){h+=`<div class="hc" style="background:var(--gray-soft);opacity:.35">·</div>`;return;}const[bg,fg]=scoreColor(v);h+=`<div class="hc tot" style="background:${bg};color:${fg}">${v.toFixed(1)}</div>`;});
+    if(dl)h+=deltaCell(t.delta==null?null:t.delta,1);}
   return h+`</div></div>`;
 }
-/* pill de tendencia vs mes anterior — coloreado por DIRECCIÓN (no por banda de score) */
-function deltaCell(d){
+/* eje Y acotado a los puntajes (margen de 3 pts, múltiplos de 5, mínimo 10 de rango) para que las diferencias se vean */
+function zoomY(vals){
+  const xs=vals.filter(v=>v!=null&&isFinite(v));if(!xs.length)return {min:0,max:100};
+  let lo=Math.max(0,Math.floor((Math.min(...xs)-3)/5)*5), hi=Math.min(100,Math.ceil((Math.max(...xs)+3)/5)*5);
+  if(hi-lo<10){hi=Math.min(100,lo+10);lo=hi-10;}
+  return {min:lo,max:hi,ticks:{stepSize:5}};
+}
+/* pill de tendencia vs mes anterior — coloreado por DIRECCIÓN (no por banda de score).
+   dec: con decimales (fila de total) el umbral de "se mantiene" baja a 0.05 */
+function deltaCell(d,dec){
   if(d==null)return `<div class="hc dlt" style="background:#f1f3f5;color:#9aa0a6;border-style:dashed" title="Sin mes anterior para comparar">·</div>`;
-  const flat=Math.abs(d)<1.5, up=d>0;
+  const flat=Math.abs(d)<(dec?0.05:1.5), up=d>0;
   const col=flat?'#6b7280':(up?'var(--green)':'var(--secondary)');
-  const lbl=flat?'=':(up?'▲ +':'▼ −')+Math.abs(d).toFixed(0);
+  const lbl=flat?'=':(up?'▲ +':'▼ −')+Math.abs(d).toFixed(dec||0);
   return `<div class="hc dlt" style="background:${col};color:#fff" title="${flat?'Se mantiene':(up?'Subió':'Bajó')} vs mes anterior">${lbl}</div>`;
 }
 function trendChip(d){
@@ -421,6 +437,11 @@ function vResumen(){
   const barCfg={type:'bar',data:{labels:rows.map(r=>r.c),datasets:[{data:rows.map(r=>Math.round(r.s)),backgroundColor:rows.map(r=>scoreColor(r.s)[0]),borderColor:'#000',borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',scales:{x:{min:0,max:100,ticks:{stepSize:20}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'/100'}},datalabels:{display:true,anchor:'end',align:'start',offset:6,color:ctx=>{const v=ctx.dataset.data[ctx.dataIndex];return (v>=70&&v<80)?'#3a2e00':'#fff';},font:{weight:'700',size:11},formatter:v=>v}}}};
   const bands=[0,0,0,0];rows.forEach(r=>{bands[r.s>=90?0:r.s>=80?1:r.s>=70?2:3]++;});
   const donut={type:'doughnut',data:{labels:['Excelente','Bueno','Regular','A mejorar'],datasets:[{data:bands,backgroundColor:['#1e5af9','#10b981','#ffcc00','#ff3b30'],borderColor:'#000',borderWidth:2}]},options:{cutout:'58%',plugins:{legend:{position:'bottom'},datalabels:{display:true,color:ctx=>ctx.dataIndex===2?'#3a2e00':'#fff',font:{weight:'800',size:14},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+(+b||0),0);return v>0&&t?Math.round(v/t*100)+'%':'';}}}}};
+  // evolución del puntaje total (promedio mensual de score_total), eje acotado a los puntajes
+  const evoM=msAll.map(m=>{const vs=Vall.filter(v=>(v.fecha||'').slice(0,7)===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))*10)/10:null;});
+  const evoTot={type:'line',data:{labels:msAll.map(m=>mLabel(m)),datasets:[{label:'Puntaje total',data:evoM,borderColor:'#171c20',backgroundColor:'#171c20',pointBackgroundColor:evoM.map(v=>v==null?'#fff':scoreColor(v)[0]),pointBorderColor:'#171c20',pointBorderWidth:2,pointRadius:msAll.map(m=>PER===m?8:5),pointHoverRadius:8,borderWidth:3,tension:.3,spanGaps:true}]},
+    options:{layout:{padding:{top:24,left:6,right:6}},scales:{y:zoomY(evoM)},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+'/100'}},datalabels:{display:true,align:'top',anchor:'end',offset:6,color:'#171c20',font:{weight:'700',size:11},formatter:v=>v==null?'':v.toFixed(1)}}}};
+  const sedeNm=DB.locales.length>1?((DB.locales.find(l=>l.id===LOCAL)||{}).nombre||''):'';
   return `
   ${periodBar(msAll)}
   <div class="kpis">
@@ -429,6 +450,7 @@ function vResumen(){
    <div class="kpi reveal"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px">event</span>Último mes</div><div class="val">${lastScore.toFixed(0)}</div><div class="sub">${mLabel(lastM)}</div></div>
    <div class="kpi reveal"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>Promedio</div><div class="val">${anual.toFixed(0)}</div><div class="sub">${msAll.length} meses</div></div>
   </div>
+  <div class="section"><div class="section-h"><h3>Evolución del puntaje total${sedeNm?' · '+escapeHtml(sedeNm):''}</h3><span class="hint">promedio mensual · eje ajustado a los puntajes</span></div><div class="card">${chart('revo',evoTot,280)}</div></div>
   <div class="section"><div class="section-h"><h3>Puntaje por criterio</h3><span class="hint">${periodLbl}</span></div><div class="card">${chart('rbar',barCfg,Math.max(300,crit.length*28))}</div></div>
   <div class="section"><div class="section-h"><h3>Distribución por nivel</h3><span class="hint">criterios en cada banda · ${periodLbl}</span></div><div class="card">${chart('rdon',donut,250)}</div></div>`;
 }
@@ -481,10 +503,13 @@ function vDetalle(){
     const gdelta=pM?{label:'vs '+MESN[+pM.split('-')[1]],fn:r=>{const c=gcur(r),p=gprev(r);return(c==null||p==null)?null:c-p;}}:null;
     const nv=Va.filter(v=>a2m[v.id]===PER).length;
     const gh=pM?`vs ${mLabel(pM)} en la última columna · ▲ mejoró · ▼ bajó · = se mantiene`:'primer mes · aún no hay comparación';
-    return `<div class="section"><div class="section-h"><h3>Vista general del mes · todas las sedes</h3><span class="hint">${mLabel(PER)} · ${nv} evaluaciones · ${gh}</span></div><div class="card">${heat(crows,gcols,gval,{delta:gdelta})}<div class="legend">${LEGEND}</div></div></div>`;
+    const sAvg=vs=>vs.length?avg(vs.map(v=>+v.score_total||0)):null;
+    const gtot={fn:c=>sAvg(Va.filter(v=>a2m[v.id]===PER&&(c.key==='__g'||a2l[v.id]===c.key))),delta:pM?sAvg(Va.filter(v=>a2m[v.id]===PER))-sAvg(Va.filter(v=>a2m[v.id]===pM)):null};
+    return `<div class="section"><div class="section-h"><h3>Vista general del mes · todas las sedes</h3><span class="hint">${mLabel(PER)} · ${nv} evaluaciones · ${gh}</span></div><div class="card">${heat(crows,gcols,gval,{delta:gdelta,total:gtot})}<div class="legend">${LEGEND}</div></div></div>`;
   };
   if(PER==='all'){
-    return periodBar(ms)+genMes()+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">elige un mes para ver sus 4 visitas${multi?' y la vista general de sedes':''}</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;})}<div class="legend">${LEGEND}</div></div></div>`;
+    const mtot={fn:c=>{const vs=V.filter(v=>v2m[v.id]===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}};
+    return periodBar(ms)+genMes()+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">elige un mes para ver sus 4 visitas${multi?' y la vista general de sedes':''}</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{total:mtot})}<div class="legend">${LEGEND}</div></div></div>`;
   }
   const vis=V.filter(v=>(v.fecha||'').slice(0,7)===PER).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
   const pmap={};R.forEach(r=>{pmap[r.visita_id+'|'+r.criterio]=+r.puntaje||0;});
@@ -500,7 +525,8 @@ function vDetalle(){
   const dhint=prevM?`vs ${mLabel(prevM)} en la última columna · ▲ subió · ▼ bajó · = se mantiene`:'primer mes del periodo · aún no hay comparación';
   const sedeName=(DB.locales.find(l=>l.id===LOCAL)||{}).nombre||'';
   const stitle=(multi&&vis.length?escapeHtml(sedeName)+' · ':'')+mLabel(PER)+' · '+vis.length+' visitas'+hchip;
-  const perSede=vis.length?`<div class="section"><div class="section-h"><h3>${stitle}</h3><span class="hint">${dhint}</span></div><div class="card">${heat(crows,cols,valFn,{delta})}<div class="legend">${LEGEND}</div></div></div>`:'';
+  const vtot={fn:c=>{if(c.key==='__p')return vis.length?avg(vis.map(v=>+v.score_total||0)):null;const v=vis.find(x=>x.id===c.key);return v&&v.score_total!=null?+v.score_total:null;},delta:totD};
+  const perSede=vis.length?`<div class="section"><div class="section-h"><h3>${stitle}</h3><span class="hint">${dhint}</span></div><div class="card">${heat(crows,cols,valFn,{delta,total:vtot})}<div class="legend">${LEGEND}</div></div></div>`:'';
   return periodBar(ms)+genMes()+perSede;
 }
 
@@ -588,8 +614,8 @@ function vConsolidado(){
   const byScore=[...sede].sort((a,b)=>b.s-a.s);
   const rankOf={};byScore.forEach((x,i)=>{rankOf[x.l.id]=i+1;});
   const top=byScore[0], bot=byScore[byScore.length-1];
-  const ds=locs.map((l,i)=>{const col=SEDE_COLORS[i%SEDE_COLORS.length];return {label:l.nombre,data:msAll.map(m=>{const vs=Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))):null;}),borderColor:col,backgroundColor:col,pointBackgroundColor:col,pointBorderColor:'#171c20',pointBorderWidth:2,borderWidth:3,tension:.3,spanGaps:true,pointRadius:4,pointHoverRadius:6};});
-  const evoCfg={type:'line',data:{labels:msAll.map(m=>MESN[+m.split('-')[1]]),datasets:ds},options:{scales:{y:{min:40,max:100}},plugins:{legend:{position:'bottom'}}}};
+  const ds=locs.map((l,i)=>{const col=SEDE_COLORS[i%SEDE_COLORS.length];return {label:l.nombre,data:msAll.map(m=>{const vs=Vall.filter(v=>v.local_id===l.id&&v2m[v.id]===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))*10)/10:null;}),borderColor:col,backgroundColor:col,pointBackgroundColor:col,pointBorderColor:'#171c20',pointBorderWidth:2,borderWidth:3,tension:.3,spanGaps:true,pointRadius:4,pointHoverRadius:6};});
+  const evoCfg={type:'line',data:{labels:msAll.map(m=>mLabel(m)),datasets:ds},options:{interaction:{mode:'index',intersect:false},scales:{y:zoomY(ds.flatMap(d=>d.data))},plugins:{legend:{position:'bottom'},tooltip:{itemSort:(a,b)=>b.parsed.y-a.parsed.y,callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y.toFixed(1)}}}}};
   const crit=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
   const cols=locs.map(l=>({key:l.id,label:l.nombre}));
   const cellCS=(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2l[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;};
@@ -608,7 +634,7 @@ function vConsolidado(){
       <div class="trend ${x.delta==null?'':x.delta>=0?'up':'down'}">${x.delta==null?(x.n+' visitas'):((x.delta>=0?'▲ +':'▼ ')+x.delta.toFixed(1)+' pts · '+x.n+' vis.')}</div></div>`).join('')}</div></div>
   <div class="section"><div class="section-h"><h3>Puntajes comparativos por sede</h3><span class="hint">general y por área · ${periodLbl}</span></div>
     <div class="card">${heat(trows,tcols,tval)}<div class="legend">${LEGEND}</div></div></div>
-  <div class="section"><div class="section-h"><h3>Evolución por sede</h3><span class="hint">score mensual</span></div>
+  <div class="section"><div class="section-h"><h3>Evolución por sede</h3><span class="hint">score mensual · eje ajustado a los puntajes</span></div>
     <div class="card">${chart('evo',evoCfg,300)}</div></div>
   <div class="section"><div class="section-h"><h3>${wc.k} es la debilidad transversal (${wc.s.toFixed(0)}/100)</h3><span class="hint">criterio × sede · ${periodLbl}</span></div>
     <div class="card">${heat(crit,cols,cellCS)}<div class="legend">${LEGEND}</div></div></div>`;
