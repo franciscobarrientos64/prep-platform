@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de examen · Prep!</title>
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/role-view.js"></script>
+<style>
+/* Reporte imprimible de un examen de El Libro. "Descargar PDF" = imprimir → Guardar como PDF.
+   Encabezado (logo Prep! / logo del cliente) y pie (prep.rest / página) van en los márgenes de @page. */
+@page{size:A4;margin:11mm 18mm 20mm;
+  @bottom-left{content:'prep.rest';font:8.5pt 'IBM Plex Sans',sans-serif;color:#5b636b;vertical-align:top}
+  @bottom-right{content:counter(page) ' / ' counter(pages);font:8.5pt 'IBM Plex Sans',sans-serif;color:#5b636b;vertical-align:top}}
+:root{--ink:#171c20;--soft:#5b636b;--line:#d9dde2;--blue:#1e5af9;--blue-soft:#d6e2ff;--red:#d9362b;--amber:#c98a00;--bg:#fcf9f8}
+*{box-sizing:border-box}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);font-size:10pt;line-height:1.45;margin:0;background:var(--bg)}
+.sheet{max-width:210mm;margin:0 auto;background:#fff;padding:14mm 18mm 18mm;min-height:100vh}
+.toolbar{position:sticky;top:0;z-index:5;display:flex;gap:8px;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--ink);color:#fff;font-size:13px}
+.toolbar button{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #000;border-radius:999px;background:var(--blue);color:#fff;font:600 13px 'IBM Plex Sans',sans-serif;cursor:pointer}
+.toolbar button.ghost{background:transparent;border-color:#fff}
+.material-symbols-outlined{font-size:17px}
+.brandrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:18pt}
+.brandrow img.prep{height:8mm}.brandrow img.cli{height:13mm;width:13mm;object-fit:cover}
+h1{font-size:28pt;font-weight:700;letter-spacing:-.02em;line-height:1.04;margin:0 0 6pt}
+h2{font-size:15pt;font-weight:600;letter-spacing:-.01em;margin:22pt 0 8pt}
+h3{font-size:11pt;font-weight:600;margin:0}
+p{margin:0 0 7pt}
+.meta{color:var(--soft);font-size:9.5pt;margin-bottom:18pt}
+.lead{font-size:13pt;font-weight:300;line-height:1.4;max-width:150mm;margin-bottom:16pt}.lead b{font-weight:600}
+.big{display:flex;gap:28pt;padding:12pt 0;border-top:1.5pt solid var(--ink);border-bottom:.5pt solid var(--line);flex-wrap:wrap}
+.big div{flex:1;min-width:110px}.big strong{display:block;font-size:24pt;font-weight:600;letter-spacing:-.02em;line-height:1.1}.big span{color:var(--soft);font-size:9pt}
+table{width:100%;border-collapse:collapse;margin-top:4pt}
+th{text-align:left;font-weight:500;font-size:8.5pt;color:var(--soft);padding:0 6pt 5pt 0;border-bottom:.5pt solid var(--ink)}
+td{padding:7pt 6pt 7pt 0;border-bottom:.5pt solid var(--line);vertical-align:middle}
+tr{break-inside:avoid}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+td.err{color:var(--soft);font-size:8.8pt}
+.bar{position:relative;height:8pt;background:#eef0f3;width:100%;min-width:40px}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
+.bar i.mid{background:var(--amber)}.bar i.low{background:var(--red)}
+.bar b{position:absolute;top:-2pt;bottom:-2pt;width:1pt;background:var(--ink)}
+.note{font-size:8.5pt;color:var(--soft);margin-top:6pt}
+.pill{font-size:8pt;font-weight:500;padding:1pt 5pt;border-radius:8pt;white-space:nowrap}
+.ok{background:var(--blue-soft);color:#0b3aa8}.re{background:#fdf1d6;color:#7a5400}.no{background:#fbe1de;color:#9a1f16}
+.person{padding:10pt 0 8pt;border-top:.5pt solid var(--line);break-inside:avoid}
+.person.first{border-top:1.5pt solid var(--ink)}
+.person .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5pt;gap:10px}
+.person .hd span{color:var(--soft);font-size:9pt;white-space:nowrap}
+.linea{display:grid;grid-template-columns:34mm 1fr;gap:8pt;padding:3pt 0;font-size:9.3pt}
+.linea .k{color:var(--soft)}.linea .v.vacia{color:var(--red);font-style:italic}.linea .v.corta{color:var(--amber)}
+.foot{margin-top:20pt;padding-top:8pt;border-top:.5pt solid var(--line);font-size:8pt;color:var(--soft)}
+.pg{width:100%;border-collapse:collapse;margin:0}.pg>tbody>tr{break-inside:auto}.pg>thead>tr>td,.pg>tbody>tr>td{padding:0;border:0;vertical-align:top}
+.estado{padding:60px 20px;text-align:center;color:var(--soft)}
+@media print{
+  body{background:#fff}.toolbar{display:none}
+  .brandrow{margin-bottom:10mm}
+  .sheet{padding:0;max-width:none;min-height:0}
+  .brk{break-before:page}
+}
+@media (max-width:600px){.sheet{padding:18px 16px}.linea{grid-template-columns:1fr;gap:0}.big{gap:14px}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button class="ghost" onclick="history.length>1?history.back():location.href='/el-libro'"><span class="material-symbols-outlined">arrow_back</span>El Libro</button>
+  <button onclick="window.print()"><span class="material-symbols-outlined">download</span>Descargar PDF</button>
+</div>
+<div class="sheet" id="sheet"><div class="estado">Oído · armando el reporte…</div></div>
+
+<script>
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6');
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const LOGOS={m7:'/logos/m7.png',m8:'/logos/m8.png'};
+const CORTE=70; // mismo corte que El Libro: cada puntaje aprueba con 70%
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const fechaLarga=ts=>{const d=new Date(ts);return d.getDate()+' de '+MES[d.getMonth()]+' de '+d.getFullYear()};
+const hora=ts=>new Date(ts).toLocaleTimeString('es-PE',{hour:'numeric',minute:'2-digit'});
+const palabras=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
+const nombreBonito=n=>(n||'—').trim().replace(/\s+/g,' ').replace(/(^|\s)(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
+// "¿Qué lleva el Amargo Mandarino?" → "Amargo Mandarino"; "Tu línea para ofrecer el X en la mesa." → "X"
+const tema=q=>{const m=(q||'').match(/(?:lleva|ofrecer)\s+(?:el|la|los|las)\s+(.+?)(?:\s+en la mesa)?[?.]?$/i);return m?m[1]:(q||'')};
+const cls=v=>v>=85?'':v>=CORTE?'mid':'low';
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const orden=(a,b)=>a.localeCompare(b,'es');
+
+async function init(){
+  const id=new URLSearchParams(location.search).get('id');
+  if(!id)return fin('Falta el examen. Ábrelo desde El Libro → Exámenes.');
+  const[{data:ex,error:e1},{data:res,error:e2},{data:marca}]=await Promise.all([
+    sb.from('rrhh_examenes').select('*').eq('id',id).maybeSingle(),
+    sb.from('rrhh_examen_resultados').select('*').eq('examen_id',id).order('created_at'),
+    sb.from('inv_marcas').select('nombre').eq('id',MARCA).maybeSingle()]);
+  if(e1||e2)return fin('Atrás: '+esc((e1||e2).message));
+  if(!ex)return fin('No encontramos este examen o no tienes acceso.');
+  render(ex,res||[],(marca&&marca.nombre)||'');
+}
+function fin(m){document.getElementById('sheet').innerHTML='<div class="estado">'+m+'</div>'}
+
+function render(ex,rows,cliente){
+  const preg=Array.isArray(ex.preguntas)?ex.preguntas:[];
+  const mc=preg.map((p,i)=>({p,i})).filter(x=>x.p.tipo!=='abierta');
+  const ab=preg.map((p,i)=>({p,i})).filter(x=>x.p.tipo==='abierta');
+  // 1) Quitar envíos duplicados (misma persona, mismas respuestas, menos de 2 min de diferencia: doble clic)
+  let dup=0;const limpios=[];
+  rows.forEach(r=>{const prev=limpios.filter(x=>x._k===r.persona.trim().toLowerCase()).pop();
+    const k=r.persona.trim().toLowerCase();
+    if(prev&&JSON.stringify(prev.respuestas)===JSON.stringify(r.respuestas)&&new Date(r.created_at)-new Date(prev.created_at)<120000){dup++;return}
+    limpios.push(Object.assign({_k:k},r))});
+  // 2) Por persona: cuenta el último intento
+  const porP={};limpios.forEach(r=>{(porP[r._k]=porP[r._k]||[]).push(r)});
+  const gente=Object.values(porP).map(ints=>{const u=ints[ints.length-1],resp=u.respuestas||{};
+    const aciertos=mc.filter(x=>resp[x.i]===x.p.correcta).length;
+    const escritas=ab.filter(x=>palabras(resp[x.i])>4).length;
+    return{nombre:nombreBonito(u.persona),r:u,resp,intentos:ints,aciertos,escritas,
+      con:mc.length?pct(aciertos,mc.length):null,ven:ab.length?pct(escritas,ab.length):null}})
+    .sort((a,b)=>(b.con??0)-(a.con??0)||(b.ven??0)-(a.ven??0)||orden(a.nombre,b.nombre));
+  const N=gente.length;
+  const sheet=document.getElementById('sheet');
+  const logoCli=LOGOS[MARCA];
+  document.title='Reporte · '+ex.titulo+(cliente?' · '+cliente:'');
+  const cab=`<div class="brandrow"><img class="prep" src="/logo.png" alt="Prep!">${logoCli?`<img class="cli" src="${logoCli}" alt="">`:''}</div>`;
+  // En impresión el encabezado va en un <thead>: Chrome lo repite en cada página.
+  const envolver=h=>`<table class="pg"><thead><tr><td>${cab}</td></tr></thead><tbody><tr><td>${h}</td></tr></tbody></table>`;
+  if(!N){sheet.innerHTML=envolver(`<h1>${esc(ex.titulo)}</h1><div class="estado">Todavía nadie rindió este examen.</div>`);return}
+
+  const fechas=limpios.map(r=>new Date(r.created_at)).sort((a,b)=>a-b);
+  const f0=fechaLarga(fechas[0]),f1=fechaLarga(fechas[fechas.length-1]);const fTxt=f0===f1?'el '+f0:'del '+f0+' al '+f1;
+  const conProm=mc.length?Math.round(gente.reduce((s,g)=>s+g.aciertos,0)/(N*mc.length)*100):null;
+  const venProm=ab.length?Math.round(gente.reduce((s,g)=>s+g.escritas,0)/(N*ab.length)*100):null;
+  const aprobCon=gente.filter(g=>g.con!=null&&g.con>=CORTE).length;
+  const aprobAmbos=gente.filter(g=>(g.con==null||g.con>=CORTE)&&(g.ven==null||g.ven>=CORTE)).length;
+  const estado=g=>{const okC=g.con==null||g.con>=CORTE,okV=g.ven==null||g.ven>=CORTE;
+    if(okC&&okV)return'<span class="pill ok">Aprobado</span>';
+    if((g.con??100)>=CORTE-15&&(g.ven??100)>=CORTE-15)return'<span class="pill re">Repasar</span>';
+    return'<span class="pill no">Volver a rendir</span>'};
+
+  // Lead en una frase según los datos
+  let lead='';
+  if(conProm!=null&&venProm!=null){
+    lead=venProm-conProm>=15?`El equipo <b>escribe sus líneas de venta</b> (${venProm}%), pero el <b>conocimiento</b> se queda en ${conProm}%: vende más de lo que domina.`
+      :conProm-venProm>=15?`El equipo <b>conoce la carta</b> (${conProm}%), pero le cuesta <b>ponerlo en palabras</b> para vender (${venProm}%).`
+      :`Conocimiento en ${conProm}% y venta sugestiva en ${venProm}%.`;
+    lead+=` ${aprobAmbos} de ${N} ${N===1?'persona aprueba':'personas aprueban'} las dos partes.`;
+  }else if(conProm!=null){lead=`El grupo acertó en promedio el <b>${conProm}%</b> de las preguntas; ${aprobCon} de ${N} ${aprobCon===1?'persona aprueba':'personas aprueban'}.`}
+
+  // Pregunta por pregunta (solo opción múltiple)
+  const items=mc.map(x=>{const fallos=gente.filter(g=>g.resp[x.i]!==x.p.correcta);
+    const ok=N-fallos.length;
+    // agrupar por opción elegida
+    const grp={};fallos.forEach(g=>{const k=g.resp[x.i]==null?'sin responder':(x.p.opciones[g.resp[x.i]]||'—');(grp[k]=grp[k]||[]).push(g.nombre.split(' ')[0])});
+    const det=Object.entries(grp).map(([op,ns])=>`${esc(ns.join(', ').replace(/, ([^,]*)$/,' y $1'))}: ${esc(op)}`).join(' · ');
+    return{x,ok,det}}).sort((a,b)=>b.ok-a.ok);
+
+  // Notas de datos
+  const reint=gente.filter(g=>g.intentos.length>1);
+  const notas=[];
+  reint.forEach(g=>{const p=g.intentos[0];const c0=mc.length?pct(mc.filter(x=>(p.respuestas||{})[x.i]===x.p.correcta).length,mc.length):null;
+    notas.push(`${esc(g.nombre)} rindió el examen ${g.intentos.length} veces: ${c0!=null?c0+'% en el primer intento ('+hora(p.created_at)+')':'primer intento a las '+hora(p.created_at)} y ${g.con!=null?g.con+'%':'—'} en el último (${hora(g.r.created_at)}). Se toma el último.`)});
+  if(dup)notas.push(`${dup} ${dup===1?'envío quedó duplicado':'envíos quedaron duplicados'} por doble clic y se ${dup===1?'cuenta':'cuentan'} una sola vez.`);
+
+  const lineasHTML=ab.length?`<h2 class="brk">Líneas de venta, persona por persona</h2>
+    <p>El puntaje de venta solo verifica que la línea tenga más de 4 palabras. Aquí están completas para que la gerencia las lea: en <span style="color:var(--red)">rojo</span> las que dejó en blanco y en <span style="color:var(--amber)">ámbar</span> las demasiado cortas.</p>`
+    +gente.map((g,k)=>`<div class="person${k===0?' first':''}"><div class="hd"><h3>${esc(g.nombre)}</h3><span>${g.escritas}/${ab.length} líneas válidas</span></div>`
+      +ab.map(x=>{const t=(g.resp[x.i]||'').trim(),n=palabras(t);
+        return`<div class="linea"><div class="k">${esc(tema(x.p.q))}</div><div class="v ${!t?'vacia':n<=4?'corta':''}">${t?esc(t):'No la escribió'}</div></div>`}).join('')+`</div>`).join(''):'';
+
+  sheet.innerHTML=envolver(`
+  <h1>${esc(ex.titulo)}${cliente?'<br>'+esc(cliente):''}</h1>
+  <div class="meta">Aplicado ${fTxt} &nbsp;·&nbsp; ${N} ${N===1?'persona':'personas'} &nbsp;·&nbsp; Reporte del ${fechaLarga(new Date())}</div>
+  ${lead?`<p class="lead">${lead}</p>`:''}
+  <div class="big">
+    ${conProm!=null?`<div><strong>${conProm} %</strong><span>Conocimiento promedio<br>(${gente.reduce((s,g)=>s+g.aciertos,0)} de ${N*mc.length} respuestas)</span></div>`:''}
+    ${venProm!=null?`<div><strong>${venProm} %</strong><span>Líneas de venta válidas<br>(${gente.reduce((s,g)=>s+g.escritas,0)} de ${N*ab.length})</span></div>`:''}
+    <div><strong>${aprobAmbos} de ${N}</strong><span>aprueban${mc.length&&ab.length?' las dos partes':''}<br>(corte ${CORTE} %)</span></div>
+  </div>
+  ${mc.length&&ab.length?`<p class="note">Dos puntajes separados. Conocimiento: ${mc.length} preguntas de opción múltiple. Venta sugestiva: ${ab.length} líneas abiertas que cuentan si superan 4 palabras; ese puntaje mide que la persona escribió, no la calidad de lo escrito.</p>`:''}
+
+  <h2>Resultados por persona</h2>
+  <table>
+    <tr><th style="width:44mm">Persona</th>${mc.length?'<th style="width:24mm">Conocimiento</th><th>&nbsp;</th>':''}${ab.length?'<th style="width:18mm">Venta</th>':''}<th style="width:24mm">Estado</th></tr>
+    ${gente.map(g=>`<tr><td>${esc(g.nombre)}${g.intentos.length>1?` <span style="color:var(--soft);font-size:8.5pt">(${g.intentos.length} intentos)</span>`:''}</td>
+      ${mc.length?`<td class="n">${g.aciertos} / ${mc.length} · ${g.con} %</td><td><div class="bar"><i class="${cls(g.con)}" style="width:${g.con}%"></i><b style="left:${CORTE}%"></b></div></td>`:''}
+      ${ab.length?`<td class="n">${g.escritas} / ${ab.length}</td>`:''}<td>${estado(g)}</td></tr>`).join('')}
+  </table>
+  <p class="note">${mc.length?`La línea vertical marca el corte de ${CORTE} %. `:''}${notas.join(' ')}</p>
+
+  ${mc.length?`<h2 class="brk">Pregunta por pregunta</h2>
+  <p>Aciertos sobre ${N} ${N===1?'persona':'personas'}, de la más dominada a la menos.</p>
+  <table>
+    <tr><th style="width:40mm">Pregunta</th><th style="width:40mm">Aciertos</th><th>Quién falló y qué eligió</th></tr>
+    ${items.map(it=>{const v=pct(it.ok,N);return`<tr><td style="font-weight:500">${esc(tema(it.x.p.q))}</td>
+      <td><div style="display:flex;align-items:center;gap:6pt"><div class="bar"><i class="${cls(v)}" style="width:${v}%"></i></div><span class="n" style="font-size:8.5pt;color:var(--soft)">${it.ok}/${N}</span></div></td>
+      <td class="err">${it.det||'Todos acertaron'}</td></tr>`}).join('')}
+  </table>
+  <p class="note">Respuesta correcta de cada pregunta: ${items.slice().sort((a,b)=>a.x.i-b.x.i).map(it=>`<b>${esc(tema(it.x.p.q))}</b>: ${esc(it.x.p.opciones[it.x.p.correcta])}`).join(' · ')}.</p>`:''}
+
+  ${lineasHTML}
+
+  <div class="foot">Fuente: Prep!, El Libro · examen «${esc(ex.titulo)}»${cliente?' ('+esc(cliente)+')':''}. ${N} ${N===1?'persona':'personas'}, ${rows.length} ${rows.length===1?'envío registrado':'envíos registrados'}.</div>`);
+}
+init();
+</script>
+</body>
+</html>

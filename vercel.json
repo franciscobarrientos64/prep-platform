@@ -182,6 +182,10 @@
       "destination": "/el-libro.html"
     },
     {
+      "source": "/examen-reporte",
+      "destination": "/examen-reporte.html"
+    },
+    {
       "source": "/curso-vinos",
       "destination": "/curso-vinos.html"
     },

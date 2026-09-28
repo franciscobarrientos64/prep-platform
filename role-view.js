@@ -54,7 +54,7 @@
     '/kds':'linea','/linea':'linea','/bienvenida':'bienvenida','/reservar':'bienvenida',
     '/mercado':'mercado','/inventario':'mercado','/recetas':'recetas','/rrhh':'rrhh',
     '/delivery':'delivery','/finanzas':'contabilidad','/contabilidad':'contabilidad','/caja-chica':'contabilidad',
-    '/vuelto':'vuelto','/el-libro':'libro','/libro':'libro','/directorio':'directorio',
+    '/vuelto':'vuelto','/el-libro':'libro','/examen-reporte':'libro','/libro':'libro','/directorio':'directorio',
     '/engagement':'engagement','/prediccion':'prediccion',
     '/voz-cliente':'mystery','/voz':'mystery','/mystery':'mystery'
   };
