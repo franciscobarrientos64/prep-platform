@@ -78,7 +78,7 @@ td.err{color:var(--soft);font-size:8.8pt}
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const LOGOS={m7:'/logos/m7.png',m8:'/logos/m8.png'};
-const CORTE=70; // mismo corte que El Libro: cada puntaje aprueba con 70%
+const CORTE=90; // mismo corte que El Libro (APRUEBA): cada puntaje aprueba con 90%
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const fechaLarga=ts=>{const d=new Date(ts);return d.getDate()+' de '+MES[d.getMonth()]+' de '+d.getFullYear()};
@@ -87,7 +87,7 @@ const palabras=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
 const nombreBonito=n=>(n||'—').trim().replace(/\s+/g,' ').replace(/(^|\s)(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
 // "¿Qué lleva el Amargo Mandarino?" → "Amargo Mandarino"; "Tu línea para ofrecer el X en la mesa." → "X"
 const tema=q=>{const m=(q||'').match(/(?:lleva|ofrecer)\s+(?:el|la|los|las)\s+(.+?)(?:\s+en la mesa)?[?.]?$/i);return m?m[1]:(q||'')};
-const cls=v=>v>=85?'':v>=CORTE?'mid':'low';
+const cls=v=>v>=CORTE?'':v>=CORTE-20?'mid':'low';
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const orden=(a,b)=>a.localeCompare(b,'es');
 
