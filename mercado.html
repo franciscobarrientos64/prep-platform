@@ -143,7 +143,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={parEdits:{},parCob:7,parSeg:20,parCat:'todas',parQ:'',parSoloDif:false,consumo:null,productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
+const state={parEdits:{},parOrigen:{},parLocal:{},parHist:[],usuario:null,locales1:true,parCob:7,parSeg:20,parCat:'todas',parQ:'',parFiltro:'todos',consumo:null,productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -164,10 +164,11 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist()]);
+  await Promise.all([loadAlertaWA(),loadParLocal(),loadParHist(),loadUsuario(),loadNumLocales(),loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist()]);
   const h=location.hash.replace('#','');if(['inventario','pares','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
+async function loadNumLocales(){const{count}=await sb.from('inv_locales').select('id',{count:'exact',head:true}).eq('marca_id',MARCA);state.locales1=(count||1)<=1}
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
 async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento').eq('marca_id',MARCA);state.recetas=data||[]}
 function teoDesde(){const d=new Date();if(state.teoPeriodo==='hoy')return d.toISOString().slice(0,10)+'T00:00:00';if(state.teoPeriodo==='mes'){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01T00:00:00'}d.setDate(d.getDate()-7);return d.toISOString().slice(0,10)+'T00:00:00'}
@@ -185,7 +186,6 @@ async function loadOrdenes(){const{data}=await sb.from('inv_ordenes_compra').sel
 
 /* ===== DERIVED ===== */
 function stock(pid){return state.stockMap[pid]||0}
-function estadoStock(p){const s=stock(p.id);if(s<=0)return'sin';if(s<Number(p.par_level||0))return'bajo';return'ok'}
 function valorInventario(){return state.productos.reduce((a,p)=>a+stock(p.id)*Number(p.costo||0),0)}
 function categorias(){return Array.from(new Set(state.productos.map(p=>p.categoria||'Otros')))}
 
@@ -207,7 +207,7 @@ function renderHeader(){
     <div class="brand"><a href="/" class="brand-logo" title="Inicio · módulos"><span class="l base"></span><span class="l bang"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">Módulo Mercado</div></div></div>
     <div class="header-info">
       <span class="pill">${money(valorInventario())} en stock</span>
-      <span class="pill ${bajo?'alert':''}">${bajo} bajo par</span>
+      <span class="pill ${bajo?'alert':''}">${bajo} bajo mínimo</span>
     </div>
     <button class="btn-ico primary" id="h-entrada"><span class="material-symbols-outlined">add</span><span>Entrada</span></button>
     <button class="btn-ico" id="h-merma"><span class="material-symbols-outlined">delete_sweep</span><span>Merma</span></button>`;
@@ -238,7 +238,7 @@ function renderInventario(){
     <div class="kpis">
       <div class="kpi"><div class="val">${state.productos.length}</div><div class="lbl">Productos</div></div>
       <div class="kpi"><div class="val">${money(valorInventario())}</div><div class="lbl">Valor inventario</div></div>
-      <div class="kpi ${bajo?'alert':''}"><div class="val">${bajo}</div><div class="lbl">Bajo par</div></div>
+      <div class="kpi ${bajo?'alert':''}"><div class="val">${bajo}</div><div class="lbl">Bajo mínimo</div></div>
       <div class="kpi ${sin?'alert':''}"><div class="val">${sin}</div><div class="lbl">Sin stock</div></div>
     </div>
     <div class="toolbar">
@@ -251,7 +251,7 @@ function renderInventario(){
   $$('#screen .row-card [data-act]').forEach(b=>b.onclick=()=>{const pid=b.closest('.row-card').dataset.pid;const a=b.dataset.act;
     if(a==='pedir')abrirAgregarPedido(pid);else if(a==='entrada')abrirMovimiento(pid,'entrada');else if(a==='salida')abrirMovimiento(pid,'salida');else if(a==='ajuste')abrirMovimiento(pid,'ajuste');else if(a==='merma')abrirMerma(pid);else if(a==='ficha')abrirFichaProducto(pid)});
 }
-function invCard(p){const s=stock(p.id),est=estadoStock(p);const lbl={ok:'En stock',bajo:'Bajo par',sin:'Sin stock'}[est];
+function invCard(p){const s=stock(p.id),est=estadoStock(p);const lbl={ok:'En stock',bajo:'Bajo mínimo',sin:'Sin stock'}[est];
   const col=est==='ok'?'var(--green)':est==='bajo'?'#c98a00':'var(--secondary)';
   const enPedido=state.pedidoQty[p.id]||0;
   return `<div class="row-card" data-pid="${p.id}">
@@ -268,7 +268,8 @@ function invCard(p){const s=stock(p.id),est=estadoStock(p);const lbl={ok:'En sto
       </div>
     </div>
     <div class="row-right">
-      <span class="stockbig" style="color:${col}">${num(s)} <span style="font-size:13px;font-weight:400;opacity:.7">de ${num(p.par_level)} ${p.unidad||''}</span></span>
+      <span class="stockbig" style="color:${col}">${num(s)} <span style="font-size:13px;font-weight:400;opacity:.7">${p.unidad||''}</span></span>
+      <span class="row-meta">mín ${num(minimoDe(p))} · PAR ${num(parHoy(p))}</span>
       <span class="badge ${est}">${lbl}</span>
     </div>
   </div>`;
@@ -279,21 +280,28 @@ async function abrirFichaProducto(pid){const p=prod(pid);if(!p)return;const s=st
   setHead(p.emoji||'📦',p.nombre,p.categoria+' · '+p.unidad);
   $('#sheet-body').innerHTML=`
     <div class="kpis"><div class="kpi"><div class="val">${num(s)}</div><div class="lbl">Stock ${p.unidad||''}</div></div>
-      <div class="kpi"><div class="val">${num(p.par_level)}</div><div class="lbl">Par level</div></div>
+      <div class="kpi"><div class="val">${num(minimoDe(p))}</div><div class="lbl">Mínimo</div></div>
+      <div class="kpi"><div class="val">${num(parHoy(p))}</div><div class="lbl">PAR hoy</div></div>
       <div class="kpi"><div class="val">${money(p.costo)}</div><div class="lbl">Costo</div></div></div>
     <div class="sheet-section"><div class="field-lbl">Proveedores (precio)</div>
       ${precios.length?`<table class="tbl"><tr><th>Proveedor</th><th>Costo</th><th>Entrega</th></tr>${precios.map((pp,i)=>`<tr class="${i===0?'best':''}"><td>${prov(pp.proveedor_id)?.nombre||pp.proveedor_id}${pp.preferido?' ⭐':''}</td><td>${money(pp.costo)}/${pp.unidad_compra||''}</td><td>${pp.tiempo_entrega_dias||'?'}d</td></tr>`).join('')}</table>`:'<div class="empty-state" style="padding:14px">Sin precios de proveedor</div>'}</div>
     <div class="sheet-section"><div class="field-lbl">Últimos movimientos</div>
       ${movs.length?movs.map(m=>`<div class="info-row"><span>${m.fecha} · ${m.tipo}</span><strong style="color:${Number(m.cantidad)<0?'var(--secondary)':'var(--green)'}">${Number(m.cantidad)>0?'+':''}${num(m.cantidad)}</strong></div>`).join(''):'<div class="empty-state" style="padding:14px">Sin movimientos</div>'}</div>
-    <div class="sheet-section"><button class="btn" id="fp-cfg"><span class="material-symbols-outlined">settings</span>Configurar par / proveedor</button></div>`;
+    <div class="sheet-section"><button class="btn" id="fp-cfg"><span class="material-symbols-outlined">settings</span>Configurar mínimo / PAR / proveedor</button></div>
+    ${(()=>{const h=state.parHist.filter(x=>x.producto_id===pid).slice(0,5);return h.length?`<div class="sheet-section"><div class="field-lbl">Últimos cambios de mínimo / PAR <a href="#" id="fp-hist" style="font-weight:400">ver todo</a></div>${h.map(x=>`<div class="info-row"><span>${(x.created_at||'').slice(0,10)} · ${x.campo==='par_dia'?'PAR por día':x.campo==='par'?'PAR':'Mínimo'} · ${x.usuario||'—'}</span><strong>${typeof x.despues==='object'&&x.despues?'por día':num(x.despues)}</strong></div>`).join('')}</div>`:''})()}`;
   openSheet();
   $('#fp-cfg').onclick=()=>abrirConfigProducto(pid);
+  if($('#fp-hist'))$('#fp-hist').onclick=e=>{e.preventDefault();abrirHistorialPar(pid)};
 }
 
-/* ===== PARES (editor masivo de par level + sugerido por consumo) ===== */
-// Consumo real = salidas + mermas de los últimos PAR_DIAS días (inv_movimientos).
-// Par sugerido = consumo diario × (días de cobertura + días de entrega del proveedor preferido) × (1 + colchón).
+/* ===== PARES: MÍNIMO y PAR por sede (y PAR por día de semana) =====
+   Mínimo = punto de pedido (bajo eso salta la alerta). PAR = nivel objetivo hasta donde se pide.
+   Consumo real = salidas + mermas de los últimos PAR_DIAS días (inv_movimientos).
+   PAR sugerido   = consumo/día × (cobertura + días de entrega) × (1 + colchón).
+   Mínimo sugerido = consumo/día × días de entrega (mín. 1) × (1 + colchón). */
 const PAR_DIAS=28;
+const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const DIAS_XLS=['dom','lun','mar','mie','jue','vie','sab'];
 async function loadConsumo(){
   const d=new Date();d.setDate(d.getDate()-PAR_DIAS);const desde=d.toISOString().slice(0,10);
   const m={};let from=0;const page=1000;
@@ -305,118 +313,264 @@ async function loadConsumo(){
   }
   state.consumo=m;
 }
+async function loadParLocal(){const{data}=await sb.from('inv_par_local').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=r);state.parLocal=m}
+async function loadParHist(){const{data}=await sb.from('inv_par_hist').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(300);state.parHist=data||[]}
+async function loadUsuario(){try{const{data}=await sb.auth.getUser();state.usuario=data?.user?.email||null}catch(e){}}
 function diasEntrega(pid){const pp=state.provProd.filter(x=>x.producto_id===pid);const pref=pp.find(x=>x.preferido)||pp[0];return Number(pref?.tiempo_entrega_dias||0)}
 function consumoDia(pid){return (state.consumo?.[pid]||0)/PAR_DIAS}
 function pasoPar(p){return ['kg','l','g','ml'].includes((p.unidad||'').toLowerCase())?0.5:1}
-function parSugeridoConsumo(p){const c=consumoDia(p.id);if(!c)return null;const paso=pasoPar(p);
-  const v=c*(state.parCob+diasEntrega(p.id))*(1+state.parSeg/100);return Math.ceil(v/paso)*paso}
-function parActual(p){return state.parEdits[p.id]!=null?state.parEdits[p.id]:Number(p.par_level||0)}
-function setParEdit(pid,v){const p=prod(pid);v=Math.max(0,Number(v)||0);if(v===Number(p.par_level||0))delete state.parEdits[pid];else state.parEdits[pid]=v}
+function redPaso(p,v){const s=pasoPar(p);return Math.ceil(v/s-1e-9)*s}
+// Valores guardados (sede activa) con respaldo en inv_productos.par_level
+function parBase(p){const r=state.parLocal[p.id];return r?Number(r.par||0):Number(p.par_level||0)}
+function minimoDe(p){const r=state.parLocal[p.id];if(r)return Number(r.minimo||0);return redPaso(p,Number(p.par_level||0)*0.5)}
+function parDiaMap(p){const r=state.parLocal[p.id];return r&&r.par_dia&&typeof r.par_dia==='object'?r.par_dia:null}
+function parDia(p,dow){const m=parDiaMap(p);const v=m?m[String(dow)]:null;return v!=null&&v!==''?Number(v):parBase(p)}
+function parHoy(p){return parDia(p,new Date().getDay())}
+function fechaEntrega(pid){const d=new Date();d.setDate(d.getDate()+diasEntrega(pid));return d}
+function parEntrega(p){return parDia(p,fechaEntrega(p.id).getDay())}
+function estadoStock(p){const s=stock(p.id);if(s<=0)return'sin';if(s<minimoDe(p))return'bajo';return'ok'}
+function sugerido(p){return Math.max(0,+(parEntrega(p)-stock(p.id)).toFixed(2))}
+// Sugeridos por consumo
+function parSugeridoConsumo(p){const c=consumoDia(p.id);if(!c)return null;return redPaso(p,c*(state.parCob+diasEntrega(p.id))*(1+state.parSeg/100))}
+function minSugeridoConsumo(p){const c=consumoDia(p.id);if(!c)return null;return redPaso(p,c*Math.max(1,diasEntrega(p.id))*(1+state.parSeg/100))}
+// Edición en curso: state.parEdits[pid]={minimo?,par?,par_dia?}; state.parOrigen[pid]=manual|excel|sugerido
+function ed(p){return state.parEdits[p.id]||{}}
+function minActual(p){const e=ed(p);return e.minimo!=null?e.minimo:minimoDe(p)}
+function parActual(p){const e=ed(p);return e.par!=null?e.par:parBase(p)}
+function parDiaActual(p){const e=ed(p);return e.par_dia!==undefined?e.par_dia:parDiaMap(p)}
+function setEdit(pid,campo,v,origen){const p=prod(pid);const e={...(state.parEdits[pid]||{})};
+  const orig=campo==='minimo'?minimoDe(p):campo==='par'?parBase(p):parDiaMap(p);
+  if(campo==='par_dia'){const iguales=JSON.stringify(v||null)===JSON.stringify(orig||null);if(iguales)delete e.par_dia;else e.par_dia=v}
+  else{v=Math.max(0,Number(v)||0);if(v===orig)delete e[campo];else e[campo]=v}
+  if(Object.keys(e).length){state.parEdits[pid]=e;state.parOrigen[pid]=origen||state.parOrigen[pid]||'manual'}else{delete state.parEdits[pid];delete state.parOrigen[pid]}}
+function desfasado(p){const s=parSugeridoConsumo(p),a=parBase(p);return s!=null&&a>0&&Math.abs(s-a)/a>=0.25}
 function listaPares(){return state.productos.filter(p=>(state.parCat==='todas'||p.categoria===state.parCat)&&(!state.parQ||(p.nombre+' '+p.categoria).toLowerCase().includes(state.parQ.toLowerCase())))
-  .filter(p=>{if(!state.parSoloDif)return true;const s=parSugeridoConsumo(p),a=parActual(p);return s!=null&&(a===0||Math.abs(s-a)/Math.max(a,0.01)>=0.25)})}
+  .filter(p=>{if(state.parFiltro==='desfase'){const s=parSugeridoConsumo(p),a=parActual(p);return s!=null&&(a===0||Math.abs(s-a)/Math.max(a,0.01)>=0.25)}if(state.parFiltro==='bajo')return estadoStock(p)!=='ok';return true})}
+function chipDias(p){const m=parDiaActual(p);if(!m)return'<span class="row-meta">igual</span>';const b=parActual(p);
+  return `<span class="mono" style="font-size:10px">${[2,3,4,5,6,0].map(d=>{const v=m[String(d)];return v!=null&&Number(v)!==b?DIAS[d].slice(0,2)+' '+num(v):''}).filter(Boolean).join(' · ')||'igual'}</span>`}
 async function renderPares(){
   if(!state.consumo){$('#screen').innerHTML='<div class="empty-state">Oído · calculando consumo de las últimas 4 semanas…</div>';await loadConsumo();if(state.view!=='pares')return}
   const cats=['todas',...categorias()];const list=listaPares();const nEd=Object.keys(state.parEdits).length;
-  const sinPar=state.productos.filter(p=>!Number(p.par_level)).length;
-  const desfase=state.productos.filter(p=>{const s=parSugeridoConsumo(p),a=Number(p.par_level||0);return s!=null&&a>0&&Math.abs(s-a)/a>=0.25}).length;
+  const sinPar=state.productos.filter(p=>!parBase(p)).length;
+  const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
+  const desfase=state.productos.filter(desfasado).length;
   const capital=state.productos.reduce((a,p)=>a+parActual(p)*Number(p.costo||0),0);
   $('#screen').innerHTML=`
     <div class="kpis">
-      <div class="kpi"><div class="val">${money(capital)}</div><div class="lbl">Inventario al par</div></div>
-      <div class="kpi ${desfase?'alert':''}"><div class="val">${desfase}</div><div class="lbl">Par desfasado ±25%</div></div>
-      <div class="kpi ${sinPar?'alert':''}"><div class="val">${sinPar}</div><div class="lbl">Sin par</div></div>
+      <div class="kpi ${bajo?'alert':''}"><div class="val">${bajo}</div><div class="lbl">Bajo mínimo</div></div>
+      <div class="kpi"><div class="val">${money(capital)}</div><div class="lbl">Inventario al PAR</div></div>
+      <div class="kpi ${desfase?'alert':''}"><div class="val">${desfase}</div><div class="lbl">PAR desfasado ±25%</div></div>
+      <div class="kpi ${sinPar?'alert':''}"><div class="val">${sinPar}</div><div class="lbl">Sin PAR</div></div>
       <div class="kpi"><div class="val">${nEd}</div><div class="lbl">Cambios sin guardar</div></div>
     </div>
     <div class="toolbar">
       <input class="input" id="par-q" placeholder="Buscar insumo…" value="${state.parQ}" style="max-width:240px">
       <label class="row-meta" style="display:flex;align-items:center;gap:6px">Cobertura <input class="input" id="par-cob" type="number" min="1" value="${state.parCob}" style="width:70px;padding:6px 8px"> días</label>
       <label class="row-meta" style="display:flex;align-items:center;gap:6px">Colchón <input class="input" id="par-seg" type="number" min="0" step="5" value="${state.parSeg}" style="width:70px;padding:6px 8px"> %</label>
-      <button class="chip ${state.parSoloDif?'active':''}" id="par-dif">Solo desfasados</button>
+      <div class="chips">${[['todos','Todos'],['bajo','Bajo mínimo'],['desfase','Desfasados']].map(f=>`<button class="chip ${state.parFiltro===f[0]?'active':''}" data-pf="${f[0]}">${f[1]}</button>`).join('')}</div>
     </div>
     <div class="toolbar"><div class="chips">${cats.map(c=>`<button class="chip ${state.parCat===c?'active':''}" data-pcat="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div></div>
     <div class="toolbar">
-      <button class="mini-btn" id="par-aplicar"><span class="material-symbols-outlined" style="font-size:14px">auto_fix_high</span>Usar sugerido en los ${list.length} visibles</button>
+      <button class="mini-btn" id="par-aplicar"><span class="material-symbols-outlined" style="font-size:14px">auto_fix_high</span>Usar sugeridos en los ${list.length} visibles</button>
       <button class="mini-btn" id="par-xls-dl"><span class="material-symbols-outlined" style="font-size:14px">download</span>Descargar Excel</button>
       <button class="mini-btn" id="par-xls-up"><span class="material-symbols-outlined" style="font-size:14px">upload_file</span>Cargar desde Excel</button>
       <input type="file" id="par-xls-file" accept=".xlsx,.xls,.csv" style="display:none">
+      <button class="mini-btn" id="par-auto"><span class="material-symbols-outlined" style="font-size:14px">local_shipping</span>Pedido automático</button>
+      <button class="mini-btn" id="par-wa"><span class="material-symbols-outlined" style="font-size:14px">chat</span>Avisar por WhatsApp</button>
+      <button class="mini-btn ghost" id="par-hist"><span class="material-symbols-outlined" style="font-size:14px">history</span>Historial</button>
       ${nEd?`<button class="mini-btn ghost" id="par-desc">Descartar cambios</button>`:''}
       <button class="btn primary" id="par-save" style="margin-left:auto;padding:9px 16px" ${nEd?'':'disabled'}><span class="material-symbols-outlined" style="font-size:18px">save</span>Guardar ${nEd||''} cambio${nEd===1?'':'s'}</button>
     </div>
-    <div class="row-meta" style="margin-bottom:10px">Sugerido = consumo diario (salidas + mermas de ${PAR_DIAS} días) × (cobertura + días de entrega del proveedor) × (1 + colchón). Enter baja a la siguiente fila.</div>
-    <div style="overflow-x:auto">${list.length?`<table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Consumo/día</th><th>Entrega</th><th>Par</th><th>Sugerido</th><th>Cubre</th></tr>
-      ${list.map(p=>{const a=parActual(p),s=parSugeridoConsumo(p),c=consumoDia(p.id),ed=state.parEdits[p.id]!=null;
-        const st=stock(p.id),cls=ed?'amar':(st<a?'rojo':'');const dias=c?a/c:null;
+    <div class="row-meta" style="margin-bottom:10px">Mínimo = cuándo pedir · PAR = hasta cuánto pedir. Sugeridos según el consumo de ${PAR_DIAS} días (salidas + mermas), los días de entrega del proveedor y el colchón. "Por día" sube el PAR los días fuertes. Enter baja a la siguiente fila.</div>
+    <div style="overflow-x:auto">${list.length?`<table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Consumo/día</th><th>Entrega</th><th>Mínimo</th><th>PAR</th><th>Sugerido</th><th>Por día</th><th>Cubre</th></tr>
+      ${list.map(p=>{const mi=minActual(p),a=parActual(p),sp=parSugeridoConsumo(p),sm=minSugeridoConsumo(p),c=consumoDia(p.id),e=state.parEdits[p.id],st=stock(p.id);
+        const cls=e?'amar':(st<mi?'rojo':'');const dias=c?a/c:null;const step=pasoPar(p);
+        const igual=sp==null||(sp===a&&sm===mi);
         return `<tr class="${cls}" data-pid="${p.id}"><td>${p.emoji||''} <strong>${p.nombre}</strong><div class="row-meta">${p.categoria||'—'} · ${p.unidad||''}</div></td>
           <td class="mono">${num(st)}</td><td class="mono">${c?num(c):'—'}</td><td class="mono">${diasEntrega(p.id)}d</td>
-          <td><input class="input par-in" type="number" min="0" step="${pasoPar(p)}" value="${a}" style="width:90px;padding:6px 8px">${ed?`<div class="row-meta">antes ${num(p.par_level)}</div>`:''}</td>
-          <td>${s!=null?`<button class="mini-btn ${s!==a?'warn':''}" data-sug="${s}" title="Usar sugerido">${num(s)}</button>`:'<span class="row-meta">sin consumo</span>'}</td>
+          <td><input class="input par-in" data-campo="minimo" type="number" min="0" step="${step}" value="${mi}" style="width:80px;padding:6px 8px">${e&&e.minimo!=null?`<div class="row-meta">antes ${num(minimoDe(p))}</div>`:''}</td>
+          <td><input class="input par-in" data-campo="par" type="number" min="0" step="${step}" value="${a}" style="width:80px;padding:6px 8px">${e&&e.par!=null?`<div class="row-meta">antes ${num(parBase(p))}</div>`:''}</td>
+          <td>${sp!=null?`<button class="mini-btn ${igual?'':'warn'}" data-sug="1" title="Usar sugerido">mín ${num(sm)} · PAR ${num(sp)}</button>`:'<span class="row-meta">sin consumo</span>'}</td>
+          <td><button class="mini-btn ghost" data-dias="1" title="PAR por día de semana">${chipDias(p)}</button></td>
           <td class="mono">${dias!=null?num(Math.round(dias*10)/10)+' d':'—'}</td></tr>`}).join('')}</table>`:'<div class="empty-state">Sin insumos con ese filtro</div>'}</div>`;
   $('#par-q').oninput=e=>{state.parQ=e.target.value;renderPares().then(()=>{const i=$('#par-q');i.focus();i.setSelectionRange(i.value.length,i.value.length)})};
   $('#par-cob').onchange=e=>{state.parCob=Math.max(1,Number(e.target.value)||7);renderPares()};
   $('#par-seg').onchange=e=>{state.parSeg=Math.max(0,Number(e.target.value)||0);renderPares()};
-  $('#par-dif').onclick=()=>{state.parSoloDif=!state.parSoloDif;renderPares()};
+  $$('#screen [data-pf]').forEach(b=>b.onclick=()=>{state.parFiltro=b.dataset.pf;renderPares()});
   $$('#screen [data-pcat]').forEach(b=>b.onclick=()=>{state.parCat=b.dataset.pcat;renderPares()});
-  $('#par-aplicar').onclick=()=>{let n=0;list.forEach(p=>{const s=parSugeridoConsumo(p);if(s!=null&&s!==parActual(p)){setParEdit(p.id,s);n++}});renderTabs();renderPares();toast(n?`Va · ${n} pares con el sugerido (falta guardar)`:'Ya están en el sugerido',n?'ok':'')};
-  if($('#par-desc'))$('#par-desc').onclick=()=>{state.parEdits={};renderTabs();renderPares()};
+  $('#par-aplicar').onclick=()=>{let n=0;list.forEach(p=>{const sp=parSugeridoConsumo(p),sm=minSugeridoConsumo(p);if(sp==null)return;if(sp!==parActual(p)||sm!==minActual(p)){setEdit(p.id,'par',sp,'sugerido');setEdit(p.id,'minimo',sm,'sugerido');n++}});renderTabs();renderPares();toast(n?`Va · ${n} insumos con el sugerido (falta guardar)`:'Ya están en el sugerido',n?'ok':'')};
+  if($('#par-desc'))$('#par-desc').onclick=()=>{state.parEdits={};state.parOrigen={};renderTabs();renderPares()};
   $('#par-save').onclick=guardarPares;
   $('#par-xls-dl').onclick=descargarParesXLS;
   $('#par-xls-up').onclick=()=>$('#par-xls-file').click();
   $('#par-xls-file').onchange=e=>{const f=e.target.files[0];if(f)cargarParesXLS(f);e.target.value=''};
+  $('#par-auto').onclick=abrirPedidoAutomatico;
+  $('#par-wa').onclick=avisarWhatsApp;
+  $('#par-hist').onclick=()=>abrirHistorialPar(null);
   const ins=$$('#screen .par-in');
+  const commit=(inp)=>{setEdit(inp.closest('tr').dataset.pid,inp.dataset.campo,inp.value,'manual');renderTabs()};
   ins.forEach((inp,i)=>{
-    inp.onchange=()=>{setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i];if(n)n.focus()})};
-    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i+1];if(n){n.focus();n.select()}})}};
+    inp.onchange=()=>{commit(inp);renderPares().then(()=>{const n=$$('#screen .par-in')[i];if(n)n.focus()})};
+    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();commit(inp);renderPares().then(()=>{const n=$$('#screen .par-in')[i+2];if(n){n.focus();n.select()}})}};
   });
-  $$('#screen [data-sug]').forEach(b=>b.onclick=()=>{setParEdit(b.closest('tr').dataset.pid,b.dataset.sug);renderTabs();renderPares()});
+  $$('#screen [data-sug]').forEach(b=>b.onclick=()=>{const p=prod(b.closest('tr').dataset.pid);setEdit(p.id,'par',parSugeridoConsumo(p),'sugerido');setEdit(p.id,'minimo',minSugeridoConsumo(p),'sugerido');renderTabs();renderPares()});
+  $$('#screen [data-dias]').forEach(b=>b.onclick=()=>abrirParDias(b.closest('tr').dataset.pid));
 }
-/* Excel: la plantilla trae ID + insumo + par actual + sugerido; al cargarla se cruza por ID (o por nombre) y
-   los pares quedan como cambios sin guardar, para revisarlos en la tabla antes de confirmar. */
+function abrirParDias(pid){const p=prod(pid);const base=parActual(p);let m={...(parDiaActual(p)||{})};
+  const orden=[2,3,4,5,6,0,1];
+  const draw=()=>{
+    setHead(p.emoji||'📅','PAR por día de semana',p.nombre+' · PAR base '+num(base)+' '+(p.unidad||''));
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section row-meta">El PAR del día de la entrega es el que se usa para armar el pedido. Deja vacío para usar el PAR base.</div>
+      <div class="sheet-section grid2">${orden.map(d=>`<div><div class="field-lbl">${DIAS[d]}</div><input class="input" data-d="${d}" type="number" min="0" step="${pasoPar(p)}" value="${m[d]!=null?m[d]:''}" placeholder="${num(base)}"></div>`).join('')}</div>
+      <div class="sheet-section chips">
+        <button class="chip" id="pd-finde">Fin de semana fuerte (vie/sáb ×1.6 · dom ×1.2)</button>
+        <button class="chip" id="pd-igual">Igual todos los días</button></div>
+      <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="pd-cancel">Atrás</button><button class="btn primary" id="pd-ok">Va</button></div></div>`;
+    $$('#sheet-body [data-d]').forEach(i=>i.oninput=()=>{const v=i.value;if(v==='')delete m[i.dataset.d];else m[i.dataset.d]=Number(v)});
+    $('#pd-finde').onclick=()=>{m={'5':redPaso(p,base*1.6),'6':redPaso(p,base*1.6),'0':redPaso(p,base*1.2)};draw()};
+    $('#pd-igual').onclick=()=>{m={};draw()};
+    $('#pd-cancel').onclick=closeSheet;
+    $('#pd-ok').onclick=()=>{const limpio={};Object.entries(m).forEach(([d,v])=>{if(v!=null&&v!==''&&!isNaN(v))limpio[d]=Number(v)});setEdit(pid,'par_dia',Object.keys(limpio).length?limpio:null,'manual');closeSheet();renderTabs();renderPares()};
+  };draw();openSheet();
+}
+async function guardarPares(){
+  const eds=Object.entries(state.parEdits);if(!eds.length)return;
+  const now=nowISO(),quien=state.usuario||'Mercado';const rows=[],hist=[];
+  eds.forEach(([pid,e])=>{const p=prod(pid);if(!p)return;const o=state.parOrigen[pid]||'manual';
+    const row={local_id:LOCAL,producto_id:pid,minimo:e.minimo!=null?e.minimo:minimoDe(p),par:e.par!=null?e.par:parBase(p),par_dia:e.par_dia!==undefined?e.par_dia:parDiaMap(p),updated_at:now,updated_by:quien};
+    rows.push(row);
+    if(e.minimo!=null)hist.push({local_id:LOCAL,producto_id:pid,campo:'minimo',antes:minimoDe(p),despues:e.minimo,origen:o,usuario:quien});
+    if(e.par!=null)hist.push({local_id:LOCAL,producto_id:pid,campo:'par',antes:parBase(p),despues:e.par,origen:o,usuario:quien});
+    if(e.par_dia!==undefined)hist.push({local_id:LOCAL,producto_id:pid,campo:'par_dia',antes:parDiaMap(p),despues:e.par_dia,origen:o,usuario:quien});});
+  const{error}=await sb.from('inv_par_local').upsert(rows,{onConflict:'local_id,producto_id'});
+  if(error){toast('Atrás: '+error.message,'err');return}
+  if(hist.length)await sb.from('inv_par_hist').insert(hist);
+  // Si la marca tiene una sola sede, el PAR base también queda en el catálogo (lo leen otros módulos)
+  if(state.locales1){await Promise.all(rows.map(r=>sb.from('inv_productos').update({par_level:r.par}).eq('id',r.producto_id).eq('marca_id',MARCA)))}
+  const n=rows.length;state.parEdits={};state.parOrigen={};await Promise.all([loadParLocal(),loadParHist(),loadProductos()]);render();
+  toast(`Servido · ${n} insumo${n===1?'':'s'} actualizado${n===1?'':'s'}`,'ok');
+}
+function abrirHistorialPar(pid){
+  const h=state.parHist.filter(x=>!pid||x.producto_id===pid).slice(0,pid?30:120);
+  const fmt=v=>v==null?'—':typeof v==='object'?Object.entries(v).map(([d,x])=>DIAS[d].slice(0,2)+' '+num(x)).join(' · ')||'igual':num(v);
+  setHead('🕘','Historial de mínimo / PAR',pid?prod(pid)?.nombre:'Todos los insumos de la sede');
+  $('#sheet-body').innerHTML=h.length?`<table class="tbl"><tr><th>Cuándo</th>${pid?'':'<th>Insumo</th>'}<th>Qué</th><th>Antes → Ahora</th><th>Quién</th></tr>
+    ${h.map(x=>`<tr><td class="mono" style="font-size:11px">${(x.created_at||'').slice(0,16).replace('T',' ')}</td>${pid?'':`<td>${prod(x.producto_id)?.nombre||x.producto_id}</td>`}<td>${x.campo==='par_dia'?'PAR por día':x.campo==='par'?'PAR':'Mínimo'}<div class="row-meta">${x.origen}</div></td><td class="mono" style="font-size:11px">${fmt(x.antes)} → <strong>${fmt(x.despues)}</strong></td><td style="font-size:11px">${x.usuario||'—'}</td></tr>`).join('')}</table>`
+    :'<div class="empty-state">Sin cambios registrados</div>';
+  openSheet();
+}
+/* Excel: plantilla con ID + insumo + mínimo + PAR (+ PAR por día). Al cargarla se cruza por ID (o nombre) y
+   los valores quedan como cambios sin guardar, para revisarlos en la tabla antes de confirmar. */
 async function xlsLib(){if(window.XLSX)return window.XLSX;await new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)});return window.XLSX}
-function normTxt(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim()}
+function normTxt(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[_]+/g,' ').replace(/\s+/g,' ').trim()}
 async function descargarParesXLS(){
   if(!state.consumo)await loadConsumo();
   let X;try{X=await xlsLib()}catch(e){toast('Atrás: no se pudo cargar el lector de Excel','err');return}
-  const rows=state.productos.map(p=>({ID:p.id,Insumo:p.nombre,Categoria:p.categoria||'',Unidad:p.unidad||'',Stock:+stock(p.id).toFixed(2),'Consumo dia':+consumoDia(p.id).toFixed(2),'Par actual':Number(p.par_level||0),'Par sugerido':parSugeridoConsumo(p)??'',Par:parActual(p)}));
-  const ws=X.utils.json_to_sheet(rows);ws['!cols']=[{wch:14},{wch:34},{wch:16},{wch:9},{wch:8},{wch:11},{wch:10},{wch:12},{wch:8}];
+  const rows=state.productos.map(p=>{const m=parDiaActual(p)||{};const r={ID:p.id,Insumo:p.nombre,Categoria:p.categoria||'',Unidad:p.unidad||'',Stock:+stock(p.id).toFixed(2),'Consumo dia':+consumoDia(p.id).toFixed(2),'Minimo sugerido':minSugeridoConsumo(p)??'','PAR sugerido':parSugeridoConsumo(p)??'',Minimo:minActual(p),Par:parActual(p)};
+    DIAS_XLS.forEach((d,i)=>r['Par_'+d]=m[i]!=null?m[i]:'');return r});
+  const ws=X.utils.json_to_sheet(rows);ws['!cols']=[{wch:14},{wch:34},{wch:14},{wch:8},{wch:8},{wch:11},{wch:14},{wch:12},{wch:9},{wch:8},...DIAS_XLS.map(()=>({wch:8}))];
   const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,'Pares');
   const cli=(document.querySelector('#app-header .cli')?.textContent||'local').trim().replace(/\s+/g,'-').toLowerCase();
   X.writeFile(wb,`pares-${cli}-${hoyISO()}.xlsx`);
-  toast('Servido · edita la columna "Par" y vuelve a cargar el archivo','ok');
+  toast('Servido · edita Minimo y Par (y Par_vie, Par_sab… si quieres) y vuelve a cargar el archivo','ok');
 }
 async function cargarParesXLS(file){
   let X;try{X=await xlsLib()}catch(e){toast('Atrás: no se pudo cargar el lector de Excel','err');return}
   let rows;try{const wb=X.read(await file.arrayBuffer());rows=X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}catch(e){toast('Atrás: no pude leer el archivo','err');return}
   if(!rows.length){toast('El archivo está vacío','warn');return}
   const key=(r,names)=>{const k=Object.keys(r).find(k=>names.includes(normTxt(k)));return k!=null?r[k]:undefined};
+  const numv=v=>{if(v===undefined||v==='')return undefined;const n=Number(String(v).replace(',','.'));return n>=0?n:NaN};
   const porId={},porNom={};state.productos.forEach(p=>{porId[normTxt(p.id)]=p;porNom[normTxt(p.nombre)]=p});
   let ok=0,igual=0;const sinMatch=[],malos=[];
   rows.forEach(r=>{
     const id=key(r,['id','codigo','sku']),nom=key(r,['insumo','producto','nombre','item']);
-    let par=key(r,['par','par nuevo','par minimo','minimo','cantidad minima','par level']);
-    if(par===undefined||par==='')return;
+    const mi=numv(key(r,['minimo','min','stock minimo','punto de pedido']));
+    const pa=numv(key(r,['par','par nuevo','par level','par objetivo','maximo']));
+    const dias={};let hayDias=false;DIAS_XLS.forEach((d,i)=>{const v=numv(key(r,['par '+d]));if(v!==undefined){hayDias=true;if(!isNaN(v))dias[i]=v}});
+    if(mi===undefined&&pa===undefined&&!hayDias)return;
     const p=porId[normTxt(id)]||porNom[normTxt(nom)];
     if(!p){sinMatch.push(nom||id||'(fila sin nombre)');return}
-    par=Number(String(par).replace(',','.'));if(!(par>=0)){malos.push(p.nombre);return}
-    if(par===Number(p.par_level||0)){igual++;delete state.parEdits[p.id];return}
-    state.parEdits[p.id]=par;ok++;
+    if(isNaN(mi)||isNaN(pa)){malos.push(p.nombre);return}
+    const antes=JSON.stringify(state.parEdits[p.id]||{});
+    if(mi!==undefined)setEdit(p.id,'minimo',mi,'excel');
+    if(pa!==undefined)setEdit(p.id,'par',pa,'excel');
+    if(hayDias)setEdit(p.id,'par_dia',Object.keys(dias).length?dias:null,'excel');
+    if(state.parEdits[p.id]&&JSON.stringify(state.parEdits[p.id])!==antes)ok++;else igual++;
   });
-  state.parSoloDif=false;state.parCat='todas';state.parQ='';renderTabs();renderPares();
+  state.parFiltro='todos';state.parCat='todas';state.parQ='';renderTabs();renderPares();
   setHead('📄','Carga desde Excel',file.name);
   $('#sheet-body').innerHTML=`
-    <div class="kpis"><div class="kpi"><div class="val">${ok}</div><div class="lbl">Pares a cambiar</div></div>
+    <div class="kpis"><div class="kpi"><div class="val">${ok}</div><div class="lbl">Insumos a cambiar</div></div>
       <div class="kpi"><div class="val">${igual}</div><div class="lbl">Sin cambio</div></div>
       <div class="kpi ${sinMatch.length?'alert':''}"><div class="val">${sinMatch.length}</div><div class="lbl">No encontrados</div></div></div>
     ${sinMatch.length?`<div class="sheet-section"><div class="field-lbl">No encontrados en el catálogo (se ignoran)</div><div class="row-meta">${sinMatch.slice(0,40).join(' · ')}${sinMatch.length>40?' …':''}</div></div>`:''}
-    ${malos.length?`<div class="sheet-section"><div class="field-lbl">Par inválido (se ignoran)</div><div class="row-meta">${malos.join(' · ')}</div></div>`:''}
+    ${malos.length?`<div class="sheet-section"><div class="field-lbl">Valor inválido (se ignoran)</div><div class="row-meta">${malos.join(' · ')}</div></div>`:''}
     <div class="sheet-section row-meta">Los cambios quedaron marcados en amarillo en la tabla. Revisa y toca <strong>Guardar</strong> para confirmarlos.</div>
-    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="xl-rev">Revisar en la tabla</button><button class="btn primary" id="xl-save" ${ok?'':'disabled'}>Guardar ${ok} cambio${ok===1?'':'s'}</button></div></div>`;
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="xl-rev">Revisar en la tabla</button><button class="btn primary" id="xl-save" ${Object.keys(state.parEdits).length?'':'disabled'}>Guardar ${Object.keys(state.parEdits).length} cambio(s)</button></div></div>`;
   openSheet();$('#xl-rev').onclick=closeSheet;$('#xl-save').onclick=async()=>{closeSheet();await guardarPares()};
 }
-async function guardarPares(){
-  const ed=Object.entries(state.parEdits);if(!ed.length)return;
-  const r=await Promise.all(ed.map(([pid,v])=>sb.from('inv_productos').update({par_level:v}).eq('id',pid).eq('marca_id',MARCA)));
-  const err=r.find(x=>x.error);if(err){toast('Atrás: '+err.error.message,'err');return}
-  state.parEdits={};await loadProductos();render();toast(`Servido · ${ed.length} par${ed.length===1?'':'es'} actualizado${ed.length===1?'':'s'}`,'ok');
+
+/* ===== PEDIDO AUTOMÁTICO: todo lo bajo mínimo → OCs borrador por proveedor preferido =====
+   Cantidad = PAR del día de entrega − stock, redondeada a la unidad de compra (caja, botella…). */
+function factorCompra(p){return Math.max(1,Number(p.factor_compra||0)||Number(p.unidades_por_caja||0)||1)}
+function unidadCompra(p){return p.unidad_compra||(factorCompra(p)>1?'caja':p.unidad||'u')}
+function aCompra(p,q){const f=factorCompra(p);if(f<=1)return{q:+q.toFixed(2),compra:null};const n=Math.ceil(q/f-1e-9);return{q:n*f,compra:n}}
+function lblCompra(p,n){return n==null?'':`${num(n)} ${unidadCompra(p)}${n===1?'':'s'} ×${num(factorCompra(p))}`}
+function planAutomatico(){
+  const grupos={},sinProv=[];
+  state.productos.filter(p=>estadoStock(p)!=='ok').forEach(p=>{const falta=sugerido(p);if(!(falta>0))return;
+    const c=aCompra(p,falta);const pp=proveedorDe(p.id);
+    if(!pp){sinProv.push({p,q:c.q});return}
+    const g=(grupos[pp.proveedor_id]=grupos[pp.proveedor_id]||{items:[],monto:0,entrega:0});
+    g.items.push({producto_id:p.id,nombre:p.nombre,cantidad:c.q,costo_unit:Number(pp.costo),...(c.compra!=null?{cantidad_compra:c.compra,unidad_compra:unidadCompra(p),factor_compra:factorCompra(p)}:{})});
+    g.monto+=c.q*Number(pp.costo);g.entrega=Math.max(g.entrega,Number(pp.tiempo_entrega_dias||0));});
+  Object.values(grupos).forEach(g=>{const d=new Date();d.setDate(d.getDate()+g.entrega);g.fecha=d});
+  return{grupos,sinProv};
+}
+function abrirPedidoAutomatico(){
+  const{grupos,sinProv}=planAutomatico();const ids=Object.keys(grupos);
+  const total=ids.reduce((a,id)=>a+grupos[id].monto,0);
+  setHead('🚚','Pedido automático','Todo lo que está bajo el mínimo, hasta el PAR del día de entrega');
+  $('#sheet-body').innerHTML=(ids.length||sinProv.length)?`
+    <div class="kpis"><div class="kpi"><div class="val">${ids.length}</div><div class="lbl">Proveedores</div></div>
+      <div class="kpi"><div class="val">${ids.reduce((a,id)=>a+grupos[id].items.length,0)}</div><div class="lbl">Insumos</div></div>
+      <div class="kpi"><div class="val">${money(total)}</div><div class="lbl">Subtotal</div></div></div>
+    ${ids.map(id=>{const g=grupos[id];return `<div class="sheet-section"><div class="field-lbl" style="display:flex;justify-content:space-between"><span>${prov(id)?.nombre||id}</span><span>llega ${DIAS[g.fecha.getDay()]} ${g.fecha.toISOString().slice(5,10)} · ${money(g.monto)}</span></div>
+      <table class="tbl"><tr><th>Insumo</th><th>Stock / mín</th><th>Pedir</th></tr>${g.items.map(it=>{const p=prod(it.producto_id);return `<tr><td>${p?.emoji||''} ${it.nombre}</td><td class="mono">${num(stock(it.producto_id))} / ${num(minimoDe(p))}</td><td><strong>${num(it.cantidad)} ${p?.unidad||''}</strong>${it.cantidad_compra!=null?`<div class="row-meta">${lblCompra(p,it.cantidad_compra)}</div>`:''}</td></tr>`}).join('')}</table></div>`}).join('')}
+    ${sinProv.length?`<div class="sheet-section" style="background:var(--red-soft);border:1px dashed var(--secondary);border-radius:10px;padding:10px 12px;font-size:12px">Sin proveedor asignado (no entran a la orden): ${sinProv.map(x=>x.p.nombre).join(', ')}.</div>`:''}
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="pa-cancel">Atrás</button><button class="btn primary" id="pa-ok" ${ids.length?'':'disabled'}><span class="material-symbols-outlined">receipt_long</span>Crear ${ids.length} orden${ids.length===1?'':'es'} borrador</button></div></div>`
+    :'<div class="empty-state">Nada bajo el mínimo · todo en orden</div>';
+  openSheet();
+  if($('#pa-cancel'))$('#pa-cancel').onclick=closeSheet;
+  if($('#pa-ok'))$('#pa-ok').onclick=async()=>{
+    const{data:nums}=await sb.from('inv_ordenes_compra').select('numero').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(1);
+    const prev=(nums&&nums[0]?.numero)||'';const pref=prev.replace(/\d+$/,'')||'OC-';let n=parseInt((prev.match(/(\d+)$/)||[])[1])||0;
+    const rows=ids.map(id=>{const g=grupos[id];const subtotal=+g.monto.toFixed(2);const igv=+(subtotal*0.18).toFixed(2);n++;
+      return{numero:pref+String(n).padStart(4,'0'),local_id:LOCAL,proveedor_id:id,estado:'borrador',items:g.items,subtotal,igv,total:+(subtotal+igv).toFixed(2),fecha_emision:hoyISO(),fecha_entrega:g.fecha.toISOString().slice(0,10),notas:'Pedido automático · bajo mínimo',responsable:state.usuario||'Mercado'}});
+    const{error}=await sb.from('inv_ordenes_compra').insert(rows);
+    if(error){toast('Atrás: '+error.message,'err');return}
+    closeSheet();await loadOrdenes();state.view='compras';state.comprasTab='ordenes';render();
+    toast('Servido · '+rows.length+' orden(es) borrador creadas','ok');
+  };
+}
+/* ===== ALERTA POR WHATSAPP (manual: arma el mensaje y abre wa.me) ===== */
+async function loadAlertaWA(){try{const{data}=await sb.from('config_local').select('alerta_whatsapp,nombre_comercial').eq('local_id',LOCAL).maybeSingle();state.alertaWA=data?.alerta_whatsapp||null;state.nombreLocal=data?.nombre_comercial||''}catch(e){}
+  if(!state.alertaWA){try{state.alertaWA=localStorage.getItem('prep_alerta_wa_'+LOCAL)}catch(e){}}}
+function mensajeBajoMinimo(){const b=state.productos.filter(p=>estadoStock(p)!=='ok').sort((a,c)=>stock(a.id)/Math.max(minimoDe(a),0.01)-stock(c.id)/Math.max(minimoDe(c),0.01));
+  const f=new Date();const cab=`*Prep! · Bajo mínimo${state.nombreLocal?' · '+state.nombreLocal:''}*\n${DIAS[f.getDay()]} ${f.toLocaleDateString('es-PE')} · ${b.length} insumo${b.length===1?'':'s'}\n`;
+  return cab+b.map(p=>{const c=aCompra(p,sugerido(p));return `• ${p.nombre}: ${num(stock(p.id))} ${p.unidad||''} (mín ${num(minimoDe(p))}) → pedir ${num(c.q)}${c.compra!=null?' ('+lblCompra(p,c.compra)+')':''}`}).join('\n')}
+function avisarWhatsApp(){
+  const n=state.productos.filter(p=>estadoStock(p)!=='ok').length;
+  setHead('💬','Avisar por WhatsApp',n+' insumo(s) bajo mínimo');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><div class="field-lbl">Número del encargado (con código de país)</div><input class="input" id="wa-num" inputmode="tel" placeholder="51987654321" value="${state.alertaWA||''}"></div>
+    <div class="sheet-section"><div class="field-lbl">Mensaje</div><textarea class="input" id="wa-msg" rows="10" style="width:100%;font-family:var(--font-mono);font-size:12px">${mensajeBajoMinimo()}</textarea></div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="wa-cancel">Atrás</button><button class="btn primary" id="wa-go" ${n?'':'disabled'}><span class="material-symbols-outlined">send</span>Abrir WhatsApp</button></div></div>`;
+  openSheet();$('#wa-cancel').onclick=closeSheet;
+  $('#wa-go').onclick=async()=>{const num_=$('#wa-num').value.replace(/\D/g,'');if(num_.length<8){toast('Número inválido','warn');return}
+    if(num_!==state.alertaWA){state.alertaWA=num_;const{error}=await sb.from('config_local').update({alerta_whatsapp:num_}).eq('local_id',LOCAL);if(error){try{localStorage.setItem('prep_alerta_wa_'+LOCAL,num_)}catch(e){}}}
+    window.open('https://wa.me/'+num_+'?text='+encodeURIComponent($('#wa-msg').value),'_blank','noopener');closeSheet();toast('Va · mensaje listo en WhatsApp','ok')};
 }
 
 /* ===== MOVIMIENTOS (entrada/salida/ajuste) ===== */
@@ -519,6 +673,7 @@ function renderCarga(){
     <div class="toolbar">
       <div class="seg"><button class="${modo==='recepcion'?'active':''}" data-cm="recepcion">📥 Recepción</button><button class="${modo==='conteo'?'active':''}" data-cm="conteo">📋 Inventario</button></div>
       ${modo==='conteo'?`<button class="btn-ico ${state.cargaCiego?'dark':'ghost'}" id="cg-ciego"><span class="material-symbols-outlined">${state.cargaCiego?'visibility_off':'visibility'}</span><span>Modo ciego</span></button>`:''}
+      ${modo==='conteo'?`<a class="btn-ico" href="/inventario" title="Conteo de botellas abiertas con balanza"><span class="material-symbols-outlined">scale</span><span>Conteo por peso</span></a>`:''}
       ${modo==='conteo'&&state.sesiones.length?`<button class="btn-ico warn" id="cg-aprob" style="margin-left:auto"><span class="material-symbols-outlined">fact_check</span><span>${state.sesiones.length} por aprobar</span></button>`:''}
     </div>
     <div class="chips" style="margin-bottom:10px">${cats.map(c=>`<button class="chip ${state.cargaCat===c?'active':''}" data-cc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
@@ -640,10 +795,9 @@ function preciosDe(pid){
 function precioPreferido(pid){const pp=proveedorDe(pid);return pp?Number(pp.costo):null}
 // Alerta si existe una fuente más barata que el proveedor que usamos
 function alertaPrecio(pid){const pref=precioPreferido(pid);if(pref==null)return null;const best=preciosDe(pid)[0];if(best&&best.precio<pref-0.001)return{best,pref,ahorro:+(pref-best.precio).toFixed(2)};return null;}
-function sugerido(p){return Math.max(0,Number(p.par_level||0)-stock(p.id))}
 function mermaTotal(pid){return state.mermas.filter(m=>m.producto_id===pid).reduce((a,m)=>a+Number(m.cantidad||0),0)}
-function mermaAlta(p){const m=mermaTotal(p.id),par=Number(p.par_level||0);return m>0&&par>0&&m>=par*0.3} // merma ≥ 30% del par
-function parSugerido(p){return Math.ceil(Number(p.par_level||0)+mermaTotal(p.id))} // recalculo simple por merma
+function mermaAlta(p){const m=mermaTotal(p.id),par=parBase(p);return m>0&&par>0&&m>=par*0.3} // merma ≥ 30% del par
+function parSugerido(p){return Math.ceil(parBase(p)+mermaTotal(p.id))} // recalculo simple por merma
 function consolidadoPedido(){
   const porProv={};let sinProv=[];
   Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);if(!(q>0))return;const p=prod(pid);if(!p)return;
@@ -657,36 +811,39 @@ function consolidadoPedido(){
 }
 function renderPedido(){
   // Precarga lo necesario para completar el PAR (primera vez)
-  if(!state.pedidoInit){state.productos.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});state.pedidoInit=true;}
+  if(!state.pedidoInit){state.productos.forEach(p=>{const s=sugerido(p);if(s>0&&estadoStock(p)!=='ok')state.pedidoQty[p.id]=s});state.pedidoInit=true;}
   const cats=['todas',...categorias()];
   const list=state.productos.filter(p=>state.pedidoCat==='todas'||p.categoria===state.pedidoCat);
-  const faltan=state.productos.filter(p=>sugerido(p)>0).length;
+  const faltan=state.productos.filter(p=>estadoStock(p)!=='ok').length;
   $('#screen').innerHTML=`
     <div class="toolbar">
       <div class="chips">${cats.map(c=>`<button class="chip ${state.pedidoCat===c?'active':''}" data-pc="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div>
-      <button class="btn-ico" id="ped-sug" style="margin-left:auto"><span class="material-symbols-outlined">auto_fix_high</span><span>Completar el PAR</span></button>
+      <button class="btn-ico warn" id="ped-auto" style="margin-left:auto"><span class="material-symbols-outlined">local_shipping</span><span>Pedido automático</span></button>
+      <button class="btn-ico" id="ped-wa"><span class="material-symbols-outlined">chat</span><span>WhatsApp</span></button>
+      <button class="btn-ico" id="ped-sug"><span class="material-symbols-outlined">auto_fix_high</span><span>Completar el PAR</span></button>
       <button class="btn-ico ghost" id="ped-clear"><span class="material-symbols-outlined">close</span><span>Limpiar</span></button>
     </div>
-    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Precargado lo necesario para completar el PAR (${faltan} insumo${faltan===1?'':'s'} bajo par). Toca el nombre de un insumo para configurar su par. Abajo se consolida por proveedor.</div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Precargado lo necesario para completar el PAR del día de entrega (${faltan} insumo${faltan===1?'':'s'} bajo mínimo). Toca el nombre de un insumo para configurar su par. Abajo se consolida por proveedor.</div>
     ${list.map(pedRow).join('')||'<div class="empty-state">Sin productos</div>'}
     <div id="ped-resumen" style="margin-top:18px"></div>`;
   $$('#screen .chip[data-pc]').forEach(b=>b.onclick=()=>{state.pedidoCat=b.dataset.pc;renderPedido()});
-  $('#ped-sug').onclick=()=>{state.productos.forEach(p=>{const s=sugerido(p);if(s>0)state.pedidoQty[p.id]=s});renderPedido()};
+  $('#ped-sug').onclick=()=>{state.productos.forEach(p=>{const s=sugerido(p);if(s>0&&estadoStock(p)!=='ok')state.pedidoQty[p.id]=s});renderPedido()};
   $('#ped-clear').onclick=()=>{state.pedidoQty={};renderPedido()};
+  $('#ped-auto').onclick=abrirPedidoAutomatico;$('#ped-wa').onclick=avisarWhatsApp;
   $$('#screen [data-cfg]').forEach(el=>el.onclick=()=>abrirConfigProducto(el.dataset.cfg));
   $$('#screen [data-pq]').forEach(inp=>inp.oninput=()=>{state.pedidoQty[inp.dataset.pq]=Number(inp.value)||0;renderResumenPedido()});
   renderResumenPedido();
 }
 function pedRow(p){const s=stock(p.id),sug=sugerido(p),pp=proveedorDe(p.id),q=Number(state.pedidoQty[p.id]||0);
   const provLbl=pp?(prov(pp.proveedor_id)?.nombre||pp.proveedor_id):'⚠ sin proveedor';
-  const overpar=q>0&&(s+q)>Number(p.par_level||0)*1.2;
+  const overpar=q>0&&(s+q)>parEntrega(p)*1.2;
   const alertas=[];
   if(mermaAlta(p))alertas.push('<span class="badge sin">⚠ mucha merma · recalcular par</span>');
   if(overpar)alertas.push('<span class="badge bajo">⚠ supera el par +20%</span>');
   return `<div class="row-card" data-pid="${p.id}">
     <span class="row-emoji">${p.emoji||'📦'}</span>
     <div class="row-main"><h3 style="cursor:pointer" data-cfg="${p.id}">${p.nombre} <span class="material-symbols-outlined" style="font-size:14px;opacity:.5">settings</span></h3>
-      <div class="row-meta"><span>${num(s)} de ${num(p.par_level)} ${p.unidad||''}</span><span>falta ${num(sug)}</span><span>${pp?money(pp.costo)+' · ':''}${provLbl}</span></div>
+      <div class="row-meta"><span>${num(s)} ${p.unidad||''} · mín ${num(minimoDe(p))} · PAR ${num(parEntrega(p))}</span><span>falta ${num(sug)}</span><span>${pp?money(pp.costo)+' · ':''}${provLbl}</span></div>
       ${alertas.length?`<div class="chips" style="margin-top:6px">${alertas.join('')}</div>`:''}
     </div>
     <div class="row-right"><input class="input" data-pq="${p.id}" type="number" min="0" step="0.5" value="${q||''}" placeholder="${sug||0}" style="width:90px;text-align:right"></div>
@@ -696,7 +853,7 @@ function renderResumenPedido(){
   const el=$('#ped-resumen');if(!el)return;
   const {porProv,sinProv}=consolidadoPedido();
   const provIds=Object.keys(porProv);
-  const overpar=[];Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);const p=prod(pid);if(p&&q>0&&(stock(pid)+q)>Number(p.par_level||0)*1.2)overpar.push(p.nombre)});
+  const overpar=[];Object.entries(state.pedidoQty).forEach(([pid,q])=>{q=Number(q);const p=prod(pid);if(p&&q>0&&(stock(pid)+q)>parEntrega(p)*1.2)overpar.push(p.nombre)});
   const totalMonto=provIds.reduce((a,id)=>a+porProv[id].monto,0);
   const totalItems=provIds.reduce((a,id)=>a+porProv[id].items.length,0);
   if(!provIds.length&&!sinProv.length){el.innerHTML='';return;}
@@ -737,8 +894,8 @@ function abrirAgregarPedido(pid){
     setHead(p.emoji||'🛒','Agregar al pedido',p.nombre+' · '+(p.categoria||''));
     $('#sheet-body').innerHTML=`
       <div class="sheet-section">
-        <div class="info-row"><span>Stock / par</span><strong style="color:${estadoStock(p)==='ok'?'var(--green)':'var(--secondary)'}">${num(stock(pid))} de ${num(p.par_level)} ${p.unidad||''}</strong></div>
-        <div class="info-row"><span>Sugerido (par − stock)</span><strong>${num(sugerido(p))} ${p.unidad||''}</strong></div>
+        <div class="info-row"><span>Stock · mínimo · PAR</span><strong style="color:${estadoStock(p)==='ok'?'var(--green)':'var(--secondary)'}">${num(stock(pid))} · ${num(minimoDe(p))} · ${num(parEntrega(p))} ${p.unidad||''}</strong></div>
+        <div class="info-row"><span>Sugerido (PAR del día de entrega − stock)</span><strong>${num(sugerido(p))} ${p.unidad||''}</strong></div>
         <div class="info-row"><span>Se le pedirá a</span><strong>${pp?(prov(pp.proveedor_id)?.nombre+' · '+money(pp.costo)):'⚠ sin proveedor'}</strong></div>
       </div>
       <div class="sheet-section"><div class="field-lbl">Cantidad a pedir (${p.unidad||''})</div>
@@ -800,7 +957,11 @@ function abrirConfigProducto(pid){
     </div>
     ${mermaAlta(p)?`<div class="sheet-section"><div style="background:var(--red-soft);border:1px dashed var(--secondary);border-radius:10px;padding:10px 12px;font-size:12px">⚠ <strong>Mucha merma</strong> en este insumo. Considera subir el par para no quedarte corto. Sugerido: <strong>${num(sug)} ${p.unidad||''}</strong> <button class="mini-btn" id="cfg-usesug" style="margin-left:6px">Usar sugerido</button></div></div>`:''}
     <div class="sheet-section grid2">
-      <div><div class="field-lbl">Par level (${p.unidad||''})</div><input class="input" id="cfg-par" type="number" min="0" step="0.5" value="${Number(p.par_level||0)}"></div>
+      <div><div class="field-lbl">Mínimo · punto de pedido (${p.unidad||''})</div><input class="input" id="cfg-min" type="number" min="0" step="${pasoPar(p)}" value="${minimoDe(p)}"></div>
+      <div><div class="field-lbl">PAR · nivel objetivo (${p.unidad||''})</div><input class="input" id="cfg-par" type="number" min="0" step="${pasoPar(p)}" value="${parBase(p)}"></div>
+    </div>
+    <div class="sheet-section row-meta">PAR por día: ${chipDias(p)} · se edita en la pestaña Pares.</div>
+    <div class="sheet-section grid2">
       <div><div class="field-lbl">Costo (S/)</div><input class="input" id="cfg-costo" type="number" min="0" step="0.5" value="${Number(p.costo||0)}"></div>
     </div>
     <div class="sheet-section"><div class="field-lbl">Vida útil / caducidad (días desde recepción) — para alertas FEFO</div><input class="input" id="cfg-cad" type="number" min="0" value="${p.dias_caducidad!=null?p.dias_caducidad:''}" placeholder="ej. 7 (lácteos), 3 (carnes), 180 (abarrotes)">${vencimientoPid(pid)?`<div class="row-meta" style="margin-top:4px">Próximo vencimiento estimado: <strong>${vencimientoPid(pid)}</strong> (${diasParaVencer(pid)<0?'vencido':'en '+diasParaVencer(pid)+'d'})</div>`:''}</div>
@@ -814,17 +975,21 @@ function abrirConfigProducto(pid){
   if($('#cfg-usesug'))$('#cfg-usesug').onclick=()=>{$('#cfg-par').value=sug};
   $$('#sheet-body [data-pref]').forEach(b=>b.onclick=()=>marcarPreferido(pid,b.dataset.pref));
   $('#cfg-cancel').onclick=closeSheet;
-  $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-par').value),Number($('#cfg-costo').value),$('#cfg-cad').value===''?null:Number($('#cfg-cad').value));
+  $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-min').value),Number($('#cfg-par').value),Number($('#cfg-costo').value),$('#cfg-cad').value===''?null:Number($('#cfg-cad').value));
 }
 async function marcarPreferido(pid,provId){
   await sb.from('inv_proveedor_productos').update({preferido:false}).eq('producto_id',pid);
   await sb.from('inv_proveedor_productos').update({preferido:true}).eq('producto_id',pid).eq('proveedor_id',provId);
   await loadProvProd();abrirConfigProducto(pid);toast('Va · proveedor preferido actualizado','ok');
 }
-async function guardarConfigProducto(pid,par,costo,diasCad){
-  if(!(par>=0)){toast('Par inválido','warn');return}
-  const ant=Number(prod(pid)?.costo||0);
-  const patch={par_level:par,costo:costo};if(diasCad!==undefined)patch.dias_caducidad=diasCad;
+async function guardarConfigProducto(pid,minimo,par,costo,diasCad){
+  if(!(par>=0)||!(minimo>=0)){toast('Mínimo o PAR inválido','warn');return}
+  if(minimo>par){toast('El mínimo no puede ser mayor que el PAR','warn');return}
+  const p0=prod(pid);const ant=Number(p0?.costo||0);
+  setEdit(pid,'minimo',minimo,'manual');setEdit(pid,'par',par,'manual');
+  if(state.parEdits[pid]){const otros=Object.fromEntries(Object.entries(state.parEdits).filter(([k])=>k!==pid));const oo=Object.fromEntries(Object.entries(state.parOrigen).filter(([k])=>k!==pid));
+    state.parEdits={[pid]:state.parEdits[pid]};state.parOrigen={[pid]:'manual'};await guardarPares();state.parEdits={...otros,...state.parEdits};state.parOrigen={...oo,...state.parOrigen};}
+  const patch={costo:costo};if(diasCad!==undefined)patch.dias_caducidad=diasCad;
   const{error}=await sb.from('inv_productos').update(patch).eq('id',pid);
   if(error){toast('Atrás: '+error.message,'err');return}
   if(Number(costo)!==ant){await sb.from('inv_precios_hist').insert({marca_id:MARCA,producto_id:pid,costo:Number(costo),fuente:'manual',fecha:hoyISO()});await loadHist();}
@@ -1069,8 +1234,8 @@ function renderReportes(){
   $('#screen').innerHTML=`
     <div class="kpis">
       <div class="kpi"><div class="val">${money(valorInventario())}</div><div class="lbl">Valor inventario</div></div>
-      <div class="kpi ${bajo.length?'alert':''}"><div class="val">${bajo.length}</div><div class="lbl">Bajo par</div></div>
-      <div class="kpi"><div class="val">${money(costoReponer)}</div><div class="lbl">Costo reponer par</div></div>
+      <div class="kpi ${bajo.length?'alert':''}"><div class="val">${bajo.length}</div><div class="lbl">Bajo mínimo</div></div>
+      <div class="kpi"><div class="val">${money(costoReponer)}</div><div class="lbl">Costo reponer al PAR</div></div>
       <div class="kpi alert"><div class="val">${money(mermaTot)}</div><div class="lbl">Mermas</div></div>
       <div class="kpi"><div class="val">${alertas.length}</div><div class="lbl">Precios mejorables</div></div>
     </div>
@@ -1089,10 +1254,10 @@ function renderReportes(){
       <table class="tbl"><tr><th>Producto</th><th>Tu precio</th><th>Más barato</th><th>Ahorro/u</th></tr>
       ${alertas.map(x=>`<tr class="rojo"><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${money(x.al.pref)}</td><td>${money(x.al.best.precio)} · ${x.al.best.fuente}${x.al.best.url?` <a href="${x.al.best.url}" target="_blank" rel="noopener">↗</a>`:''}</td><td><strong style="color:var(--secondary)">−${money(x.al.ahorro)}</strong></td></tr>`).join('')}</table>`
       :'<div class="row-meta">Tus proveedores ya tienen el mejor precio en todos los productos. 👌</div>')}
-    ${card('🛒 Sugerencia de reposición (completar el par)', bajo.length?`<table class="tbl"><tr><th>Producto</th><th>Stock/par</th><th>Falta</th><th>Costo</th></tr>
-      ${bajo.map(x=>`<tr><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${num(stock(x.p.id))}/${num(x.p.par_level)}</td><td>${num(x.falta)} ${x.p.unidad||''}</td><td>${money(x.costo)}</td></tr>`).join('')}
+    ${card('🛒 Sugerencia de reposición (bajo mínimo → completar el PAR)', bajo.length?`<table class="tbl"><tr><th>Producto</th><th>Stock/mín/PAR</th><th>Falta</th><th>Costo</th></tr>
+      ${bajo.map(x=>`<tr><td>${x.p.emoji||''} ${x.p.nombre}</td><td>${num(stock(x.p.id))}/${num(minimoDe(x.p))}/${num(parEntrega(x.p))}</td><td>${num(x.falta)} ${x.p.unidad||''}</td><td>${money(x.costo)}</td></tr>`).join('')}
       <tr><td colspan="3" style="text-align:right;font-weight:700">Total</td><td style="font-weight:700">${money(costoReponer)}</td></tr></table>`
-      :'<div class="row-meta">Todo el inventario está en o sobre el par. ✅')}
+      :'<div class="row-meta">Todo el inventario está sobre el mínimo. ✅')}
     ${card('🏆 Vendor scoring', scoring.length?`<table class="tbl"><tr><th>Proveedor</th><th>Productos</th><th>Mejor precio en</th><th>Entrega</th><th>Score</th></tr>
       ${scoring.map(s=>`<tr><td>${s.v.nombre}</td><td>${s.nprod}</td><td>${s.baratos}</td><td>${s.entrega.toFixed(1)}d</td><td><span class="badge ${s.score>=70?'ok':s.score>=50?'bajo':'sin'}">${s.score}</span></td></tr>`).join('')}</table>
       <div class="row-meta" style="margin-top:6px">Score = competitividad de precio + rapidez de entrega.</div>`:'<div class="row-meta">Sin datos de proveedores.</div>')}
