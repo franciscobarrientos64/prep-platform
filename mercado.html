@@ -146,7 +146,7 @@ const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/fal
 const state={parEdits:{},parOrigen:{},parLocal:{},parHist:[],usuario:null,locales1:true,parCob:7,parSeg:20,parCat:'todas',parQ:'',parFiltro:'todos',consumo:null,productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
-  cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
+  cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaEnCompra:{},turnos:{},equipo:{},equipoCargado:false,cargaCiego:false,channel:null};
 const UNIDADES=['unidad','kg','g','l','ml','lata','botella','atado','caja','paquete','docena','bolsa'];
 
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
@@ -170,9 +170,19 @@ async function loadAll(){
 }
 async function loadNumLocales(){const{count}=await sb.from('inv_locales').select('id',{count:'exact',head:true}).eq('marca_id',MARCA);state.locales1=(count||1)<=1}
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
-async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento').eq('marca_id',MARCA);state.recetas=data||[]}
+async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento,precio_venta,categoria_menu,estacion_id').eq('marca_id',MARCA);state.recetas=data||[]}
 function teoDesde(){const d=new Date();if(state.teoPeriodo==='hoy')return d.toISOString().slice(0,10)+'T00:00:00';if(state.teoPeriodo==='mes'){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01T00:00:00'}d.setDate(d.getDate()-7);return d.toISOString().slice(0,10)+'T00:00:00'}
-async function loadVentasItems(){const{data:peds}=await sb.from('ca_pedidos').select('id').eq('local_id',LOCAL).gte('created_at',teoDesde());const ids=(peds||[]).map(p=>p.id);if(!ids.length){state.ventasItems=[];return}const{data}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,estado,pedido_id').in('pedido_id',ids).neq('estado','cancelado');state.ventasItems=data||[]}
+// Ventas del período: join embebido con ca_pedidos (filtra sede y fecha en el servidor) + paginación.
+// Antes se mandaban todos los ids de pedidos en la URL (.in) y con volumen la consulta reventaba.
+async function loadVentasItems(){const desde=teoDesde();const out=[];let from=0;const page=1000;
+  while(true){const{data,error}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,estado,precio_total,es_cortesia,pedido_id,ca_pedidos!inner(local_id,created_at,turno_id,mozo_id)')
+      .eq('ca_pedidos.local_id',LOCAL).gte('ca_pedidos.created_at',desde).neq('estado','cancelado').order('created_at').range(from,from+page-1);
+    if(error){console.error(error);break}out.push(...(data||[]));if(!data||data.length<page)break;from+=page}
+  state.ventasItems=out.map(it=>({...it,turno_id:it.ca_pedidos?.turno_id||null,mozo_id:it.ca_pedidos?.mozo_id||null,fecha:(it.ca_pedidos?.created_at||'').slice(0,10)}));
+  await loadTurnosYEquipo();}
+async function loadTurnosYEquipo(){const ids=[...new Set(state.ventasItems.map(i=>i.turno_id).filter(Boolean))];
+  if(ids.length&&!ids.every(id=>state.turnos[id])){const{data}=await sb.from('ca_turnos').select('id,fecha,nombre').eq('local_id',LOCAL).gte('fecha',teoDesde().slice(0,10));(data||[]).forEach(t=>state.turnos[t.id]=t)}
+  if(!state.equipoCargado){const{data}=await sb.from('rrhh_empleados').select('id,nombre,apellidos,rol').eq('local_id',LOCAL);(data||[]).forEach(e=>state.equipo[e.id]=e);state.equipoCargado=true}}
 function diffPct(c,r){if(r<=0)return c>0?1:0;return Math.abs(c-r)/r}
 function esAnomalia(c,r){if(isNaN(c))return false;return diffPct(c,r)>=0.5||(r>0&&c===0)} // ≥50% de diferencia o quiebre total
 async function loadStockMap(){const{data}=await sb.from('inv_stock_actual').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m;}
@@ -180,7 +190,7 @@ async function loadPreciosMercado(){const{data}=await sb.from('inv_precios_merca
 async function loadProductos(){try{const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)throw error;state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre));PrepSync.cacheSet('productos',state.productos);}catch(e){state.productos=PrepSync.cacheGet('productos')||state.productos||[]}}
 async function loadProveedores(){const{data}=await sb.from('inv_proveedores').select('*');state.proveedores=(data||[]).filter(p=>p.activo!==false)}
 async function loadProvProd(){const{data}=await sb.from('inv_proveedor_productos').select('*');state.provProd=data||[]}
-async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];state.consumo=null;await loadStockMap();}
+async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];state.consumo=null;state.consumo30=null;await loadStockMap();}
 async function loadMermas(){const{data}=await sb.from('inv_mermas').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(100);state.mermas=data||[]}
 async function loadOrdenes(){const{data}=await sb.from('inv_ordenes_compra').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.ordenes=data||[]}
 
@@ -313,6 +323,9 @@ async function loadConsumo(){
   }
   state.consumo=m;
 }
+async function loadConsumoDias(dias){const d=new Date();d.setDate(d.getDate()-dias);const desde=d.toISOString().slice(0,10);const m={};let from=0;const page=1000;
+  while(true){const{data,error}=await sb.from('inv_movimientos').select('producto_id,cantidad').eq('local_id',LOCAL).in('tipo',['salida','merma']).gte('fecha',desde).range(from,from+page-1);if(error)break;(data||[]).forEach(r=>{m[r.producto_id]=(m[r.producto_id]||0)+Math.abs(Number(r.cantidad||0))});if(!data||data.length<page)break;from+=page}
+  return m}
 async function loadParLocal(){const{data}=await sb.from('inv_par_local').select('*').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=r);state.parLocal=m}
 async function loadParHist(){const{data}=await sb.from('inv_par_hist').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(300);state.parHist=data||[]}
 async function loadUsuario(){try{const{data}=await sb.auth.getUser();state.usuario=data?.user?.email||null}catch(e){}}
@@ -573,6 +586,32 @@ function avisarWhatsApp(){
     window.open('https://wa.me/'+num_+'?text='+encodeURIComponent($('#wa-msg').value),'_blank','noopener');closeSheet();toast('Va · mensaje listo en WhatsApp','ok')};
 }
 
+function pedirCodigoCamara(cb){escanearCodigo(null,cb)}
+/* ===== CÓDIGO DE BARRAS (BarcodeDetector si el navegador lo trae; si no, ingreso manual / lector USB) ===== */
+function prodPorCodigo(c){c=String(c||'').trim();if(!c)return null;return state.productos.find(p=>String(p.codigo_barras||'').trim()===c)||null}
+async function escanearCodigo(onFound,raw){
+  setHead('📷','Escanear código de barras','Apunta la cámara al código o escríbelo');
+  $('#sheet-body').innerHTML=`
+    <div class="sheet-section"><video id="sc-video" playsinline muted style="width:100%;max-height:260px;border:2px solid var(--outline);border-radius:12px;background:var(--ink);display:none"></video>
+      <div class="row-meta" id="sc-msg">Oído · abriendo cámara…</div></div>
+    <div class="sheet-section"><div class="field-lbl">O escribe / usa el lector</div><input class="input" id="sc-in" inputmode="numeric" placeholder="7750000000000" autofocus></div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="sc-cancel">Atrás</button><button class="btn primary" id="sc-ok">Buscar</button></div></div>`;
+  openSheet();let stream=null,vivo=true;
+  const parar=()=>{vivo=false;if(stream)stream.getTracks().forEach(t=>t.stop())};
+  const usar=(code)=>{code=String(code||'').trim();if(!code)return false;if(raw){parar();closeSheet();raw(code);return true}const p=prodPorCodigo(code);if(!p){$('#sc-msg').textContent='Atrás · ningún insumo tiene el código '+code+'. Asígnalo en Configurar insumo.';return false}parar();closeSheet();onFound(p,code);return true};
+  $('#sc-cancel').onclick=()=>{parar();closeSheet()};
+  $('#sc-ok').onclick=()=>usar($('#sc-in').value);
+  $('#sc-in').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();usar(e.target.value)}};
+  $('#sheet-close').addEventListener('click',parar,{once:true});
+  if(!('BarcodeDetector' in window)||!navigator.mediaDevices?.getUserMedia){$('#sc-msg').textContent='Este navegador no lee códigos con la cámara: escribe el código o usa un lector USB/Bluetooth.';return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const v=$('#sc-video');v.srcObject=stream;v.style.display='block';await v.play();$('#sc-msg').textContent='Buscando código…';
+    const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code']});
+    const loop=async()=>{if(!vivo)return;try{const r=await det.detect(v);if(r.length&&usar(r[0].rawValue))return}catch(e){}requestAnimationFrame(loop)};loop();
+  }catch(e){$('#sc-msg').textContent='Sin acceso a la cámara: escribe el código o usa un lector.'}
+}
+
 /* ===== MOVIMIENTOS (entrada/salida/ajuste) ===== */
 function abrirMovimiento(pid,tipo){
   let prodId=pid||'', cant=1, objetivo=0, provId='';
@@ -581,7 +620,7 @@ function abrirMovimiento(pid,tipo){
   const draw=()=>{
     const p=prod(prodId);const s=p?stock(prodId):0;
     $('#sheet-body').innerHTML=`
-      <div class="sheet-section"><div class="field-lbl">Producto</div>
+      <div class="sheet-section"><div class="field-lbl" style="display:flex;justify-content:space-between">Producto <a href="#" id="m-scan" style="font-weight:400"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">barcode_scanner</span> escanear</a></div>
         <select class="select" id="m-prod"><option value="">Elegir…</option>${state.productos.map(x=>`<option value="${x.id}" ${prodId===x.id?'selected':''}>${x.emoji||''} ${x.nombre} (${num(stock(x.id))} ${x.unidad||''})</option>`).join('')}</select></div>
       ${p?`<div class="sheet-section"><div class="info-row"><span>Stock actual</span><strong>${num(s)} ${p.unidad||''}</strong></div></div>`:''}
       ${tipo==='ajuste'?`
@@ -592,6 +631,9 @@ function abrirMovimiento(pid,tipo){
       ${tipo==='entrada'?`<div class="sheet-section"><div class="field-lbl">Proveedor (opcional)</div><select class="select" id="m-prov"><option value="">—</option>${state.proveedores.map(v=>`<option value="${v.id}" ${provId===v.id?'selected':''}>${v.nombre}</option>`).join('')}</select></div>`:''}
       <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="m-cancel">Atrás</button><button class="btn primary" id="m-save">${titulo}</button></div></div>`;
     $('#m-prod').onchange=e=>{prodId=e.target.value;objetivo=prodId?stock(prodId):0;draw()};
+    $('#m-scan').onclick=e=>{e.preventDefault();escanearCodigo(p=>{prodId=p.id;objetivo=stock(p.id);setHead(tipo==='entrada'?'📥':tipo==='salida'?'📤':'⚖️',titulo,'Inventario');draw();openSheet()})};
+    if(tipo==='entrada'&&p&&factorCompra(p)>1&&$('#m-cant-in'))$('#m-cant-in').insertAdjacentHTML('afterend',`<div class="chips" style="margin-top:8px"><button class="chip" id="m-x">× ${num(factorCompra(p))} (${unidadCompra(p)} → ${p.unidad||'u'})</button></div>`);
+    if($('#m-x'))$('#m-x').onclick=()=>{cant=+(cant*factorCompra(p)).toFixed(3);$('#m-cant').textContent=cant;$('#m-cant-in').value=cant};
     if($('#m-minus')){$('#m-minus').onclick=()=>{cant=Math.max(0,+(cant-1));$('#m-cant').textContent=cant;$('#m-cant-in').value=cant};$('#m-plus').onclick=()=>{cant=+(cant+1);$('#m-cant').textContent=cant;$('#m-cant-in').value=cant};$('#m-cant-in').oninput=e=>{cant=Number(e.target.value)||0;$('#m-cant').textContent=cant}}
     if($('#m-obj'))$('#m-obj').oninput=e=>objetivo=Number(e.target.value)||0;
     if($('#m-prov'))$('#m-prov').onchange=e=>provId=e.target.value;
@@ -673,6 +715,7 @@ function renderCarga(){
     <div class="toolbar">
       <div class="seg"><button class="${modo==='recepcion'?'active':''}" data-cm="recepcion">📥 Recepción</button><button class="${modo==='conteo'?'active':''}" data-cm="conteo">📋 Inventario</button></div>
       ${modo==='conteo'?`<button class="btn-ico ${state.cargaCiego?'dark':'ghost'}" id="cg-ciego"><span class="material-symbols-outlined">${state.cargaCiego?'visibility_off':'visibility'}</span><span>Modo ciego</span></button>`:''}
+      <button class="btn-ico" id="cg-scan"><span class="material-symbols-outlined">barcode_scanner</span><span>Escanear</span></button>
       ${modo==='conteo'?`<a class="btn-ico" href="/inventario" title="Conteo de botellas abiertas con balanza"><span class="material-symbols-outlined">scale</span><span>Conteo por peso</span></a>`:''}
       ${modo==='conteo'&&state.sesiones.length?`<button class="btn-ico warn" id="cg-aprob" style="margin-left:auto"><span class="material-symbols-outlined">fact_check</span><span>${state.sesiones.length} por aprobar</span></button>`:''}
     </div>
@@ -686,6 +729,8 @@ function renderCarga(){
   if($('#cg-aprob'))$('#cg-aprob').onclick=abrirAprobaciones;
   $$('#screen .chip[data-cc]').forEach(b=>b.onclick=()=>{state.cargaCat=b.dataset.cc;renderCarga()});
   $$('#screen [data-uni]').forEach(sel=>sel.onchange=()=>cambiarUnidad(sel.dataset.uni,sel.value));
+  $$('#screen [data-cu]').forEach(sel=>sel.onchange=()=>{state.cargaEnCompra[sel.dataset.cu]=sel.value==='1';renderCarga()});
+  $('#cg-scan').onclick=()=>escanearCodigo(p=>{state.cargaCat='todas';renderCarga();const inp=$(`#screen input[data-pid="${p.id}"]`);if(inp){inp.focus();inp.select();inp.scrollIntoView({block:'center',behavior:'smooth'})}toast('Va · '+p.nombre,'ok')});
   const inputs=$$('#screen input[data-ci]');
   inputs.forEach(inp=>{
     inp.oninput=()=>{state.cargaVals[inp.dataset.pid]=inp.value;updateCargaCount();
@@ -695,6 +740,7 @@ function renderCarga(){
   $('#cg-save').onclick=guardarCarga;updateCargaCount();
 }
 function cargaRow(p,i,modo){const s=stock(p.id);const val=state.cargaVals[p.id]??'';
+  const enCompra=modo==='recepcion'&&factorCompra(p)>1&&state.cargaEnCompra[p.id]!==false;
   const inLista=UNIDADES.includes(p.unidad||'unidad');
   const uniSel=`<select class="select" data-uni="${p.id}" style="width:auto;padding:3px 6px;font-size:11px;box-shadow:none;border-radius:6px">${UNIDADES.map(u=>`<option ${(p.unidad||'unidad')===u?'selected':''}>${u}</option>`).join('')}${inLista?'':`<option selected>${p.unidad}</option>`}</select>`;
   const anom=modo==='conteo'&&!state.cargaCiego&&val!==''&&esAnomalia(Number(val),s);
@@ -705,7 +751,7 @@ function cargaRow(p,i,modo){const s=stock(p.id);const val=state.cargaVals[p.id]?
       <div class="row-meta" style="align-items:center">${(modo==='conteo'&&state.cargaCiego)?'<span style="opacity:.5">a ciegas</span>':`<span>stock ${num(s)} ${p.unidad||''}</span>`}${uniSel}</div></div>
     <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
       <input class="input" inputmode="decimal" data-ci="${i}" data-pid="${p.id}" data-reg="${s}" value="${val}" placeholder="${modo==='recepcion'?'+':num(s)}" style="${istyle}">
-      <span style="font-size:11px;font-family:var(--font-mono);opacity:.6;width:44px;flex-shrink:0">${p.unidad||''}</span>
+      ${modo==='recepcion'&&factorCompra(p)>1?`<select class="select" data-cu="${p.id}" style="width:auto;padding:3px 4px;font-size:11px;box-shadow:none;border-radius:6px;flex-shrink:0"><option value="1" ${enCompra?'selected':''}>${unidadCompra(p)} ×${num(factorCompra(p))}</option><option value="0" ${enCompra?'':'selected'}>${p.unidad||'u'}</option></select>`:`<span style="font-size:11px;font-family:var(--font-mono);opacity:.6;width:44px;flex-shrink:0">${p.unidad||''}</span>`}
     </div>
   </div>`;
 }
@@ -718,8 +764,9 @@ async function guardarCarga(){
   const entries=Object.entries(state.cargaVals).filter(([pid,v])=>v!==''&&v!=null);
   if(!entries.length){toast('Nada que guardar','warn');return}
   const now=hoyISO(),rows=[];
-  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;const v=Number(vRaw);if(isNaN(v)||v<=0)continue;
-    rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:'recepción',responsable:'Mercado'});}
+  for(const [pid,vRaw] of entries){const p=prod(pid);if(!p)continue;let v=Number(vRaw);if(isNaN(v)||v<=0)continue;
+    const enCompra=factorCompra(p)>1&&state.cargaEnCompra[pid]!==false;const ref=enCompra?'recepción · '+num(v)+' '+unidadCompra(p)+' ×'+num(factorCompra(p)):'recepción';if(enCompra)v=+(v*factorCompra(p)).toFixed(3);
+    rows.push({local_id:LOCAL,producto_id:pid,tipo:'entrada',cantidad:v,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(v*Number(p.costo||0)).toFixed(2),fecha:now,referencia:ref,responsable:'Mercado'});}
   if(!rows.length){toast('Sin cantidades válidas','warn');return}
   if(!confirm('Ingresar a stock '+rows.length+' producto(s)?'))return;
   rows.forEach(r=>r.id=PrepSync.uuid());
@@ -964,6 +1011,11 @@ function abrirConfigProducto(pid){
     <div class="sheet-section grid2">
       <div><div class="field-lbl">Costo (S/)</div><input class="input" id="cfg-costo" type="number" min="0" step="0.5" value="${Number(p.costo||0)}"></div>
     </div>
+    <div class="sheet-section grid2">
+      <div><div class="field-lbl">Unidad de compra</div><input class="input" id="cfg-ucompra" placeholder="caja, botella, saco…" value="${p.unidad_compra||''}"></div>
+      <div><div class="field-lbl">Trae (${p.unidad||'u'} por unidad de compra)</div><input class="input" id="cfg-factor" type="number" min="1" step="any" value="${p.factor_compra||p.unidades_por_caja||1}"></div>
+    </div>
+    <div class="sheet-section"><div class="field-lbl">Código de barras</div><div style="display:flex;gap:8px"><input class="input" id="cfg-cb" inputmode="numeric" value="${p.codigo_barras||''}" placeholder="EAN de la etiqueta" style="flex:1"><button class="btn-ico" id="cfg-scan" type="button"><span class="material-symbols-outlined">barcode_scanner</span></button></div></div>
     <div class="sheet-section"><div class="field-lbl">Vida útil / caducidad (días desde recepción) — para alertas FEFO</div><input class="input" id="cfg-cad" type="number" min="0" value="${p.dias_caducidad!=null?p.dias_caducidad:''}" placeholder="ej. 7 (lácteos), 3 (carnes), 180 (abarrotes)">${vencimientoPid(pid)?`<div class="row-meta" style="margin-top:4px">Próximo vencimiento estimado: <strong>${vencimientoPid(pid)}</strong> (${diasParaVencer(pid)<0?'vencido':'en '+diasParaVencer(pid)+'d'})</div>`:''}</div>
     ${(()=>{const h=histDe(pid);if(!h.length)return'';const c=cambioPrecio(pid);const max=Math.max(...h.map(x=>Number(x.costo)),Number(p.costo||0));const pts=[...h.map(x=>x.costo),p.costo];return `<div class="sheet-section"><div class="field-lbl">Histórico de precio ${c?`<span style="color:${c.pct>0?'var(--secondary)':'var(--green)'}">(${c.pct>0?'▲':'▼'} ${Math.abs(c.pct).toFixed(0)}% desde ${c.desde})</span>`:''}</div>
       <div style="display:flex;align-items:flex-end;gap:4px;height:50px">${pts.map(v=>`<div style="flex:1;background:var(--primary);border:1px solid var(--outline);border-radius:3px 3px 0 0;height:${Math.round(Number(v)/max*100)}%" title="${money(v)}"></div>`).join('')}</div>
@@ -975,6 +1027,8 @@ function abrirConfigProducto(pid){
   if($('#cfg-usesug'))$('#cfg-usesug').onclick=()=>{$('#cfg-par').value=sug};
   $$('#sheet-body [data-pref]').forEach(b=>b.onclick=()=>marcarPreferido(pid,b.dataset.pref));
   $('#cfg-cancel').onclick=closeSheet;
+  $('#cfg-scan').onclick=()=>{const keep={min:$('#cfg-min').value,par:$('#cfg-par').value,costo:$('#cfg-costo').value,uc:$('#cfg-ucompra').value,f:$('#cfg-factor').value,cad:$('#cfg-cad').value};
+    pedirCodigoCamara(code=>{abrirConfigProducto(pid);$('#cfg-min').value=keep.min;$('#cfg-par').value=keep.par;$('#cfg-costo').value=keep.costo;$('#cfg-ucompra').value=keep.uc;$('#cfg-factor').value=keep.f;$('#cfg-cad').value=keep.cad;$('#cfg-cb').value=code})};
   $('#cfg-save').onclick=()=>guardarConfigProducto(pid,Number($('#cfg-min').value),Number($('#cfg-par').value),Number($('#cfg-costo').value),$('#cfg-cad').value===''?null:Number($('#cfg-cad').value));
 }
 async function marcarPreferido(pid,provId){
@@ -989,7 +1043,10 @@ async function guardarConfigProducto(pid,minimo,par,costo,diasCad){
   setEdit(pid,'minimo',minimo,'manual');setEdit(pid,'par',par,'manual');
   if(state.parEdits[pid]){const otros=Object.fromEntries(Object.entries(state.parEdits).filter(([k])=>k!==pid));const oo=Object.fromEntries(Object.entries(state.parOrigen).filter(([k])=>k!==pid));
     state.parEdits={[pid]:state.parEdits[pid]};state.parOrigen={[pid]:'manual'};await guardarPares();state.parEdits={...otros,...state.parEdits};state.parOrigen={...oo,...state.parOrigen};}
-  const patch={costo:costo};if(diasCad!==undefined)patch.dias_caducidad=diasCad;
+  const patch={costo:costo};
+  if($('#cfg-ucompra')){const f=Number($('#cfg-factor').value)||1;const cb=$('#cfg-cb').value.trim();
+    if(cb){const otro=state.productos.find(x=>x.id!==pid&&String(x.codigo_barras||'')===cb);if(otro){toast('Ese código ya es de '+otro.nombre,'warn');return}}
+    patch.unidad_compra=$('#cfg-ucompra').value.trim()||null;patch.factor_compra=f>1?f:null;patch.codigo_barras=cb||null;}if(diasCad!==undefined)patch.dias_caducidad=diasCad;
   const{error}=await sb.from('inv_productos').update(patch).eq('id',pid);
   if(error){toast('Atrás: '+error.message,'err');return}
   if(Number(costo)!==ant){await sb.from('inv_precios_hist').insert({marca_id:MARCA,producto_id:pid,costo:Number(costo),fuente:'manual',fecha:hoyISO()});await loadHist();}
@@ -1168,8 +1225,43 @@ function consumoTeorico(){
     r.ingredientes.forEach(ing=>{if(!ing.pid)return;const merma=Number(ing.merma||0);const factor=(merma>0&&merma<100)?1/(1-merma/100):1;const cant=Number(ing.cantidad||0)*q*factor;if(!m[ing.pid])m[ing.pid]={cant:0};m[ing.pid].cant+=cant;});});
   return m;
 }
+/* POUR COST (bar): costo teórico de los tragos vendidos / venta de esos tragos.
+   Bebida = receta de estación de bar/servicio o de una sección de tragos. Real = salidas + mermas valorizadas de los
+   insumos de bar en el período → variación real vs teórico. Por turno y por mozo: pour cost de lo que vendió cada uno. */
+function esBebida(r){if(!r)return false;return /bar|servicio|bebida|drink/i.test(r.estacion_id||'')||/c[oó]ctel|trago|sour|bebida|cerveza|vino|sin alcohol|cl[aá]sicos?|licor|bar/i.test(r.categoria_menu||'')}
+function costoReceta(r){if(!r||!Array.isArray(r.ingredientes))return 0;return r.ingredientes.reduce((a,ing)=>{const p=ing.pid?prod(ing.pid):null;if(!p)return a;const merma=Number(ing.merma||0);const f=(merma>0&&merma<100)?1/(1-merma/100):1;return a+Number(ing.cantidad||0)*f*Number(p.costo||0)},0)}
+function pourCost(items){let costo=0,venta=0;items.forEach(it=>{const r=state.recetas.find(x=>x.id===it.receta_id);if(!esBebida(r)||it.es_cortesia)return;const q=Number(it.qty||1);costo+=costoReceta(r)*q;venta+=Number(it.precio_total!=null?it.precio_total:Number(r.precio_venta||0)*q)});
+  // la venta incluye IGV: el pour cost se mide sobre la venta neta
+  const neta=venta/1.18;return{costo,venta,neta,pct:neta>0?costo/neta*100:null}}
+function insumosDeBar(){const s=new Set();state.recetas.filter(esBebida).forEach(r=>(r.ingredientes||[]).forEach(i=>i.pid&&s.add(i.pid)));return s}
+async function consumoRealPeriodo(pids){const desde=teoDesde().slice(0,10);let from=0,tot=0;const page=1000;
+  while(true){const{data,error}=await sb.from('inv_movimientos').select('producto_id,valor_total,motivo').eq('local_id',LOCAL).in('tipo',['salida','merma','ajuste']).gte('fecha',desde).range(from,from+page-1);
+    if(error)break;(data||[]).forEach(m=>{if(pids.has(m.producto_id)&&!/consumo te[oó]rico/i.test(m.motivo||''))tot+=-Number(m.valor_total||0)});if(!data||data.length<page)break;from+=page}
+  return tot}
+function bloquePourCost(){
+  const pc=pourCost(state.ventasItems);if(pc.pct==null)return'';
+  const porTurno={},porMozo={};state.ventasItems.forEach(it=>{(porTurno[it.turno_id||it.fecha]=porTurno[it.turno_id||it.fecha]||[]).push(it);if(it.mozo_id)(porMozo[it.mozo_id]=porMozo[it.mozo_id]||[]).push(it)});
+  const filasT=Object.entries(porTurno).map(([k,its])=>{const t=state.turnos[k];const x=pourCost(its);return{lbl:t?(t.fecha+' · '+(t.nombre||'')):k,x}}).filter(r=>r.x.pct!=null).sort((a,b)=>a.lbl<b.lbl?1:-1);
+  const filasM=Object.entries(porMozo).map(([k,its])=>{const e=state.equipo[k];return{lbl:e?(e.nombre+' '+(e.apellidos||'').split(' ')[0]):k,rol:e?.rol||'',x:pourCost(its)}}).filter(r=>r.x.pct!=null).sort((a,b)=>b.x.pct-a.x.pct);
+  const dif=v=>{const d=v-pc.pct;return `<span style="color:${Math.abs(d)<1.5?'':d>0?'var(--secondary)':'var(--green)'}">${d>0?'+':''}${d.toFixed(1)} pp</span>`};
+  const real=state.pourReal;const varPct=real!=null&&pc.costo>0?(real-pc.costo)/pc.costo*100:null;
+  return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:14px">
+    <div style="font-family:var(--font-display);font-size:18px;margin-bottom:8px">Pour cost del bar</div>
+    <div class="kpis">
+      <div class="kpi ${pc.pct>24?'alert':''}"><div class="val">${pc.pct.toFixed(1)}%</div><div class="lbl">Pour cost teórico</div></div>
+      <div class="kpi"><div class="val">${money(pc.neta)}</div><div class="lbl">Venta de tragos (sin IGV)</div></div>
+      <div class="kpi"><div class="val">${money(pc.costo)}</div><div class="lbl">Costo teórico</div></div>
+      <div class="kpi ${varPct!=null&&varPct>5?'alert':''}"><div class="val">${real==null?'…':money(real)}</div><div class="lbl">Consumo real insumos de bar${varPct!=null?` · ${varPct>0?'+':''}${varPct.toFixed(0)}% vs teórico`:''}</div></div>
+    </div>
+    <div class="row-meta" style="margin-bottom:8px">Referencia de la industria: 18–24%. Si el real supera al teórico, hay sobre-servido, cortesías sin registrar o merma: crúzalo con el conteo por peso.</div>
+    <div class="grid2" style="align-items:start">
+      <div><div class="field-lbl">Por turno</div><table class="tbl"><tr><th>Turno</th><th>Venta</th><th>Pour</th><th>vs prom.</th></tr>${filasT.slice(0,14).map(r=>`<tr><td>${r.lbl}</td><td class="mono">${money(r.x.neta)}</td><td class="mono">${r.x.pct.toFixed(1)}%</td><td class="mono">${dif(r.x.pct)}</td></tr>`).join('')}</table></div>
+      <div><div class="field-lbl">Por mozo / bartender</div>${filasM.length?`<table class="tbl"><tr><th>Quién</th><th>Venta</th><th>Pour</th><th>vs prom.</th></tr>${filasM.map(r=>`<tr><td>${r.lbl}<div class="row-meta">${r.rol}</div></td><td class="mono">${money(r.x.neta)}</td><td class="mono">${r.x.pct.toFixed(1)}%</td><td class="mono">${dif(r.x.pct)}</td></tr>`).join('')}</table>`:'<div class="row-meta">Los pedidos no tienen mozo asignado.</div>'}</div>
+    </div></div>`;
+}
 function renderTeorico(){
   const cons=consumoTeorico();
+  if(state.pourRealKey!==state.teoPeriodo){state.pourRealKey=state.teoPeriodo;state.pourReal=null;consumoRealPeriodo(insumosDeBar()).then(v=>{state.pourReal=v;if(state.view==='teorico')renderTeorico()})}
   const pids=Object.keys(cons).filter(pid=>prod(pid));
   const platos=state.ventasItems.reduce((a,it)=>a+Number(it.qty||0),0);
   const valorCons=pids.reduce((a,pid)=>a+cons[pid].cant*Number(prod(pid).costo||0),0);
@@ -1178,6 +1270,7 @@ function renderTeorico(){
   $('#screen').innerHTML=`
     <div class="toolbar"><div class="chips">${per.map(p=>`<button class="chip ${state.teoPeriodo===p[0]?'active':''}" data-tp="${p[0]}">${p[1]}</button>`).join('')}</div></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-bottom:10px">Inventario <b>real</b> = lo que hay físico (conteos/compras). Inventario <b>virtual</b> = real − consumo teórico de las recetas vendidas. La diferencia al hacer un conteo = merma real.</div>
+    ${bloquePourCost()}
     <div class="kpis">
       <div class="kpi"><div class="val">${num(platos)}</div><div class="lbl">Platos vendidos</div></div>
       <div class="kpi"><div class="val">${money(valorCons)}</div><div class="lbl">Consumo teórico</div></div>
@@ -1189,7 +1282,7 @@ function renderTeorico(){
       <div class="row-meta" style="margin-top:10px">Si registras el consumo, se generan salidas por el teórico y el stock real baja a su nivel "virtual".</div>
       <button class="btn primary" id="teo-aplicar" style="margin-top:10px"><span class="material-symbols-outlined">remove_circle</span>Registrar consumo del período a inventario</button>`
       :'<div class="empty-state">Sin ventas con receta costeada en el período. Costea recetas en el módulo Recetas para ver el consumo.</div>'}`;
-  $$('#screen .chip[data-tp]').forEach(b=>b.onclick=async()=>{state.teoPeriodo=b.dataset.tp;await loadVentasItems();render()});
+  $$('#screen .chip[data-tp]').forEach(b=>b.onclick=async()=>{state.teoPeriodo=b.dataset.tp;$('#screen').innerHTML='<div class="empty-state">Oído · cargando ventas…</div>';await loadVentasItems();render()});
   if($('#teo-aplicar'))$('#teo-aplicar').onclick=()=>aplicarConsumoTeorico(cons);
 }
 async function aplicarConsumoTeorico(cons){
@@ -1225,6 +1318,10 @@ function renderReportes(){
   const compraArr=Object.entries(compra).sort((a,b)=>b[1]-a[1]);const maxCompra=Math.max(1,...compraArr.map(x=>x[1]));
   // mejores precios / ahorro potencial
   const alertas=prods.map(p=>({p,al:alertaPrecio(p.id)})).filter(x=>x.al).sort((a,b)=>b.al.ahorro-a.al.ahorro);
+  // sin movimiento 30 días → capital inmovilizado
+  if(!state.consumo30&&!state.cargando30){state.cargando30=true;loadConsumoDias(30).then(m=>{state.consumo30=m;state.cargando30=false;if(state.view==='reportes')renderReportes()})}
+  const dormidos=state.consumo30?prods.filter(p=>stock(p.id)>0&&!state.consumo30[p.id]).map(p=>({p,cap:stock(p.id)*Number(p.costo||0)})).sort((a,b)=>b.cap-a.cap):null;
+  const capDorm=dormidos?dormidos.reduce((a,x)=>a+x.cap,0):0;
   // vendor scoring (ME-06)
   const scoring=state.proveedores.map(v=>{const pps=state.provProd.filter(pp=>pp.proveedor_id===v.id);if(!pps.length)return null;
     const entrega=pps.reduce((a,pp)=>a+(pp.tiempo_entrega_dias||0),0)/pps.length;
@@ -1238,7 +1335,13 @@ function renderReportes(){
       <div class="kpi"><div class="val">${money(costoReponer)}</div><div class="lbl">Costo reponer al PAR</div></div>
       <div class="kpi alert"><div class="val">${money(mermaTot)}</div><div class="lbl">Mermas</div></div>
       <div class="kpi"><div class="val">${alertas.length}</div><div class="lbl">Precios mejorables</div></div>
+      <div class="kpi ${capDorm?'alert':''}"><div class="val">${dormidos?money(capDorm):'…'}</div><div class="lbl">Capital inmovilizado</div></div>
     </div>
+    ${card('💤 Sin movimiento en 30 días · capital inmovilizado', dormidos==null?'<div class="row-meta">Oído · revisando 30 días de movimientos…</div>':dormidos.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Insumos con stock que no tuvieron salidas ni mermas en 30 días. Baja su PAR, úsalos en una promo o deja de comprarlos:</div>
+      <table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Costo</th><th>Capital</th><th>PAR</th></tr>
+      ${dormidos.map(x=>`<tr><td>${x.p.emoji||''} ${x.p.nombre}<div class="row-meta">${x.p.categoria||''}</div></td><td class="mono">${num(stock(x.p.id))} ${x.p.unidad||''}</td><td class="mono">${money(x.p.costo)}</td><td class="mono"><strong>${money(x.cap)}</strong></td><td class="mono">${num(parBase(x.p))}</td></tr>`).join('')}
+      <tr><td colspan="3" style="text-align:right;font-weight:700">Total</td><td colspan="2" style="font-weight:700">${money(capDorm)}</td></tr></table>`
+      :'<div class="row-meta">Todo lo que tienes en stock se movió en los últimos 30 días. ✅</div>')}
     ${(()=>{const venc=prods.map(p=>({p,d:diasParaVencer(p.id),v:vencimientoPid(p.id)})).filter(x=>x.d!=null&&x.d<=5&&stock(x.p.id)>0).sort((a,b)=>a.d-b.d);
       return card('⏳ Vencimientos próximos (FEFO)', venc.length?`<div style="font-size:12px;opacity:.7;margin-bottom:8px">Insumos por vencer según su última recepción — usar/rotar primero (PEPS):</div>
         <table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Vence</th><th>Estado</th></tr>
