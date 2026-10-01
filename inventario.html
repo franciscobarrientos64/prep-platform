@@ -3,24 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PREP ≫ Inventario</title>
+<title>Conteo por peso · Prep!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<script src="/tenant.js"></script>
+<script src="/client-name.js"></script>
+<script src="/role-view.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 :root{
-  --bg:#06070a;--panel:#0c0d12;--card:#131520;--card2:#191c28;
-  --border:#1e2235;--border2:#2a3050;--text:#dde2f4;--muted:#4a5272;--dim:#1e2235;
-  --gold:#c4963a;--gold-d:rgba(196,150,58,.15);--gold-b:rgba(196,150,58,.08);
-  --green:#22c55e;--green-d:rgba(34,197,94,.12);--red:#ef4444;--red-d:rgba(239,68,68,.12);
-  --yellow:#f59e0b;--yellow-d:rgba(245,158,11,.12);--blue:#3b82f6;--blue-d:rgba(59,130,246,.12);
-  --purple:#a855f7;--purple-d:rgba(168,85,247,.12);
+  --bg:#fcf9f8;--panel:#ffffff;--card:#ffffff;--card2:#f3efec;
+  --border:#000000;--border2:#000000;--text:#171c20;--muted:#5f6670;--dim:#dfe3e8;
+  --gold:#1e5af9;--gold-d:#d6e2ff;--gold-b:#eef3ff;
+  --green:#14833b;--green-d:#dcf5e4;--red:#ff3b30;--red-d:#ffe1df;
+  --yellow:#c98a00;--yellow-d:#fff3c4;--blue:#1e5af9;--blue-d:#d6e2ff;
+  --purple:#7c3aed;--purple-d:#ede4ff;
+  --font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);overflow:hidden;}
-body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-body);font-size:14px;color:var(--text);-webkit-tap-highlight-color:transparent;}
 
 /* TOPBAR */
 .topbar{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;background:var(--panel);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 14px;gap:10px;}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:3px;color:var(--gold);}
+.logo{font-family:var(--font-display);font-weight:900;font-size:15px;letter-spacing:3px;color:var(--gold);}
 .ctx-pill{display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;transition:border-color .15s;max-width:200px;overflow:hidden;}
 .ctx-pill:hover{border-color:var(--border2);}
 .ctx-pill .chev{color:var(--muted);font-size:10px;flex-shrink:0;}
@@ -29,13 +37,13 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
 .sync-dot.syncing{background:var(--yellow);animation:pulse 1s infinite;}
 .sync-dot.offline{background:var(--red);}
-.top-val-num{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--green);}
+.top-val-num{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--green);}
 .bt-indicator{font-size:16px;cursor:pointer;opacity:.4;transition:opacity .2s;}
 .bt-indicator.on{opacity:1;}
 
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:58px;z-index:100;background:var(--panel);border-top:1px solid var(--border2);display:flex;}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'Barlow',sans-serif;transition:color .15s;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--muted);border:none;background:none;font-family:var(--font-body);transition:color .15s;}
 .nav-item.active{color:var(--gold);}
 .nav-item .ni{font-size:18px;}.nav-item .nl{font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
 
@@ -51,20 +59,20 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .count-screen.active{display:flex;}
 .count-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
 .count-back{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;}
-.count-area-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;flex:1;}
-.count-progress-txt{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);}
+.count-area-name{font-family:var(--font-display);font-weight:800;font-size:17px;flex:1;}
+.count-progress-txt{font-family:var(--font-mono);font-size:13px;color:var(--muted);}
 .count-prog-bar{height:3px;background:var(--border);flex-shrink:0;}
 .count-prog-fill{height:100%;background:var(--gold);transition:width .3s;}
 .count-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow:hidden;gap:14px;}
 .count-product-icon{font-size:52px;line-height:1;}
-.count-product-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-align:center;line-height:1.1;max-width:100%;}
+.count-product-name{font-family:var(--font-display);font-weight:900;font-size:28px;text-align:center;line-height:1.1;max-width:100%;}
 .count-product-ref{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;}
 
 /* WEIGHT INPUT */
 .count-input-wrap{width:100%;max-width:360px;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:16px 20px;text-align:center;transition:border-color .2s;}
 .count-input-wrap.ok{border-color:var(--green);}.count-input-wrap.warn{border-color:var(--yellow);}.count-input-wrap.error{border-color:var(--red);}
-.count-big-input{font-family:'DM Mono',monospace;font-size:48px;font-weight:500;text-align:center;background:none;border:none;color:var(--text);outline:none;width:100%;}
-.count-unit-label{font-size:14px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.count-big-input{font-family:var(--font-mono);font-size:48px;font-weight:500;text-align:center;background:none;border:none;color:var(--text);outline:none;width:100%;}
+.count-unit-label{font-size:14px;color:var(--muted);font-family:var(--font-mono);margin-top:2px;}
 .count-validation{font-size:12px;font-weight:600;margin-top:6px;min-height:18px;}
 .count-validation.ok{color:var(--green);}.count-validation.warn{color:var(--yellow);}.count-validation.error{color:var(--red);}
 
@@ -73,34 +81,34 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .sell-label{font-size:12px;color:var(--muted);flex:1;}
 .sell-stepper{display:flex;align-items:center;gap:12px;}
 .sell-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:var(--card2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
-.sell-val{font-family:'DM Mono',monospace;font-size:22px;min-width:32px;text-align:center;}
+.sell-val{font-family:var(--font-mono);font-size:22px;min-width:32px;text-align:center;}
 
 /* BOTTLE VISUAL */
 .bottle-result{display:flex;align-items:center;gap:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:100%;max-width:360px;}
 .bottle-mini{width:36px;height:74px;flex-shrink:0;}
 .bottle-result-info{flex:1;}
-.res-vol{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1;}
+.res-vol{font-family:var(--font-mono);font-size:24px;font-weight:500;line-height:1;}
 .res-pct{font-size:11px;color:var(--muted);margin:2px 0;}
 .res-extras{display:flex;gap:12px;margin-top:4px;}
-.res-e{font-size:10px;color:var(--muted);}<br>.res-e b{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);}
+.res-e{font-size:10px;color:var(--muted);}<br>.res-e b{font-family:var(--font-mono);font-size:12px;color:var(--text);}
 
 /* UNIT RESULT */
 .unit-result{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:100%;max-width:360px;}
 .ur-label{font-size:13px;color:var(--muted);}
-.ur-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--green);}
+.ur-val{font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--green);}
 
 /* CONFIRM BUTTON */
-.count-confirm-btn{width:100%;max-width:360px;height:58px;border-radius:14px;border:none;background:var(--gold);color:#0a0b0d;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:filter .15s;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0;}
+.count-confirm-btn{width:100%;max-width:360px;height:58px;border-radius:14px;border:2px solid #000;box-shadow:4px 4px 0 0 #000;background:var(--gold);color:#fff;font-family:var(--font-display);font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:filter .15s;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0;}
 .count-confirm-btn:hover{filter:brightness(1.1);}
 .count-confirm-btn:active{filter:brightness(.9);}
 .count-nav-row{display:flex;justify-content:space-between;width:100%;max-width:360px;}
-.count-nav-btn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:8px 4px;font-family:'Barlow',sans-serif;}
+.count-nav-btn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:8px 4px;font-family:var(--font-body);}
 .count-nav-btn:hover{color:var(--text);}
 
 /* DONE SCREEN */
 .count-done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;}
 .count-done-icon{font-size:64px;}
-.count-done-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;}
+.count-done-title{font-family:var(--font-display);font-weight:900;font-size:32px;}
 .count-done-sub{font-size:13px;color:var(--muted);line-height:1.5;}
 
 /* GENERAL COMPONENTS */
@@ -112,11 +120,11 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;}
 .stat-card.full{grid-column:span 2;}
 .stat-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1;}
+.stat-val{font-family:var(--font-mono);font-size:22px;font-weight:500;line-height:1;}
 .stat-val.green{color:var(--green);}.stat-val.red{color:var(--red);}.stat-val.gold{color:var(--gold);}.stat-val.yellow{color:var(--yellow);}
 .stat-sub{font-size:10px;color:var(--muted);margin-top:2px;}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border-radius:10px;border:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px;}
-.btn-gold{background:var(--gold);color:#0a0b0d;}.btn-gold:hover{filter:brightness(1.1);}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border-radius:10px;border:none;font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px;}
+.btn-gold{background:var(--gold);color:#fff;border:2px solid #000;box-shadow:4px 4px 0 0 #000;}.btn-gold:hover{filter:brightness(1.1);}
 .btn-outline{background:none;border:1px solid var(--border);color:var(--muted);}.btn-outline:hover{border-color:var(--border2);color:var(--text);}
 .btn-green{background:var(--green-d);border:1px solid var(--green);color:var(--green);}
 .btn-red{background:var(--red-d);border:1px solid var(--red);color:var(--red);}
@@ -124,7 +132,7 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .btn-sm{padding:7px 12px;font-size:11px;border-radius:8px;width:auto;margin-bottom:0;}
 .form-row{margin-bottom:11px;}
 .form-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
-.form-input,.form-select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.form-input,.form-select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .15s;}
 .form-input:focus,.form-select:focus{border-color:var(--border2);}
 .form-input::placeholder{color:var(--muted);}
 .form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -138,7 +146,7 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .prod-name{font-size:13px;font-weight:700;margin-bottom:1px;}
 .prod-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .prod-right{text-align:right;flex-shrink:0;}
-.prod-stock{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
+.prod-stock{font-family:var(--font-mono);font-size:13px;font-weight:500;}
 .prod-stock.low{color:var(--red);}
 .prod-val{font-size:10px;color:var(--muted);margin-top:1px;}
 .prod-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;}
@@ -151,12 +159,12 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .reorder-item.critical{border-left-color:var(--red);}
 .reorder-name{font-size:13px;font-weight:700;}
 .reorder-meta{font-size:11px;color:var(--muted);margin-top:1px;}
-.reorder-qty{font-family:'DM Mono',monospace;font-size:13px;color:var(--yellow);text-align:right;}
+.reorder-qty{font-family:var(--font-mono);font-size:13px;color:var(--yellow);text-align:right;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.show{display:flex;}
 .modal-box{background:var(--panel);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;border-top:1px solid var(--border2);}
 .modal-handle{width:40px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 16px;}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:19px;letter-spacing:.5px;margin-bottom:4px;}
+.modal-title{font-family:var(--font-display);font-weight:800;font-size:19px;letter-spacing:.5px;margin-bottom:4px;}
 .modal-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
 .ctx-option{display:flex;align-items:center;gap:11px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;}
 .ctx-option:hover{border-color:var(--border2);}
@@ -182,9 +190,9 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 .cat-bar-row{display:flex;align-items:center;gap:9px;}
 .cat-bar-label{font-size:10px;width:72px;flex-shrink:0;color:var(--muted);}
 .cat-bar-track{flex:1;height:16px;background:var(--card2);border-radius:4px;overflow:hidden;}
-.cat-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:5px;font-size:8.5px;font-family:'DM Mono',monospace;color:#fff;}
+.cat-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:5px;font-size:8.5px;font-family:var(--font-mono);color:#fff;}
 .loader{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
-.loader-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:4px;color:var(--gold);}
+.loader-logo{font-family:var(--font-display);font-weight:900;font-size:26px;letter-spacing:4px;color:var(--gold);}
 .spinner{width:30px;height:30px;border:2.5px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:68px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 16px;border-radius:8px;font-weight:700;font-size:12px;transition:transform .25s;z-index:9999;white-space:nowrap;max-width:90vw;}
@@ -204,7 +212,7 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
 <div class="loader" id="loader"><div class="loader-logo">PREP ≫</div><div class="spinner"></div><div style="color:var(--muted);font-size:12px">Cargando inventario...</div></div>
 
 <div class="topbar">
-  <div class="logo">PREP</div>
+  <a class="logo" href="/mercado" title="Volver a Mercado" style="text-decoration:none">← MERCADO</a>
   <div class="ctx-pill" onclick="openCtx()">
     <span id="ctxBrand" class="ctx-name">—</span><span style="color:var(--muted)">·</span><span id="ctxLoc" class="ctx-name">—</span><span class="chev">▼</span>
   </div>
@@ -278,7 +286,8 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
     <div class="count-done-icon">✅</div>
     <div class="count-done-title">¡Área completada!</div>
     <div class="count-done-sub" id="countDoneSub">—</div>
-    <button class="btn btn-gold" onclick="exitCounting()" style="max-width:280px">← Volver al inicio</button>
+    <button class="btn btn-gold" onclick="abrirCierre()" style="max-width:280px">Cerrar conteo y ajustar stock</button>
+    <button class="btn btn-outline" onclick="exitCounting()" style="max-width:280px">← Seguir con otra área</button>
     <button class="btn btn-outline" onclick="reiniciarConteo()" style="max-width:280px">↩ Repasar de nuevo</button>
   </div>
 </div>
@@ -293,6 +302,7 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
       <div class="stat-card"><div class="stat-label">Productos</div><div class="stat-val" id="dash-prods">0</div><div class="stat-sub">en catálogo</div></div>
       <div class="stat-card"><div class="stat-label">Bajo par</div><div class="stat-val red" id="dash-bajo">0</div><div class="stat-sub">reabastecer</div></div>
     </div>
+    <div id="cierreBox"></div>
     <div class="section-title">Iniciar conteo</div>
     <div class="area-grid" id="dashAreas"></div>
     <div class="section-title">Valor por categoría</div>
@@ -404,9 +414,17 @@ body{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);-webkit-ta
   <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalOrden')">Cancelar</button>
 </div></div>
 
+<!-- MODAL CIERRE DE CONTEO -->
+<div class="modal-overlay" id="modalCierre"><div class="modal-box"><div class="modal-handle"></div>
+  <div class="modal-title">Cerrar conteo</div>
+  <div class="modal-sub">Esto deja el stock de Mercado igual a lo que contaste. Revisa la diferencia antes de confirmar.</div>
+  <div id="cierreBody"></div>
+  <button class="btn btn-gold" id="cierreOk" onclick="confirmarCierre()">✓ Ajustar stock en Mercado</button>
+  <button class="btn btn-outline" style="border:none;color:var(--muted)" onclick="closeModal('modalCierre')">Atrás</button>
+</div></div>
+
 <div id="toast" class="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script>
@@ -431,7 +449,8 @@ const AREAS=[{id:'barra',n:'Barra principal',e:'🍸'},{id:'barra2',n:'Barra ter
 
 let state={
   marcas:[],locales:[],productos:[],conteos:{},ordenConteo:{},
-  marcaActiva:'m1',localActivo:'l1',
+  marcaActiva:window.PREP_MARCA||'m6',localActivo:window.PREP_LOCAL||'l11',
+  stockActual:{},sesion:{},
   countArea:null,countList:[],countIdx:0,countSell:0,
   editProd:null,emojiSel:'🍾',catFilter:'todos',
   bt:{enabled:false,device:null,peso:null},
@@ -453,11 +472,13 @@ async function loadAll(){
   syncing();
   try{
     const[m,l,p,c]=await Promise.all([
-      sb.from('inv_marcas').select('*').order('id'),
-      sb.from('inv_locales').select('*').order('id'),
-      sb.from('inv_productos').select('*').order('nombre'),
+      sb.from('inv_marcas').select('*').eq('id',state.marcaActiva),
+      sb.from('inv_locales').select('*').eq('marca_id',state.marcaActiva).order('orden'),
+      sb.from('inv_productos').select('*').eq('marca_id',state.marcaActiva).order('nombre'),
       sb.from('inv_conteos').select('*').eq('local_id',state.localActivo),
     ]);
+    const st=await sb.from('inv_stock_actual').select('producto_id,stock').eq('local_id',state.localActivo);
+    state.stockActual={};(st.data||[]).forEach(r=>state.stockActual[r.producto_id]=Number(r.stock||0));
     state.marcas=m.data||[];state.locales=l.data||[];
     state.productos=(p.data||[]).map(x=>({
       id:x.id,nombre:x.nombre,cat:x.categoria,emoji:x.emoji||'🍾',
@@ -491,13 +512,14 @@ function showScreen(s){
 }
 
 // ── CONTEXTO ──
-function openCtx(){renderCtxOpts();document.getElementById('modalCtx').classList.add('show');}
+function openCtx(){if(state.locales.length<2){showToast('Esta marca tiene una sola sede');return}renderCtxOpts();document.getElementById('modalCtx').classList.add('show');}
 function renderCtxOpts(){
-  document.getElementById('brandOpts').innerHTML=state.marcas.map(m=>`<div class="ctx-option${state.marcaActiva===m.id?' selected':''}" onclick="selBrand('${m.id}')"><span class="em">${m.emoji}</span><div style="flex:1"><div class="nm">${m.nombre}</div><div class="mt">${state.locales.filter(l=>l.marca_id===m.id).length} locales</div></div></div>`).join('');
+  document.getElementById('brandOpts').innerHTML='';document.getElementById('brandOpts').previousElementSibling.style.display='none';
+  void state.marcas.map(m=>`<div class="ctx-option${state.marcaActiva===m.id?' selected':''}" onclick="selBrand('${m.id}')"><span class="em">${m.emoji}</span><div style="flex:1"><div class="nm">${m.nombre}</div><div class="mt">${state.locales.filter(l=>l.marca_id===m.id).length} locales</div></div></div>`).join('');
   document.getElementById('locOpts').innerHTML=state.locales.filter(l=>l.marca_id===state.marcaActiva).map(l=>`<div class="ctx-option${state.localActivo===l.id?' selected':''}" onclick="selLoc('${l.id}')"><span class="em">📍</span><div style="flex:1"><div class="nm">${l.nombre}</div></div></div>`).join('');
 }
 function selBrand(id){state.marcaActiva=id;const f=state.locales.find(l=>l.marca_id===id);if(f)state.localActivo=f.id;renderCtxOpts();}
-async function selLoc(id){state.localActivo=id;renderCtxOpts();renderCtxPill();await loadAll();renderDashboard();}
+function selLoc(id){const q=new URLSearchParams(location.search);q.set('marca',state.marcaActiva);q.set('local',id);location.search=q.toString();}
 function renderCtxPill(){
   const m=state.marcas.find(x=>x.id===state.marcaActiva),l=state.locales.find(x=>x.id===state.localActivo);
   document.getElementById('ctxBrand').textContent=m?m.nombre:'—';
@@ -515,7 +537,7 @@ function renderDashboard(){
   document.getElementById('dash-sub').textContent='en '+(l?l.nombre:'—');
   document.getElementById('dash-prods').textContent=state.productos.length;
   const c=conteoLocal();
-  const bajo=state.productos.filter(p=>{const e=c[p.id];return(e?e.bottlesEquiv:0)<p.par;}).length;
+  const bajo=state.productos.filter(p=>(state.stockActual[p.id]||0)<p.par).length;
   document.getElementById('dash-bajo').textContent=bajo;
   // Areas
   const ag=document.getElementById('dashAreas');
@@ -527,8 +549,8 @@ function renderDashboard(){
   const cb=document.getElementById('catBars');
   cb.innerHTML=cats.length?cats.map(([cat,v])=>{const ct=CATS.find(x=>x.id===cat);return`<div class="cat-bar-row"><div class="cat-bar-label">${ct?ct.e:''} ${ct?ct.n:cat}</div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.max(10,(v/maxV)*100)}%;background:${CAT_COLS[cat]||'#6b7280'}">S/${Math.round(v)}</div></div></div>`;}).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:8px">Sin datos de conteo aún</div>';
   // Alertas
-  const alertas=state.productos.filter(p=>{const e=c[p.id];return(e?e.bottlesEquiv:0)<p.par;}).slice(0,5);
-  document.getElementById('dashAlertas').innerHTML=alertas.length?alertas.map(p=>{const e=c[p.id];const bot=e?e.bottlesEquiv:0;return`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div style="flex:1"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">${bot.toFixed(1)} de ${p.par} (par) · ${p.unidad}</div></div><div class="reorder-qty">faltan ${Math.ceil(p.par-bot)}</div></div>`;}).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:12px">✓ Todo sobre el par</div>';
+  const alertas=state.productos.filter(p=>(state.stockActual[p.id]||0)<p.par).slice(0,5);
+  document.getElementById('dashAlertas').innerHTML=alertas.length?alertas.map(p=>{const bot=state.stockActual[p.id]||0;return`<div class="reorder-item${bot<p.par*0.5?' critical':''}"><div class="prod-emoji">${p.emoji}</div><div style="flex:1"><div class="reorder-name">${p.nombre}</div><div class="reorder-meta">${bot.toFixed(1)} de ${p.par} (par) · ${p.unidad}</div></div><div class="reorder-qty">faltan ${Math.ceil(p.par-bot)}</div></div>`;}).join(''):'<div class="card" style="text-align:center;color:var(--green);font-size:12px;padding:12px">✓ Todo sobre el par</div>';
 }
 
 // ── COUNTING ──
@@ -658,6 +680,7 @@ async function confirmCount(){
   else{
     if(!state.conteos[state.localActivo])state.conteos[state.localActivo]={};
     state.conteos[state.localActivo][p.id]={...calc,area:state.countArea,ts:Date.now()};
+    (state.sesion[p.id]=state.sesion[p.id]||{})[state.countArea]=calc.bottlesEquiv;renderCierreBtn();
     synced();
     advanceCount();
   }
@@ -692,6 +715,35 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')skipProduct();
   if(e.key==='ArrowLeft')prevProduct();
 });
+
+// ── CIERRE: conteo → ajuste de stock en Mercado (inv_movimientos tipo 'ajuste') ──
+function contadoSesion(pid){return Object.values(state.sesion[pid]||{}).reduce((a,b)=>a+Number(b||0),0)}
+function filasCierre(){return Object.keys(state.sesion).map(pid=>{const p=state.productos.find(x=>x.id===pid);if(!p)return null;
+  const contado=+contadoSesion(pid).toFixed(2),sistema=+(state.stockActual[pid]||0).toFixed(2),dif=+(contado-sistema).toFixed(2);
+  return{p,contado,sistema,dif,valor:dif*(p.costo||0),areas:Object.keys(state.sesion[pid])};}).filter(Boolean).sort((a,b)=>Math.abs(b.valor)-Math.abs(a.valor))}
+function renderCierreBtn(){const n=Object.keys(state.sesion).length;const b=document.getElementById('cierreBox');if(!b)return;
+  b.innerHTML=n?`<div class="card" style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="flex:1"><div style="font-weight:700">${n} producto${n===1?'':'s'} contado${n===1?'':'s'}</div><div style="font-size:11px;color:var(--muted)">Falta pasar el conteo al stock de Mercado</div></div><button class="btn btn-gold btn-sm" style="width:auto" onclick="abrirCierre()">Cerrar conteo</button></div>`:'';}
+function abrirCierre(){
+  const f=filasCierre();if(!f.length){showToast('Todavía no contaste nada');return}
+  const tot=f.reduce((a,x)=>a+x.valor,0),falt=f.filter(x=>x.dif<0).reduce((a,x)=>a+x.valor,0);
+  const u=x=>x.p.unidad||'u';
+  document.getElementById('cierreBody').innerHTML=`
+    <div class="stat-grid"><div class="stat-card"><div class="stat-label">Diferencia neta</div><div class="stat-val ${tot<0?'red':''}">S/${Math.round(tot).toLocaleString()}</div></div>
+    <div class="stat-card"><div class="stat-label">Faltante</div><div class="stat-val red">S/${Math.round(-falt).toLocaleString()}</div></div></div>
+    ${f.map(x=>`<div class="prod-item" style="cursor:default"><div class="prod-emoji">${x.p.emoji||'🍾'}</div><div class="prod-body"><div class="prod-name">${x.p.nombre}</div>
+      <div class="prod-meta">Sistema ${x.sistema} · contado ${x.contado} ${u(x)}${x.areas.length>1?' · '+x.areas.length+' áreas':''}</div></div>
+      <div class="prod-right"><div class="prod-stock" style="color:${x.dif<0?'var(--red)':x.dif>0?'var(--green)':'var(--muted)'}">${x.dif>0?'+':''}${x.dif}</div><div class="prod-val">S/${Math.round(x.valor)}</div></div></div>`).join('')}`;
+  document.getElementById('modalCierre').classList.add('show');
+}
+async function confirmarCierre(){
+  const f=filasCierre().filter(x=>x.dif!==0);const btn=document.getElementById('cierreOk');
+  if(f.length){btn.disabled=true;syncing();
+    const hoy=new Date();const fecha=hoy.getFullYear()+'-'+String(hoy.getMonth()+1).padStart(2,'0')+'-'+String(hoy.getDate()).padStart(2,'0');
+    const{error}=await sb.from('inv_movimientos').insert(f.map(x=>({local_id:state.localActivo,producto_id:x.p.id,tipo:'ajuste',cantidad:x.dif,unidad:x.p.unidad,costo_unitario:x.p.costo,valor_total:+(x.dif*(x.p.costo||0)).toFixed(2),fecha,motivo:'Conteo por peso',responsable:'Conteo por peso'})));
+    btn.disabled=false;if(error){syncErr();showToast('Atrás: '+error.message);return}synced();}
+  state.sesion={};closeModal('modalCierre');exitCounting();await loadAll();renderDashboard();renderCierreBtn();
+  showToast(f.length?`Servido · ${f.length} ajuste${f.length===1?'':'s'} en Mercado`:'Servido · el stock ya cuadraba');
+}
 
 // ── ORDEN EDITOR ──
 function openOrdenModal(){
@@ -817,7 +869,7 @@ async function guardarProd(){
   const vacia=parseFloat(document.getElementById('np-vacia').value)||0;
   if(tipo==='peso'&&!vacia){showToast('⭐ El peso vacío es obligatorio para botellas');return;}
   const id=state.editProd?state.editProd.id:'p'+Date.now();
-  const row={id,nombre,categoria:document.getElementById('np-cat').value,emoji:state.emojiSel,volumen_ml:parseFloat(document.getElementById('np-vol').value)||750,peso_vacia_g:vacia,densidad:parseFloat(document.getElementById('np-den').value)||1,costo:parseFloat(document.getElementById('np-costo').value)||0,par_level:parseInt(document.getElementById('np-par').value)||3,tipo_conteo:tipo,unidad:document.getElementById('np-unidad').value||tipo,unidades_por_caja:parseInt(document.getElementById('np-porcaja').value)||1};
+  const row={id,marca_id:state.marcaActiva,nombre,categoria:document.getElementById('np-cat').value,emoji:state.emojiSel,volumen_ml:parseFloat(document.getElementById('np-vol').value)||750,peso_vacia_g:vacia,densidad:parseFloat(document.getElementById('np-den').value)||1,costo:parseFloat(document.getElementById('np-costo').value)||0,par_level:parseInt(document.getElementById('np-par').value)||3,tipo_conteo:tipo,unidad:document.getElementById('np-unidad').value||tipo,unidades_por_caja:parseInt(document.getElementById('np-porcaja').value)||1};
   syncing();const{error}=await sb.from('inv_productos').upsert(row);if(error){syncErr();showToast('⚠ '+error.message);return;}
   synced();await loadAll();closeModal('modalProd');renderCatalogo();showToast('✓ '+nombre+' guardado');
 }
