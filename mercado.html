@@ -336,6 +336,9 @@ async function renderPares(){
     <div class="toolbar"><div class="chips">${cats.map(c=>`<button class="chip ${state.parCat===c?'active':''}" data-pcat="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div></div>
     <div class="toolbar">
       <button class="mini-btn" id="par-aplicar"><span class="material-symbols-outlined" style="font-size:14px">auto_fix_high</span>Usar sugerido en los ${list.length} visibles</button>
+      <button class="mini-btn" id="par-xls-dl"><span class="material-symbols-outlined" style="font-size:14px">download</span>Descargar Excel</button>
+      <button class="mini-btn" id="par-xls-up"><span class="material-symbols-outlined" style="font-size:14px">upload_file</span>Cargar desde Excel</button>
+      <input type="file" id="par-xls-file" accept=".xlsx,.xls,.csv" style="display:none">
       ${nEd?`<button class="mini-btn ghost" id="par-desc">Descartar cambios</button>`:''}
       <button class="btn primary" id="par-save" style="margin-left:auto;padding:9px 16px" ${nEd?'':'disabled'}><span class="material-symbols-outlined" style="font-size:18px">save</span>Guardar ${nEd||''} cambio${nEd===1?'':'s'}</button>
     </div>
@@ -356,12 +359,58 @@ async function renderPares(){
   $('#par-aplicar').onclick=()=>{let n=0;list.forEach(p=>{const s=parSugeridoConsumo(p);if(s!=null&&s!==parActual(p)){setParEdit(p.id,s);n++}});renderTabs();renderPares();toast(n?`Va · ${n} pares con el sugerido (falta guardar)`:'Ya están en el sugerido',n?'ok':'')};
   if($('#par-desc'))$('#par-desc').onclick=()=>{state.parEdits={};renderTabs();renderPares()};
   $('#par-save').onclick=guardarPares;
+  $('#par-xls-dl').onclick=descargarParesXLS;
+  $('#par-xls-up').onclick=()=>$('#par-xls-file').click();
+  $('#par-xls-file').onchange=e=>{const f=e.target.files[0];if(f)cargarParesXLS(f);e.target.value=''};
   const ins=$$('#screen .par-in');
   ins.forEach((inp,i)=>{
     inp.onchange=()=>{setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i];if(n)n.focus()})};
     inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i+1];if(n){n.focus();n.select()}})}};
   });
   $$('#screen [data-sug]').forEach(b=>b.onclick=()=>{setParEdit(b.closest('tr').dataset.pid,b.dataset.sug);renderTabs();renderPares()});
+}
+/* Excel: la plantilla trae ID + insumo + par actual + sugerido; al cargarla se cruza por ID (o por nombre) y
+   los pares quedan como cambios sin guardar, para revisarlos en la tabla antes de confirmar. */
+async function xlsLib(){if(window.XLSX)return window.XLSX;await new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)});return window.XLSX}
+function normTxt(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim()}
+async function descargarParesXLS(){
+  if(!state.consumo)await loadConsumo();
+  let X;try{X=await xlsLib()}catch(e){toast('Atrás: no se pudo cargar el lector de Excel','err');return}
+  const rows=state.productos.map(p=>({ID:p.id,Insumo:p.nombre,Categoria:p.categoria||'',Unidad:p.unidad||'',Stock:+stock(p.id).toFixed(2),'Consumo dia':+consumoDia(p.id).toFixed(2),'Par actual':Number(p.par_level||0),'Par sugerido':parSugeridoConsumo(p)??'',Par:parActual(p)}));
+  const ws=X.utils.json_to_sheet(rows);ws['!cols']=[{wch:14},{wch:34},{wch:16},{wch:9},{wch:8},{wch:11},{wch:10},{wch:12},{wch:8}];
+  const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,'Pares');
+  const cli=(document.querySelector('#app-header .cli')?.textContent||'local').trim().replace(/\s+/g,'-').toLowerCase();
+  X.writeFile(wb,`pares-${cli}-${hoyISO()}.xlsx`);
+  toast('Servido · edita la columna "Par" y vuelve a cargar el archivo','ok');
+}
+async function cargarParesXLS(file){
+  let X;try{X=await xlsLib()}catch(e){toast('Atrás: no se pudo cargar el lector de Excel','err');return}
+  let rows;try{const wb=X.read(await file.arrayBuffer());rows=X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}catch(e){toast('Atrás: no pude leer el archivo','err');return}
+  if(!rows.length){toast('El archivo está vacío','warn');return}
+  const key=(r,names)=>{const k=Object.keys(r).find(k=>names.includes(normTxt(k)));return k!=null?r[k]:undefined};
+  const porId={},porNom={};state.productos.forEach(p=>{porId[normTxt(p.id)]=p;porNom[normTxt(p.nombre)]=p});
+  let ok=0,igual=0;const sinMatch=[],malos=[];
+  rows.forEach(r=>{
+    const id=key(r,['id','codigo','sku']),nom=key(r,['insumo','producto','nombre','item']);
+    let par=key(r,['par','par nuevo','par minimo','minimo','cantidad minima','par level']);
+    if(par===undefined||par==='')return;
+    const p=porId[normTxt(id)]||porNom[normTxt(nom)];
+    if(!p){sinMatch.push(nom||id||'(fila sin nombre)');return}
+    par=Number(String(par).replace(',','.'));if(!(par>=0)){malos.push(p.nombre);return}
+    if(par===Number(p.par_level||0)){igual++;delete state.parEdits[p.id];return}
+    state.parEdits[p.id]=par;ok++;
+  });
+  state.parSoloDif=false;state.parCat='todas';state.parQ='';renderTabs();renderPares();
+  setHead('📄','Carga desde Excel',file.name);
+  $('#sheet-body').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="val">${ok}</div><div class="lbl">Pares a cambiar</div></div>
+      <div class="kpi"><div class="val">${igual}</div><div class="lbl">Sin cambio</div></div>
+      <div class="kpi ${sinMatch.length?'alert':''}"><div class="val">${sinMatch.length}</div><div class="lbl">No encontrados</div></div></div>
+    ${sinMatch.length?`<div class="sheet-section"><div class="field-lbl">No encontrados en el catálogo (se ignoran)</div><div class="row-meta">${sinMatch.slice(0,40).join(' · ')}${sinMatch.length>40?' …':''}</div></div>`:''}
+    ${malos.length?`<div class="sheet-section"><div class="field-lbl">Par inválido (se ignoran)</div><div class="row-meta">${malos.join(' · ')}</div></div>`:''}
+    <div class="sheet-section row-meta">Los cambios quedaron marcados en amarillo en la tabla. Revisa y toca <strong>Guardar</strong> para confirmarlos.</div>
+    <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="xl-rev">Revisar en la tabla</button><button class="btn primary" id="xl-save" ${ok?'':'disabled'}>Guardar ${ok} cambio${ok===1?'':'s'}</button></div></div>`;
+  openSheet();$('#xl-rev').onclick=closeSheet;$('#xl-save').onclick=async()=>{closeSheet();await guardarPares()};
 }
 async function guardarPares(){
   const ed=Object.entries(state.parEdits);if(!ed.length)return;
