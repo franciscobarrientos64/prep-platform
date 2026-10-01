@@ -125,7 +125,9 @@ async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('*'
 async function loadProductos(){const{data}=await sb.from('inv_productos').select('id,nombre,unidad,costo').eq('marca_id',MARCA).order('nombre');state.productos=data||[]}
 async function loadMenus(){const{data}=await sb.from('inv_menus').select('*').eq('marca_id',MARCA).order('orden');state.menus=data||[]}
 async function loadStock(){const{data}=await sb.from('inv_stock_actual').select('producto_id,stock').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m}
-async function loadVentas(){const d=new Date();d.setDate(d.getDate()-30);const{data:peds}=await sb.from('ca_pedidos').select('id').eq('local_id',LOCAL).gte('created_at',d.toISOString());const ids=(peds||[]).map(p=>p.id);if(!ids.length){state.ventas=[];return}const{data}=await sb.from('ca_pedido_items').select('receta_id,qty,estado').in('pedido_id',ids).neq('estado','cancelado');state.ventas=data||[]}
+// Trae todas las filas paginando de a 1000 (PostgREST corta en 1000 por consulta).
+async function fetchAll(mk){const out=[];for(let f=0;;f+=1000){const{data,error}=await mk().order('id').range(f,f+999);if(error)throw error;out.push(...(data||[]));if(!data||data.length<1000)break}return out}
+async function loadVentas(){const d=new Date();d.setDate(d.getDate()-30);try{state.ventas=(await fetchAll(()=>sb.from('ca_pedido_items').select('receta_id,qty,estado,ca_pedidos!inner(local_id,created_at)').eq('ca_pedidos.local_id',LOCAL).gte('ca_pedidos.created_at',d.toISOString()).neq('estado','cancelado'))).map(({ca_pedidos,...r})=>r)}catch(e){console.error(e);state.ventas=[]}}
 function stockP(pid){return state.stockMap[pid]||0}
 async function loadAll(){await Promise.all([loadRecetas(),loadProductos(),loadMenus(),loadStock(),loadVentas()]);render();subscribe();$('#boot').classList.add('gone')}
 

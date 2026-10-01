@@ -64,11 +64,13 @@ const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const state={peds:[],items:[]};
 
+// Trae todas las filas paginando de a 1000 (PostgREST corta en 1000 por consulta).
+async function fetchAll(mk){const out=[];for(let f=0;;f+=1000){const{data,error}=await mk().order('id').range(f,f+999);if(error)throw error;out.push(...(data||[]));if(!data||data.length<1000)break}return out}
 async function load(){
   const desde=new Date();desde.setDate(desde.getDate()-90);const d=desde.toISOString().slice(0,10);
   const [{data:peds},{data:items}]=await Promise.all([
-    sb.from('ca_pedidos').select('id,total,comensales,estado,abierta_at,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('abierta_at',d+'T00:00:00').limit(5000),
-    sb.from('ca_pedido_items').select('nombre,qty,created_at,es_cortesia').gte('created_at',d+'T00:00:00').limit(20000)
+    fetchAll(()=>sb.from('ca_pedidos').select('id,total,comensales,estado,abierta_at,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('abierta_at',d+'T00:00:00')).then(data=>({data})),
+    fetchAll(()=>sb.from('ca_pedido_items').select('nombre,qty,created_at,es_cortesia,ca_pedidos!inner(local_id)').eq('ca_pedidos.local_id',LOCAL).gte('created_at',d+'T00:00:00')).then(data=>({data:data.map(({ca_pedidos,...r})=>r)}))
   ]);
   state.peds=peds||[];state.items=items||[];
   render();

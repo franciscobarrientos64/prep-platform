@@ -68,10 +68,12 @@ function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMont
 function addD(iso,n){const[y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
 function bounds(){const h=hoyISO();if(state.periodo==='hoy')return{ini:h,fin:addD(h,1)};if(state.periodo==='7d')return{ini:addD(h,-6),fin:addD(h,1)};return{ini:h.slice(0,8)+'01',fin:addD(h,1)}}
 
+// Trae todas las filas paginando de a 1000 (PostgREST corta en 1000 por consulta).
+async function fetchAll(mk){const out=[];for(let f=0;;f+=1000){const{data,error}=await mk().order('id').range(f,f+999);if(error)throw error;out.push(...(data||[]));if(!data||data.length<1000)break}return out}
 async function load(){
   const{ini,fin}=bounds();
   const[pe,prod,stock,merm,vu,emp,res,dl,fin_p]=await Promise.all([
-    sb.from('ca_pedidos').select('id,total,estado,origen,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00'),
+    fetchAll(()=>sb.from('ca_pedidos').select('id,total,estado,origen,cerrada_at').eq('local_id',LOCAL).eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00')).then(data=>({data})),
     sb.from('inv_productos').select('id,costo,par_level').eq('marca_id',MARCA),
     sb.from('inv_stock_actual').select('producto_id,stock').eq('local_id',LOCAL),
     sb.from('inv_mermas').select('valor_perdido,fecha').eq('local_id',LOCAL).gte('fecha',ini).lt('fecha',fin),
@@ -82,7 +84,7 @@ async function load(){
     sb.from('fin_partidas').select('tipo,monto,activo').eq('local_id',LOCAL).eq('activo',true),
   ]);
   const peds=pe.data||[];const ids=peds.map(p=>p.id);
-  let items=[];if(ids.length){const{data}=await sb.from('ca_pedido_items').select('receta_id,nombre,qty,precio_total,estado,pedido_id').in('pedido_id',ids).neq('estado','cancelado');items=data||[]}
+  let items=[];if(ids.length){items=(await fetchAll(()=>sb.from('ca_pedido_items').select('receta_id,nombre,qty,precio_total,estado,pedido_id,ca_pedidos!inner(local_id,estado,cerrada_at)').eq('ca_pedidos.local_id',LOCAL).eq('ca_pedidos.estado','cerrada').gte('ca_pedidos.cerrada_at',ini+'T00:00:00').lt('ca_pedidos.cerrada_at',fin+'T00:00:00').neq('estado','cancelado'))).map(({ca_pedidos,...r})=>r)}
   const{data:recetas}=await sb.from('inv_recetas').select('id,ingredientes').eq('marca_id',MARCA);
   const[allPe,locs]=await Promise.all([
     sb.from('ca_pedidos').select('local_id,total').eq('estado','cerrada').gte('cerrada_at',ini+'T00:00:00').lt('cerrada_at',fin+'T00:00:00'),
