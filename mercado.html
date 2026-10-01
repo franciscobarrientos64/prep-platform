@@ -1225,8 +1225,8 @@ function consumoTeorico(){
     r.ingredientes.forEach(ing=>{if(!ing.pid)return;const merma=Number(ing.merma||0);const factor=(merma>0&&merma<100)?1/(1-merma/100):1;const cant=Number(ing.cantidad||0)*q*factor;if(!m[ing.pid])m[ing.pid]={cant:0};m[ing.pid].cant+=cant;});});
   return m;
 }
-/* POUR COST (bar): costo teórico de los tragos vendidos / venta de esos tragos.
-   Bebida = receta de estación de bar/servicio o de una sección de tragos. Real = salidas + mermas valorizadas de los
+/* POUR COST (bar): costo teórico de los cócteles vendidos / venta de esos cócteles.
+   Bebida = receta de estación de bar/servicio o de una sección de cócteles. Real = salidas + mermas valorizadas de los
    insumos de bar en el período → variación real vs teórico. Por turno y por mozo: pour cost de lo que vendió cada uno. */
 function esBebida(r){if(!r)return false;return /bar|servicio|bebida|drink/i.test(r.estacion_id||'')||/c[oó]ctel|trago|sour|bebida|cerveza|vino|sin alcohol|cl[aá]sicos?|licor|bar/i.test(r.categoria_menu||'')}
 function costoReceta(r){if(!r||!Array.isArray(r.ingredientes))return 0;return r.ingredientes.reduce((a,ing)=>{const p=ing.pid?prod(ing.pid):null;if(!p)return a;const merma=Number(ing.merma||0);const f=(merma>0&&merma<100)?1/(1-merma/100):1;return a+Number(ing.cantidad||0)*f*Number(p.costo||0)},0)}
@@ -1249,7 +1249,7 @@ function bloquePourCost(){
     <div style="font-family:var(--font-display);font-size:18px;margin-bottom:8px">Pour cost del bar</div>
     <div class="kpis">
       <div class="kpi ${pc.pct>24?'alert':''}"><div class="val">${pc.pct.toFixed(1)}%</div><div class="lbl">Pour cost teórico</div></div>
-      <div class="kpi"><div class="val">${money(pc.neta)}</div><div class="lbl">Venta de tragos (sin IGV)</div></div>
+      <div class="kpi"><div class="val">${money(pc.neta)}</div><div class="lbl">Venta de bar (sin IGV)</div></div>
       <div class="kpi"><div class="val">${money(pc.costo)}</div><div class="lbl">Costo teórico</div></div>
       <div class="kpi ${varPct!=null&&varPct>5?'alert':''}"><div class="val">${real==null?'…':money(real)}</div><div class="lbl">Consumo real insumos de bar${varPct!=null?` · ${varPct>0?'+':''}${varPct.toFixed(0)}% vs teórico`:''}</div></div>
     </div>
