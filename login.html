@@ -86,8 +86,24 @@ function showChangePw(){
 $('#btn-in').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||!password){msg('Completa email y contraseña','err');return}
   msg('Ingresando…');const{error}=await sb.auth.signInWithPassword({email,password});
   if(error){msg(errES(error),'err');return}
-  try{const{data:u}=await sb.from('prep_usuarios').select('must_change_pw').eq('email',email.toLowerCase()).maybeSingle();if(u&&u.must_change_pw){showChangePw();return}}catch(e){}
+  let u=null;try{({data:u}=await sb.from('prep_usuarios').select('must_change_pw,rol_sistema,marca_id,local_id').eq('email',email.toLowerCase()).maybeSingle());}catch(e){}
+  await fijarCtx(email,u);
+  if(u&&u.must_change_pw){showChangePw();return}
   location.href=next};
+// Contexto del usuario al entrar: su restaurante y su sede. Nunca se hereda el de otro cliente
+// (p. ej. el último que abrió el super admin en este equipo). El super admin elige en /portal.
+async function fijarCtx(email,u){
+  try{
+    if(!u||u.rol_sistema==='superadmin'||!u.marca_id||window.PREP_BYSUB)return;
+    let ctx={};try{ctx=JSON.parse(localStorage.getItem('prep_ctx')||'{}')}catch(e){}
+    let mias=[u.marca_id];
+    try{const{data}=await sb.from('prep_usuario_marcas').select('marca_id').ilike('email',email);(data||[]).forEach(x=>mias.push(x.marca_id));}catch(e){}
+    if(ctx.marca&&mias.includes(ctx.marca)&&ctx.local)return;
+    let local=u.local_id;
+    if(!local){try{const{data}=await sb.from('inv_locales').select('id').eq('marca_id',u.marca_id).order('orden',{nullsFirst:false}).order('id').limit(1);local=data&&data[0]&&data[0].id;}catch(e){}}
+    localStorage.setItem('prep_ctx',JSON.stringify({marca:u.marca_id,local:local||''}));
+  }catch(e){}
+}
 $('#btn-up').onclick=async()=>{const email=$('#email').value.trim(),password=$('#pass').value;if(!email||password.length<6){msg('Email válido y clave de 6+ caracteres','err');return}
   msg('Creando cuenta…');const{data,error}=await sb.auth.signUp({email,password});
   if(error){msg(errES(error),'err');return}

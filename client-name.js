@@ -3,7 +3,7 @@
 // un selector de SEDE (si la marca activa tiene más de un local).
 document.addEventListener('DOMContentLoaded',function(){
   try{
-    var marca=window.PREP_MARCA||'m6';
+    var marca=window.PREP_MARCA; if(!marca||window.PREP_NEEDCTX)return;
     var local=window.PREP_LOCAL;
     var c=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
     // marca -> subdominio (cada restaurante vive en su propia URL)
@@ -45,7 +45,10 @@ document.addEventListener('DOMContentLoaded',function(){
     // Nombre del cliente
     c.from('inv_marcas').select('nombre').eq('id',marca).maybeSingle().then(function(r){
       var nom=r&&r.data&&r.data.nombre; if(!nom)return;
-      document.querySelectorAll('.brand-txt .cli').forEach(function(e){e.textContent=nom;});
+      window.PREP_CLIENTE=nom;
+      try{var ns=JSON.parse(localStorage.getItem('prep_cli_nombres')||'{}');ns[marca]=nom;localStorage.setItem('prep_cli_nombres',JSON.stringify(ns));}catch(e){}
+      document.querySelectorAll('.brand-txt .cli,[data-client-name]').forEach(function(e){e.textContent=nom;});
+      try{document.dispatchEvent(new CustomEvent('prep:cliente',{detail:{nombre:nom}}));}catch(e){}
       try{var base=(document.title||'').replace(/^[^·]*·\s*/,'');document.title=nom+(base?' · '+base:' · Prep!');}catch(e){}
     }).catch(function(){});
 

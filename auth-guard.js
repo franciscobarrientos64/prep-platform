@@ -1,6 +1,6 @@
 // Guard de sesión: protege toda la app con login, excepto superficies públicas.
 // SSO entre subdominios *.prep.rest: la sesión se comparte vía cookie de dominio,
-// para saltar entre restaurantes (symposium / lcds / casa-italia) sin re-login.
+// para saltar entre restaurantes (un subdominio por cliente) sin re-login.
 (function(){
   var path=(location.pathname.replace(/\/+$/,'')||'/');
   var PUBLIC=['/login','/carta','/menu','/m','/pedir','/reservar','/tarjeta'];
@@ -16,26 +16,49 @@
   function persist(s){ if(s&&s.access_token&&s.refresh_token) writeCookie(SSO,JSON.stringify({a:s.access_token,r:s.refresh_token})); }
   function toLogin(){ location.replace('/login?next='+encodeURIComponent(path)); }
 
-  // Marca correcta para quien no es super admin. En os.prep.rest, tenant.js cae en
-  // Casa Italia (m6) si no hay contexto, y un cliente veía pantallas vacías (RLS no le
-  // deja ver m6). Si la marca en pantalla no es una de las suyas, se le lleva a su
-  // restaurante en la MISMA pantalla. Corre tras DOMContentLoaded: tenant.js ya fijó PREP_MARCA.
-  var SUBOF={m6:'casa-italia',m7:'symposium',m8:'lcds',m9:'la-calor'};
+  // Contexto correcto para cada usuario. tenant.js ya no asume ningún restaurante: si no hay
+  // contexto (PREP_NEEDCTX) o la marca en pantalla no es una de las del usuario, se le lleva
+  // a SU restaurante y sede en la MISMA pantalla. El super admin sin contexto va a /portal.
+  // Corre tras DOMContentLoaded: tenant.js ya fijó PREP_MARCA.
+  var SIN='__sin_contexto__';
+  function irA(c,marca,local){
+    function go(lc){
+      // Freno anti-bucle: máximo 3 redirecciones de contexto por pestaña.
+      var n=0;try{n=+(sessionStorage.getItem('prep_ctx_redir')||0);sessionStorage.setItem('prep_ctx_redir',String(n+1));}catch(e){}
+      if(n>=3) return;
+      try{localStorage.setItem('prep_ctx',JSON.stringify({marca:marca,local:lc||''}));}catch(e){}
+      var qs='?marca='+encodeURIComponent(marca)+(lc?'&local='+encodeURIComponent(lc):'');
+      // En el subdominio de OTRO cliente el subdominio manda sobre ?marca: se pasa a os.prep.rest.
+      if(window.PREP_BYSUB&&onPrep){ location.replace('https://os.prep.rest'+location.pathname+qs+location.hash); return; }
+      location.replace(location.pathname+qs+location.hash);
+    }
+    if(local) return go(local);
+    c.from('inv_locales').select('id').eq('marca_id',marca).order('orden',{nullsFirst:false}).order('id').limit(1)
+      .then(function(r){go(r&&r.data&&r.data[0]&&r.data[0].id);}).catch(function(){go('');});
+  }
   function checkMarca(c,sess){
     var email=sess&&sess.user&&sess.user.email; if(!email) return;
     function run(){
       var marca=window.PREP_MARCA; if(!marca) return;      // página sin tenant.js
+      var sinCtx=!!window.PREP_NEEDCTX||marca===SIN;
       Promise.all([
-        c.from('prep_usuarios').select('rol_sistema,marca_id').ilike('email',email).eq('activo',true).limit(1),
+        c.from('prep_usuarios').select('rol_sistema,marca_id,local_id').ilike('email',email).eq('activo',true).limit(1),
         c.from('prep_usuario_marcas').select('marca_id').ilike('email',email)
       ]).then(function(rs){
-        var u=rs[0]&&rs[0].data&&rs[0].data[0]; if(!u||u.rol_sistema==='superadmin') return;
+        var u=rs[0]&&rs[0].data&&rs[0].data[0]; if(!u) return;
+        if(u.rol_sistema==='superadmin'){
+          if(!sinCtx) return;
+          if(marca!==SIN) return irA(c,marca,null);            // marca elegida, falta la sede
+          if(location.pathname.replace(/\/+$/,'')!=='/portal') location.replace('/portal');
+          return;
+        }
         var mias=((rs[1]&&rs[1].data)||[]).map(function(x){return x.marca_id;});
         if(u.marca_id) mias.unshift(u.marca_id);
-        if(!mias.length||mias.indexOf(marca)>=0) return;   // ya está en una de sus marcas
-        var dest=u.marca_id||mias[0], sub=SUBOF[dest];
-        if(sub&&onPrep) location.replace('https://'+sub+'.prep.rest'+location.pathname);
-        else location.replace(location.pathname+'?marca='+dest);
+        if(!mias.length) return;
+        if(!sinCtx&&mias.indexOf(marca)>=0){ try{sessionStorage.removeItem('prep_ctx_redir');}catch(e){} return; } // ya está en una de sus marcas
+        if(sinCtx&&marca!==SIN&&mias.indexOf(marca)>=0) return irA(c,marca,null);
+        var dest=u.marca_id||mias[0];
+        irA(c,dest,dest===u.marca_id?u.local_id:null);
       }).catch(function(){});
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();

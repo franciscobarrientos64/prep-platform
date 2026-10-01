@@ -39,7 +39,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink)}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const ICO={abrir_pedido:['table_restaurant','#1e5af9'],agregar_item:['add','#10b981'],cobro:['point_of_sale','#0d3d34'],cancelar_pedido:['cancel','#ff3b30'],cortesia:['redeem','#d4a000']};

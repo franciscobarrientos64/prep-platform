@@ -180,7 +180,7 @@
         ];
         montar(opciones);
 
-        var marca=window.PREP_MARCA||'m6';
+        var marca=window.PREP_MARCA||'__sin_contexto__';
         // Roles del cliente: se agregan a la lista cuando llegan (la lista se lee al abrir el panel).
         sb.from('prep_roles').select('*').eq('marca_id',marca).order('nombre').then(function(rr){
           var roles=(rr&&rr.data)||[];

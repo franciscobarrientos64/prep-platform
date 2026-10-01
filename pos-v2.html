@@ -1250,8 +1250,8 @@ button { font-family: inherit; cursor: pointer; }
    ========================================================================= */
 const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA = (window.PREP_MARCA||'m6');
-const LOCAL = (window.PREP_LOCAL||'l11');
+const MARCA = (window.PREP_MARCA||'__sin_contexto__');
+const LOCAL = (window.PREP_LOCAL||'__sin_contexto__');
 // fetch con timeout (PrepSync.fetch): una red lenta cae a la caché/cola en vez de colgar la pantalla
 const sb = supabase.createClient(SB_URL, SB_KEY, { global: { fetch: PrepSync.fetch } });
 
@@ -1358,7 +1358,7 @@ function toast(msg, tipo='') {
 // CA-02: tiempos / cursos del servicio
 const COURSES = [
   { step: 1, label: 'Entrada', short: 'ENT', emoji: '🥗' },
-  { step: 2, label: 'Fondo',   short: 'FON', emoji: '🍝' },
+  { step: 2, label: 'Fondo',   short: 'FON', emoji: '🍽️' },
   { step: 3, label: 'Postre',  short: 'POS', emoji: '🍰' },
 ];
 function courseDe(step) { return COURSES.find(c => c.step === step) || COURSES[1]; }
@@ -1370,13 +1370,13 @@ function courseSugerido(r) {
   return 2; // fondos por defecto
 }
 
-// CA-10: modificadores priceados (catálogo genérico Casa Italia)
+// CA-10: modificadores priceados (catálogo genérico)
 // precio = delta fijo en S/ · pct = delta proporcional al precio base (0.6 = +60%)
 const MODIFICADORES = {
   cocina: [
     { id: 'extra_queso',  nombre: 'Extra queso',     precio: 4 },
     { id: 'extra_salsa',  nombre: 'Extra salsa',     precio: 3 },
-    { id: 'sin_gluten',   nombre: 'Pasta sin gluten', precio: 6 },
+    { id: 'sin_gluten',   nombre: 'Sin gluten',      precio: 0 },
     { id: 'porcion_doble',nombre: 'Porción doble',   precio: 0, pct: 0.6 },
     { id: 'pan_extra',    nombre: 'Pan extra',       precio: 2 },
     { id: 'sin_lactosa',  nombre: 'Sin lactosa',     precio: 0 },
@@ -1485,7 +1485,7 @@ function imprimirPreCuenta(ped, T) {
     </tr>`;
   }).join('');
   const body = `
-    <div class="center xl b">Casa Italia</div>
+    <div class="center xl b">${prepCliente()}</div>
     <div class="center muted">PRE-CUENTA · no es comprobante de pago</div>
     <hr>
     <table>
@@ -1513,7 +1513,7 @@ function imprimirPreCuenta(ped, T) {
       encodeURIComponent(location.origin + '/encuesta?id=' + ENCUESTA_TICKET_ID + (mesa ? '&mesa=' + encodeURIComponent(mesa.numero) : ''));
     const qrHtml = `<hr><div class="center b">¿Cómo estuvo todo?</div><div class="center muted">Escanéa y cuéntanos · 30 seg</div>` +
       `<div class="center" style="margin:6px 0"><img src="${qrSrc}" alt="Encuesta" style="width:38mm;height:38mm"></div>` +
-      `<div class="center muted">Tu opinión mejora Casa Italia 🍝</div>`;
+      `<div class="center muted">Tu opinión nos ayuda a mejorar</div>`;
     const im = new Image();
     im.onload = () => printPre(qrHtml);
     im.onerror = () => printPre('');

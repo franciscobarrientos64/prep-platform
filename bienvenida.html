@@ -373,8 +373,8 @@ button { font-family: inherit; cursor: pointer; }
    ========================================================================= */
 const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA = (window.PREP_MARCA||'m6');
-const LOCAL = (window.PREP_LOCAL||'l11');
+const MARCA = (window.PREP_MARCA||'__sin_contexto__');
+const LOCAL = (window.PREP_LOCAL||'__sin_contexto__');
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 /* ========= CATÁLOGOS ========= */
@@ -609,7 +609,7 @@ function renderResCard(r) {
       <div class="res-main">
         <h3>${nombreCliente(c)}</h3>
         <div class="res-meta">
-          <span>${esAlmuerzo(r.hora)?'🍝 Almuerzo':'🌙 Cena'}</span>
+          <span>${esAlmuerzo(r.hora)?'☀️ Almuerzo':'🌙 Cena'}</span>
           <span>Mesa ${r.mesa_id?mesaLabel(r.mesa_id):'sin asignar'}</span>
           <span>${({manual:'manual',widget:'web',whatsapp:'WhatsApp',walk_in:'walk-in',telefono:'teléfono',api:'api'})[r.origen]||r.origen}</span>
           ${r.notas?`<span>· ${r.notas}</span>`:''}
@@ -631,7 +631,7 @@ function wireResCards() {
       if (a==='sentar') sentarReserva(r);
       else if (a==='mesa') asignarMesaPrompt(r);
       else if (a==='garantia') abrirGarantia(r);
-      else if (a==='recordar') { const c=state.clientesMap[r.cliente_id]; mockMensaje(c&&c.telefono, 'Recordatorio: tu reserva en Casa Italia hoy '+hhmm(r.hora)+' para '+r.comensales+'. Responde SÍ para confirmar.'); }
+      else if (a==='recordar') { const c=state.clientesMap[r.cliente_id]; mockMensaje(c&&c.telefono, 'Recordatorio: tu reserva en '+prepCliente()+' hoy '+hhmm(r.hora)+' para '+r.comensales+'. Responde SÍ para confirmar.'); }
       else if (a==='noshow') marcarNoShow(r);
       else if (a==='completar') completarReserva(r);
       else if (a==='ficha') abrirFichaComensal(r.cliente_id, r);
@@ -738,7 +738,7 @@ function abrirEditorReserva(reserva) {
     ocasion: reserva?.ocasion || '',
     notas: reserva?.notas || '',
   };
-  setSheetHead('📅', edit?'Editar reserva':'Nueva reserva', 'Casa Italia · '+fechaLarga(form.fecha));
+  setSheetHead('📅', edit?'Editar reserva':'Nueva reserva', prepCliente()+' · '+fechaLarga(form.fecha));
   const render2 = () => {
     const cli = form.cliente_id ? state.clientesMap[form.cliente_id] : null;
     const cliBox = cli
@@ -842,7 +842,7 @@ async function guardarReserva(reserva, form) {
 // MS-16: confirmación automática al crear/aceptar reserva
 function simularWhatsApp(c, form) {
   const tel = c && c.telefono;
-  if (tel) mockMensaje(tel, 'Reserva confirmada en Casa Italia · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas. Te esperamos 🍝');
+  if (tel) mockMensaje(tel, 'Reserva confirmada en '+prepCliente()+' · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas. Te esperamos');
   return 'confirmación enviada' + (tel ? ' a '+tel : '');
 }
 
@@ -1100,7 +1100,7 @@ function imprimirBrief() {
     const txt = r.ocasion || ((r.alergias_snapshot||[]).length?('Alergia '+r.alergias_snapshot.join(', ')):'VIP');
     return `<div>${ico} ${nombreCliente(c)} · ${txt} · ${hhmm(r.hora)} · mesa ${r.mesa_id?mesaLabel(r.mesa_id):'—'}</div>`; }).join('');
   const body = `
-    <div class="center xl b">Casa Italia</div>
+    <div class="center xl b">${prepCliente()}</div>
     <div class="center muted">BRIEF DE TURNO · ${fechaLarga(state.fecha)} · ${state.turnoFiltro==='todos'?'Todos':state.turnoFiltro}</div>
     <hr>
     <table><tr><td>Reservas</td><td class="right b">${rs.length}</td></tr>
@@ -1340,7 +1340,7 @@ function renderWaitlistPublica() {
   $('#screen').innerHTML = `
     <div class="toolbar"><button class="btn-ico" id="w-exit"><span class="material-symbols-outlined">close_fullscreen</span><span>Salir de pantalla pública</span></button></div>
     <div class="pub-screen">
-      <div style="font-family:var(--font-display);font-size:28px;color:var(--tertiary);margin-bottom:8px">Lista de espera · Casa Italia</div>
+      <div style="font-family:var(--font-display);font-size:28px;color:var(--tertiary);margin-bottom:8px">Lista de espera · <span data-client-name>${prepCliente()}</span></div>
       <div style="opacity:.6;font-family:var(--font-mono);font-size:12px;margin-bottom:16px">Te avisaremos cuando tu mesa esté lista</div>
       ${list.map((w,i)=>{ const c=w.cliente_id?state.clientesMap[w.cliente_id]:null;
         const nom = (c?c.nombre:(w.nombre_walkin||'Invitado')).split(' ')[0];
@@ -1357,7 +1357,7 @@ async function avisarWaitlist(w) {
   const c = w.cliente_id ? state.clientesMap[w.cliente_id] : null;
   const tel = (c && c.telefono) || w.telefono_walkin;
   await loadWaitlist(); render();
-  mockMensaje(tel, '¡Tu mesa en Casa Italia está casi lista! Acércate al anfitrión 🍝', 'wa');
+  mockMensaje(tel, '¡Tu mesa en '+prepCliente()+' está casi lista! Acércate al anfitrión', 'wa');
 }
 async function abandonoWaitlist(w) {
   if (!confirm('¿Marcar que abandonó la espera?')) return;
@@ -1497,7 +1497,7 @@ function abrirGarantia(reserva) {
     await sb.from('ms_reservas').update({ card_hold_id: data.id }).eq('id', reserva.id);
     closeSheet(); await loadReservas(); render();
     toast('Servido · garantía de '+money(monto)+' autorizada', 'ok');
-    mockMensaje(c && c.telefono, 'Reserva garantizada en Casa Italia. Retención de '+money(monto)+' (sin cargo si asistes).');
+    mockMensaje(c && c.telefono, 'Reserva garantizada en '+prepCliente()+'. Retención de '+money(monto)+' (sin cargo si asistes).');
   };
 }
 
@@ -1537,7 +1537,7 @@ function renderWidget() {
       <div style="background:var(--surface);border:2px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;margin-top:24px">
         <div style="background:var(--ink);color:var(--bg);padding:20px 24px;display:flex;justify-content:space-between;align-items:center">
           <div class="brand"><div class="brand-logo" style="width:120px;height:38px"><span class="l base" style="background:#fff"></span><span class="l bang" style="background:#fff"></span></div></div>
-          <div style="text-align:right"><div style="font-weight:700">Casa Italia</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">Miraflores · Lima</div></div>
+          <div style="text-align:right"><div style="font-weight:700">${prepCliente()}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">Reservas</div></div>
         </div>
         <div style="padding:22px 24px">
           <div class="sheet-section grid2">
@@ -1600,7 +1600,7 @@ async function confirmarWidget(form) {
     vip_snapshot: esVip(cliente), alergias_snapshot: cliente.alergias||[],
   });
   if (error) return toast('Atrás: '+error.message,'err');
-  mockMensaje(form.telefono.trim(), 'Reserva confirmada en Casa Italia · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas 🍝');
+  mockMensaje(form.telefono.trim(), 'Reserva confirmada en '+prepCliente()+' · '+fechaLarga(form.fecha)+' '+form.hora+' · '+form.comensales+' personas');
   $('#screen').innerHTML = `
     <div style="background:var(--surface);border:2px solid var(--outline);border-radius:18px;box-shadow:var(--shadow-lg);padding:40px 28px;text-align:center;margin-top:40px">
       <div style="font-size:56px">✅</div>

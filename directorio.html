@@ -86,7 +86,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <div class="ovl" id="ovl"><div class="box" id="ovl-box"></div></div>
 <div class="toast" id="toast"></div>
 <script>
-const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const state={periodo:'mes',data:null,vista:(location.hash==='#reportes'?'reportes':'resumen'),rp:null};
@@ -222,7 +222,7 @@ function exportarCSV(){
   const csv='﻿'+rows.map(row=>row.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='prep-resumen-'+per+'-'+hoyISO()+'.csv';document.body.appendChild(a);a.click();a.remove();
 }
-const CLIENTE_NOM='Casa Italia';
+const CLIENTE_NOM=prepCliente('tu local');
 
 /* ===== REPORTES PROGRAMADOS (DI-05) =====
    Cada persona elige qué reportes recibe, por email o WhatsApp, cada día/semana/mes a una hora.

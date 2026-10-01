@@ -184,7 +184,7 @@ textarea.input{min-height:80px;resize:vertical}
 
 <header class="header">
   <a href="/" class="brand-logo" title="Hub"><div class="l"></div></a>
-  <div class="brand-txt"><div class="cli" data-client-name>Casa Italia</div><div class="mod" id="modName">Mystery Shopper</div></div>
+  <div class="brand-txt"><div class="cli" data-client-name></div><div class="mod" id="modName">Mystery Shopper</div></div>
   <div class="header-info">
     <span class="act" id="act-mystery">
       <a class="btn-ico" id="btnComite" href="/presentacion" style="display:none;text-decoration:none;color:inherit" title="Deck ejecutivo del Comité de Experiencia (solo super admin)"><span class="material-symbols-outlined">co_present</span>Comité de Experiencia</a>
@@ -224,7 +224,7 @@ textarea.input{min-height:80px;resize:vertical}
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const MARCA=window.PREP_MARCA||'m7', LOCAL=window.PREP_LOCAL||'l12';
+const MARCA=window.PREP_MARCA||'__sin_contexto__', LOCAL=window.PREP_LOCAL||'__sin_contexto__';
 let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[],detalle:[],allDetalle:[]};
 let TAB='resumen', booted=false, PER='all', SELC=null, RADSEL='all', AUDPER=null, AUDVIS=null;
 let CHARTS=[], PENDING=[];
@@ -776,7 +776,7 @@ async function buildReportPDF(scopeLocal,detArg,scopeMonth){
   const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4',compress:true});
   const W=210,H=297,M=16,CW=W-2*M;
   const cliEl=document.querySelector('[data-client-name]');
-  const CLI=(cliEl&&cliEl.textContent.trim())||({m6:'Casa Italia',m7:'Symposium',m8:'La Cuadra de Salvador'}[MARCA])||'Restaurante';
+  const CLI=(cliEl&&cliEl.textContent.trim())||prepCliente('el restaurante');
   const locs=DB.locales;
   const sedeObj=scopeLocal?locs.find(l=>l.id===scopeLocal):null;
   const multi=!scopeLocal&&locs.length>1;                 // secciones comparativas solo en el consolidado
@@ -1124,9 +1124,9 @@ function renderAlertas(){
   return back+`<div class="section-h"><h3>${al.length} alerta${al.length>1?'s':''} por atender</h3><span class="hint">reacciona rápido</span></div>`+al.map(function(a){
     const s=a.s,r=a.r,nm=[r.contacto_nombre,r.contacto_apellido].filter(Boolean).join(' ').trim()||null,tel=r.contacto_telefono,eml=r.contacto_email;
     const motivo=[];if(s.nps!=null&&s.nps<=6)motivo.push('NPS '+s.nps);if(s.csatMin!=null&&s.csatMin<=2)motivo.push('Puntaje '+s.csatMin+'/5');
-    const saludo='Hola'+(nm?' '+nm.split(' ')[0]:'')+', te escribimos de Casa Italia. Vimos tu comentario y queremos mejorar tu experiencia 🙏';
+    const saludo='Hola'+(nm?' '+nm.split(' ')[0]:'')+', te escribimos de '+prepCliente()+'. Vimos tu comentario y queremos mejorar tu experiencia 🙏';
     const wa=tel?('https://wa.me/'+(tel.replace(/[^0-9]/g,''))+'?text='+encodeURIComponent(saludo)):null;
-    const mail=eml?('mailto:'+eml+'?subject='+encodeURIComponent('Casa Italia — tu experiencia')+'&body='+encodeURIComponent(saludo)):null;
+    const mail=eml?('mailto:'+eml+'?subject='+encodeURIComponent(prepCliente()+' — tu experiencia')+'&body='+encodeURIComponent(saludo)):null;
     return `<div class="rv-card" style="border-left:6px solid var(--secondary)">
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
         <div style="display:flex;gap:6px;flex-wrap:wrap">${motivo.map(m=>`<span class="badge" style="background:var(--red-soft);border:1.5px solid var(--outline)">${m}</span>`).join('')}
@@ -1240,7 +1240,7 @@ function compartirEncuesta(id){
     <div style="margin-top:14px"><input class="input" value="${url}" readonly onclick="this.select()"></div>
     <div style="display:flex;gap:8px;margin-top:10px">
       <button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${url}');toast('Link copiado')"><span class="material-symbols-outlined">content_copy</span>Copiar</button>
-      <a class="btn primary" href="https://wa.me/?text=${encodeURIComponent('Cuéntanos cómo fue tu experiencia 🍝 '+url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined">share</span>WhatsApp</a></div>
+      <a class="btn primary" href="https://wa.me/?text=${encodeURIComponent('Cuéntanos cómo fue tu experiencia '+url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined">share</span>WhatsApp</a></div>
     <div style="margin-top:12px;font-family:var(--font-mono);font-size:11px;opacity:.6">Pégalo en la mesa o imprímelo en la boleta. Cada respuesta entra al dashboard en vivo.</div></div>`;
   openSheet();
 }
@@ -1255,8 +1255,8 @@ async function loadResenas(force){
 function stars(n){let s='';for(let i=1;i<=5;i++)s+=`<span class="material-symbols-outlined" style="${i<=n?'':'opacity:.22'}">star</span>`;return `<span class="stars">${s}</span>`;}
 function draftRespuesta(x){
   const nm=(x.nombre||'').split(' ')[0]||'';
-  if((x.rating||0)>=4)return `¡Hola ${nm}! Mil gracias por tu reseña y por las ${x.rating} estrellas 🍝. Nos alegra muchísimo que hayas disfrutado tu visita a Casa Italia. ¡Te esperamos pronto de nuevo!`;
-  return `Hola ${nm}, gracias por tomarte el tiempo de escribirnos. Lamentamos que tu experiencia no haya estado a la altura y tomamos muy en serio tu comentario para mejorar. Nos encantaría darte otra oportunidad de atenderte como mereces. — Equipo de Casa Italia`;
+  if((x.rating||0)>=4)return `¡Hola ${nm}! Mil gracias por tu reseña y por las ${x.rating} estrellas. Nos alegra muchísimo que hayas disfrutado tu visita a ${prepCliente()}. ¡Te esperamos pronto de nuevo!`;
+  return `Hola ${nm}, gracias por tomarte el tiempo de escribirnos. Lamentamos que tu experiencia no haya estado a la altura y tomamos muy en serio tu comentario para mejorar. Nos encantaría darte otra oportunidad de atenderte como mereces. — Equipo de ${prepCliente()}`;
 }
 function renderResenas(){
   const v=document.getElementById('res-view'),L=RES.lista;

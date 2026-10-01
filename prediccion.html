@@ -58,7 +58,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];

@@ -55,7 +55,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 </head>
 <body>
 <div id="boot" class="boot"><div class="l"></div></div>
-<div class="hero"><div class="logo"><span class="l"></span></div><h1>Casa Italia</h1><div class="mesa" id="mesa">Carta digital</div></div>
+<div class="hero"><div class="logo"><span class="l"></span></div><h1 data-client-name></h1><div class="mesa" id="mesa">Carta digital</div></div>
 <nav class="navsec" id="nav"></nav>
 <main class="wrap" id="screen"></main>
 <div class="cartbar"><button class="btn" id="cart-btn" disabled><span><span class="material-symbols-outlined">shopping_bag</span> <span id="cart-n">0</span> ítems</span><span id="cart-t">S/ 0.00</span></button></div>
@@ -65,7 +65,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const qs=new URLSearchParams(location.search);
-const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'l11'),MESA=qs.get('mesa')||'';
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'__sin_contexto__'),MESA=qs.get('mesa')||'';
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const state={recetas:[],cart:{},sec:null,lang:'es',cur:'PEN'};
 const LANGS=[['es','ES'],['en','EN'],['pt','PT']];
@@ -140,7 +140,7 @@ async function enviarPedido(){
   const{error:e2}=await sb.from('ca_pedido_items').insert(rows);
   if(e2){toast('Pedido creado pero falló el detalle: '+e2.message);$('#c-send').disabled=false;return}
   state.cart={};closeSheet();render();
-  $('#sheet-title').textContent='¡Pedido enviado!';$('#sheet-body').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:54px">🍝</div><h2 style="font-family:var(--font-display);font-size:24px;margin:8px 0">¡Va para la cocina!</h2><p style="opacity:.7">Pedido #${ticket}${MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):''}. En breve lo preparamos.</p><button class="btn2 primary" id="ok" style="margin-top:16px">Seguir viendo la carta</button></div>`;
+  $('#sheet-title').textContent='¡Pedido enviado!';$('#sheet-body').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:54px">🙌</div><h2 style="font-family:var(--font-display);font-size:24px;margin:8px 0">¡Va para la cocina!</h2><p style="opacity:.7">Pedido #${ticket}${MESA?(' · Mesa '+MESA.replace(/^t_/,'').toUpperCase()):''}. En breve lo preparamos.</p><button class="btn2 primary" id="ok" style="margin-top:16px">Seguir viendo la carta</button></div>`;
   $('#ok').onclick=closeSheet;openSheet();
 }
 $('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);

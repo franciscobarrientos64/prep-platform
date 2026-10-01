@@ -53,7 +53,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 </head>
 <body>
 <div id="boot" class="boot"><div class="l"></div></div>
-<div class="hero"><div class="logo"><span class="l"></span></div><h1>Casa Italia</h1><div class="sub">🛵 Pedido a domicilio</div></div>
+<div class="hero"><div class="logo"><span class="l"></span></div><h1 data-client-name></h1><div class="sub">🛵 Pedido a domicilio</div></div>
 <nav class="navsec" id="nav"></nav>
 <main class="wrap" id="screen"></main>
 <div class="cartbar"><button class="btn" id="cart-btn" disabled><span><span class="material-symbols-outlined">shopping_bag</span> <span id="cart-n">0</span> ítems</span><span id="cart-t">S/ 0.00</span></button></div>
@@ -62,7 +62,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const qs=new URLSearchParams(location.search);const MARCA=(window.PREP_MARCA||'m6'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'l11');
+const qs=new URLSearchParams(location.search);const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=qs.get('local')||(window.PREP_LOCAL||'__sin_contexto__');
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const state={recetas:[],zonas:[],cart:{},sec:null,form:{nombre:'',telefono:'',direccion:'',referencia:'',zona:'',metodo:'efectivo'}};
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}

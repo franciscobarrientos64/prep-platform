@@ -138,7 +138,7 @@ button{font-family:inherit;cursor:pointer}
 /* ===== PREP! · Módulo 05 · MERCADO (Compras + Inventario) ===== */
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-const MARCA=(window.PREP_MARCA||'m6'), LOCAL=(window.PREP_LOCAL||'l11');
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'), LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
@@ -963,10 +963,10 @@ function abrirAgregarPedido(pid){
   };draw();openSheet();
 }
 // PDF + envío de orden al proveedor (email / WhatsApp)
-function buildOrderText(o){const p=prov(o.proveedor_id);let t='Casa Italia — Orden de compra '+(o.numero||'')+'\n';
+function buildOrderText(o){const p=prov(o.proveedor_id);let t=prepCliente()+' — Orden de compra '+(o.numero||'')+'\n';
   t+='Proveedor: '+(p?.nombre||o.proveedor_id)+'\nFecha: '+(o.fecha_emision||hoyISO())+'\n\nÍtems:\n';
   (o.items||[]).forEach(it=>{t+='• '+it.nombre+' x'+num(it.cantidad)+' @ '+money(it.costo_unit)+' = '+money(it.cantidad*it.costo_unit)+'\n'});
-  t+='\nSubtotal: '+money(o.subtotal)+'\nIGV 18%: '+money(o.igv)+'\nTOTAL: '+money(o.total)+'\n\nGracias · Casa Italia (vía Prep!)';return t;}
+  t+='\nSubtotal: '+money(o.subtotal)+'\nIGV 18%: '+money(o.igv)+'\nTOTAL: '+money(o.total)+'\n\nGracias · '+prepCliente()+' (vía Prep!)';return t;}
 function imprimirA4(titulo,html){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';document.body.appendChild(f);
   const d=f.contentWindow.document;d.open();
   d.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+titulo+'</title><style>@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:13px}table td,table th{padding:7px 8px}tbody td{border-bottom:1px solid #ddd}hr{border:none;border-top:2px solid #111;margin:10px 0}</style></head><body>'+html+'</body></html>');
@@ -975,7 +975,7 @@ function imprimirOrden(o){const p=prov(o.proveedor_id);
   const filas=(o.items||[]).map(it=>`<tr><td>${it.nombre}</td><td style="text-align:right">${num(it.cantidad)}</td><td style="text-align:right">${money(it.costo_unit)}</td><td style="text-align:right">${money(it.cantidad*it.costo_unit)}</td></tr>`).join('');
   imprimirA4('Orden '+(o.numero||''),`
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div><div style="font-size:28px;font-weight:800">Casa Italia</div><div style="color:#666">Orden de compra</div></div>
+      <div><div style="font-size:28px;font-weight:800">${prepCliente()}</div><div style="color:#666">Orden de compra</div></div>
       <div style="text-align:right"><div style="font-size:20px;font-weight:700">${o.numero||''}</div><div>${o.fecha_emision||hoyISO()}</div></div></div>
     <hr>
     <div style="margin-bottom:6px"><strong>Proveedor:</strong> ${p?.nombre||o.proveedor_id}${p?.ruc?' · RUC '+p.ruc:''}</div>
@@ -987,7 +987,7 @@ function imprimirOrden(o){const p=prov(o.proveedor_id);
     <p style="margin-top:30px;color:#999;font-size:11px">Generado por Prep! · ${o.numero||''}</p>`);
 }
 function enviarOrden(o,canal){const p=prov(o.proveedor_id);const txt=buildOrderText(o);
-  if(canal==='email'){const to=p?.email||'';window.open('mailto:'+to+'?subject='+encodeURIComponent('Orden de compra '+(o.numero||'')+' — Casa Italia')+'&body='+encodeURIComponent(txt));toast(to?'Abriendo email a '+to:'Proveedor sin email — adjunta el PDF','warn');}
+  if(canal==='email'){const to=p?.email||'';window.open('mailto:'+to+'?subject='+encodeURIComponent('Orden de compra '+(o.numero||'')+' — '+prepCliente())+'&body='+encodeURIComponent(txt));toast(to?'Abriendo email a '+to:'Proveedor sin email — adjunta el PDF','warn');}
   else{const tel=(p?.telefono||'').replace(/\D/g,'');const dest=tel?(tel.length<=9?'51'+tel:tel):'';window.open('https://wa.me/'+dest+'?text='+encodeURIComponent(txt),'_blank');toast(tel?'Abriendo WhatsApp':'Proveedor sin teléfono','warn');}
 }
 

@@ -75,7 +75,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <main class="main" id="screen"></main>
 <div class="toast-container" id="toasts"></div>
 <script>
-const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY,{global:{fetch:PrepSync.fetch}}); // timeout: nunca se cuelga esperando la red
 const ESTI=[['oido','Oído','#3b4a5a'],['va','Va','#d4a000'],['fuego','En fuego','#ff3b30'],['servido','Servido','#10b981']];
 const FLUJO={oido:'va',va:'fuego',fuego:'servido'};

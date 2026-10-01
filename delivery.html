@@ -89,7 +89,7 @@ textarea.input{min-height:64px;resize:vertical}
 <aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
 <div class="toast-container" id="toasts"></div>
 <script>
-const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS=[['recibido','Recibido','#9aa0a6'],['preparando','Preparando','#d4a000'],['listo','Listo','#1e5af9'],['en_camino','En camino','#7c3aed'],['entregado','Entregado','#10b981'],['cancelado','Cancelado','#ff3b30']];
 const FLUJO={recibido:'preparando',preparando:'listo',listo:'en_camino',en_camino:'entregado'};
@@ -192,7 +192,7 @@ function abrirPedido(p){const e=estData(p.estado);const sig=FLUJO[p.estado];
     <div class="sheet-section"><div class="field-lbl">Asignar repartidor</div><div class="chips" id="p-rep">${state.reps.filter(r=>r.activo).map(r=>`<button class="chip ${p.repartidor_id===r.id?'active':''}" data-r="${r.id}">${r.nombre}</button>`).join('')||'<span style="opacity:.5;font-size:12px">Sin repartidores</span>'}</div></div>
     <div class="sheet-section"><div class="grid2">
       ${sig?`<button class="btn primary" id="p-next"><span class="material-symbols-outlined">arrow_forward</span>${estData(sig)[1]}</button>`:'<div></div>'}
-      <a class="btn wa" href="${waLink(p.telefono,'Hola '+(p.nombre||'')+', tu pedido '+(p.codigo||'')+' de Casa Italia está '+e[1].toLowerCase()+'. ¡Gracias!')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>Avisar</a></div>
+      <a class="btn wa" href="${waLink(p.telefono,'Hola '+(p.nombre||'')+', tu pedido '+(p.codigo||'')+' de '+prepCliente()+' está '+e[1].toLowerCase()+'. ¡Gracias!')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>Avisar</a></div>
       ${p.estado!=='cancelado'&&p.estado!=='entregado'?`<button class="btn ghost" id="p-cancel" style="margin-top:8px;color:var(--secondary)">Cancelar pedido</button>`:''}</div>`;
   openSheet();
   $$('#p-rep .chip').forEach(b=>b.onclick=()=>asignarRep(p,b.dataset.r));
@@ -215,7 +215,7 @@ function abrirNuevo(){
       <div class="sheet-section"><div class="field-lbl">Canal</div><div class="chips" id="n-canal">${CANALES.map(x=>`<button class="chip ${c.canal===x?'active':''}" data-c="${x}">${x}</button>`).join('')}</div></div>
       <div class="sheet-section"><div class="field-lbl">Dirección</div><input class="input" id="n-dir" value="${c.direccion}"></div>
       <div class="sheet-section"><div class="field-lbl">Referencia</div><input class="input" id="n-ref" value="${c.referencia}"></div>
-      <div class="sheet-section"><div class="field-lbl">Detalle del pedido</div><textarea class="input" id="n-det" placeholder="2x Lasagna, 1 Tiramisú…">${c.detalle}</textarea></div>
+      <div class="sheet-section"><div class="field-lbl">Detalle del pedido</div><textarea class="input" id="n-det" placeholder="2x producto, 1 producto…">${c.detalle}</textarea></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Subtotal (S/)</div><input class="input" id="n-sub" type="number" step="0.5" value="${c.subtotal}"></div><div><div class="field-lbl">Zona</div><select class="select" id="n-zona"><option value="">—</option>${state.zonas.map(z=>`<option ${c.zona===z.nombre?'selected':''}>${z.nombre}</option>`).join('')}</select></div></div>
       <div class="sheet-section grid2"><div><div class="field-lbl">Método de pago</div><select class="select" id="n-pago">${['efectivo','yape','plin','tarjeta','rappi','pedidosya'].map(x=>`<option ${c.metodo_pago===x?'selected':''}>${x}</option>`).join('')}</select></div><div><div class="field-lbl">Total (auto)</div><input class="input" value="${money(total)} (+${money(fee)} env.)" disabled></div></div>
       <div class="sheet-section"><button class="btn primary" id="n-save"><span class="material-symbols-outlined">save</span>Crear pedido</button></div>`;

@@ -125,7 +125,7 @@ async function enviar(){
     valor_num:(p.tipo==='nps'||p.tipo==='csat'||p.tipo==='escala5')?VAL[p.id]:null,
     valor_texto:(p.tipo==='opciones'||p.tipo==='abierta')?String(VAL[p.id]):null}));
   if(items.length)await sb.from('vc_resp_items').insert(items);
-  app.innerHTML=msgBox('favorite','¡Gracias!','Tu opinión nos ayuda a mejorar. ¡Te esperamos pronto! 🍝');
+  app.innerHTML=msgBox('favorite','¡Gracias!','Tu opinión nos ayuda a mejorar. ¡Te esperamos pronto!');
 }
 init();
 </script>

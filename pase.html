@@ -47,7 +47,7 @@ a.tile{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-mon
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const $=s=>document.querySelector(s);
 const money=n=>'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
 const num=n=>Number(n||0).toLocaleString('en-US');

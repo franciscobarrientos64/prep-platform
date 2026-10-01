@@ -42,7 +42,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink)}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 let cfg={};
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),300)},2000)}
@@ -72,7 +72,7 @@ function render(){
     <div class="card"><h3>💳 Pasarelas de pago</h3>
       <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px;line-height:1.5">Puedes activar <strong>varias a la vez</strong>. Las llaves/claves <strong>secretas</strong> van como variables de entorno del Edge Function <code>cobro-tarjeta</code> (<code>NIUBIZ_USER/NIUBIZ_PASSWORD</code>, <code>CULQI_SECRET_KEY</code>, <code>IZIPAY_PASSWORD</code>) — nunca en el front. Empieza en modo prueba.</div>
       <div style="border:2px solid #000;border-radius:12px;padding:12px;margin-bottom:10px;background:var(--primary-soft,#d6e2ff)">
-        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Niubiz (VisaNet) · Casa Italia</strong><div class="chips" id="f-niuact"><button class="chip ${cfg.niubiz_activa?'active':''}" data-a="1">Activa</button><button class="chip ${cfg.niubiz_activa?'':'active'}" data-a="0">Inactiva</button></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Niubiz (VisaNet)</strong><div class="chips" id="f-niuact"><button class="chip ${cfg.niubiz_activa?'active':''}" data-a="1">Activa</button><button class="chip ${cfg.niubiz_activa?'':'active'}" data-a="0">Inactiva</button></div></div>
         <div class="grid2"><div><span class="field-lbl">Merchant ID</span><input class="input" id="f-niumid" value="${(cfg.niubiz_merchant_id||'').replace(/"/g,'&quot;')}" placeholder="456879852"></div><div><span class="field-lbl">Modo</span><select class="input" id="f-niumodo">${['test','prod'].map(m=>`<option ${ (cfg.niubiz_modo||'test')===m?'selected':''}>${m}</option>`).join('')}</select></div></div>
         <div style="font-family:var(--font-mono);font-size:10px;opacity:.65;margin-top:6px">Usuario y clave de API van como secrets (NIUBIZ_USER / NIUBIZ_PASSWORD).</div>
       </div>

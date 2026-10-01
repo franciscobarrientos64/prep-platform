@@ -89,7 +89,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <aside class="sheet" id="sheet"><div class="sheet-handle"></div><div class="sheet-head"><div class="sheet-mark" id="sheet-mark">—</div><div class="sheet-title"><h2 id="sheet-title">—</h2><div class="meta" id="sheet-meta">—</div></div><button class="sheet-close" id="sheet-close"><span class="material-symbols-outlined">close</span></button></div><div class="sheet-body" id="sheet-body"></div></aside>
 <div class="toast-container" id="toasts"></div>
 <script>
-const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
+const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const NIVELES=[{k:'Diamante',min:5000,emoji:'💎',c:'#7c3aed'},{k:'Oro',min:2000,emoji:'🥇',c:'#d4a000'},{k:'Plata',min:800,emoji:'🥈',c:'#9aa0a6'},{k:'Bronce',min:0,emoji:'🥉',c:'#b87333'}];
 const state={clientes:[],puntos:[],campanas:[],resenas:[],view:'clientes',q:'',seg:'todos',channel:null};
@@ -166,11 +166,11 @@ function renderLoyalty(){
 }
 
 const MSGS={
-  cumple:c=>`¡Feliz cumpleaños ${c.nombre}! 🎂 En Casa Italia queremos celebrarte: te esperamos con un detalle especial. ¡Reserva cuando quieras!`,
-  aniversario:c=>`${c.nombre}, ¡feliz aniversario! 🥂 Celébralo en Casa Italia, tenemos una sorpresa para ti.`,
-  riesgo:c=>`${c.nombre}, ¡te extrañamos en Casa Italia! 🍝 Vuelve esta semana y disfruta de tu mesa favorita.`,
-  nuevos:c=>`${c.nombre}, ¡gracias por visitar Casa Italia! 🇮🇹 Esperamos verte pronto de nuevo.`,
-  vip:c=>`${c.nombre}, como cliente especial de Casa Italia queremos consentirte. ¡Escríbenos para tu próxima reserva! ⭐`
+  cumple:c=>`¡Feliz cumpleaños ${c.nombre}! 🎂 En ${prepCliente()} queremos celebrarte: te esperamos con un detalle especial. ¡Reserva cuando quieras!`,
+  aniversario:c=>`${c.nombre}, ¡feliz aniversario! 🥂 Celébralo en ${prepCliente()}, tenemos una sorpresa para ti.`,
+  riesgo:c=>`${c.nombre}, ¡te extrañamos en ${prepCliente()}! Vuelve esta semana y disfruta de tu mesa favorita.`,
+  nuevos:c=>`${c.nombre}, ¡gracias por visitar ${prepCliente()}! Esperamos verte pronto de nuevo.`,
+  vip:c=>`${c.nombre}, como invitado especial de ${prepCliente()} queremos consentirte. ¡Escríbenos para tu próxima reserva! ⭐`
 };
 function audiencias(){
   const mes=mesDe(hoyISO());
@@ -199,7 +199,7 @@ function renderCampanas(){
   $$('#screen [data-camp]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.camp);registrarCampana(a,'whatsapp')});
   $$('#screen [data-email]').forEach(b=>b.onclick=()=>{const a=auds.find(x=>x.k===b.dataset.email);setTimeout(()=>registrarCampana(a,'email'),200)});
 }
-function mailtoAud(a){const correos=a.cs.filter(c=>c.email).map(c=>c.email);const msg=a.cs[0]?MSGS[a.k](a.cs[0]).replace(/\{nombre\}/g,''):'';return 'mailto:?bcc='+encodeURIComponent(correos.join(','))+'&subject='+encodeURIComponent('Casa Italia 🇮🇹')+'&body='+encodeURIComponent(msg)}
+function mailtoAud(a){const correos=a.cs.filter(c=>c.email).map(c=>c.email);const msg=a.cs[0]?MSGS[a.k](a.cs[0]).replace(/\{nombre\}/g,''):'';return 'mailto:?bcc='+encodeURIComponent(correos.join(','))+'&subject='+encodeURIComponent(prepCliente())+'&body='+encodeURIComponent(msg)}
 async function registrarCampana(a,canal){
   const{error}=await sb.from('eng_campanas').insert({marca_id:MARCA,local_id:LOCAL,nombre:a.t,audiencia:a.k,canal:canal||'whatsapp',mensaje:a.cs[0]?MSGS[a.k](a.cs[0]):'',n_destinatarios:canal==='email'?a.cs.filter(c=>c.email).length:a.cs.length,estado:'enviada',fecha:hoyISO()});
   if(error){toast('Atrás: '+error.message,'err');return}
@@ -342,7 +342,7 @@ function abrirFicha(c){
       <div class="info-row" style="align-items:center"><span>Acepta recibir promociones</span><button class="btn ${c.acepta_marketing?'wa':'ghost'}" id="f-consent" style="width:auto;min-height:0;padding:8px 14px">${c.acepta_marketing?'✓ Consiente'+(c.consentimiento_at?(' · '+String(c.consentimiento_at).slice(0,10)):''):'Sin consentimiento'}</button></div>
       <div style="font-family:var(--font-mono);font-size:10px;opacity:.55;margin-top:4px">Solo se incluye en campañas si dio su consentimiento.</div></div>
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="f-bono"><span class="material-symbols-outlined">add_circle</span>Otorgar puntos</button><button class="btn ghost" id="f-canje"><span class="material-symbols-outlined">redeem</span>Canjear</button></div></div>
-    <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de Casa Italia 🇮🇹')}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>
+    <div class="sheet-section"><div class="grid2"><a class="btn wa" href="${waLink(c.telefono,'Hola '+c.nombre+', te escribimos de '+prepCliente())}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>WhatsApp</a><a class="btn ghost" href="mailto:${c.email||''}"><span class="material-symbols-outlined">mail</span>Email</a></div></div>
     ${c.loyalty_token?`<div class="sheet-section"><button class="btn ghost" id="f-tarjeta" style="width:100%"><span class="material-symbols-outlined">card_membership</span>Ver / compartir tarjeta de fidelidad</button></div>`:''}`;
   openSheet();
   $('#f-consent').onclick=async()=>{const nv=!c.acepta_marketing;const{error}=await sb.from('ms_clientes').update({acepta_marketing:nv,consentimiento_at:nv?new Date().toISOString():null}).eq('id',c.id);if(error){toast('Atrás','err');return}c.acepta_marketing=nv;c.consentimiento_at=nv?new Date().toISOString():null;await loadClientes();abrirFicha(state.clientes.find(x=>x.id===c.id)||c);toast(nv?'Va · consentimiento registrado':'Consentimiento retirado',nv?'ok':'warn')};
