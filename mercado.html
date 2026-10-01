@@ -143,7 +143,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ESTADOS_OC=['borrador','enviada','aprobada','recibida','cancelada'];
 const MOTIVOS_MERMA=['Vencimiento','Daño/rotura','Mala manipulación','Robo/faltante','Cocción fallida','Devolución'];
 
-const state={productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
+const state={parEdits:{},parCob:7,parSeg:20,parCat:'todas',parQ:'',parSoloDif:false,consumo:null,productos:[],proveedores:[],provProd:[],movs:[],mermas:[],ordenes:[],stockMap:{},preciosMercado:[],sesiones:[],recetas:[],ventasItems:[],hist:[],teoPeriodo:'7d',
   view:'inventario',cat:'todas',q:'',comprasTab:'proveedores',comparaPid:null,
   pedidoQty:{},pedidoCat:'todas',pedidoInit:false,
   cargaMode:'recepcion',cargaCat:'todas',cargaVals:{},cargaCiego:false,channel:null};
@@ -165,7 +165,7 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 /* ===== LOAD ===== */
 async function loadAll(){
   await Promise.all([loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist()]);
-  const h=location.hash.replace('#','');if(['inventario','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
+  const h=location.hash.replace('#','');if(['inventario','pares','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
@@ -179,7 +179,7 @@ async function loadPreciosMercado(){const{data}=await sb.from('inv_precios_merca
 async function loadProductos(){try{const{data,error}=await sb.from('inv_productos').select('*').eq('marca_id',MARCA);if(error)throw error;state.productos=(data||[]).sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||a.nombre.localeCompare(b.nombre));PrepSync.cacheSet('productos',state.productos);}catch(e){state.productos=PrepSync.cacheGet('productos')||state.productos||[]}}
 async function loadProveedores(){const{data}=await sb.from('inv_proveedores').select('*');state.proveedores=(data||[]).filter(p=>p.activo!==false)}
 async function loadProvProd(){const{data}=await sb.from('inv_proveedor_productos').select('*');state.provProd=data||[]}
-async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];await loadStockMap();}
+async function loadMovs(){const{data}=await sb.from('inv_movimientos').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(300);state.movs=data||[];state.consumo=null;await loadStockMap();}
 async function loadMermas(){const{data}=await sb.from('inv_mermas').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).limit(100);state.mermas=data||[]}
 async function loadOrdenes(){const{data}=await sb.from('inv_ordenes_compra').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false});state.ordenes=data||[]}
 
@@ -192,6 +192,7 @@ function categorias(){return Array.from(new Set(state.productos.map(p=>p.categor
 /* ===== ROUTER ===== */
 function render(){renderHeader();renderTabs();
   if(state.view==='inventario')renderInventario();
+  else if(state.view==='pares')renderPares();
   else if(state.view==='carga')renderCarga();
   else if(state.view==='pedido')renderPedido();
   else if(state.view==='compras')renderCompras();
@@ -216,6 +217,7 @@ function renderHeader(){
 function renderTabs(){
   const nPedido=Object.values(state.pedidoQty).filter(q=>q>0).length;
   const tabs=[{k:'inventario',l:'Inventario',ico:'inventory_2',n:state.productos.length},
+    {k:'pares',l:'Pares',ico:'tune',n:Object.keys(state.parEdits).length||null},
     {k:'carga',l:'Carga rápida',ico:'bolt'},
     {k:'pedido',l:'Armar pedido',ico:'list_alt',n:nPedido||null},
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
@@ -224,7 +226,7 @@ function renderTabs(){
     {k:'teorico',l:'Teórico vs real',ico:'science'},
     {k:'reportes',l:'Reportes',ico:'monitoring'}];
   $('#tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.view===t.k?'active':''}" data-v="${t.k}"><span class="material-symbols-outlined" style="font-size:16px">${t.ico}</span>${t.l}${t.n!=null?`<span class="count">${t.n}</span>`:''}</button>`).join('');
-  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{if(state.view==='pares'&&b.dataset.v!=='pares'&&Object.keys(state.parEdits).length&&!confirm('Tienes pares sin guardar. ¿Salir igual?'))return;state.view=b.dataset.v;render()});
 }
 
 /* ===== INVENTARIO (ME-07) ===== */
@@ -286,6 +288,86 @@ async function abrirFichaProducto(pid){const p=prod(pid);if(!p)return;const s=st
     <div class="sheet-section"><button class="btn" id="fp-cfg"><span class="material-symbols-outlined">settings</span>Configurar par / proveedor</button></div>`;
   openSheet();
   $('#fp-cfg').onclick=()=>abrirConfigProducto(pid);
+}
+
+/* ===== PARES (editor masivo de par level + sugerido por consumo) ===== */
+// Consumo real = salidas + mermas de los últimos PAR_DIAS días (inv_movimientos).
+// Par sugerido = consumo diario × (días de cobertura + días de entrega del proveedor preferido) × (1 + colchón).
+const PAR_DIAS=28;
+async function loadConsumo(){
+  const d=new Date();d.setDate(d.getDate()-PAR_DIAS);const desde=d.toISOString().slice(0,10);
+  const m={};let from=0;const page=1000;
+  while(true){
+    const{data,error}=await sb.from('inv_movimientos').select('producto_id,cantidad').eq('local_id',LOCAL).in('tipo',['salida','merma']).gte('fecha',desde).range(from,from+page-1);
+    if(error){toast('Atrás: '+error.message,'err');break}
+    (data||[]).forEach(r=>{m[r.producto_id]=(m[r.producto_id]||0)+Math.abs(Number(r.cantidad||0))});
+    if(!data||data.length<page)break;from+=page;
+  }
+  state.consumo=m;
+}
+function diasEntrega(pid){const pp=state.provProd.filter(x=>x.producto_id===pid);const pref=pp.find(x=>x.preferido)||pp[0];return Number(pref?.tiempo_entrega_dias||0)}
+function consumoDia(pid){return (state.consumo?.[pid]||0)/PAR_DIAS}
+function pasoPar(p){return ['kg','l','g','ml'].includes((p.unidad||'').toLowerCase())?0.5:1}
+function parSugeridoConsumo(p){const c=consumoDia(p.id);if(!c)return null;const paso=pasoPar(p);
+  const v=c*(state.parCob+diasEntrega(p.id))*(1+state.parSeg/100);return Math.ceil(v/paso)*paso}
+function parActual(p){return state.parEdits[p.id]!=null?state.parEdits[p.id]:Number(p.par_level||0)}
+function setParEdit(pid,v){const p=prod(pid);v=Math.max(0,Number(v)||0);if(v===Number(p.par_level||0))delete state.parEdits[pid];else state.parEdits[pid]=v}
+function listaPares(){return state.productos.filter(p=>(state.parCat==='todas'||p.categoria===state.parCat)&&(!state.parQ||(p.nombre+' '+p.categoria).toLowerCase().includes(state.parQ.toLowerCase())))
+  .filter(p=>{if(!state.parSoloDif)return true;const s=parSugeridoConsumo(p),a=parActual(p);return s!=null&&(a===0||Math.abs(s-a)/Math.max(a,0.01)>=0.25)})}
+async function renderPares(){
+  if(!state.consumo){$('#screen').innerHTML='<div class="empty-state">Oído · calculando consumo de las últimas 4 semanas…</div>';await loadConsumo();if(state.view!=='pares')return}
+  const cats=['todas',...categorias()];const list=listaPares();const nEd=Object.keys(state.parEdits).length;
+  const sinPar=state.productos.filter(p=>!Number(p.par_level)).length;
+  const desfase=state.productos.filter(p=>{const s=parSugeridoConsumo(p),a=Number(p.par_level||0);return s!=null&&a>0&&Math.abs(s-a)/a>=0.25}).length;
+  const capital=state.productos.reduce((a,p)=>a+parActual(p)*Number(p.costo||0),0);
+  $('#screen').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="val">${money(capital)}</div><div class="lbl">Inventario al par</div></div>
+      <div class="kpi ${desfase?'alert':''}"><div class="val">${desfase}</div><div class="lbl">Par desfasado ±25%</div></div>
+      <div class="kpi ${sinPar?'alert':''}"><div class="val">${sinPar}</div><div class="lbl">Sin par</div></div>
+      <div class="kpi"><div class="val">${nEd}</div><div class="lbl">Cambios sin guardar</div></div>
+    </div>
+    <div class="toolbar">
+      <input class="input" id="par-q" placeholder="Buscar insumo…" value="${state.parQ}" style="max-width:240px">
+      <label class="row-meta" style="display:flex;align-items:center;gap:6px">Cobertura <input class="input" id="par-cob" type="number" min="1" value="${state.parCob}" style="width:70px;padding:6px 8px"> días</label>
+      <label class="row-meta" style="display:flex;align-items:center;gap:6px">Colchón <input class="input" id="par-seg" type="number" min="0" step="5" value="${state.parSeg}" style="width:70px;padding:6px 8px"> %</label>
+      <button class="chip ${state.parSoloDif?'active':''}" id="par-dif">Solo desfasados</button>
+    </div>
+    <div class="toolbar"><div class="chips">${cats.map(c=>`<button class="chip ${state.parCat===c?'active':''}" data-pcat="${c}">${c==='todas'?'Todas':c}</button>`).join('')}</div></div>
+    <div class="toolbar">
+      <button class="mini-btn" id="par-aplicar"><span class="material-symbols-outlined" style="font-size:14px">auto_fix_high</span>Usar sugerido en los ${list.length} visibles</button>
+      ${nEd?`<button class="mini-btn ghost" id="par-desc">Descartar cambios</button>`:''}
+      <button class="btn primary" id="par-save" style="margin-left:auto;padding:9px 16px" ${nEd?'':'disabled'}><span class="material-symbols-outlined" style="font-size:18px">save</span>Guardar ${nEd||''} cambio${nEd===1?'':'s'}</button>
+    </div>
+    <div class="row-meta" style="margin-bottom:10px">Sugerido = consumo diario (salidas + mermas de ${PAR_DIAS} días) × (cobertura + días de entrega del proveedor) × (1 + colchón). Enter baja a la siguiente fila.</div>
+    <div style="overflow-x:auto">${list.length?`<table class="tbl"><tr><th>Insumo</th><th>Stock</th><th>Consumo/día</th><th>Entrega</th><th>Par</th><th>Sugerido</th><th>Cubre</th></tr>
+      ${list.map(p=>{const a=parActual(p),s=parSugeridoConsumo(p),c=consumoDia(p.id),ed=state.parEdits[p.id]!=null;
+        const st=stock(p.id),cls=ed?'amar':(st<a?'rojo':'');const dias=c?a/c:null;
+        return `<tr class="${cls}" data-pid="${p.id}"><td>${p.emoji||''} <strong>${p.nombre}</strong><div class="row-meta">${p.categoria||'—'} · ${p.unidad||''}</div></td>
+          <td class="mono">${num(st)}</td><td class="mono">${c?num(c):'—'}</td><td class="mono">${diasEntrega(p.id)}d</td>
+          <td><input class="input par-in" type="number" min="0" step="${pasoPar(p)}" value="${a}" style="width:90px;padding:6px 8px">${ed?`<div class="row-meta">antes ${num(p.par_level)}</div>`:''}</td>
+          <td>${s!=null?`<button class="mini-btn ${s!==a?'warn':''}" data-sug="${s}" title="Usar sugerido">${num(s)}</button>`:'<span class="row-meta">sin consumo</span>'}</td>
+          <td class="mono">${dias!=null?num(Math.round(dias*10)/10)+' d':'—'}</td></tr>`}).join('')}</table>`:'<div class="empty-state">Sin insumos con ese filtro</div>'}</div>`;
+  $('#par-q').oninput=e=>{state.parQ=e.target.value;renderPares().then(()=>{const i=$('#par-q');i.focus();i.setSelectionRange(i.value.length,i.value.length)})};
+  $('#par-cob').onchange=e=>{state.parCob=Math.max(1,Number(e.target.value)||7);renderPares()};
+  $('#par-seg').onchange=e=>{state.parSeg=Math.max(0,Number(e.target.value)||0);renderPares()};
+  $('#par-dif').onclick=()=>{state.parSoloDif=!state.parSoloDif;renderPares()};
+  $$('#screen [data-pcat]').forEach(b=>b.onclick=()=>{state.parCat=b.dataset.pcat;renderPares()});
+  $('#par-aplicar').onclick=()=>{let n=0;list.forEach(p=>{const s=parSugeridoConsumo(p);if(s!=null&&s!==parActual(p)){setParEdit(p.id,s);n++}});renderTabs();renderPares();toast(n?`Va · ${n} pares con el sugerido (falta guardar)`:'Ya están en el sugerido',n?'ok':'')};
+  if($('#par-desc'))$('#par-desc').onclick=()=>{state.parEdits={};renderTabs();renderPares()};
+  $('#par-save').onclick=guardarPares;
+  const ins=$$('#screen .par-in');
+  ins.forEach((inp,i)=>{
+    inp.onchange=()=>{setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i];if(n)n.focus()})};
+    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();setParEdit(inp.closest('tr').dataset.pid,inp.value);renderTabs();renderPares().then(()=>{const n=$$('#screen .par-in')[i+1];if(n){n.focus();n.select()}})}};
+  });
+  $$('#screen [data-sug]').forEach(b=>b.onclick=()=>{setParEdit(b.closest('tr').dataset.pid,b.dataset.sug);renderTabs();renderPares()});
+}
+async function guardarPares(){
+  const ed=Object.entries(state.parEdits);if(!ed.length)return;
+  const r=await Promise.all(ed.map(([pid,v])=>sb.from('inv_productos').update({par_level:v}).eq('id',pid).eq('marca_id',MARCA)));
+  const err=r.find(x=>x.error);if(err){toast('Atrás: '+err.error.message,'err');return}
+  state.parEdits={};await loadProductos();render();toast(`Servido · ${ed.length} par${ed.length===1?'':'es'} actualizado${ed.length===1?'':'s'}`,'ok');
 }
 
 /* ===== MOVIMIENTOS (entrada/salida/ajuste) ===== */
