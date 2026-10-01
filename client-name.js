@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var local=window.PREP_LOCAL;
     var c=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
     // marca -> subdominio (cada restaurante vive en su propia URL)
-    var SUBOF={m6:'casa-italia',m7:'symposium',m8:'lcds'};
+    var SUBOF={m6:'casa-italia',m7:'symposium',m8:'lcds',m9:'la-calor'};
     // marca -> logo del restaurante (icono junto al nombre)
     var LOGOS={m7:'/logos/m7.png',m8:'/logos/m8.png'};
 

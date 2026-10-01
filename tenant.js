@@ -9,7 +9,8 @@
     'casa-italia':{marca:'m6',local:'l11'},   // casa-italia.prep.rest
     'casaitalia':{marca:'m6',local:'l11'},    // dominio propio casaitalia.rest
     'symposium':{marca:'m7',local:'l12'},
-    'lcds':{marca:'m8',local:'l13'}
+    'lcds':{marca:'m8',local:'l13'},
+    'la-calor':{marca:'m9',local:'l17'}   // la-calor.prep.rest (demo bar)
   };
   var host=(location.hostname||'').toLowerCase();
   var sub=host.split('.')[0];
