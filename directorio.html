@@ -47,6 +47,32 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .boot{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}
 .boot .logo{position:relative;width:220px;height:73px}.boot .logo .l{position:absolute;inset:0;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.vtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rp-intro{font-size:14px;max-width:70ch;opacity:.8;margin-bottom:14px;line-height:1.5}
+.rp-scroll{overflow-x:auto;border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);background:var(--surface)}
+.rp-tbl{border-collapse:collapse;width:100%;font-size:13px;min-width:980px}
+.rp-tbl th{background:var(--ink);color:var(--bg);font-size:11px;font-weight:600;padding:8px 6px;text-align:center;vertical-align:bottom;line-height:1.2}
+.rp-tbl th.l,.rp-tbl td.l{text-align:left}
+.rp-tbl td{padding:8px 6px;border-top:1px dashed var(--gray-soft);text-align:center;vertical-align:middle}
+.rp-tbl tr.off td{opacity:.45}
+.rp-tbl input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary);cursor:pointer}
+.rp-tbl select,.rp-tbl input[type=time]{font:inherit;font-size:12px;padding:4px 6px;border:2px solid var(--outline);border-radius:8px;background:var(--surface)}
+.rp-who strong{display:block;font-size:14px}.rp-who span{font-size:11px;opacity:.65}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);cursor:pointer;box-shadow:2px 2px 0 0 #000}
+.ibtn:active{transform:translate(1px,1px);box-shadow:none}.ibtn .material-symbols-outlined{font-size:17px}
+.ibtn.pri{background:var(--primary);color:#fff}
+.btnp{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:2px solid var(--outline);border-radius:999px;font-weight:600;font-size:14px;background:var(--primary);color:#fff;box-shadow:var(--shadow-sm);cursor:pointer;font-family:inherit}
+.btnp.ghost{background:var(--surface);color:var(--ink)}.btnp:active{transform:translate(2px,2px);box-shadow:none}
+.est{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:2px solid var(--outline);white-space:nowrap}
+.est.enviado{background:var(--green);color:#fff}.est.pendiente_llave{background:var(--tertiary)}.est.error{background:var(--secondary);color:#fff}
+.ovl{position:fixed;inset:0;background:rgba(23,28,32,.55);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:24px 16px;overflow:auto}.ovl.open{display:flex}
+.ovl .box{background:var(--bg);border:2px solid var(--outline);border-radius:18px;box-shadow:8px 8px 0 0 #000;width:100%;max-width:760px;padding:18px}
+.ovl .box h3{font-family:var(--font-display);font-size:20px;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:12px;font-weight:600}
+.fld input{font:inherit;font-size:14px;font-weight:400;padding:9px 11px;border:2px solid var(--outline);border-radius:10px;background:var(--surface)}
+.prev-frame{width:100%;height:60vh;border:2px solid var(--outline);border-radius:12px;background:#fff}
+.prev-txt{white-space:pre-wrap;font-family:var(--font-mono);font-size:12px;background:var(--surface);border:2px solid var(--outline);border-radius:12px;padding:12px;max-height:60vh;overflow:auto}
+.toast{position:fixed;right:16px;bottom:16px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;z-index:300;opacity:0;transform:translateY(10px);transition:.25s}.toast.show{opacity:1;transform:none}
 .boot .msg{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.6}
 </style>
 </head>
@@ -56,12 +82,14 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
   <div class="brand"><a href="/" class="brand-logo" title="Inicio"><span class="l"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">Módulo Directorio</div></div></div>
   <div class="header-info" id="per"></div>
 </header>
-<main class="wrap" id="screen"></main>
+<main class="wrap"><div class="vtabs" id="vtabs"></div><div id="screen"></div></main>
+<div class="ovl" id="ovl"><div class="box" id="ovl-box"></div></div>
+<div class="toast" id="toast"></div>
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const state={periodo:'mes',data:null};
+const state={periodo:'mes',data:null,vista:(location.hash==='#reportes'?'reportes':'resumen'),rp:null};
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
 function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0})}
 function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -96,7 +124,13 @@ async function load(){
 function costoProd(d,pid){const p=d.prod.find(x=>x.id===pid);return p?Number(p.costo||0):0}
 function costoReceta(d,rid){const r=d.recetas.find(x=>x.id===rid);if(!r||!Array.isArray(r.ingredientes))return 0;return r.ingredientes.reduce((a,ing)=>{if(!ing.pid)return a;const m=Number(ing.merma||0);const f=(m>0&&m<100)?1/(1-m/100):1;return a+Number(ing.cantidad||0)*f*costoProd(d,ing.pid)},0)}
 
+function renderTabs(){
+  $('#vtabs').innerHTML=[['resumen','monitoring','Resumen ejecutivo'],['reportes','schedule_send','Reportes programados']].map(([k,i,l])=>`<button class="chip ${state.vista===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span> ${l}</button>`).join('');
+  $$('#vtabs .chip').forEach(b=>b.onclick=()=>{state.vista=b.dataset.v;history.replaceState(null,'',state.vista==='reportes'?'#reportes':location.pathname+location.search);render()});
+}
 function render(){
+  renderTabs();
+  if(state.vista==='reportes'){$('#per').innerHTML='';renderReportes();return}
   const d=state.data;const per=[['hoy','Hoy'],['7d','7 días'],['mes','Mes']];
   $('#per').innerHTML=per.map(p=>`<button class="chip ${state.periodo===p[0]?'active':''}" data-p="${p[0]}">${p[1]}</button>`).join('');
   $$('#per .chip').forEach(b=>b.onclick=async()=>{state.periodo=b.dataset.p;$('#boot').classList.remove('gone');await load()});
@@ -189,6 +223,124 @@ function exportarCSV(){
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='prep-resumen-'+per+'-'+hoyISO()+'.csv';document.body.appendChild(a);a.click();a.remove();
 }
 const CLIENTE_NOM='Casa Italia';
+
+/* ===== REPORTES PROGRAMADOS (DI-05) =====
+   Cada persona elige qué reportes recibe, por email o WhatsApp, cada día/semana/mes a una hora.
+   Datos: rep_catalogo, rep_suscripciones, rep_envios. Envío: Edge Function reportes-programados (pg_cron cada 15 min). */
+const DIAS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600)}
+function escH(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function abrirOvl(html){$('#ovl-box').innerHTML=html;$('#ovl').classList.add('open')}
+function cerrarOvl(){$('#ovl').classList.remove('open')}
+$('#ovl').addEventListener('click',e=>{if(e.target.id==='ovl')cerrarOvl()});
+async function loadRP(){
+  const[c,s,e]=await Promise.all([
+    sb.from('rep_catalogo').select('*').order('orden'),
+    sb.from('rep_suscripciones').select('*').eq('local_id',LOCAL).order('created_at'),
+    sb.from('rep_envios').select('id,suscripcion_id,canal,destino,estado,detalle,asunto,texto,origen,created_at').eq('local_id',LOCAL).order('created_at',{ascending:false}).limit(25)]);
+  state.rp={cat:c.data||[],subs:s.data||[],env:e.data||[]};
+}
+async function renderReportes(){
+  if(!state.rp){$('#screen').innerHTML='<div class="empty">Oído · cargando reportes</div>';await loadRP()}
+  const{cat,subs,env}=state.rp;
+  const fr=s=>`<select data-f="frecuencia">${['diaria','semanal','mensual'].map(f=>`<option value="${f}" ${s.frecuencia===f?'selected':''}>${f[0].toUpperCase()+f.slice(1)}</option>`).join('')}</select>
+    ${s.frecuencia==='semanal'?`<select data-f="dia_semana" style="margin-top:4px">${DIAS.map((d,i)=>`<option value="${i}" ${Number(s.dia_semana??1)===i?'selected':''}>${d}</option>`).join('')}</select>`:''}
+    ${s.frecuencia==='mensual'?`<select data-f="dia_mes" style="margin-top:4px">${Array.from({length:28},(_,i)=>`<option value="${i+1}" ${Number(s.dia_mes??1)===i+1?'selected':''}>Día ${i+1}</option>`).join('')}</select>`:''}`;
+  const nombreSub=id=>subs.find(x=>x.id===id)?.nombre||'—';
+  $('#screen').innerHTML=`
+    <div class="section-t">Reportes programados</div>
+    <p class="rp-intro">Elige qué recibe cada persona y cuándo. Los reportes salen solos a la hora indicada (hora de Lima) con los datos reales del local: el reporte diario cubre la noche anterior (de 6:00 a 6:00), el semanal los últimos 7 días y el mensual los últimos 30. Marca varias columnas para armar un reporte a medida.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btnp" id="rp-add"><span class="material-symbols-outlined" style="font-size:18px">person_add</span>Agregar persona</button>
+      <button class="btnp ghost" id="rp-prev-libre"><span class="material-symbols-outlined" style="font-size:18px">preview</span>Vista previa de todo</button>
+    </div>
+    <div class="rp-scroll"><table class="rp-tbl">
+      <tr><th class="l" style="min-width:170px">Persona</th>${cat.map(c=>`<th title="${escH(c.descripcion)}">${escH(c.nombre)}<div style="opacity:.6;font-weight:400">${escH(c.modulo)}</div></th>`).join('')}<th>Canal</th><th>Frecuencia</th><th>Hora</th><th>Activo</th><th style="min-width:120px"></th></tr>
+      ${subs.length?subs.map(s=>`<tr data-id="${s.id}" class="${s.activo?'':'off'}">
+        <td class="l rp-who"><strong>${escH(s.nombre)}</strong><span>${escH(s.puesto||'')}${s.titulo?' · '+escH(s.titulo):''}</span></td>
+        ${cat.map(c=>`<td><input type="checkbox" data-r="${c.clave}" ${(s.reportes||[]).includes(c.clave)?'checked':''} aria-label="${escH(c.nombre)} para ${escH(s.nombre)}"></td>`).join('')}
+        <td><select data-f="canal"><option value="email" ${s.canal==='email'?'selected':''}>Email</option><option value="whatsapp" ${s.canal==='whatsapp'?'selected':''}>WhatsApp</option><option value="ambos" ${s.canal==='ambos'?'selected':''}>Ambos</option></select></td>
+        <td>${fr(s)}</td>
+        <td><input type="time" data-f="hora" value="${String(s.hora||'08:00').slice(0,5)}"></td>
+        <td><input type="checkbox" data-f="activo" ${s.activo?'checked':''} aria-label="Activo"></td>
+        <td style="white-space:nowrap"><button class="ibtn" data-a="prev" title="Vista previa"><span class="material-symbols-outlined">preview</span></button>
+          <button class="ibtn pri" data-a="send" title="Enviar ahora (prueba)"><span class="material-symbols-outlined">send</span></button>
+          <button class="ibtn" data-a="edit" title="Editar persona"><span class="material-symbols-outlined">edit</span></button></td>
+      </tr>`).join(''):`<tr><td colspan="${cat.length+6}" class="empty">Todavía nadie recibe reportes. Agrega a la primera persona.</td></tr>`}
+    </table></div>
+    <div class="section-t" style="margin-top:26px">Últimos envíos</div>
+    <div class="panel">${env.length?env.map(e=>`<div class="li" style="align-items:center;gap:10px"><span style="min-width:0"><strong>${escH(nombreSub(e.suscripcion_id))}</strong> · ${e.canal==='whatsapp'?'WhatsApp':'Email'}${e.origen==='prueba'?' · prueba':''}<br><span style="font-size:12px;opacity:.65">${new Date(e.created_at).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'})} · ${escH(e.asunto||'')}</span>${e.estado!=='enviado'?`<br><span style="font-size:12px;opacity:.75">${escH(motivoEnvio(e))}</span>`:''}</span>
+      <span style="display:flex;gap:6px;align-items:center">${e.canal==='whatsapp'&&e.estado!=='enviado'&&e.destino?`<a class="ibtn" title="Abrir en WhatsApp" target="_blank" rel="noopener" href="https://wa.me/${escH(e.destino)}?text=${encodeURIComponent(e.texto||'')}"><span class="material-symbols-outlined">chat</span></a>`:''}<span class="est ${escH(e.estado)}">${({enviado:'Enviado',pendiente_llave:'Falta llave',error:'Atrás'})[e.estado]||escH(e.estado)}</span></span></div>`).join(''):'<div class="empty">Sin envíos todavía</div>'}</div>`;
+  $('#rp-add').onclick=()=>editarPersona(null);
+  $('#rp-prev-libre').onclick=()=>vistaPrevia({reportes:cat.map(c=>c.clave),frecuencia:'diaria',titulo:'Reporte diario',nombre:'Vista previa'});
+  $$('#screen tr[data-id]').forEach(tr=>{
+    const id=tr.dataset.id,s=subs.find(x=>x.id===id);
+    tr.querySelectorAll('input[data-r]').forEach(cb=>cb.onchange=()=>{const set=new Set(s.reportes||[]);cb.checked?set.add(cb.dataset.r):set.delete(cb.dataset.r);guardarSub(s,{reportes:[...set]})});
+    tr.querySelectorAll('[data-f]').forEach(el=>el.onchange=()=>{const f=el.dataset.f;let v=el.type==='checkbox'?el.checked:el.value;if(f==='dia_semana'||f==='dia_mes')v=Number(v);const patch={[f]:v};if(f==='frecuencia'){if(v==='semanal'&&s.dia_semana==null)patch.dia_semana=1;if(v==='mensual'&&s.dia_mes==null)patch.dia_mes=1}guardarSub(s,patch,f==='frecuencia'||f==='activo')});
+    tr.querySelector('[data-a="prev"]').onclick=()=>vistaPrevia(s);
+    tr.querySelector('[data-a="send"]').onclick=()=>enviarAhora(s);
+    tr.querySelector('[data-a="edit"]').onclick=()=>editarPersona(s);
+  });
+}
+function motivoEnvio(e){if(e.estado==='pendiente_llave')return e.canal==='whatsapp'?'Falta conectar WhatsApp Business. Mientras, ábrelo en WhatsApp y envíalo tú.':'Falta la llave del servicio de email.';
+  if(/not verified/i.test(e.detalle||''))return 'El dominio de envío de email todavía no está verificado.';return e.detalle||''}
+async function guardarSub(s,patch,rerender){
+  patch.updated_at=new Date().toISOString();
+  const{error}=await sb.from('rep_suscripciones').update(patch).eq('id',s.id);
+  if(error){toast('Atrás · '+error.message);return}
+  Object.assign(s,patch);toast('Servido · guardado');if(rerender)renderReportes();
+}
+function editarPersona(s){
+  const v=s||{nombre:'',puesto:'',email:'',whatsapp:'',titulo:''};
+  abrirOvl(`<h3>${s?'Editar persona':'Agregar persona'}<button class="ibtn" id="ov-x" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button></h3>
+    <div class="grid2" style="gap:10px">
+      <label class="fld">Nombre<input id="pf-nombre" value="${escH(v.nombre)}" placeholder="Ej. Renzo Paredes"></label>
+      <label class="fld">Puesto<input id="pf-puesto" value="${escH(v.puesto||'')}" placeholder="Ej. Jefe de barra"></label>
+      <label class="fld">Email<input id="pf-email" type="email" value="${escH(v.email||'')}" placeholder="nombre@correo.com"></label>
+      <label class="fld">WhatsApp<input id="pf-wa" value="${escH(v.whatsapp||'')}" placeholder="987 654 321"></label>
+    </div>
+    <label class="fld">Nombre del reporte (opcional)<input id="pf-titulo" value="${escH(v.titulo||'')}" placeholder="Ej. Barra: stock y pour cost"></label>
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:6px">
+      ${s?'<button class="btnp ghost" id="pf-del" style="color:var(--secondary)"><span class="material-symbols-outlined" style="font-size:18px">delete</span>Quitar</button>':'<span></span>'}
+      <button class="btnp" id="pf-ok">${s?'Guardar':'Agregar'}</button></div>`);
+  $('#ov-x').onclick=cerrarOvl;
+  $('#pf-ok').onclick=async()=>{
+    const row={nombre:$('#pf-nombre').value.trim(),puesto:$('#pf-puesto').value.trim()||null,email:$('#pf-email').value.trim()||null,whatsapp:$('#pf-wa').value.trim()||null,titulo:$('#pf-titulo').value.trim()||null};
+    if(!row.nombre){toast('Escribe el nombre');return}
+    if(!row.email&&!row.whatsapp){toast('Agrega un email o un WhatsApp');return}
+    let r;if(s)r=await sb.from('rep_suscripciones').update({...row,updated_at:new Date().toISOString()}).eq('id',s.id);
+    else r=await sb.from('rep_suscripciones').insert({...row,marca_id:MARCA,local_id:LOCAL,reportes:['ventas'],canal:row.email&&row.whatsapp?'ambos':row.email?'email':'whatsapp',frecuencia:'diaria',hora:'08:00'});
+    if(r.error){toast('Atrás · '+r.error.message);return}
+    cerrarOvl();state.rp=null;renderReportes();toast(s?'Servido · persona actualizada':'Va · ahora marca sus reportes en la tabla');
+  };
+  if($('#pf-del'))$('#pf-del').onclick=async()=>{if(!confirm('¿Quitar a '+s.nombre+' de los reportes?'))return;const{error}=await sb.from('rep_suscripciones').delete().eq('id',s.id);if(error){toast('Atrás · '+error.message);return}cerrarOvl();state.rp=null;renderReportes();toast('Servido · quitado')};
+}
+async function vistaPrevia(s){
+  if(!(s.reportes||[]).length){toast('Marca al menos un reporte');return}
+  abrirOvl(`<h3>Vista previa<button class="ibtn" id="ov-x" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button></h3><div class="empty">Oído · armando el reporte con los datos del local</div>`);$('#ov-x').onclick=cerrarOvl;
+  const{data,error}=await sb.functions.invoke('reportes-programados',{body:{modo:'preview',local_id:LOCAL,marca_id:MARCA,reportes:s.reportes,frecuencia:s.frecuencia||'diaria',titulo:s.titulo}});
+  if(error||!data?.ok){$('#ovl-box').innerHTML=`<h3>Vista previa<button class="ibtn" id="ov-x"><span class="material-symbols-outlined">close</span></button></h3><div class="empty">Atrás · ${escH(data?.error||error?.message||'no se pudo armar')}</div>`;$('#ov-x').onclick=cerrarOvl;return}
+  const wa=(s.whatsapp||'').replace(/\D/g,'');const waNum=wa.length===9?'51'+wa:wa;
+  $('#ovl-box').innerHTML=`<h3><span>${escH(data.asunto)}</span><button class="ibtn" id="ov-x" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button></h3>
+    <div class="vtabs"><button class="chip active" data-pv="email">Como email</button><button class="chip" data-pv="wa">Como WhatsApp</button></div>
+    <div id="pv-body"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btnp ghost" id="pv-copy"><span class="material-symbols-outlined" style="font-size:18px">content_copy</span>Copiar texto</button>
+      <a class="btnp ghost" target="_blank" rel="noopener" href="https://wa.me/${waNum}?text=${encodeURIComponent(data.texto)}" style="text-decoration:none"><span class="material-symbols-outlined" style="font-size:18px">chat</span>Abrir en WhatsApp</a></div>`;
+  const show=k=>{$$('#ovl-box [data-pv]').forEach(b=>b.classList.toggle('active',b.dataset.pv===k));
+    if(k==='email'){$('#pv-body').innerHTML='<iframe class="prev-frame" id="pv-if" title="Vista previa del email"></iframe>';$('#pv-if').srcdoc=data.html}else{$('#pv-body').innerHTML=`<div class="prev-txt">${escH(data.texto)}</div>`}};
+  show('email');$$('#ovl-box [data-pv]').forEach(b=>b.onclick=()=>show(b.dataset.pv));
+  $('#ov-x').onclick=cerrarOvl;
+  $('#pv-copy').onclick=async()=>{try{await navigator.clipboard.writeText(data.texto);toast('Servido · texto copiado')}catch(e){toast('No se pudo copiar')}};
+}
+async function enviarAhora(s){
+  if(!(s.reportes||[]).length){toast('Marca al menos un reporte');return}
+  toast('Oído · enviando a '+s.nombre);
+  const{data,error}=await sb.functions.invoke('reportes-programados',{body:{modo:'enviar',suscripcion_id:s.id}});
+  if(error||!data?.ok){toast('Atrás · '+(data?.error||error?.message||'no se pudo enviar'));return}
+  const ok=(data.envios||[]).filter(e=>e.estado==='enviado').length,tot=(data.envios||[]).length;
+  toast(ok===tot?'Va · enviado':'Servido · '+ok+' de '+tot+' enviados. Revisa “Últimos envíos”.');
+  state.rp=null;renderReportes();
+}
 load().catch(e=>{console.error(e);$('#boot .msg').textContent='Atrás · '+(e.message||'fallo')});
 </script>
 </body>
