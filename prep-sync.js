@@ -19,11 +19,28 @@ window.PrepSync = (function(){
   async function write(table, op, opts){
     opts=opts||{};
     var item={table:table, op:op, values:opts.values, match:opts.match, onConflict:opts.onConflict, ts:Date.now()};
-    if(navigator.onLine){
-      try{ await exec(item); flush(); return {queued:false,error:null}; }
+    // Si ya hay cola, se respeta el orden: lo nuevo va detrás (un ítem nunca sube antes que su pedido).
+    if(navigator.onLine && !q().length){
+      try{ await exec(item); return {queued:false,error:null}; }
       catch(e){ if(isNet(e)){ enqueue(item); return {queued:true,error:null}; } return {queued:false,error:e}; }
     }
-    enqueue(item); return {queued:true,error:null};
+    enqueue(item); flush(); return {queued:true,error:null};
+  }
+  // Superpone lo pendiente de la cola sobre filas leídas del servidor (para que una recarga
+  // no "borre" ventas que todavía no subieron, ni reabra un pedido ya cobrado en el dispositivo).
+  function overlay(table, rows){
+    var out=(rows||[]).slice(), byId={};
+    out.forEach(function(r,i){ byId[r.id]=i; });
+    q().forEach(function(op){
+      if(op.table!==table) return;
+      var vals=Array.isArray(op.values)?op.values:[op.values];
+      if(op.op==='insert'||op.op==='upsert'){ vals.forEach(function(v){ if(v&&v.id!=null&&byId[v.id]==null){ byId[v.id]=out.length; out.push(Object.assign({},v)); } }); }
+      else if(op.op==='update'){ var ids=op.match&&op.match.id; ids=Array.isArray(ids)?ids:(ids!=null?[ids]:[]);
+        ids.forEach(function(id){ var i=byId[id]; if(i!=null) out[i]=Object.assign({},out[i],op.values); }); }
+      else if(op.op==='delete'){ var d=op.match&&op.match.id; d=Array.isArray(d)?d:(d!=null?[d]:[]);
+        d.forEach(function(id){ var i=byId[id]; if(i!=null) out[i]=null; }); }
+    });
+    return out.filter(Boolean);
   }
   var flushing=false;
   async function flush(){
@@ -31,7 +48,9 @@ window.PrepSync = (function(){
     var a=q();
     while(a.length){ var op=a[0];
       try{ await exec(op); a.shift(); setQ(a); }
-      catch(e){ if(isNet(e)) break; a.shift(); setQ(a); } // error no-red: descartar para no atascar la cola
+      catch(e){ if(isNet(e)) break; // error no-red: se aparta a 'fallidos' (auditable) para no atascar la cola
+        try{ var f=JSON.parse(localStorage.getItem('prep_outbox_fallidos')||'[]'); f.push({op:op,error:(e&&e.message)||String(e),at:Date.now()}); localStorage.setItem('prep_outbox_fallidos',JSON.stringify(f.slice(-200))); }catch(_){}
+        a.shift(); setQ(a); }
     }
     flushing=false; badge();
   }
@@ -39,7 +58,7 @@ window.PrepSync = (function(){
     var n=q().length, el=document.getElementById('prep-syncbadge');
     if(!el){ if(!n||!document.body)return; el=document.createElement('div'); el.id='prep-syncbadge';
       el.style.cssText='position:fixed;right:10px;bottom:46px;z-index:99998;background:#ffcc00;color:#171c20;border:2px solid #000;border-radius:999px;padding:6px 12px;font:700 12px system-ui,sans-serif;box-shadow:3px 3px 0 #000'; document.body.appendChild(el); }
-    if(el){ el.style.display=n?'block':'none'; el.textContent='↑ '+n+' por sincronizar'; }
+    if(el){ el.style.display=n?'block':'none'; el.textContent='↑ '+n+' '+(window.PREP_SYNC_LABEL||'cambios')+' por sincronizar'; }
   }
   function cacheSet(k,v){ try{localStorage.setItem('prep_cache_'+k,JSON.stringify(v))}catch(e){} }
   function cacheGet(k){ try{return JSON.parse(localStorage.getItem('prep_cache_'+k))}catch(e){return null} }
@@ -48,7 +67,7 @@ window.PrepSync = (function(){
   setInterval(flush, 20000);
   document.addEventListener('DOMContentLoaded', function(){ badge(); flush(); });
   return {
-    write:write, flush:flush, pending:function(){return q().length},
+    write:write, flush:flush, overlay:overlay, pending:function(){return q().length},
     online:function(){return navigator.onLine},
     uuid:function(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():('id'+Date.now()+Math.random().toString(16).slice(2))},
     cacheSet:cacheSet, cacheGet:cacheGet
