@@ -48,9 +48,16 @@
       if(ev==='SIGNED_OUT'){ clearCookie(SSO); }
       else if(sess){ persist(sess); }
     });
+    // Sesión guardada en el equipo (aunque el token haya vencido). Sin internet NO se echa a nadie
+    // al login: el POS y la Línea deben seguir operando el turno con la sesión local.
+    function storedSession(){ try{ var raw=localStorage.getItem('sb-jmkvphayyhwzootlybde-auth-token'); var s=raw&&JSON.parse(raw); return !!(s&&(s.refresh_token||(s.currentSession&&s.currentSession.refresh_token))); }catch(e){ return false; } }
+    function netErr(e){ if(!e) return false; var m=((e.message||'')+'')+' '+(e.name||''); return e.status===0||/fetch|network|timeout|abort|offline|retryable|load failed/i.test(m); }
+    function seguirOffline(){ window.addEventListener('online', function(){ c.auth.getSession().then(function(r2){ if(r2&&r2.data&&r2.data.session) persist(r2.data.session); }); }, {once:true}); }
     c.auth.getSession().then(function(r){
       var sess=r&&r.data&&r.data.session;
       if(sess){ persist(sess); checkMarca(c,sess); return; } // sesión local OK
+      if((!navigator.onLine||netErr(r&&r.error)) && storedSession()){ seguirOffline(); return; } // sin red: seguir con la sesión local
+      if(!navigator.onLine){ window.addEventListener('online', function(){ location.reload(); }, {once:true}); return; } // sin red y sin sesión: esperar, no mandar a un login que no carga
       // Sin sesión local: intentar restaurar desde la cookie compartida (.prep.rest)
       var raw=readCookie(SSO), tok=null;
       if(raw){ try{tok=JSON.parse(raw)}catch(e){} }
@@ -60,7 +67,7 @@
         c.auth.setSession({access_token:tok.a,refresh_token:tok.r}).then(function(res){
           if(res&&res.data&&res.data.session){ persist(res.data.session); location.reload(); }
           else { clearCookie(SSO); toLogin(); }
-        }).catch(function(){ clearCookie(SSO); toLogin(); });
+        }).catch(function(e){ if(netErr(e)||!navigator.onLine){ sessionStorage.removeItem('prep_sso_tried'); seguirOffline(); return; } clearCookie(SSO); toLogin(); });
       } else {
         toLogin();
       }

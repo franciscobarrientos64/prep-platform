@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
-<script>window.PREP_SYNC_LABEL="ventas";</script>
+<script>window.PREP_SYNC_LABEL="ventas";window.PREP_OFFLINE_MSG="Sin conexión: se sigue vendiendo y las comandas se imprimen aquí; la pantalla de barra se pondrá al día al volver.";</script>
 <script src="/prep-sync.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/tenant.js"></script>
@@ -1252,7 +1252,8 @@ const SB_URL = 'https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY = 'sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const MARCA = (window.PREP_MARCA||'m6');
 const LOCAL = (window.PREP_LOCAL||'l11');
-const sb = supabase.createClient(SB_URL, SB_KEY);
+// fetch con timeout (PrepSync.fetch): una red lenta cae a la caché/cola en vez de colgar la pantalla
+const sb = supabase.createClient(SB_URL, SB_KEY, { global: { fetch: PrepSync.fetch } });
 
 // Voz del Cliente: encuesta marcada para imprimirse en el ticket (QR en la pre-cuenta)
 let ENCUESTA_TICKET_ID = null;
@@ -1607,16 +1608,17 @@ async function loadGerentes() {
     .select('id, nombre, apellidos, rol, area')
     .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('estado', 'activo')
     .or('rol.ilike.%gerente%,rol.ilike.%admin%,rol.ilike.%encargad%,rol.ilike.%superv%,rol.ilike.%chef%');
-  if (error) { state.gerentes = []; return; }
+  if (error) { state.gerentes = PrepSync.cacheGet('gerentes') || state.gerentes || []; return; }
   state.gerentes = data || [];
+  PrepSync.cacheSet('gerentes', state.gerentes);
 }
 async function loadFloorPlan() {
   const { data, error } = await sb.from('ms_floor_plans')
     .select('*')
     .eq('marca_id', MARCA).eq('local_id', LOCAL).eq('activo', true)
     .limit(1);
-  if (error) return toast('Atrás: ' + error.message, 'err');
-  state.floorPlan = (data && data[0]) || null;
+  if (error) { state.floorPlan = PrepSync.cacheGet('floorplan') || state.floorPlan || null; }
+  else { state.floorPlan = (data && data[0]) || null; PrepSync.cacheSet('floorplan', state.floorPlan); }
   if (state.floorPlan && state.floorPlan.layout) {
     state.muebles = state.floorPlan.layout.muebles || [];
     state.zonas = state.floorPlan.layout.zonas || [];
@@ -3212,24 +3214,28 @@ async function marcharItems(ped, oidos, etiqueta) {
   const now = new Date().toISOString();
   const urgentes = oidos.filter(it => it.urgente).map(it => it.id);
   const normales = oidos.filter(it => !it.urgente).map(it => it.id);
+  // Primero lo local y la comanda impresa (no depende de la red): en hora punta la barra no espera a internet.
+  const aplicar = (ids, estado) => (state.pedidoItemsCache[ped.id] || []).forEach(it => { if (ids.includes(it.id)) Object.assign(it, { estado, enviado_cocina_at: now, course_marchar_at: now }); });
+  aplicar(urgentes, 'fuego'); aplicar(normales, 'va');
+  PrepSync.cacheSet('items_' + ped.id, state.pedidoItemsCache[ped.id] || []);
+  // CA-06: imprime comandas ruteadas por estación
+  imprimirComandasEstacion(ped, oidos, etiqueta);
+  toast('En fuego · ' + oidos.length + ' ítem(s) a cocina' + (etiqueta ? ' · ' + etiqueta : '') + (PrepSync.online() ? '' : ' (impresas aquí, sin conexión)'), 'ok');
+  render();
+  // Luego la red (va a la cola si no hay conexión)
   const marcar = async (ids, estado) => {
     if (!ids.length) return true;
     const r = await PrepSync.write('ca_pedido_items', 'update', { values: { estado, enviado_cocina_at: now, course_marchar_at: now }, match: { id: ids } });
     if (r.error) { toast('Atrás: ' + r.error.message, 'err'); return false; }
-    (state.pedidoItemsCache[ped.id] || []).forEach(it => { if (ids.includes(it.id)) Object.assign(it, { estado, enviado_cocina_at: now, course_marchar_at: now }); });
     return true;
   };
   if (!(await marcar(urgentes, 'fuego'))) return;
   if (!(await marcar(normales, 'va'))) return;
-  PrepSync.cacheSet('items_' + ped.id, state.pedidoItemsCache[ped.id] || []);
   // estado_servicio: BD acepta abierta|ordenando|comiendo|cuenta_pedida|pagando
   if (['abierta','ordenando'].includes(ped.estado_servicio)) {
     await writePedido(ped.id, { estado_servicio: 'comiendo' });
+    render();
   }
-  // CA-06: imprime comandas ruteadas por estación
-  imprimirComandasEstacion(ped, oidos, etiqueta);
-  toast('En fuego · ' + oidos.length + ' ítem(s) a cocina' + (etiqueta ? ' · ' + etiqueta : ''), 'ok');
-  render();
 }
 
 async function marcharTodoPendientes() {
@@ -3335,9 +3341,9 @@ async function abrirCobroScreen(pedidoId) {
   ]);
   state.cobro = {
     pagos: [],
-    pagosPersistidos: pagosRes.data || [],
+    pagosPersistidos: PrepSync.overlay('ca_pagos', pagosRes.data || []).filter(x => x.pedido_id === pedidoId),
     cortesias: [],
-    cortesiasPersistidas: cortesiasRes.data || [],
+    cortesiasPersistidas: PrepSync.overlay('ca_cortesias', cortesiasRes.data || []).filter(x => x.pedido_id === pedidoId),
     propina_pct: 10,
     propina_custom: null,
     comprobante: { tipo: 'sin_comprobante', doc: '', nombre: '', email: '' },
@@ -4011,9 +4017,17 @@ async function confirmarCobro() {
 // En hora punta llegan decenas de eventos por segundo: se agrupan para recargar y pintar una sola vez.
 const _deb = {};
 function debounce(key, ms, fn) { clearTimeout(_deb[key]); _deb[key] = setTimeout(fn, ms); }
+// Reconexión automática: si se corta el realtime aparece "Reconectando…", se resincroniza por REST
+// cada 15 s y, al volver, se recargan los pedidos abiertos (nunca queda congelado en silencio).
+async function resyncPOS() {
+  await loadPedidos();
+  if (state.pedidoAbiertoId) await loadPedidoItems(state.pedidoAbiertoId);
+  render();
+  if (state.mesaAbierta && $('#sheet').classList.contains('open')) openSheet(state.mesaAbierta.id);
+}
 function subscribe() {
-  if (state.channel) sb.removeChannel(state.channel);
-  state.channel = sb.channel('pos_v2_floor_' + LOCAL)
+  if (state.rt) return;
+  state.rt = PrepSync.realtime(sb, 'pos_v2_floor_' + LOCAL, ch => ch
     .on('postgres_changes', { event: '*', schema:'public', table:'ca_pedidos', filter:'local_id=eq.'+LOCAL },
         () => debounce('pedidos', 350, async () => {
           await loadPedidos();
@@ -4021,7 +4035,7 @@ function subscribe() {
           if (state.mesaAbierta && $('#sheet').classList.contains('open')) openSheet(state.mesaAbierta.id);
         }))
     .on('postgres_changes', { event: '*', schema:'public', table:'ca_mesas', filter:'local_id=eq.'+LOCAL },
-        async () => { if (state.screen !== 'edit') { await loadMesas(); render(); } })
+        () => debounce('mesas', 400, async () => { if (state.screen !== 'edit') { await loadMesas(); render(); } }))
     .on('postgres_changes', { event: '*', schema:'public', table:'ca_pedido_items' },
         (payload) => {
           // Solo reaccionar si el pedido afectado está en cache o abierto; agrupa ráfagas por pedido
@@ -4032,8 +4046,9 @@ function subscribe() {
               if (state.screen === 'pedido' && state.pedidoAbiertoId === pedidoId) render();
             });
           }
-        })
-    .subscribe();
+        }),
+    () => debounce('resync', 200, resyncPOS));
+  PrepSync.heartbeat('pos');
 }
 
 /* ========= WIRE UP ========= */

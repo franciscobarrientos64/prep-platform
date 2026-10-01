@@ -14,12 +14,15 @@
     if(bar)return bar;
     bar=document.createElement('div');bar.id='prep-offbar';bar.setAttribute('role','status');bar.setAttribute('aria-live','polite');
     bar.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#ff3b30;color:#fff;font:600 13px/1.3 system-ui,sans-serif;padding:9px 14px;text-align:center;box-shadow:0 -2px 0 #000;display:none';
-    bar.textContent='⚠ Sin conexión — la app sigue funcionando con datos guardados.';
+    bar.textContent='⚠ '+(window.PREP_OFFLINE_MSG||'Sin conexión — la app sigue funcionando con datos guardados.');
     (document.body||document.documentElement).appendChild(bar);
     return bar;
   }
-  function upd(){var b=ensure();b.style.display=navigator.onLine?'none':'block';}
+  // navigator.onLine no detecta "WiFi sin internet": prep-sync.js avisa con 'prep:net' cuando las llamadas fallan.
+  var netDown=false;
+  function upd(){var b=ensure();b.style.display=(navigator.onLine&&!netDown)?'none':'block';}
   window.addEventListener('online',upd);
   window.addEventListener('offline',upd);
+  window.addEventListener('prep:net',function(ev){netDown=!!(ev.detail&&ev.detail.down);upd();});
   if(document.readyState!=='loading')upd();else document.addEventListener('DOMContentLoaded',upd);
 })();

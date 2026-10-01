@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>window.PREP_SYNC_LABEL="cambios";window.PREP_OFFLINE_MSG="Sin conexión: esta pantalla muestra lo último recibido. Guíate por las comandas impresas; se pondrá al día al volver.";</script>
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="/offline.js"></script>
 <script src="/prep-sync.js"></script>
@@ -75,7 +76,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <div class="toast-container" id="toasts"></div>
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'m6'),LOCAL=(window.PREP_LOCAL||'l11');
-const sb=supabase.createClient(SB_URL,SB_KEY);
+const sb=supabase.createClient(SB_URL,SB_KEY,{global:{fetch:PrepSync.fetch}}); // timeout: nunca se cuelga esperando la red
 const ESTI=[['oido','Oído','#3b4a5a'],['va','Va','#d4a000'],['fuego','En fuego','#ff3b30'],['servido','Servido','#10b981']];
 const FLUJO={oido:'va',va:'fuego',fuego:'servido'};
 const state={pedidos:[],items:[],deliv:[],station:'todas',channel:null};
@@ -93,11 +94,11 @@ async function loadData(){
   try{
     const{data:peds,error:e1}=await sb.from('ca_pedidos').select('id,ticket_num,mesa_id,tab_nombre,origen,abierta_at,estado').eq('local_id',LOCAL).eq('estado','abierta');
     if(e1)throw e1;
-    state.pedidos=peds||[];
+    state.pedidos=PrepSync.overlay('ca_pedidos',peds||[]).filter(p=>p.estado==='abierta');
     const ids=state.pedidos.map(p=>p.id);
-    if(ids.length){const{data:its,error:e2}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');if(e2)throw e2;state.items=its||[];}else{state.items=[];}
+    if(ids.length){const{data:its,error:e2}=await sb.from('ca_pedido_items').select('*').in('pedido_id',ids).neq('estado','servido').order('created_at');if(e2)throw e2;state.items=PrepSync.overlay('ca_pedido_items',its||[]).filter(i=>ids.includes(i.pedido_id)&&i.estado!=='servido');}else{state.items=[];}
     const{data:dl,error:e3}=await sb.from('dl_pedidos').select('*').eq('local_id',LOCAL).in('estado',['recibido','preparando','listo']).order('created_at');if(e3)throw e3;
-    state.deliv=dl||[];
+    state.deliv=PrepSync.overlay('dl_pedidos',dl||[]).filter(d=>['recibido','preparando','listo'].includes(d.estado));
     PrepSync.cacheSet('kds_pedidos',state.pedidos);PrepSync.cacheSet('kds_items',state.items);PrepSync.cacheSet('kds_deliv',state.deliv);
   }catch(e){
     state.pedidos=PrepSync.cacheGet('kds_pedidos')||state.pedidos||[];
@@ -141,8 +142,9 @@ function delivCard(p){const m=Math.floor((Date.now()-new Date(p.created_at).getT
 }
 async function avanzarDl(id,nx){const patch={estado:nx};if(nx==='entregado')patch.entregado_at=new Date().toISOString();
   const d=state.deliv.find(x=>x.id===id);if(d)Object.assign(d,patch);PrepSync.cacheSet('kds_deliv',state.deliv);
-  const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id}});if(error){toast('Error');return}
-  if(PrepSync.online())await loadData();render();toast('Delivery → '+nx+(queued?' (sin conexión)':''))}
+  render();
+  const{error,queued}=await PrepSync.write('dl_pedidos','update',{values:patch,match:{id}});if(error){toast('Atrás: no se guardó');return}
+  if(PrepSync.online())reload();toast('Delivery → '+nx+(queued?' (sin conexión)':''))}
 const COURSE={1:'⏱ Tiempo 1 · Entradas',2:'⏱ Tiempo 2 · Fondos',3:'⏱ Tiempo 3 · Postres'};
 function renderItemsPorTiempo(its){
   const g={};its.forEach(i=>{const c=Number(i.course_step||2);(g[c]=g[c]||[]).push(i)});
@@ -157,27 +159,33 @@ function itRow(i){const e=estData(i.estado);const mod=modTxt(i.modificadores);
 
 async function bump(itemId){const i=state.items.find(x=>x.id===itemId);if(!i)return;const sig=FLUJO[i.estado];if(!sig)return;
   const patch={estado:sig};if(sig==='servido')patch.servido_at=new Date().toISOString();
-  Object.assign(i,patch);PrepSync.cacheSet('kds_items',state.items);
-  const{error}=await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:itemId}});if(error){toast('Error');return}
-  if(PrepSync.online())await loadData();render();
+  Object.assign(i,patch);if(sig==='servido')state.items=state.items.filter(x=>x.estado!=='servido');PrepSync.cacheSet('kds_items',state.items);render(); // UI al instante; la red va por detrás
+  const{error}=await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:itemId}});if(error){toast('Atrás: no se guardó');return}
+  if(PrepSync.online())reload();
 }
 async function avanzarTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&FLUJO[i.estado]);
-  for(const i of its){const patch={estado:FLUJO[i.estado]};Object.assign(i,patch);await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:i.id}});}
-  PrepSync.cacheSet('kds_items',state.items);
-  if(PrepSync.online())await loadData();render();toast('Comanda avanzada');
+  const ws=its.map(i=>{const patch={estado:FLUJO[i.estado]};Object.assign(i,patch);return ['ca_pedido_items','update',{values:patch,match:{id:i.id}}]});
+  PrepSync.cacheSet('kds_items',state.items);render();toast('Va · comanda avanzada');
+  for(const w of ws)await PrepSync.write(...w);
+  if(PrepSync.online())reload();
 }
 async function servirTodo(pid){const its=state.items.filter(i=>i.pedido_id===pid&&i.estado!=='servido');const now=new Date().toISOString();
-  for(const i of its){const patch={estado:'servido',servido_at:now};Object.assign(i,patch);await PrepSync.write('ca_pedido_items','update',{values:patch,match:{id:i.id}});}
-  PrepSync.cacheSet('kds_items',state.items);
-  if(PrepSync.online())await loadData();render();toast('Comanda servida');
+  const ws=its.map(i=>{const patch={estado:'servido',servido_at:now};Object.assign(i,patch);return ['ca_pedido_items','update',{values:patch,match:{id:i.id}}]});
+  state.items=state.items.filter(i=>i.estado!=='servido');PrepSync.cacheSet('kds_items',state.items);render();toast('Servido · comanda');
+  for(const w of ws)await PrepSync.write(...w);
+  if(PrepSync.online())reload();
 }
 
-function subscribe(){if(state.channel)sb.removeChannel(state.channel);
-  state.channel=sb.channel('kds_'+LOCAL)
-    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedido_items'},async()=>{await loadData();render()})
-    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},async()=>{await loadData();render()})
-    .on('postgres_changes',{event:'*',schema:'public',table:'dl_pedidos',filter:'local_id=eq.'+LOCAL},async()=>{await loadData();render()})
-    .subscribe();
+// Realtime con reconexión: ráfagas agrupadas (una recarga cada 400 ms como máximo), aviso "Reconectando…"
+// si se corta, resincronización por REST cada 15 s mientras tanto y al volver.
+let _kdsT=null;function reload(){clearTimeout(_kdsT);_kdsT=setTimeout(async()=>{await loadData();render()},400)}
+function subscribe(){if(state.rt)return;
+  state.rt=PrepSync.realtime(sb,'kds_'+LOCAL,ch=>ch
+    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedido_items'},reload)
+    .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},reload)
+    .on('postgres_changes',{event:'*',schema:'public',table:'dl_pedidos',filter:'local_id=eq.'+LOCAL},reload),
+    reload);
+  PrepSync.heartbeat('kds');
 }
 setInterval(()=>{if(!$('#boot').classList.contains('gone'))return;render()},30000); // refresca timers
 loadAll().catch(err=>{console.error(err);$('#boot .msg').textContent='Atrás · '+(err.message||'fallo')});
