@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Prep! · pre-push: protege el turno de los clientes.
+# 1) Congelamiento: no se publica a main de martes a sábado entre 17:00 y 03:00 (hora Lima),
+#    que es cuando los bares/restaurantes están en servicio. Urgencia: PREP_DEPLOY_URGENTE=1 git push
+# 2) Smoke test: sintaxis de todo el JS de los módulos del turno (scripts/smoke.sh).
+set -uo pipefail
+a_main=0
+while read -r lref lsha rref rsha; do
+  [[ "$rref" == "refs/heads/main" ]] && a_main=1
+done
+[ $a_main -eq 0 ] && exit 0
+
+dow=$(TZ=America/Lima date +%u)   # 1=lun … 7=dom
+hh=$(TZ=America/Lima date +%H); hh=$((10#$hh))
+congelado=0
+# mar(2)–sáb(6) desde las 17:00, y la madrugada siguiente (mié–dom) hasta las 03:00
+if [ "$dow" -ge 2 ] && [ "$dow" -le 6 ] && [ "$hh" -ge 17 ]; then congelado=1; fi
+if [ "$dow" -ge 3 ] && [ "$dow" -le 7 ] && [ "$hh" -lt 3 ]; then congelado=1; fi
+if [ $congelado -eq 1 ] && [ "${PREP_DEPLOY_URGENTE:-0}" != "1" ]; then
+  echo "⛔ Prep!: estamos en horario de turno (mar–sáb 17:00–03:00 Lima). No se publica a main."
+  echo "   Si es una urgencia real (algo está caído): PREP_DEPLOY_URGENTE=1 git push"
+  exit 1
+fi
+[ $congelado -eq 1 ] && echo "⚠ Publicando en horario de turno (PREP_DEPLOY_URGENTE=1)."
+bash "$(git rev-parse --show-toplevel)/scripts/smoke.sh" || exit 1

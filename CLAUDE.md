@@ -38,6 +38,20 @@ git remote set-url origin https://$GITHUB_TOKEN@github.com/franciscobarrientos64
 
 **IMPORTANTE:** Vercel redeploya automáticamente al pushear. Espera ~60s y el cambio está en `casa-italia.prep.rest`.
 
+## 3b. REGLAS DE TURNO (no romper el servicio de los clientes)
+
+El turno de los clientes es sagrado: una caída en hora punta es el problema #1 de la competencia y lo que Prep! promete resolver.
+
+- **Congelamiento:** no se publica a `main` de **martes a sábado entre 17:00 y 03:00 (hora Lima)**. El hook `.githooks/pre-push` lo bloquea. Activa el hook en cada clon nuevo: `git config core.hooksPath .githooks`.
+- **Smoke test obligatorio:** el mismo hook corre `bash scripts/smoke.sh` (sintaxis de todo el JS de POS, Línea, Mercado, Bienvenida, El Libro, Directorio, hub, login, etc. + los .js compartidos). Si falla, no se publica. Córrelo a mano antes de commitear cambios grandes.
+- **Urgencia real** (algo está caído en pleno turno): `PREP_DEPLOY_URGENTE=1 git push`. Solo para arreglar una caída, nunca para features.
+- **Rollback rápido:** si un deploy rompió algo, vuelve al anterior sin esperar un fix:
+  `cd ~/prep-platform && vercel ls prep-platform` → copia la URL del deploy anterior en estado Ready → `vercel rollback <url-del-deploy-anterior> --yes` (o `vercel promote <url> --yes`). Toma segundos. Luego arregla con calma y vuelve a publicar fuera del horario de turno.
+- **Migraciones de BD en horario de turno:** solo aditivas (`create index concurrently`, columnas nuevas con default). Nada que bloquee `ca_pedidos`/`ca_pedido_items` (ALTER con rewrite, `create index` sin `concurrently`, updates masivos).
+- **Monitoreo:** `prep_monitor_turno()` corre por pg_cron cada 2 min y abre incidentes en `prep_incidentes` (equipos sin latido >3 min, ventas en cola o rechazadas, comandas >20 min sin avanzar, errores del POS, BD lenta >500 ms). Se ven en **/portal › Salud del turno** (RPC `prep_salud_turno`) y se avisan por WhatsApp con la Edge Function `turno-alertas` (secrets `WA_TOKEN`, `WA_PHONE_ID`, `ALERTA_WHATSAPP_ADMIN`; sin llave quedan `pendiente_llave`). Horario de cada local: `config_local.horario_turno`.
+- **RLS rápida:** las políticas por tenant usan `(SELECT prep_is_super()) OR local_id = ANY (ARRAY(SELECT unnest(prep_mis_locales())))` (y `prep_mis_marcas()`), que se calcula una vez por consulta. **No escribas políticas nuevas con `prep_can_local(col)` por fila**: con miles de filas el POS se pone lento (medido: 1,6 s → 22 ms). Respaldo de las políticas anteriores en `prep_policy_backup`.
+- **Plan de contingencia para el local:** `docs/CONTINGENCIA.md` (se ve en `/instalacion?doc=contingencia`).
+
 ## 4. ESTRUCTURA DE ARCHIVOS
 
 ```

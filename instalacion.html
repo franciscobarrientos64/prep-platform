@@ -64,10 +64,13 @@ function box(ic,t,s){return `<div class="center"><div class="ic"><span class="ma
   if(!isSuper){app.innerHTML=box('lock','Acceso restringido','Este manual es solo para el super administrador. <br><a href="/" style="color:var(--primary)">Volver al inicio</a>');return;}
   // Cargar el markdown del libro de instalación
   try{
-    const res=await fetch('/docs/INSTALACION.md',{cache:'no-store'});
+    // ?doc=contingencia abre el plan de contingencia del turno (docs/CONTINGENCIA.md)
+    const esCont=new URLSearchParams(location.search).get('doc')==='contingencia';
+    const res=await fetch('/docs/'+(esCont?'CONTINGENCIA':'INSTALACION')+'.md',{cache:'no-store'});
     if(!res.ok)throw new Error('no md');
     const md=await res.text();
-    app.innerHTML='<div class="doc">'+marked.parse(md)+'</div>';
+    const nav='<p style="margin-bottom:14px">'+(esCont?'<a href="/instalacion" style="color:var(--primary)">← Manual de instalación</a>':'<a href="/instalacion?doc=contingencia" style="color:var(--primary)">Plan de contingencia del turno →</a>')+'</p>';
+    app.innerHTML='<div class="doc">'+nav+marked.parse(md)+'</div>';
   }catch(e){
     app.innerHTML=box('error','No se pudo cargar el manual','El archivo /docs/INSTALACION.md no está disponible aún. Verifica el deploy.');
   }

@@ -49,6 +49,19 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .mod-card .tag{position:absolute;top:10px;right:10px;font-family:var(--font-mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1.5px solid var(--outline)}
 .mod-card .tag.on{background:var(--green);color:#fff}.mod-card .tag.off{background:var(--gray-soft)}
 .note{font-family:var(--font-mono);font-size:11px;opacity:.55;text-align:center;padding:12px}
+/* Salud del turno */
+.salud{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:14px 16px}
+.salud-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.salud-k{display:flex;flex-direction:column}.salud-k b{font-family:var(--font-display);font-weight:400;font-size:24px;line-height:1}.salud-k span{font-family:var(--font-mono);font-size:10px;opacity:.6}
+.salud-k.bad b{color:var(--secondary)}.salud-k.ok b{color:var(--green)}
+.salud table{width:100%;border-collapse:collapse;font-size:13px}
+.salud th{text-align:left;font-family:var(--font-mono);font-size:10px;opacity:.6;font-weight:600;padding:6px 8px;border-bottom:2px solid var(--outline)}
+.salud td{padding:7px 8px;border-bottom:1px dashed var(--gray-soft);vertical-align:top}
+.salud td.n{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;border:1.5px solid var(--outline);vertical-align:middle}
+.dot.on{background:var(--green)}.dot.off{background:var(--gray-soft)}.dot.bad{background:var(--secondary)}
+.inc{font-size:12px;line-height:1.35}.inc.critico{color:var(--secondary);font-weight:700}
+.salud-scroll{overflow-x:auto}
 .boot{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .3s}.boot.gone{opacity:0;pointer-events:none}.boot .l{width:220px;height:70px;-webkit-mask:url(/logo.png) center/contain no-repeat;mask:url(/logo.png) center/contain no-repeat;background:var(--ink)}
 </style>
 </head>
@@ -94,7 +107,7 @@ async function load(){
   state.vcCount={all:(mv.data||[]).length};(mv.data||[]).forEach(v=>{state.vcCount[v.marca_id]=(state.vcCount[v.marca_id]||0)+1});
   if(!state.marcas.find(m=>m.id===state.sel))state.sel=state.marcas[0]?.id;
   if(!localesDe(state.sel).find(l=>l.id===state.selLocal))state.selLocal=localesDe(state.sel)[0]?.id||'';
-  render();$('#boot').classList.add('gone');
+  render();loadSalud();$('#boot').classList.add('gone');
 }
 function render(){
   const m=state.marcas.find(x=>x.id===state.sel);
@@ -102,6 +115,8 @@ function render(){
   const sub=state.subs.find(s=>s.marca_id===state.sel);
   const nact=MODULOS.filter(x=>modActivo(state.sel,x.k)).length;
   $('#screen').innerHTML=`
+    <div class="section-t">Salud del turno <span class="sub">en vivo · se actualiza cada 20 s</span><label class="sub" style="margin-left:auto;cursor:pointer"><input type="checkbox" id="saludTodos" ${state.saludTodos?'checked':''}> ver todos los locales</label></div>
+    <div class="salud" id="salud"><div class="note">Oído · midiendo…</div></div>
     <div class="section-t">Herramientas Prep <span class="sub">administración de la plataforma</span></div>
     <div class="tools">
       <a class="tool" href="/prep"><span class="material-symbols-outlined">tune</span><div><div class="nm">Consola de módulos</div><div class="ds">Activar features por cliente</div></div></a>
@@ -135,10 +150,40 @@ function render(){
       return on&&mo.href?`<a class="mod-card on" href="${mo.href}?marca=${state.sel}&local=${state.selLocal}" style="--ac:${mo.ac}">${inner}</a>`:`<div class="mod-card ${on?'on':'off'}" style="--ac:${mo.ac}">${inner}</div>`;
     }).join('')}</div></div>
     <div class="note">Selecciona un cliente para ver y entrar a sus módulos. (La data por-cliente se activa con el multi-tenant; hoy los módulos operan sobre Casa Italia.)</div>`;
+  $('#saludTodos').onchange=e=>{state.saludTodos=e.target.checked;renderSalud()};
+  renderSalud();
   $('#vcMarca').onchange=e=>{state.vcSel=e.target.value;render()};
   $('#cliente').onchange=e=>{state.sel=e.target.value;state.selLocal=localesDe(state.sel)[0]?.id||'';render()};
   if($('#local'))$('#local').onchange=e=>{state.selLocal=e.target.value;render()};
 }
+/* ===== Salud del turno (RPC prep_salud_turno, solo super admin) ===== */
+async function loadSalud(){const{data,error}=await sb.rpc('prep_salud_turno');if(!error)state.salud=data;else state.saludErr=error.message;renderSalud()}
+function hace(ts){const m=Math.round((Date.now()-new Date(ts))/60000);return m<1?'recién':m<60?m+' min':Math.round(m/60)+' h'}
+function sparkSalud(serie){if(!serie||serie.length<2)return'';const W=160,H=28,mx=Math.max(100,...serie.map(p=>+p.ms));
+  const pts=serie.map((p,i)=>`${(i/(serie.length-1)*W).toFixed(1)},${(H-(+p.ms/mx)*H).toFixed(1)}`).join(' ');
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-label="latencia últimas 2 h"><polyline points="${pts}" fill="none" stroke="var(--primary)" stroke-width="2"/></svg>`}
+function renderSalud(){const el=$('#salud');if(!el)return;const d=state.salud;
+  if(!d){el.innerHTML=`<div class="note">${state.saludErr?'Atrás · '+state.saludErr:'Oído · midiendo…'}</div>`;return}
+  const u=d.ultima||{};const locs=(d.locales||[]).filter(l=>state.saludTodos||l.en_turno||l.dispositivos||l.dispositivos_caidos||(l.incidentes||[]).length);
+  const inc=(d.locales||[]).reduce((a,l)=>a+(l.incidentes||[]).length,0)+(d.globales||[]).length;
+  const enCola=(d.locales||[]).reduce((a,l)=>a+(+l.en_cola||0),0),fall=(d.locales||[]).reduce((a,l)=>a+(+l.fallidos||0),0);
+  const lat=+u.latencia_ms||0,stale=u.ts&&(Date.now()-new Date(u.ts))>6*60000;
+  el.innerHTML=`<div class="salud-top">
+      <div class="salud-k ${lat>500||stale?'bad':'ok'}"><b class="mono">${u.latencia_ms!=null?Math.round(lat)+' ms':'—'}</b><span>latencia BD${u.ts?' · '+hace(u.ts):''}${stale?' · monitor detenido':''}</span></div>
+      <div>${sparkSalud(d.serie)}</div>
+      <div class="salud-k ${inc?'bad':'ok'}"><b class="mono">${inc}</b><span>incidentes abiertos</span></div>
+      <div class="salud-k ${enCola?'bad':'ok'}"><b class="mono">${enCola}</b><span>ventas en cola</span></div>
+      <div class="salud-k ${fall?'bad':'ok'}"><b class="mono">${fall}</b><span>rechazadas</span></div>
+      <div class="salud-k"><b class="mono">${u.conexiones??'—'}</b><span>conexiones BD</span></div>
+    </div>
+    ${(d.globales||[]).map(i=>`<div class="inc ${i.severidad}">● ${i.titulo} · ${hace(i.desde)}</div>`).join('')}
+    <div class="salud-scroll">${locs.length?`<table><tr><th>Cliente · local</th><th>Turno</th><th class="n">Equipos</th><th class="n">Sin señal</th><th class="n">En cola</th><th class="n">Cuentas abiertas</th><th>Incidentes</th></tr>
+      ${locs.map(l=>`<tr><td><strong>${l.marca}</strong> · ${l.local}</td><td><span class="dot ${(l.incidentes||[]).length?'bad':l.en_turno?'on':'off'}"></span>${l.en_turno?'en turno':'cerrado'}</td>
+        <td class="n">${l.dispositivos}</td><td class="n">${l.dispositivos_caidos||''}</td><td class="n">${(+l.en_cola||0)+(+l.fallidos?' · '+l.fallidos+' ✗':'')}</td><td class="n">${l.abiertos}</td>
+        <td>${(l.incidentes||[]).map(i=>`<div class="inc ${i.severidad}">● ${i.titulo} · ${hace(i.desde)}</div>`).join('')||'<span class="inc" style="opacity:.5">sin novedades</span>'}</td></tr>`).join('')}</table>`
+      :'<div class="note">Ningún local en turno ahora. Marca "ver todos los locales" para revisarlos.</div>'}</div>`}
+setInterval(()=>{if(!document.hidden)loadSalud()},20000);
+
 $('#logout').onclick=async()=>{await sb.auth.signOut();location.href='/login'};
 load().catch(e=>{console.error(e);$('#boot').classList.add('gone');$('#screen').innerHTML='<div class="note">Error al cargar</div>'});
 </script>
