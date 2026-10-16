@@ -13,7 +13,7 @@
 <script src="/tenant.js"></script>
 <script src="/role-view.js"></script>
 <style>
-/* Reporte imprimible de un examen de El Libro. "Descargar PDF" = imprimir → Guardar como PDF.
+/* Reporte de un examen de El Libro. Solo en pantalla: la impresión y el PDF están bloqueados (#no-print).
    Encabezado (logo Prep! / logo del cliente) y pie (prep.rest / página) van en los márgenes de @page. */
 @page{size:A4;margin:11mm 18mm 20mm;
   @bottom-left{content:'prep.rest';font:8.5pt 'IBM Plex Sans',sans-serif;color:#5b636b;vertical-align:top}
@@ -66,11 +66,11 @@ td.err{color:var(--soft);font-size:8.8pt}
 }
 @media (max-width:600px){.sheet{padding:18px 16px}.linea{grid-template-columns:1fr;gap:0}.big{gap:14px}}
 </style>
+<style id="no-print">@media print{html,body{display:none!important}}</style>
 </head>
 <body>
 <div class="toolbar">
   <button class="ghost" onclick="history.length>1?history.back():location.href='/el-libro'"><span class="material-symbols-outlined">arrow_back</span>El Libro</button>
-  <button onclick="window.print()"><span class="material-symbols-outlined">download</span>Descargar PDF</button>
 </div>
 <div class="sheet" id="sheet"><div class="estado">Oído · armando el reporte…</div></div>
 
