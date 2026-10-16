@@ -225,8 +225,8 @@ const SB_URL='https://jmkvphayyhwzootlybde.supabase.co';
 const SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const MARCA=window.PREP_MARCA||'__sin_contexto__', LOCAL=window.PREP_LOCAL||'__sin_contexto__';
-let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],locales:[],allVisitas:[],allResp:[],detalle:[],allDetalle:[]};
-let TAB='resumen', booted=false, PER='all', SELC=null, RADSEL='all', AUDPER=null, AUDVIS=null;
+let DB={plantilla:null,criterios:[],visitas:[],respuestas:[],acciones:[],allAcciones:[],locales:[],allVisitas:[],allResp:[],detalle:[],allDetalle:[]};
+let TAB='resumen', booted=false, PER='all', SELC=null, RADSEL='all', AUDPER=null, AUDVIS=null, ALLS=false;
 let CHARTS=[], PENDING=[];
 const SEDE_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9'];
 const CRIT_COLORS=['#1e5af9','#ff3b30','#f59e0b','#10b981','#7c3aed','#0ea5e9','#e11d48','#65a30d','#d97706','#0891b2','#9333ea'];
@@ -310,9 +310,23 @@ function trendChip(d){
 }
 function lvlColor(v){if(v==null)return null;return ['#171c20','#ff3b30','#ffcc00','#10b981','#1e5af9'][v]||null;}
 function setAud(p){AUDPER=p;AUDVIS=null;render();}
-function setAudVis(n){AUDVIS=(n==='all'?null:n==='sedes'?'sedes':+n);render();}
+function setAudVis(n){AUDVIS=(n==='all'?null:+n);render();}
+/* Alcance de cada vista: la sede activa o todas las sedes juntas (solo clientes multi-sede) */
+function multiSede(){return DB.locales.length>1;}
+function useAll(){return ALLS&&multiSede();}
+function scopeV(){return useAll()?DB.allVisitas:DB.visitas;}
+function scopeR(){return useAll()?DB.allResp:DB.respuestas;}
+function sedeNombre(){return (DB.locales.find(l=>l.id===LOCAL)||{}).nombre||'';}
+function scopeLbl(){return useAll()?'Todas las sedes':sedeNombre();}
+function scopeBar(){
+  if(!multiSede())return '';
+  const ic=t=>`<span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">${t}</span>`;
+  return `<div class="perbar"><button class="pchip ${useAll()?'on':''}" onclick="setScope(true)">${ic('table_view')} Todas las sedes</button><button class="pchip ${useAll()?'':'on'}" onclick="setScope(false)">${ic('storefront')} ${escapeHtml(sedeNombre())}</button></div>`;
+}
+function setScope(b){ALLS=!!b;AUDVIS=null;render();}
 /* Matriz consolidada: 4 visitas de todas las sedes, ítem por ítem, por período */
-function audMatrix(per){
+function audMatrix(per,vn){
+  const VN=vn?[vn]:[1,2,3,4];
   const locs=DB.locales;
   const rows=(DB.allDetalle||[]).filter(d=>d.periodo===per);
   if(!rows.length)return '<div class="empty">Sin detalle para este período.</div>';
@@ -326,24 +340,24 @@ function audMatrix(per){
   });
   const cur={}, prev={};
   (DB.allDetalle||[]).forEach(d=>{const k=d.local_id+'|'+d.mundo+'|'+((d.orden!=null?d.orden:'')+'␟'+d.item);if(d.periodo===per)cur[k]=d;else if(prevPer&&d.periodo===prevPer)prev[k]=d;});
-  const iavg=d=>{if(!d)return null;const xs=[d.v1,d.v2,d.v3,d.v4].filter(v=>v!=null);return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null;};
-  const dind=k=>{const ca=iavg(cur[k]),pa=prevPer?iavg(prev[k]):null;
+  const iavg=(d,ns)=>{if(!d)return null;const xs=(ns||[1,2,3,4]).map(n=>d['v'+n]).filter(v=>v!=null);return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null;};
+  const dind=k=>{const ca=iavg(cur[k],VN),pa=prevPer?iavg(prev[k]):null;
     if(ca==null||pa==null)return `<div class="dind" style="color:#c8ccd0" title="sin comparación">·</div>`;
     const dd=ca-pa, flat=Math.abs(dd)<0.13, up=dd>0, col=flat?'#9aa0a6':(up?'var(--green)':'var(--secondary)');
     return `<div class="dind" style="color:${col}" title="${flat?'se mantiene':(up?'subió':'bajó')} vs ${prevPer}">${flat?'=':(up?'▲':'▼')}</div>`;};
   const sedeRow=`<div class="srow"><div class="num"></div><div class="lbl"></div>`+locs.map(l=>`<div class="cgh">${escapeHtml(l.nombre)}</div>`).join('')+`</div>`;
-  const mScore=(mu,lid,src)=>{let s=0,c=0;itemsByMundo[mu].forEach(it=>{const d=src[lid+'|'+mu+'|'+it.key];if(d)[d.v1,d.v2,d.v3,d.v4].forEach(v=>{if(v!=null){s+=v;c++;}});});return c?s/c/4*100:null;};
+  const mScore=(mu,lid,src,ns)=>{let s=0,c=0;itemsByMundo[mu].forEach(it=>{const d=src[lid+'|'+mu+'|'+it.key];if(d)(ns||[1,2,3,4]).forEach(n=>{const v=d['v'+n];if(v!=null){s+=v;c++;}});});return c?s/c/4*100:null;};
   let body='';
   mundos.forEach(mu=>{
     body+=`<div class="muh">${escapeHtml(mu)}</div>`+sedeRow;
     itemsByMundo[mu].forEach(it=>{
       body+=`<div class="mrow"><div class="num">${it.orden!=null?it.orden:''}</div><div class="lbl">${escapeHtml(it.item)}</div>`
         +locs.map(l=>{const k=l.id+'|'+mu+'|'+it.key,d=cur[k];
-          return `<div class="cg">`+[1,2,3,4].map(n=>{const v=d?d['v'+n]:null,col=lvlColor(v);return `<div class="msq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+dind(k)+`</div>`;}).join('')
+          return `<div class="cg">`+VN.map(n=>{const v=d?d['v'+n]:null,col=lvlColor(v);return `<div class="msq" style="background:${col||'#fff'}${col?'':';border-color:#e8eaed'}"></div>`;}).join('')+dind(k)+`</div>`;}).join('')
         +`</div>`;
     });
     body+=`<div class="scorerow"><div class="num"></div><div class="lbl">Puntaje ${escapeHtml(mu)}</div>`
-      +locs.map(l=>{const s=mScore(mu,l.id,cur);if(s==null)return `<div class="scv"></div>`;const sc=scoreColor(s),p=prevPer?mScore(mu,l.id,prev):null,dd=(p==null)?null:s-p;
+      +locs.map(l=>{const s=mScore(mu,l.id,cur,VN);if(s==null)return `<div class="scv"></div>`;const sc=scoreColor(s),p=prevPer?mScore(mu,l.id,prev):null,dd=(p==null)?null:s-p;
         const arr=dd==null?'':(Math.abs(dd)<0.5?'<span style="color:#9aa0a6;font-weight:800">=</span>':dd>0?'<span style="color:var(--green);font-weight:800">▲</span>':'<span style="color:var(--secondary);font-weight:800">▼</span>');
         return `<div class="scv"><span style="background:${sc[0]};color:${sc[1]}">${Math.round(s)}%</span>${arr}</div>`;}).join('')
       +`</div>`;
@@ -383,15 +397,20 @@ async function load(){
     sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('orden',{nullsFirst:false}).order('id'),
     sb.from('mys_plantillas').select('*').eq('local_id',LOCAL).eq('activo',true).order('created_at').limit(1),
     sb.from('mys_visitas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}),
-    sb.from('mys_acciones').select('*').eq('local_id',LOCAL).order('created_at',{ascending:false})
+    sb.from('mys_acciones').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false})
   ]);
   DB.locales=loc.data||[];
   DB.plantilla=(pl.data||[])[0]||null;
   DB.allVisitas=vi.data||[];
   DB.visitas=DB.allVisitas.filter(v=>v.local_id===LOCAL);
-  DB.acciones=ac.data||[];
+  DB.allAcciones=ac.data||[];
+  DB.acciones=DB.allAcciones.filter(a=>a.local_id===LOCAL);
   if(DB.plantilla){const cr=await sb.from('mys_criterios').select('*').eq('plantilla_id',DB.plantilla.id).order('orden');DB.criterios=cr.data||[];}
-  if(DB.allVisitas.length){const rp=await sb.from('mys_respuestas').select('*').in('visita_id',DB.allVisitas.map(v=>v.id));DB.allResp=rp.data||[];}else DB.allResp=[];
+  // Supabase corta en 1000 filas: se pide por lotes de visitas y se pagina cada lote
+  DB.allResp=[];
+  const vids=DB.allVisitas.map(v=>v.id);
+  for(let i=0;i<vids.length;i+=80){const lote=vids.slice(i,i+80);let from=0;const page=1000;
+    while(true){const rp=await sb.from('mys_respuestas').select('*').in('visita_id',lote).order('id').range(from,from+page-1);const d=rp.data||[];DB.allResp=DB.allResp.concat(d);if(d.length<page)break;from+=page;}}
   const locVis=new Set(DB.visitas.map(v=>v.id));
   DB.respuestas=DB.allResp.filter(r=>locVis.has(r.visita_id));
   try{let all=[],from=0;const page=1000;while(true){const r=await sb.from('mys_detalle').select('*').eq('marca_id',MARCA).order('orden').range(from,from+page-1);const d=r.data||[];all=all.concat(d);if(d.length<page)break;from+=page;}DB.allDetalle=all;DB.detalle=all.filter(d=>d.local_id===LOCAL);}catch(e){DB.allDetalle=[];DB.detalle=[];}
@@ -423,8 +442,8 @@ function render(){
 
 /* ===== RESUMEN (por sede) ===== */
 function vResumen(){
-  const Vall=DB.visitas, Rall=DB.respuestas;
-  if(!Vall.length)return '<div class="empty">Aún no hay evaluaciones para esta sede.<br>Toca «Nueva evaluación» para registrar la primera.</div>';
+  const Vall=scopeV(), Rall=scopeR();
+  if(!Vall.length)return scopeBar()+'<div class="empty">Aún no hay evaluaciones para esta sede.<br>Toca «Nueva evaluación» para registrar la primera.</div>';
   const msAll=months(Vall);
   const V=perVis(Vall); const idsP=new Set(V.map(v=>v.id)); const R=Rall.filter(r=>idsP.has(r.visita_id));
   const crit=DB.criterios.map(c=>c.criterio);
@@ -441,9 +460,9 @@ function vResumen(){
   const evoM=msAll.map(m=>{const vs=Vall.filter(v=>(v.fecha||'').slice(0,7)===m);return vs.length?Math.round(avg(vs.map(v=>+v.score_total||0))*10)/10:null;});
   const evoTot={type:'line',data:{labels:msAll.map(m=>mLabel(m)),datasets:[{label:'Puntaje total',data:evoM,borderColor:'#171c20',backgroundColor:'#171c20',pointBackgroundColor:evoM.map(v=>v==null?'#fff':scoreColor(v)[0]),pointBorderColor:'#171c20',pointBorderWidth:2,pointRadius:msAll.map(m=>PER===m?8:5),pointHoverRadius:8,borderWidth:3,tension:.3,spanGaps:true}]},
     options:{layout:{padding:{top:24,left:6,right:6}},scales:{y:zoomY(evoM)},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+'/100'}},datalabels:{display:true,align:'top',anchor:'end',offset:6,color:'#171c20',font:{weight:'700',size:11},formatter:v=>v==null?'':v.toFixed(1)}}}};
-  const sedeNm=DB.locales.length>1?((DB.locales.find(l=>l.id===LOCAL)||{}).nombre||''):'';
+  const sedeNm=multiSede()?scopeLbl():'';
   return `
-  ${periodBar(msAll)}
+  ${scopeBar()}${periodBar(msAll)}
   <div class="kpis">
    <div class="kpi reveal"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px;color:var(--primary)">emoji_events</span>Mejor criterio</div><div class="val" style="font-size:18px">${escapeHtml(best.c)}</div><div class="sub">${best.s.toFixed(0)}/100</div></div>
    <div class="kpi reveal"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px;color:var(--secondary)">warning</span>Crítico</div><div class="val down" style="font-size:18px">${escapeHtml(worst.c)}</div><div class="sub">${worst.s.toFixed(0)}/100</div></div>
@@ -451,14 +470,14 @@ function vResumen(){
    <div class="kpi reveal"><div class="lbl"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>Promedio</div><div class="val">${anual.toFixed(0)}</div><div class="sub">${msAll.length} meses</div></div>
   </div>
   <div class="section"><div class="section-h"><h3>Evolución del puntaje total${sedeNm?' · '+escapeHtml(sedeNm):''}</h3><span class="hint">promedio mensual · eje ajustado a los puntajes</span></div><div class="card">${chart('revo',evoTot,280)}</div></div>
-  <div class="section"><div class="section-h"><h3>Puntaje por criterio</h3><span class="hint">${periodLbl}</span></div><div class="card">${chart('rbar',barCfg,Math.max(300,crit.length*28))}</div></div>
+  <div class="section"><div class="section-h"><h3>Puntaje por criterio${sedeNm?' · '+escapeHtml(sedeNm):''}</h3><span class="hint">${periodLbl}</span></div><div class="card">${chart('rbar',barCfg,Math.max(300,crit.length*28))}</div></div>
   <div class="section"><div class="section-h"><h3>Distribución por nivel</h3><span class="hint">criterios en cada banda · ${periodLbl}</span></div><div class="card">${chart('rdon',donut,250)}</div></div>`;
 }
 
 /* ===== TENDENCIAS ===== */
 function vTendencias(){
-  const V=DB.visitas, R=DB.respuestas, crit=DB.criterios.map(c=>c.criterio), ms=months(V);
-  if(!V.length)return '<div class="empty">Sin datos.</div>';
+  const V=scopeV(), R=scopeR(), crit=DB.criterios.map(c=>c.criterio), ms=months(V);
+  if(!V.length)return scopeBar()+'<div class="empty">Sin datos.</div>';
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   const cAvgAll=c=>avg(R.filter(z=>z.criterio===c).map(z=>+z.puntaje||0));
   if(SELC===null)SELC=new Set([...crit].sort((a,b)=>cAvgAll(a)-cAvgAll(b)).slice(0,3));
@@ -466,26 +485,27 @@ function vTendencias(){
   const ds=sel.map(c=>{const col=CRIT_COLORS[crit.indexOf(c)%CRIT_COLORS.length];return {label:c,data:ms.map(m=>{const x=R.filter(z=>z.criterio===c&&v2m[z.visita_id]===m).map(z=>+z.puntaje||0);return x.length?Math.round(avg(x)):null;}),borderColor:col,backgroundColor:col,pointBackgroundColor:col,pointBorderColor:'#171c20',pointBorderWidth:2,borderWidth:3,tension:.3,spanGaps:true,pointRadius:4,pointHoverRadius:6};});
   const pills=`<div class="pills">${crit.map(c=>`<button class="pill ${SELC.has(c)?'on':''}" onclick="toggleCrit('${c.replace(/'/g,"\\'")}')">${escapeHtml(c)}</button>`).join('')}</div>`;
   const cfg={type:'line',data:{labels:ms.map(m=>MESN[+m.split('-')[1]]),datasets:ds},options:{scales:{y:{min:0,max:100,ticks:{stepSize:20}}},plugins:{legend:{position:'bottom'}}}};
-  return `<div class="section"><div class="section-h"><h3>Evolución por criterio</h3><span class="hint">elige criterios</span></div>${pills}<div class="card">${sel.length?chart('tend',cfg,320):'<div class="empty">Selecciona al menos un criterio.</div>'}</div></div>`;
+  return scopeBar()+`<div class="section"><div class="section-h"><h3>Evolución por criterio${multiSede()?' · '+escapeHtml(scopeLbl()):''}</h3><span class="hint">elige criterios</span></div>${pills}<div class="card">${sel.length?chart('tend',cfg,320):'<div class="empty">Selecciona al menos un criterio.</div>'}</div></div>`;
 }
 function toggleCrit(c){if(SELC===null)SELC=new Set();SELC.has(c)?SELC.delete(c):SELC.add(c);render();}
 
 /* ===== RADAR ===== */
 function vRadar(){
-  const V=DB.visitas, R=DB.respuestas, crit=DB.criterios.map(c=>c.criterio), ms=months(V);
-  if(!V.length)return '<div class="empty">Sin datos.</div>';
+  const V=scopeV(), R=scopeR(), crit=DB.criterios.map(c=>c.criterio), ms=months(V);
+  if(!V.length)return scopeBar()+'<div class="empty">Sin datos.</div>';
+  if(RADSEL!=='all'&&!ms.includes(RADSEL))RADSEL='all';
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   const show=RADSEL==='all'?ms:[RADSEL];
   const ds=show.map((m,i)=>{const col=SEDE_COLORS[i%SEDE_COLORS.length],all=show.length===1;return {label:mLabel(m),data:crit.map(c=>{const x=R.filter(z=>z.criterio===c&&v2m[z.visita_id]===m).map(z=>+z.puntaje||0);return x.length?Math.round(avg(x)):0;}),borderColor:col,backgroundColor:col+(all?'40':'22'),borderWidth:2,pointRadius:2};});
   const chips=`<div class="perbar"><button class="pchip ${RADSEL==='all'?'on':''}" onclick="setRad('all')">Todos</button>`+ms.map(m=>`<button class="pchip ${RADSEL===m?'on':''}" onclick="setRad('${m}')">${mLabel(m)}</button>`).join('')+`</div>`;
   const cfg={type:'radar',data:{labels:crit,datasets:ds},options:{scales:{r:{min:0,max:100,ticks:{stepSize:20,backdropColor:'transparent'}}},plugins:{legend:{position:'bottom'}}}};
-  return chips+`<div class="section"><div class="section-h"><h3>Perfil por criterio</h3><span class="hint">${RADSEL==='all'?'meses superpuestos':mLabel(RADSEL)}</span></div><div class="card">${chart('rad',cfg,440)}</div></div>`;
+  return scopeBar()+chips+`<div class="section"><div class="section-h"><h3>Perfil por criterio${multiSede()?' · '+escapeHtml(scopeLbl()):''}</h3><span class="hint">${RADSEL==='all'?'meses superpuestos':mLabel(RADSEL)}</span></div><div class="card">${chart('rad',cfg,440)}</div></div>`;
 }
 function setRad(m){RADSEL=m;render();}
 
 /* ===== DETALLE (4 visitas del mes juntas) ===== */
 function vDetalle(){
-  const V=DB.visitas, R=DB.respuestas, multi=DB.locales.length>1, ms=multi?months(DB.allVisitas):months(V);
+  const V=scopeV(), R=scopeR(), multi=multiSede(), ms=multi?months(DB.allVisitas):months(V);
   if(!V.length && !multi)return '<div class="empty">Sin datos.</div>';
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
   const crows=DB.criterios.map(c=>({key:c.criterio,label:c.criterio}));
@@ -509,8 +529,9 @@ function vDetalle(){
   };
   if(PER==='all'){
     const mtot={fn:c=>{const vs=V.filter(v=>v2m[v.id]===c.key);return vs.length?avg(vs.map(v=>+v.score_total||0)):null;}};
-    return periodBar(ms)+genMes()+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes</h3><span class="hint">elige un mes para ver sus 4 visitas${multi?' y la vista general de sedes':''}</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{total:mtot})}<div class="legend">${LEGEND}</div></div></div>`;
+    return scopeBar()+periodBar(ms)+`<div class="section"><div class="section-h"><h3>Puntaje por criterio y mes${multi?' · '+escapeHtml(scopeLbl()):''}</h3><span class="hint">${useAll()?'elige un mes para comparar las sedes':'elige un mes para ver sus 4 visitas'}</span></div><div class="card">${heat(crows,ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{total:mtot})}<div class="legend">${LEGEND}</div></div></div>`;
   }
+  if(useAll())return scopeBar()+periodBar(ms)+genMes();
   const vis=V.filter(v=>(v.fecha||'').slice(0,7)===PER).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
   const pmap={};R.forEach(r=>{pmap[r.visita_id+'|'+r.criterio]=+r.puntaje||0;});
   const cols=vis.map((v,i)=>({key:v.id,label:'V'+(i+1)})).concat([{key:'__p',label:'Prom'}]);
@@ -527,32 +548,33 @@ function vDetalle(){
   const stitle=(multi&&vis.length?escapeHtml(sedeName)+' · ':'')+mLabel(PER)+' · '+vis.length+' visitas'+hchip;
   const vtot={fn:c=>{if(c.key==='__p')return vis.length?avg(vis.map(v=>+v.score_total||0)):null;const v=vis.find(x=>x.id===c.key);return v&&v.score_total!=null?+v.score_total:null;},delta:totD};
   const perSede=vis.length?`<div class="section"><div class="section-h"><h3>${stitle}</h3><span class="hint">${dhint}</span></div><div class="card">${heat(crows,cols,valFn,{delta,total:vtot})}<div class="legend">${LEGEND}</div></div></div>`:'';
-  return periodBar(ms)+genMes()+perSede;
+  return scopeBar()+periodBar(ms)+(perSede||'<div class="empty">Esta sede no tiene visitas en '+mLabel(PER)+'.</div>');
 }
 
 /* ===== AUDITORÍA (detalle ítem por ítem, color) ===== */
 function vAuditoria(){
-  const det=DB.detalle||[];
-  const V=DB.visitas,R=DB.respuestas,ms=months(V);
+  const all=useAll(), det=(all?DB.allDetalle:DB.detalle)||[];
+  const V=scopeV(),R=scopeR(),ms=months(V);
   const v2m={};V.forEach(v=>v2m[v.id]=(v.fecha||'').slice(0,7));
-  let h=`<div class="section"><div class="section-h"><h3>Puntajes generales</h3><span class="hint">% alcanzado por criterio y mes</span></div>
+  let h=scopeBar()+`<div class="section"><div class="section-h"><h3>Puntajes generales${multiSede()?' · '+escapeHtml(scopeLbl()):''}</h3><span class="hint">% alcanzado por criterio y mes</span></div>
     <div class="card">${heat(DB.criterios.map(c=>({key:c.criterio,label:c.criterio})),ms.map(m=>({key:m,label:MESN[+m.split('-')[1]]})),(r,c)=>{const x=R.filter(z=>z.criterio===r.key&&v2m[z.visita_id]===c.key).map(z=>+z.puntaje||0);return x.length?avg(x):null;},{pct:true})}<div class="legend">${LEGEND}</div></div></div>`;
   if(!det.length)return h+'<div class="empty">Sin detalle ítem por ítem cargado.</div>';
   const periodos=[...new Set(det.map(d=>d.periodo))].sort();
-  const per=AUDPER||periodos[periodos.length-1];
+  const per=(AUDPER&&periodos.includes(AUDPER))?AUDPER:periodos[periodos.length-1];
   const items=det.filter(d=>d.periodo===per);
   const mundos=[];items.forEach(d=>{if(!mundos.includes(d.mundo))mundos.push(d.mundo);});
   const chips=periodos.length>1?`<div class="perbar">${periodos.map(p=>`<button class="pchip ${p===per?'on':''}" onclick="setAud('${p}')">${escapeHtml(p)}</button>`).join('')}</div>`:'';
   const lvlLeg=[['Sin evaluar','#f1f1f1'],['No cumple','#171c20'],['Bajo','#ff3b30'],['Medio','#ffcc00'],['Bueno','#10b981'],['Excelente','#1e5af9']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
   const LVLN=['No cumple','Bajo','Medio','Bueno','Excelente'];
   const visCols=[1,2,3,4].filter(n=>items.some(d=>d['v'+n]!=null));
-  const multi=DB.locales.length>1;
-  const sedesChip=multi?`<button class="pchip ${AUDVIS==='sedes'?'on':''}" onclick="setAudVis('sedes')"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">table_view</span> Todas las sedes</button>`:'';
-  const visBar=`<div class="perbar">`+sedesChip+`<button class="pchip ${AUDVIS==null?'on':''}" onclick="setAudVis('all')"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">grid_view</span> Grilla</button>`
+  if(AUDVIS!=null&&!visCols.includes(AUDVIS))AUDVIS=null;
+  const visBar=`<div class="perbar"><button class="pchip ${AUDVIS==null?'on':''}" onclick="setAudVis('all')"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px">grid_view</span> Todas las visitas</button>`
     +visCols.map(n=>`<button class="pchip ${AUDVIS===n?'on':''}" onclick="setAudVis('${n}')">Visita ${n}</button>`).join('')+`</div>`;
-  // --- consolidado: 4 visitas de TODAS las sedes juntas, ítem por ítem ---
-  if(AUDVIS==='sedes'&&multi){
-    return h+`<div class="section"><div class="section-h"><h3>Detalle por sede · ${escapeHtml(per)}</h3><span class="hint">las 4 visitas de cada sede + ▲/▼ vs mes anterior, ítem por ítem</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${audMatrix(per)}</div></div>`;
+  // --- todas las sedes juntas, ítem por ítem (las 4 visitas o solo la elegida) ---
+  if(all){
+    const tit=AUDVIS==null?'Detalle por sede':'Visita '+AUDVIS+' · por sede';
+    const hint=AUDVIS==null?'las 4 visitas de cada sede + ▲/▼ vs mes anterior, ítem por ítem':'solo la visita '+AUDVIS+' de cada sede + ▲/▼ vs promedio del mes anterior';
+    return h+`<div class="section"><div class="section-h"><h3>${tit} · ${escapeHtml(per)}</h3><span class="hint">${hint}</span></div>${chips}${visBar}<div class="legend" style="margin:0 0 10px">${lvlLeg}</div><div class="card">${audMatrix(per,AUDVIS)}</div></div>`;
   }
   // --- desglose ítem por ítem de UNA visita, agrupado por sección ---
   if(AUDVIS!=null){
@@ -687,9 +709,11 @@ async function saveVisita(){
 
 /* ===== PLAN DE ACCIÓN ===== */
 function vAcciones(){
-  let h=`<button class="btn ghost" onclick="addAccionFrom(null)"><span class="material-symbols-outlined">add</span>Nueva acción</button><div style="height:12px"></div>`;
-  if(!DB.acciones.length)return h+'<div class="empty">Sin acciones de mejora.</div>';
-  h+=DB.acciones.map(a=>{
+  const all=useAll(), lista=all?DB.allAcciones:DB.acciones;
+  // en «todas las sedes» no se crea: cada acción pertenece a una sede
+  const h=scopeBar()+(all?'':`<button class="btn ghost" onclick="addAccionFrom(null)"><span class="material-symbols-outlined">add</span>Nueva acción</button><div style="height:12px"></div>`);
+  if(!lista.length)return h+'<div class="empty">Sin acciones de mejora.</div>';
+  const card=a=>{
     const parts=(a.descripcion||'').split('\n');
     const title=parts[0]||'';
     const det=parts.slice(1).filter(l=>l.trim());
@@ -702,10 +726,14 @@ function vAcciones(){
       ${det.length?`<div class="accdet">${detHtml}</div>`:''}
       <div class="meta">${a.area?'<span>'+escapeHtml(a.area)+'</span>':''}${a.responsable?'<span>'+escapeHtml(a.responsable)+'</span>':''}${a.due_date?'<span>'+fmtD(a.due_date)+'</span>':''}</div></div>
       <span class="tagx ${a.estado==='hecho'?'hecho':a.estado==='en_proceso'?'proc':'pend'}">${a.estado==='hecho'?'Hecho':a.estado==='en_proceso'?'En proceso':'Pendiente'}</span></div>`;
-  }).join('');
-  return h;
+  };
+  if(!all)return h+lista.map(card).join('');
+  // todas las sedes: agrupado por sede, en el orden de inv_locales
+  return h+DB.locales.map(l=>{const xs=lista.filter(a=>a.local_id===l.id);if(!xs.length)return '';
+    const hechas=xs.filter(a=>a.estado==='hecho').length;
+    return `<div class="section"><div class="section-h"><h3>${escapeHtml(l.nombre)}</h3><span class="hint">${xs.length} acciones · ${hechas} hechas</span></div>${xs.map(card).join('')}</div>`;}).join('');
 }
-async function toggleAccion(id){const a=DB.acciones.find(x=>x.id===id);if(!a)return;const nx=a.estado==='pendiente'?'en_proceso':a.estado==='en_proceso'?'hecho':'pendiente';await sb.from('mys_acciones').update({estado:nx}).eq('id',id);a.estado=nx;render();}
+async function toggleAccion(id){const a=DB.allAcciones.find(x=>x.id===id);if(!a)return;const nx=a.estado==='pendiente'?'en_proceso':a.estado==='en_proceso'?'hecho':'pendiente';await sb.from('mys_acciones').update({estado:nx}).eq('id',id);a.estado=nx;render();}
 function addAccionFrom(visitaId){
   document.getElementById('shTitle').textContent='Nueva acción de mejora';document.getElementById('shMeta').textContent='';
   document.getElementById('shBody').innerHTML=`<label class="field-lbl">Descripción</label><textarea class="input" id="ac_d" placeholder="Acción concreta de mejora"></textarea>
