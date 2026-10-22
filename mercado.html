@@ -120,6 +120,43 @@ button{font-family:inherit;cursor:pointer}
 .boot .spinner{width:34px;height:34px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:640px){.row-card{grid-template-columns:auto 1fr}.row-right{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+/* ===== PRODUCCIÓN Y FRÍO (ME-16..18) ===== */
+.pf-board{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;align-items:start}
+.pf-col{background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:12px;min-height:180px;transition:background .12s,transform .12s}
+.pf-col.over{background:var(--primary-soft);transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.pf-col.foco{outline:4px solid var(--tertiary);outline-offset:2px}
+.pf-colh{display:flex;align-items:center;gap:8px;padding-bottom:10px;margin-bottom:10px;border-bottom:2px solid var(--outline)}
+.pf-colh h3{font-size:15px;font-weight:700;line-height:1.1}
+.pf-colh .sub{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.pf-ico{width:34px;height:34px;border:2px solid var(--outline);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--primary-soft)}
+.pf-ico.congelador{background:#dbeafe}.pf-ico.ambiente{background:var(--amber-soft)}
+.pf-temp{margin-left:auto;font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 8px;border:2px solid var(--outline);border-radius:999px;background:var(--green-soft);white-space:nowrap}
+.pf-temp.mal{background:var(--secondary);color:#fff}.pf-temp.sin{background:var(--gray-soft)}
+.pf-card{display:flex;gap:8px;align-items:flex-start;border:2px solid var(--outline);border-radius:12px;padding:8px 10px 8px 4px;margin-bottom:8px;background:var(--surface);cursor:pointer;box-shadow:2px 2px 0 0 var(--outline)}
+.pf-card.vencido{background:var(--red-soft)}.pf-card.pronto{background:var(--amber-soft)}
+.pf-grip{cursor:grab;padding:2px;touch-action:none;user-select:none;opacity:.55}
+.pf-cb{flex:1;min-width:0}
+.pf-cn{font-weight:700;font-size:14px;line-height:1.25}
+.pf-cm{font-family:var(--font-mono);font-size:11px;opacity:.7;margin-top:2px}
+.pf-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.pf-dot{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:999px;border:2px solid var(--outline)}
+.pf-chip{font-family:var(--font-mono);font-size:11px;font-weight:600;border:2px dashed var(--outline);border-radius:999px;padding:2px 9px;cursor:grab;touch-action:none;user-select:none;background:var(--surface)}
+.pf-vacia{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.5;padding:22px 0;text-align:center;border:2px dashed var(--gray-soft);border-radius:12px}
+.pf-ghost{position:fixed;left:0;top:0;z-index:700;pointer-events:none;background:var(--ink);color:var(--bg);font-weight:600;font-size:13px;padding:8px 12px;border:2px solid var(--outline);border-radius:10px;box-shadow:var(--shadow-sm);white-space:nowrap}
+.pf-dock{position:fixed;left:0;right:0;bottom:0;z-index:600;display:none;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px;background:var(--bg);border-top:3px solid var(--outline)}
+.pf-dock.on{display:flex}
+.pf-dock div{flex:1;min-width:110px;max-width:190px;text-align:center;padding:14px 6px;border:2px dashed var(--outline);border-radius:12px;font-weight:700;font-size:13px;background:var(--surface);display:flex;flex-direction:column;align-items:center;gap:4px}
+.pf-dock div.over{border-style:solid;background:var(--primary);color:#fff}
+.pf-dock div.usar.over{background:var(--green);color:#fff}.pf-dock div.botar.over{background:var(--secondary);color:#fff}
+body.pf-dragging{user-select:none;cursor:grabbing}
+.pf-seg{display:inline-flex;gap:3px;vertical-align:middle}
+.pf-seg i{width:14px;height:10px;border:1.5px solid var(--outline);border-radius:3px;background:var(--surface)}
+.pf-seg i.f{background:var(--green)}.pf-seg i.f.low{background:var(--secondary)}
+.pf-bar{height:12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);overflow:hidden;margin-top:6px}
+.pf-bar i{display:block;height:100%;background:var(--green)}.pf-bar i.low{background:var(--secondary)}
+.pf-tbl input,.pf-tbl select{padding:6px 8px;border:2px solid var(--outline);border-radius:8px;font:inherit;font-size:13px;width:100%;background:var(--surface)}
+.pf-tbl input[type=number]{max-width:90px}
+@media(max-width:640px){.pf-board{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -164,13 +201,13 @@ function setHead(mk,t,m,bg='var(--primary-soft)'){$('#sheet-mark').textContent=m
 
 /* ===== LOAD ===== */
 async function loadAll(){
-  await Promise.all([loadAlertaWA(),loadParLocal(),loadParHist(),loadUsuario(),loadNumLocales(),loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist()]);
-  const h=location.hash.replace('#','');if(['inventario','pares','carga','pedido','compras','mermas','movimientos','reportes'].includes(h))state.view=h;
+  await Promise.all([loadAlertaWA(),loadParLocal(),loadParHist(),loadUsuario(),loadNumLocales(),loadProductos(),loadProveedores(),loadProvProd(),loadMovs(),loadMermas(),loadOrdenes(),loadPreciosMercado(),loadSesiones(),loadRecetas(),loadVentasItems(),loadHist(),loadProduccion()]);
+  const h=location.hash.replace('#','');if(['inventario','pares','carga','pedido','compras','mermas','movimientos','reportes','teorico','produccion'].includes(h))state.view=h;
   render();subscribe();$('#boot').classList.add('gone');
 }
 async function loadNumLocales(){const{count}=await sb.from('inv_locales').select('id',{count:'exact',head:true}).eq('marca_id',MARCA);state.locales1=(count||1)<=1}
 async function loadSesiones(){const{data}=await sb.from('inv_sesiones_conteo').select('*').eq('local_id',LOCAL).eq('estado','tomado').order('iniciada_at',{ascending:false});state.sesiones=data||[]}
-async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento,precio_venta,categoria_menu,estacion_id').eq('marca_id',MARCA);state.recetas=data||[]}
+async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('id,nombre,ingredientes,rendimiento,precio_venta,categoria_menu,estacion_id,tipo,vida_refri_dias,vida_congelado_dias').eq('marca_id',MARCA);state.recetas=data||[]}
 function teoDesde(){const d=new Date();if(state.teoPeriodo==='hoy')return d.toISOString().slice(0,10)+'T00:00:00';if(state.teoPeriodo==='mes'){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01T00:00:00'}d.setDate(d.getDate()-7);return d.toISOString().slice(0,10)+'T00:00:00'}
 // Ventas del período: join embebido con ca_pedidos (filtra sede y fecha en el servidor) + paginación.
 // Antes se mandaban todos los ids de pedidos en la URL (.in) y con volumen la consulta reventaba.
@@ -210,6 +247,7 @@ function render(){renderHeader();renderTabs();
   else if(state.view==='movimientos')renderMovimientos();
   else if(state.view==='reportes')renderReportes();
   else if(state.view==='teorico')renderTeorico();
+  else if(state.view==='produccion')renderProduccion();
 }
 function renderHeader(){
   const bajo=state.productos.filter(p=>estadoStock(p)!=='ok').length;
@@ -231,6 +269,7 @@ function renderTabs(){
     {k:'carga',l:'Carga rápida',ico:'bolt'},
     {k:'pedido',l:'Armar pedido',ico:'list_alt',n:nPedido||null},
     {k:'compras',l:'Compras',ico:'shopping_cart',n:state.ordenes.filter(o=>o.estado!=='recibida'&&o.estado!=='cancelada').length},
+    {k:'produccion',l:'Producción y frío',ico:'ac_unit',n:state.pf.tandas.filter(t=>{const d=pfDias(t.vence);return d!=null&&d<=1}).length||null},
     {k:'mermas',l:'Mermas',ico:'delete_sweep',n:state.mermas.length},
     {k:'movimientos',l:'Movimientos',ico:'sync_alt'},
     {k:'teorico',l:'Teórico vs real',ico:'science'},
@@ -664,7 +703,7 @@ function renderMermas(){
       <div class="kpi"><div class="val">${state.mermas.length}</div><div class="lbl">Registros</div></div></div>
     <div class="toolbar"><button class="btn-ico primary" id="me-add"><span class="material-symbols-outlined">add</span><span>Registrar merma</span></button></div>
     ${state.mermas.map(m=>{const p=prod(m.producto_id);return `<div class="row-card"><span class="row-emoji">${p?.emoji||'🗑️'}</span>
-      <div class="row-main"><h3>${p?.nombre||m.producto_id}</h3><div class="row-meta"><span>${m.fecha}</span><span>${m.motivo}</span>${m.area?`<span>${m.area}</span>`:''}${m.responsable?`<span>${m.responsable}</span>`:''}</div>${m.notas?`<div style="font-size:12px;font-family:var(--font-mono);opacity:.7;margin-top:4px">${m.notas}</div>`:''}</div>
+      <div class="row-main"><h3>${p?.nombre||m.nombre||m.producto_id}</h3><div class="row-meta"><span>${m.fecha}</span><span>${m.motivo}</span>${m.area?`<span>${m.area}</span>`:''}${m.responsable?`<span>${m.responsable}</span>`:''}</div>${m.notas?`<div style="font-size:12px;font-family:var(--font-mono);opacity:.7;margin-top:4px">${m.notas}</div>`:''}</div>
       <div class="row-right"><span class="stockbig" style="color:var(--secondary)">−${num(m.cantidad)}</span><span class="mono" style="font-size:11px">${money(m.valor_perdido)}</span></div></div>`}).join('')||'<div class="empty-state">Sin mermas registradas</div>'}`;
   $('#me-add').onclick=()=>abrirMerma(null);
 }
@@ -1395,11 +1434,430 @@ function abrirDetalleReporte(rep,key){
   openSheet();$('#dr-close').onclick=closeSheet;
 }
 
+/* ===== PRODUCCIÓN Y FRÍO (ME-16 tandas y equipos · ME-17 day dots y tablero · ME-18 temperaturas) ===== */
+// Lo que la cocina produce (salsas, fondos, porcionados) vive por TANDA en un equipo de frío del local.
+// Mover entre refri y congelador recalcula el vencimiento con la vida útil de la receta.
+const PF_TIPOS=[['refri','Refrigeradora'],['camara','Cámara'],['congelador','Congelador'],['ambiente','Ambiente / despensa']];
+const PF_TEMP_DEF={refri:[0,5],camara:[0,5],congelador:[-25,-18],ambiente:[null,null]};
+const PF_ENVASES=['GN 1/1','GN 1/2','GN 1/3','GN 1/6','GN 1/9','bolsa 1 kg','bolsa 500 g','bolsa 250 g','1 L','500 ml','250 ml','porción'];
+// Day dots (mismos colores que los stickers); índice = getDay()
+const PF_DIAS=[['Dom','#1D1B18'],['Lun','#2F6DB5'],['Mar','#E8C21C'],['Mié','#C8372D'],['Jue','#7A4B2A'],['Vie','#3B9A4A'],['Sáb','#E98A1F']];
+const PF_VIDA_DEF={refri:3,congelador:60};
+const PF_MOTIVOS=['Vencimiento','Mala manipulación','Cocción fallida','Daño/rotura','Sobreproducción'];
+state.pf={equipos:[],tandas:[],minimos:[],temps:[],sub:'tablero',filtro:'todos',foco:null,cargado:false};
+
+// Deep link /mercado?equipo=CLAVE (QR o NFC del equipo). Se guarda antes de que el login redirija,
+// así al volver de /login se abre el mismo equipo.
+(function(){try{const q=new URLSearchParams(location.search).get('equipo');
+  if(q){localStorage.setItem('prep_pf_equipo',JSON.stringify({clave:q,ts:Date.now()}))}}catch(e){}})();
+function pfEquipoPendiente(){try{const v=JSON.parse(localStorage.getItem('prep_pf_equipo')||'null');if(!v)return null;
+  if(Date.now()-v.ts>30*60000){localStorage.removeItem('prep_pf_equipo');return null}return v.clave}catch(e){return null}}
+
+function pfEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pfISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function pfMas(dias,base){const d=base?new Date(base+'T12:00:00'):new Date();d.setDate(d.getDate()+Number(dias||0));return pfISO(d)}
+function pfDias(iso){if(!iso)return null;return Math.round((new Date(iso+'T12:00:00')-new Date(hoyISO()+'T12:00:00'))/864e5)}
+function pfFecha(iso){if(!iso)return '—';const p=iso.split('-');return p[2]+'/'+p[1]}
+function pfEq(id){return state.pf.equipos.find(e=>e.id===id)}
+function pfTanda(id){return state.pf.tandas.find(t=>t.id===id)}
+function pfReceta(id){return state.recetas.find(r=>r.id===id)}
+function pfCongela(eq){return !!eq&&eq.tipo==='congelador'}
+function pfRefrigera(eq){return !!eq&&(eq.tipo==='refri'||eq.tipo==='camara')}
+function pfVida(r,congelado){const v=r?(congelado?r.vida_congelado_dias:r.vida_refri_dias):null;return v!=null&&v!==''?Number(v):PF_VIDA_DEF[congelado?'congelador':'refri']}
+function pfVenceAlCrear(r,eq,elaborado){if(!eq||eq.tipo==='ambiente')return r&&r.vida_refri_dias!=null?pfMas(r.vida_refri_dias,elaborado):null;return pfMas(pfVida(r,pfCongela(eq)),elaborado)}
+// Al mover: congelado → refri cuenta desde hoy con la vida en refri; refri → congelado, desde hoy con la vida congelado.
+// Entre equipos del mismo tipo de frío (o hacia ambiente) el vencimiento no cambia.
+function pfVenceAlMover(t,desde,hacia){const r=pfReceta(t.receta_id);
+  if(pfCongela(desde)&&pfRefrigera(hacia))return pfMas(pfVida(r,false));
+  if(!pfCongela(desde)&&pfCongela(hacia))return pfMas(pfVida(r,true));
+  return t.vence}
+// Costo por porción con sub-recetas (las recetas guardan los ingredientes de toda la preparación, que rinde N porciones)
+function pfCostoPorcion(r,seen){seen=seen||new Set();if(!r||seen.has(r.id))return 0;seen.add(r.id);
+  const tot=(Array.isArray(r.ingredientes)?r.ingredientes:[]).reduce((a,ing)=>{const m=Number(ing.merma||0),f=(m>0&&m<100)?1/(1-m/100):1;const c=Number(ing.cantidad||0)*f;
+    if(ing.rid)return a+c*pfCostoPorcion(pfReceta(ing.rid),new Set(seen));
+    if(ing.pid){const p=prod(ing.pid);return a+c*Number(p?.costo||0)}return a+Number(ing.costo||0)},0);
+  return tot/(Number(r.rendimiento||1)||1)}
+function pfCostoEnvase(t){const r=pfReceta(t.receta_id);return r?pfCostoPorcion(r)*Number(t.porciones_envase||1):0}
+// Insumos de Mercado para producir N porciones (abre sub-recetas)
+function pfInsumos(r,porciones,acc,seen){acc=acc||{};seen=seen||new Set();if(!r||seen.has(r.id))return acc;seen.add(r.id);
+  const k=Number(porciones||0)/(Number(r.rendimiento||1)||1);
+  (Array.isArray(r.ingredientes)?r.ingredientes:[]).forEach(ing=>{const m=Number(ing.merma||0),f=(m>0&&m<100)?1/(1-m/100):1;const c=Number(ing.cantidad||0)*k*f;
+    if(ing.rid)pfInsumos(pfReceta(ing.rid),c,acc,new Set(seen));else if(ing.pid)acc[ing.pid]=(acc[ing.pid]||0)+c});
+  return acc}
+function pfEsSub(r){if(!r)return false;if(r.tipo==='salsa')return true;return state.recetas.some(x=>Array.isArray(x.ingredientes)&&x.ingredientes.some(i=>i.rid===r.id))}
+function pfSeccion(r){return r?.categoria_menu||(r?.tipo==='salsa'?'Salsas':'Otros')}
+function pfQuien(){return state.usuario?String(state.usuario).split('@')[0]:'Mercado'}
+function pfDot(iso){if(!iso)return '<span class="pf-dot" style="background:var(--gray-soft)">Sin fecha</span>';
+  const d=new Date(iso+'T12:00:00'),dia=PF_DIAS[d.getDay()],dd=pfDias(iso),claro=/E8C21C|E98A1F/i.test(dia[1]);
+  const rel=dd<0?'vencido':dd===0?'hoy':dd===1?'mañana':pfFecha(iso);
+  return `<span class="pf-dot" style="background:${dia[1]};color:${claro?'#141414':'#fff'}">${dia[0]} · ${rel}</span>`}
+function pfUltTemp(eqId){return state.pf.temps.find(x=>x.equipo_id===eqId)||null}
+function pfFuera(eq,temp){if(temp==null)return false;const t=Number(temp);return (eq.temp_min!=null&&t<Number(eq.temp_min))||(eq.temp_max!=null&&t>Number(eq.temp_max))}
+
+/* ---- carga ---- */
+async function loadProduccion(){
+  const desde=new Date(Date.now()-14*864e5).toISOString();
+  const [eq,ta,mi,te]=await Promise.all([
+    sb.from('inv_equipos_frio').select('*').eq('local_id',LOCAL).order('orden').order('nombre'),
+    sb.from('inv_tandas').select('*').eq('local_id',LOCAL).eq('estado','activa').order('vence',{ascending:true,nullsFirst:false}),
+    sb.from('inv_prod_minimos').select('*').eq('local_id',LOCAL),
+    sb.from('inv_temp_registros').select('*').eq('local_id',LOCAL).gte('created_at',desde).order('created_at',{ascending:false}).limit(500)]);
+  if(eq.error){console.error(eq.error);toast('Atrás · '+eq.error.message,'err')}
+  state.pf.equipos=eq.data||[];state.pf.tandas=ta.data||[];state.pf.minimos=mi.data||[];state.pf.temps=te.data||[];state.pf.cargado=true;
+  const clave=pfEquipoPendiente();
+  if(clave){const e=state.pf.equipos.find(x=>x.clave.toLowerCase()===clave.toLowerCase());
+    try{localStorage.removeItem('prep_pf_equipo')}catch(_){}
+    if(e){state.view='produccion';state.pf.sub='tablero';state.pf.filtro=e.id;state.pf.foco=e.id}
+    else toast('No hay un equipo con la clave '+clave+' en este local','warn')}
+}
+function pfLog(t,tipo,cantidad,desde,hacia){return sb.from('inv_tanda_movs').insert({tanda_id:t?.id||null,local_id:LOCAL,tipo,cantidad,desde_equipo:desde||null,hacia_equipo:hacia||null,usuario:pfQuien()}).then(r=>{if(r.error)console.warn('tanda_movs',r.error)})}
+
+/* ---- mover / usar / botar ---- */
+async function pfMover(id,qty,destinoId){
+  const t=pfTanda(id);if(!t)return;const desde=pfEq(t.equipo_id),hacia=pfEq(destinoId);if(!hacia||destinoId===t.equipo_id)return;
+  qty=Math.min(Number(qty||t.cantidad),Number(t.cantidad));if(!(qty>0))return;
+  const vence=pfVenceAlMover(t,desde,hacia);
+  // Misma tanda (misma receta o nombre + misma fecha de elaboración) ya en el destino: se fusiona
+  const dest=state.pf.tandas.find(x=>x.id!==t.id&&x.equipo_id===destinoId&&x.elaborado===t.elaborado&&(t.receta_id?x.receta_id===t.receta_id:(!x.receta_id&&x.nombre.toLowerCase()===t.nombre.toLowerCase()))&&(x.envase||'')===(t.envase||''));
+  const todo=qty>=Number(t.cantidad);
+  try{
+    if(todo&&!dest){const r=await sb.from('inv_tandas').update({equipo_id:destinoId,vence,updated_at:nowISO()}).eq('id',t.id);if(r.error)throw r.error;await pfLog(t,'mover',qty,t.equipo_id,destinoId)}
+    else{
+      if(todo){const r=await sb.from('inv_tandas').delete().eq('id',t.id);if(r.error)throw r.error}
+      else{const r=await sb.from('inv_tandas').update({cantidad:+(t.cantidad-qty).toFixed(3),updated_at:nowISO()}).eq('id',t.id);if(r.error)throw r.error}
+      let destId;
+      if(dest){const v=[dest.vence,vence].filter(Boolean).sort()[0]||null;const r=await sb.from('inv_tandas').update({cantidad:+(Number(dest.cantidad)+qty).toFixed(3),vence:v,updated_at:nowISO()}).eq('id',dest.id);if(r.error)throw r.error;destId=dest.id}
+      else{const nueva={local_id:LOCAL,receta_id:t.receta_id,nombre:t.nombre,seccion:t.seccion,elaborado:t.elaborado,vence,equipo_id:destinoId,cantidad:qty,envase:t.envase,porciones_envase:t.porciones_envase,responsable:t.responsable,notas:t.notas};
+        const r=await sb.from('inv_tandas').insert(nueva).select().single();if(r.error)throw r.error;destId=r.data.id}
+      await pfLog({id:destId},'mover',qty,t.equipo_id,destinoId)}
+    await loadProduccion();render();
+    toast('Va · '+(todo?'':num(qty)+' de ')+t.nombre+' → '+hacia.nombre+(vence&&vence!==t.vence?' (vence '+pfFecha(vence)+')':'')+(dest?' · fusionada':''),'ok');
+  }catch(e){console.error(e);toast('Atrás · no se pudo mover: '+(e.message||e),'err');await loadProduccion();render()}
+}
+async function pfSalida(id,qty,tipo,motivo,notas){
+  const t=pfTanda(id);if(!t)return;qty=Math.min(Number(qty||0),Number(t.cantidad));if(!(qty>0)){toast('Cantidad inválida','warn');return}
+  const queda=+(Number(t.cantidad)-qty).toFixed(3);
+  const cambios=queda>0?{cantidad:queda,updated_at:nowISO()}:{cantidad:0,estado:tipo==='botar'?'botada':'consumida',updated_at:nowISO()};
+  const r=await sb.from('inv_tandas').update(cambios).eq('id',t.id);if(r.error){toast('Atrás · '+r.error.message,'err');return}
+  await pfLog(t,tipo==='botar'?'botar':'consumir',qty,t.equipo_id,null);
+  if(tipo==='botar'){const valor=+(pfCostoEnvase(t)*qty).toFixed(2);
+    const m=await sb.from('inv_mermas').insert({local_id:LOCAL,producto_id:'tanda:'+t.id,tanda_id:t.id,nombre:t.nombre+(t.envase?' · '+t.envase:''),cantidad:qty,motivo:motivo||'Vencimiento',valor_perdido:valor,area:pfEq(t.equipo_id)?.nombre||null,responsable:pfQuien(),notas:notas||null,fecha:hoyISO()});
+    if(m.error)toast('Atrás · la merma no se registró: '+m.error.message,'err');else await loadMermas();
+    toast('Servido · '+num(qty)+' de '+t.nombre+' a merma ('+money(valor)+')','warn')}
+  else toast('Servido · '+num(qty)+' de '+t.nombre+' usado','ok');
+  await loadProduccion();render();
+}
+
+/* ---- vistas ---- */
+async function renderProduccion(){
+  if(!state.pf.cargado){$('#screen').innerHTML='<div class="empty-state">Oído · cargando equipos</div>';await loadProduccion()}
+  const pf=state.pf,subs=[['tablero','Tablero','kitchen'],['porhacer','Por hacer','checklist'],['temps','Temperaturas','device_thermostat'],['equipos','Equipos','tune']];
+  const venceHoy=pf.tandas.filter(t=>{const d=pfDias(t.vence);return d!=null&&d<=1}).length;
+  const fuera=pf.equipos.filter(e=>e.activo&&pfFuera(e,pfUltTemp(e.id)?.temp)).length;
+  const falta=pfFaltantes().length;
+  $('#screen').innerHTML=`
+    <div class="kpis"><div class="kpi"><div class="val">${pf.tandas.length}</div><div class="lbl">Tandas activas</div></div>
+      <div class="kpi ${venceHoy?'alert':''}"><div class="val">${venceHoy}</div><div class="lbl">Vencen hoy o mañana</div></div>
+      <div class="kpi ${falta?'alert':''}"><div class="val">${falta}</div><div class="lbl">Bajo mínimo</div></div>
+      <div class="kpi ${fuera?'alert':''}"><div class="val">${fuera}</div><div class="lbl">Equipos fuera de rango</div></div></div>
+    <div class="toolbar"><div class="seg" id="pf-sub">${subs.map(s=>`<button data-s="${s[0]}" class="${pf.sub===s[0]?'active':''}"><span class="material-symbols-outlined" style="font-size:16px">${s[2]}</span> ${s[1]}</button>`).join('')}</div>
+      <button class="btn-ico primary" id="pf-nueva"><span class="material-symbols-outlined">add</span><span>Nueva tanda</span></button></div>
+    <div id="pf-body"></div><div class="pf-dock" id="pf-dock"></div>`;
+  $$('#pf-sub button').forEach(b=>b.onclick=()=>{pf.sub=b.dataset.s;render()});
+  $('#pf-nueva').onclick=()=>pfNuevaTanda({});
+  if(pf.sub==='tablero')pfRenderTablero();else if(pf.sub==='porhacer')pfRenderPorHacer();else if(pf.sub==='temps')pfRenderTemps();else pfRenderEquipos();
+}
+function pfIcoEq(e){return e.tipo==='congelador'?'ac_unit':e.tipo==='ambiente'?'shelves':'kitchen'}
+function pfRenderTablero(){
+  const pf=state.pf,act=pf.equipos.filter(e=>e.activo);
+  if(!act.length){$('#pf-body').innerHTML=`<div class="empty-state">Este local no tiene equipos de frío<br><br><button class="mini-btn primary" id="pf-ir-eq">Agregar equipos</button></div>`;$('#pf-ir-eq').onclick=()=>{pf.sub='equipos';render()};return}
+  const ver=pf.filtro==='todos'?act:act.filter(e=>e.id===pf.filtro);
+  $('#pf-body').innerHTML=`
+    <div class="chips" style="margin-bottom:12px"><button class="chip ${pf.filtro==='todos'?'active':''}" data-f="todos">Todos</button>${act.map(e=>`<button class="chip ${pf.filtro===e.id?'active':''}" data-f="${e.id}">${pfEsc(e.nombre)}</button>`).join('')}</div>
+    <div class="row-meta" style="margin-bottom:10px">Arrastra una tanda (o un solo envase) a otro equipo, a "Se usó" o a "Se botó". Toca una tanda para ver el detalle.</div>
+    <div class="pf-board" id="pf-board">${ver.map(e=>{const ts=pf.tandas.filter(t=>t.equipo_id===e.id);const ut=pfUltTemp(e.id);
+      return `<section class="pf-col ${pf.foco===e.id?'foco':''}" data-drop="${e.id}">
+        <div class="pf-colh"><span class="pf-ico ${e.tipo}"><span class="material-symbols-outlined">${pfIcoEq(e)}</span></span>
+          <div><h3>${pfEsc(e.nombre)}</h3><div class="sub">${pfEsc(e.clave)} · ${(PF_TIPOS.find(x=>x[0]===e.tipo)||[])[1]||e.tipo}</div></div>
+          <span class="pf-temp ${ut?(pfFuera(e,ut.temp)?'mal':''):'sin'}" data-temp="${e.id}" title="Registrar temperatura">${ut?num(ut.temp)+' °C':'— °C'}</span></div>
+        ${ts.map(pfCardHTML).join('')||'<div class="pf-vacia">Vacío</div>'}
+        <div class="chips" style="margin-top:8px"><button class="mini-btn ghost" data-hoja="${e.id}"><span class="material-symbols-outlined" style="font-size:15px">print</span>Hoja</button><button class="mini-btn ghost" data-foto="${e.id}"><span class="material-symbols-outlined" style="font-size:15px">photo_camera</span>Cargar hoja</button><button class="mini-btn ghost" data-nueva="${e.id}"><span class="material-symbols-outlined" style="font-size:15px">add</span>Tanda</button></div>
+      </section>`}).join('')}</div>`;
+  $$('#pf-body [data-f]').forEach(b=>b.onclick=()=>{pf.filtro=b.dataset.f;pf.foco=null;render()});
+  $$('#pf-body [data-temp]').forEach(b=>b.onclick=()=>pfAbrirTemp(b.dataset.temp));
+  $$('#pf-body [data-hoja]').forEach(b=>b.onclick=()=>pfImprimirHoja(b.dataset.hoja));
+  $$('#pf-body [data-foto]').forEach(b=>b.onclick=()=>pfCargarHoja(b.dataset.foto));
+  $$('#pf-body [data-nueva]').forEach(b=>b.onclick=()=>pfNuevaTanda({equipo_id:b.dataset.nueva}));
+  if(pf.foco){const el=document.querySelector('.pf-col.foco');if(el)el.scrollIntoView({block:'nearest'})}
+}
+function pfCardHTML(t){const d=pfDias(t.vence),cls=d==null?'':d<0?'vencido':d<=1?'pronto':'';
+  return `<div class="pf-card ${cls}" data-edit="${t.id}">
+    <span class="pf-grip" data-drag="${t.id}" title="Arrastrar la tanda completa"><span class="material-symbols-outlined">drag_indicator</span></span>
+    <div class="pf-cb"><div class="pf-cn">${pfEsc(t.nombre)}</div>
+      <div class="pf-cm">${num(t.cantidad)} × ${pfEsc(t.envase||'envase')} · hecho ${pfFecha(t.elaborado)}${t.seccion?' · '+pfEsc(t.seccion):''}</div>
+      <div class="pf-tags">${pfDot(t.vence)}${Number(t.cantidad)>1?`<span class="pf-chip" data-drag="${t.id}" data-uno="1" title="Arrastrar un solo envase">1 × ${pfEsc(t.envase||'envase')}</span>`:''}</div></div></div>`}
+
+/* ---- detalle de una tanda ---- */
+function pfAbrirTanda(id){const t=pfTanda(id);if(!t)return;const eq=pfEq(t.equipo_id);let qty=1,motivo='Vencimiento';
+  setHead('',t.nombre,(eq?eq.nombre:'Sin equipo')+' · '+num(t.cantidad)+' × '+(t.envase||'envase'));$('#sheet-mark').innerHTML='<span class="material-symbols-outlined">inventory</span>';
+  const draw=()=>{$('#sheet-body').innerHTML=`
+    <div class="sheet-section">${pfDot(t.vence)} <span class="row-meta" style="display:inline-flex">Elaborado ${pfFecha(t.elaborado)} · ${t.responsable?pfEsc(t.responsable)+' · ':''}costo ${money(pfCostoEnvase(t))} por envase</span></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Cantidad</div><input class="input" id="pt-qty" type="number" min="0" step="0.5" value="${qty}"></div>
+      <div><div class="field-lbl">Mover a</div><select class="select" id="pt-dest"><option value="">—</option>${state.pf.equipos.filter(e=>e.activo&&e.id!==t.equipo_id).map(e=>`<option value="${e.id}">${pfEsc(e.nombre)}</option>`).join('')}</select></div></div>
+    <div class="sheet-section grid2"><button class="btn" id="pt-mover"><span class="material-symbols-outlined">swap_horiz</span>Mover</button><button class="btn primary" id="pt-usar"><span class="material-symbols-outlined">restaurant</span>Se usó</button></div>
+    <div class="sheet-section"><div class="field-lbl">Si se bota: motivo</div><div class="chips" id="pt-mot">${PF_MOTIVOS.map(m=>`<button class="chip ${motivo===m?'active':''}" data-m="${m}">${m}</button>`).join('')}</div>
+      <button class="btn danger" id="pt-botar" style="margin-top:10px"><span class="material-symbols-outlined">delete</span>Se botó (va a Mermas)</button></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Vence</div><input class="input" id="pt-vence" type="date" value="${t.vence||''}"></div><div><div class="field-lbl">Notas</div><input class="input" id="pt-notas" value="${pfEsc(t.notas||'')}"></div></div>
+    <div class="sheet-section"><button class="btn ghost" id="pt-guardar">Guardar vence y notas</button></div>`;
+    $('#pt-qty').oninput=e=>qty=Number(e.target.value)||0;
+    $$('#pt-mot .chip').forEach(b=>b.onclick=()=>{motivo=b.dataset.m;qty=Number($('#pt-qty').value)||0;draw()});
+    $('#pt-mover').onclick=()=>{const d=$('#pt-dest').value;if(!d){toast('Elige el equipo de destino','warn');return}closeSheet();pfMover(t.id,qty,d)};
+    $('#pt-usar').onclick=()=>{closeSheet();pfSalida(t.id,qty,'usar')};
+    $('#pt-botar').onclick=()=>{closeSheet();pfSalida(t.id,qty,'botar',motivo)};
+    $('#pt-guardar').onclick=async()=>{const r=await sb.from('inv_tandas').update({vence:$('#pt-vence').value||null,notas:$('#pt-notas').value||null,updated_at:nowISO()}).eq('id',t.id);
+      if(r.error){toast('Atrás · '+r.error.message,'err');return}await pfLog(t,'ajuste',null,null,null);closeSheet();await loadProduccion();render();toast('Servido · tanda actualizada','ok')};
+  };draw();openSheet()}
+function pfAbrirBotar(id,qty){const t=pfTanda(id);if(!t)return;let motivo='Vencimiento';
+  setHead('','Se botó: '+t.nombre,num(qty)+' × '+(t.envase||'envase')+' · '+money(pfCostoEnvase(t)*qty),'var(--red-soft)');$('#sheet-mark').innerHTML='<span class="material-symbols-outlined">delete</span>';
+  const draw=()=>{$('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Motivo</div><div class="chips" id="pb-mot">${PF_MOTIVOS.map(m=>`<button class="chip ${motivo===m?'active':''}" data-m="${m}">${m}</button>`).join('')}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Notas</div><input class="input" id="pb-notas"></div>
+    <div class="sheet-section grid2"><button class="btn ghost" id="pb-no">Atrás</button><button class="btn danger" id="pb-si">Va · registrar merma</button></div>`;
+    $$('#pb-mot .chip').forEach(b=>b.onclick=()=>{motivo=b.dataset.m;draw()});
+    $('#pb-no').onclick=closeSheet;$('#pb-si').onclick=()=>{const n=$('#pb-notas').value;closeSheet();pfSalida(id,qty,'botar',motivo,n)}};
+  draw();openSheet()}
+
+/* ---- nueva tanda (descuenta insumos de Mercado) ---- */
+function pfNuevaTanda(pre){
+  const subs=state.recetas.filter(pfEsSub).sort((a,b)=>a.nombre.localeCompare(b.nombre)),otras=state.recetas.filter(r=>!pfEsSub(r)&&!/bebida/.test(r.tipo||'')).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const c=Object.assign({receta_id:'',nombre:'',seccion:'',elaborado:hoyISO(),equipo_id:(state.pf.equipos.find(e=>e.activo)||{}).id||'',cantidad:1,envase:'GN 1/6',porciones_envase:1,vence:'',descontar:true,venceManual:false},pre||{});
+  setHead('','Nueva tanda','Producción propia · '+hoyISO());$('#sheet-mark').innerHTML='<span class="material-symbols-outlined">soup_kitchen</span>';
+  const calc=()=>{const r=pfReceta(c.receta_id);if(!c.venceManual)c.vence=pfVenceAlCrear(r,pfEq(c.equipo_id),c.elaborado)||'';return r};
+  const draw=()=>{const r=calc();const porc=Number(c.cantidad||0)*Number(c.porciones_envase||1);const ins=r?pfInsumos(r,porc):{};const pids=Object.keys(ins);
+    const costo=r?pfCostoPorcion(r)*porc:0;
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section"><div class="field-lbl">Receta / sub-receta</div><select class="select" id="nt-rec"><option value="">— Sin receta (escribe el nombre) —</option>
+        <optgroup label="Sub-recetas">${subs.map(x=>`<option value="${x.id}" ${c.receta_id===x.id?'selected':''}>${pfEsc(x.nombre)}</option>`).join('')}</optgroup>
+        <optgroup label="Otras recetas">${otras.map(x=>`<option value="${x.id}" ${c.receta_id===x.id?'selected':''}>${pfEsc(x.nombre)}</option>`).join('')}</optgroup></select></div>
+      ${r?'':`<div class="sheet-section"><div class="field-lbl">Nombre</div><input class="input" id="nt-nom" value="${pfEsc(c.nombre)}" placeholder="Fondo oscuro, masa madre…"></div>`}
+      <div class="sheet-section grid2"><div><div class="field-lbl">Sección</div><input class="input" id="nt-sec" value="${pfEsc(c.seccion||(r?pfSeccion(r):''))}" placeholder="Salsas, fondos, proteínas…"></div>
+        <div><div class="field-lbl">Equipo</div><select class="select" id="nt-eq">${state.pf.equipos.filter(e=>e.activo).map(e=>`<option value="${e.id}" ${c.equipo_id===e.id?'selected':''}>${pfEsc(e.nombre)}</option>`).join('')}</select></div></div>
+      <div class="sheet-section"><div class="field-lbl">Envase</div><div class="chips" id="nt-env">${PF_ENVASES.map(x=>`<button class="chip ${c.envase===x?'active':''}" data-e="${x}">${x}</button>`).join('')}</div><input class="input" id="nt-envx" style="margin-top:8px" value="${pfEsc(c.envase)}" placeholder="u otro envase"></div>
+      <div class="sheet-section grid2"><div><div class="field-lbl">Cantidad de envases</div><input class="input" id="nt-cant" type="number" min="0" step="0.5" value="${c.cantidad}"></div>
+        <div><div class="field-lbl">Porciones por envase</div><input class="input" id="nt-porc" type="number" min="0" step="0.5" value="${c.porciones_envase}"></div></div>
+      <div class="sheet-section grid2"><div><div class="field-lbl">Elaborado</div><input class="input" id="nt-elab" type="date" value="${c.elaborado}"></div>
+        <div><div class="field-lbl">Vence ${c.venceManual?'':'(automático)'}</div><input class="input" id="nt-vence" type="date" value="${c.vence||''}"></div></div>
+      ${r?`<div class="sheet-section"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="nt-desc" ${c.descontar?'checked':''}> Descontar insumos de Mercado</label>
+        <div class="row-meta" style="margin-top:6px">${num(porc)} porciones · costo ${money(costo)} · vida ${pfVida(r,false)} d en refri / ${pfVida(r,true)} d congelado</div>
+        ${pids.length?`<table class="tbl" style="margin-top:8px"><tr><th>Insumo</th><th>Sale</th><th>Stock</th></tr>${pids.map(pid=>{const p=prod(pid),s=stock(pid);return `<tr class="${s<ins[pid]?'rojo':''}"><td>${pfEsc(p?.nombre||pid)}</td><td class="mono">${num(ins[pid])} ${p?.unidad||''}</td><td class="mono">${num(s)}</td></tr>`}).join('')}</table>`:'<div class="row-meta">La receta no tiene insumos de Mercado.</div>'}</div>`:''}
+      <div class="sheet-section grid2"><button class="btn ghost" id="nt-no">Atrás</button><button class="btn primary" id="nt-si">Va · registrar tanda</button></div>`;
+    const keep=()=>{if($('#nt-nom'))c.nombre=$('#nt-nom').value;c.seccion=$('#nt-sec').value;c.envase=$('#nt-envx').value;c.cantidad=Number($('#nt-cant').value)||0;c.porciones_envase=Number($('#nt-porc').value)||1;c.elaborado=$('#nt-elab').value||hoyISO();if($('#nt-desc'))c.descontar=$('#nt-desc').checked};
+    $('#nt-rec').onchange=e=>{keep();c.receta_id=e.target.value;c.seccion='';c.venceManual=false;draw()};
+    $('#nt-eq').onchange=e=>{keep();c.equipo_id=e.target.value;draw()};
+    $$('#nt-env .chip').forEach(b=>b.onclick=()=>{keep();c.envase=b.dataset.e;draw()});
+    ['#nt-cant','#nt-porc'].forEach(s=>$(s).onchange=()=>{keep();draw()});
+    $('#nt-elab').onchange=()=>{keep();draw()};
+    $('#nt-vence').onchange=e=>{keep();c.vence=e.target.value;c.venceManual=true};
+    $('#nt-no').onclick=closeSheet;$('#nt-si').onclick=()=>{keep();pfGuardarTanda(c)};
+  };draw();openSheet()}
+async function pfGuardarTanda(c){
+  const r=pfReceta(c.receta_id);const nombre=r?r.nombre:(c.nombre||'').trim();
+  if(!nombre){toast('Ponle nombre a la tanda','warn');return}if(!(c.cantidad>0)){toast('Cantidad inválida','warn');return}if(!c.equipo_id){toast('Elige un equipo','warn');return}
+  const fila={local_id:LOCAL,receta_id:r?r.id:null,nombre,seccion:c.seccion||(r?pfSeccion(r):null),elaborado:c.elaborado,vence:c.vence||null,equipo_id:c.equipo_id,cantidad:c.cantidad,envase:c.envase||null,porciones_envase:c.porciones_envase||1,responsable:pfQuien()};
+  const ins=await sb.from('inv_tandas').insert(fila).select().single();if(ins.error){toast('Atrás · '+ins.error.message,'err');return}
+  await pfLog(ins.data,'crear',c.cantidad,null,c.equipo_id);
+  let n=0;
+  if(r&&c.descontar){const porc=Number(c.cantidad)*Number(c.porciones_envase||1);const req=pfInsumos(r,porc);
+    const rows=Object.keys(req).filter(pid=>prod(pid)&&req[pid]>0).map(pid=>{const p=prod(pid),q=+req[pid].toFixed(4);
+      return {local_id:LOCAL,producto_id:pid,tipo:'salida',cantidad:-q,unidad:p.unidad,costo_unitario:p.costo,valor_total:+(-q*Number(p.costo||0)).toFixed(2),fecha:hoyISO(),motivo:'Producción',referencia:'Tanda '+nombre+' · '+ins.data.id.slice(0,8),responsable:pfQuien()}});
+    if(rows.length){const m=await sb.from('inv_movimientos').insert(rows);if(m.error)toast('Atrás · tanda creada, pero no se descontaron insumos: '+m.error.message,'err');else n=rows.length}
+    await loadMovs()}
+  closeSheet();await loadProduccion();render();
+  toast('Servido · '+num(c.cantidad)+' × '+(c.envase||'envase')+' de '+nombre+(n?' · '+n+' insumos descontados':''),'ok');
+}
+
+/* ---- Por hacer: mínimos por receta o sección vs. tandas activas ---- */
+function pfStockReceta(rid){return state.pf.tandas.filter(t=>t.receta_id===rid).reduce((a,t)=>a+Number(t.cantidad||0),0)}
+function pfStockSeccion(sec){return state.pf.tandas.filter(t=>(t.seccion||'')===sec).reduce((a,t)=>a+Number(t.cantidad||0),0)}
+function pfFilasMin(){return state.pf.minimos.filter(m=>Number(m.minimo)>0).map(m=>{const r=m.receta_id?pfReceta(m.receta_id):null;
+  const tot=m.receta_id?pfStockReceta(m.receta_id):pfStockSeccion(m.seccion);
+  return {m,r,nombre:r?r.nombre:'Sección · '+m.seccion,tot,min:Number(m.minimo),bajo:tot<=Number(m.minimo)}})}
+function pfFaltantes(){return pfFilasMin().filter(x=>x.bajo)}
+function pfSeg(tot,min){const n=Math.min(Math.max(min,tot),12),bajo=tot<=min;let h='';for(let i=0;i<n;i++)h+=`<i class="${i<tot?(bajo?'f low':'f'):''}"></i>`;return `<span class="pf-seg">${h}</span>`}
+function pfRenderPorHacer(){
+  const filas=pfFilasMin().sort((a,b)=>(b.bajo-a.bajo)||(a.tot/a.min-b.tot/b.min));
+  const conMin=new Set(state.pf.minimos.map(m=>m.receta_id).filter(Boolean));
+  const candidatas=state.recetas.filter(r=>(pfEsSub(r)||state.pf.tandas.some(t=>t.receta_id===r.id))&&!conMin.has(r.id)).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const secs=[...new Set(state.pf.tandas.map(t=>t.seccion).concat(state.recetas.filter(pfEsSub).map(pfSeccion)).filter(Boolean))].filter(s=>!state.pf.minimos.some(m=>!m.receta_id&&m.seccion===s));
+  $('#pf-body').innerHTML=`
+    ${filas.length?filas.map(x=>`<div class="row-card"><span class="pf-ico"><span class="material-symbols-outlined">${x.bajo?'priority_high':'check'}</span></span>
+      <div class="row-main"><h3>${pfEsc(x.nombre)}</h3><div class="row-meta"><span>${num(x.tot)} de ${num(x.min)} ${pfEsc(x.m.unidad||'envases')}</span>${x.bajo?'<span style="color:var(--secondary);font-weight:700">Producir '+num(Math.max(1,x.min-x.tot))+'</span>':''}</div>
+        <div class="pf-bar"><i class="${x.bajo?'low':''}" style="width:${Math.min(100,x.tot/x.min*100)}%"></i></div></div>
+      <div class="row-right">${pfSeg(x.tot,x.min)}<div class="chips"><input class="input" type="number" min="0" value="${x.min}" data-min="${x.m.id}" style="width:80px;padding:6px">${x.r?`<button class="mini-btn primary" data-prod="${x.r.id}" data-falta="${Math.max(1,x.min-x.tot)}">Producir</button>`:''}</div></div></div>`).join('')
+      :'<div class="empty-state">Define cuántos envases quieres tener de cada preparación y aquí verás qué falta producir</div>'}
+    <div class="toolbar" style="margin-top:14px">
+      <button class="btn-ico dark" id="pf-a-pedido"><span class="material-symbols-outlined">shopping_cart</span><span>Pasar insumos faltantes al pedido</span></button></div>
+    <div class="grid2" style="margin-top:6px">
+      <div><div class="field-lbl">Agregar mínimo por receta</div><div style="display:flex;gap:8px"><select class="select" id="pf-nm-rec"><option value="">Elegir…</option>${candidatas.map(r=>`<option value="${r.id}">${pfEsc(r.nombre)}</option>`).join('')}</select><input class="input" id="pf-nm-val" type="number" min="1" value="4" style="width:80px"><button class="mini-btn primary" id="pf-nm-add">Va</button></div></div>
+      <div><div class="field-lbl">Agregar mínimo por sección</div><div style="display:flex;gap:8px"><input class="input" id="pf-ns-sec" list="pf-secs" placeholder="Salsas, fondos…"><datalist id="pf-secs">${secs.map(s=>`<option value="${pfEsc(s)}">`).join('')}</datalist><input class="input" id="pf-ns-val" type="number" min="1" value="6" style="width:80px"><button class="mini-btn primary" id="pf-ns-add">Va</button></div></div></div>`;
+  $$('#pf-body [data-min]').forEach(inp=>inp.onchange=async()=>{const v=Number(inp.value)||0;
+    const r=v>0?await sb.from('inv_prod_minimos').update({minimo:v,updated_at:nowISO()}).eq('id',inp.dataset.min):await sb.from('inv_prod_minimos').delete().eq('id',inp.dataset.min);
+    if(r.error){toast('Atrás · '+r.error.message,'err');return}await loadProduccion();render();toast('Servido · mínimo '+(v>0?'actualizado':'quitado'),'ok')});
+  $$('#pf-body [data-prod]').forEach(b=>b.onclick=()=>{const t=state.pf.tandas.find(x=>x.receta_id===b.dataset.prod);pfNuevaTanda({receta_id:b.dataset.prod,cantidad:Number(b.dataset.falta)||1,envase:t?.envase||'GN 1/6',porciones_envase:t?Number(t.porciones_envase||1):1})});
+  $('#pf-nm-add').onclick=()=>pfAgregarMin({receta_id:$('#pf-nm-rec').value||null},$('#pf-nm-val').value);
+  $('#pf-ns-add').onclick=()=>pfAgregarMin({seccion:$('#pf-ns-sec').value.trim()||null},$('#pf-ns-val').value);
+  $('#pf-a-pedido').onclick=pfInsumosAlPedido;
+}
+async function pfAgregarMin(k,val){val=Number(val)||0;if(!(k.receta_id||k.seccion)||!(val>0)){toast('Elige qué y cuántos','warn');return}
+  const ya=state.pf.minimos.find(m=>k.receta_id?m.receta_id===k.receta_id:(!m.receta_id&&m.seccion===k.seccion));
+  const r=ya?await sb.from('inv_prod_minimos').update({minimo:val,updated_at:nowISO()}).eq('id',ya.id):await sb.from('inv_prod_minimos').insert({local_id:LOCAL,receta_id:k.receta_id||null,seccion:k.receta_id?null:k.seccion,minimo:val});
+  if(r.error){toast('Atrás · '+r.error.message,'err');return}await loadProduccion();render();toast('Servido · mínimo guardado','ok')}
+// Insumos que faltan para producir lo que está bajo mínimo → Armar pedido
+function pfInsumosAlPedido(){const req={};
+  pfFaltantes().filter(x=>x.r).forEach(x=>{const t=state.pf.tandas.find(y=>y.receta_id===x.r.id);const porcEnv=t?Number(t.porciones_envase||1):1;pfInsumos(x.r,Math.max(1,x.min-x.tot)*porcEnv,req)});
+  let n=0;Object.keys(req).forEach(pid=>{const p=prod(pid);if(!p)return;const falta=+(req[pid]-stock(pid)).toFixed(2);if(falta>0){state.pedidoQty[pid]=Math.max(Number(state.pedidoQty[pid]||0),falta);n++}});
+  if(!n){toast('Hay insumos suficientes para producir lo que falta','ok');return}
+  state.pedidoInit=true;state.view='pedido';render();toast('Va · '+n+' insumos al pedido','ok')}
+
+/* ---- Equipos del local ---- */
+function pfRenderEquipos(){
+  const eqs=state.pf.equipos;
+  $('#pf-body').innerHTML=`
+    <div class="row-meta" style="margin-bottom:10px">Cada equipo tiene una clave corta: es la que va en su QR o etiqueta NFC (abre /mercado?equipo=CLAVE).</div>
+    <table class="tbl pf-tbl"><tr><th>Nombre</th><th>Clave</th><th>Tipo</th><th>Mín °C</th><th>Máx °C</th><th>Orden</th><th>Activo</th><th></th></tr>
+    ${eqs.map(e=>`<tr data-eq="${e.id}"><td><input data-k="nombre" value="${pfEsc(e.nombre)}"></td><td><input data-k="clave" value="${pfEsc(e.clave)}" style="max-width:110px"></td>
+      <td><select data-k="tipo">${PF_TIPOS.map(t=>`<option value="${t[0]}" ${e.tipo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select></td>
+      <td><input data-k="temp_min" type="number" step="0.5" value="${e.temp_min??''}"></td><td><input data-k="temp_max" type="number" step="0.5" value="${e.temp_max??''}"></td>
+      <td><input data-k="orden" type="number" value="${e.orden||0}" style="max-width:64px"></td><td><input data-k="activo" type="checkbox" ${e.activo?'checked':''} style="width:auto"></td>
+      <td style="white-space:nowrap"><button class="mini-btn" data-qr="${e.id}" title="Etiqueta QR"><span class="material-symbols-outlined" style="font-size:15px">qr_code_2</span></button> <button class="mini-btn danger" data-del="${e.id}" title="Quitar"><span class="material-symbols-outlined" style="font-size:15px">delete</span></button></td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;opacity:.5;padding:14px">Sin equipos</td></tr>'}</table>
+    <div class="toolbar" style="margin-top:12px"><button class="btn-ico primary" data-add="refri"><span class="material-symbols-outlined">kitchen</span><span>Refri</span></button><button class="btn-ico primary" data-add="camara"><span class="material-symbols-outlined">kitchen</span><span>Cámara</span></button><button class="btn-ico primary" data-add="congelador"><span class="material-symbols-outlined">ac_unit</span><span>Congelador</span></button><button class="btn-ico" data-add="ambiente"><span class="material-symbols-outlined">shelves</span><span>Ambiente</span></button></div>`;
+  $$('#pf-body tr[data-eq] [data-k]').forEach(inp=>inp.onchange=async()=>{const id=inp.closest('tr').dataset.eq,k=inp.dataset.k;
+    let v=inp.type==='checkbox'?inp.checked:inp.value;if(['temp_min','temp_max','orden'].includes(k))v=v===''?null:Number(v);if(k==='clave')v=String(v).trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'');
+    if((k==='nombre'||k==='clave')&&!v){toast('No puede quedar vacío','warn');render();return}
+    const r=await sb.from('inv_equipos_frio').update({[k]:v}).eq('id',id);if(r.error){toast('Atrás · '+(/duplicate/.test(r.error.message)?'esa clave ya existe en el local':r.error.message),'err');await loadProduccion();render();return}
+    await loadProduccion();render();toast('Servido','ok')});
+  $$('#pf-body [data-add]').forEach(b=>b.onclick=()=>pfAgregarEquipo(b.dataset.add));
+  $$('#pf-body [data-del]').forEach(b=>b.onclick=()=>pfQuitarEquipo(b.dataset.del));
+  $$('#pf-body [data-qr]').forEach(b=>b.onclick=()=>pfImprimirEtiqueta(b.dataset.qr));
+}
+async function pfAgregarEquipo(tipo){const eqs=state.pf.equipos,base={refri:'REF',camara:'CAM',congelador:'CONG',ambiente:'AMB'}[tipo];
+  let i=1;while(eqs.some(e=>e.clave===base+i))i++;const nom={refri:'Refri',camara:'Cámara',congelador:'Congelador',ambiente:'Despensa'}[tipo]+' '+i;
+  const t=PF_TEMP_DEF[tipo];const r=await sb.from('inv_equipos_frio').insert({local_id:LOCAL,clave:base+i,nombre:nom,tipo,temp_min:t[0],temp_max:t[1],orden:eqs.length});
+  if(r.error){toast('Atrás · '+r.error.message,'err');return}await loadProduccion();render();toast('Servido · '+nom+' agregado','ok')}
+async function pfQuitarEquipo(id){const e=pfEq(id);if(!e)return;const n=state.pf.tandas.filter(t=>t.equipo_id===id).length;
+  if(n){const r=await sb.from('inv_equipos_frio').update({activo:false}).eq('id',id);if(r.error){toast('Atrás · '+r.error.message,'err');return}toast('Tiene '+n+' tandas: quedó inactivo (muévelas antes de quitarlo)','warn')}
+  else{if(!confirm('¿Quitar '+e.nombre+'? Se borra también su registro de temperaturas.'))return;const r=await sb.from('inv_equipos_frio').delete().eq('id',id);if(r.error){toast('Atrás · '+r.error.message,'err');return}toast('Servido · '+e.nombre+' quitado','ok')}
+  await loadProduccion();render()}
+
+/* ---- Temperaturas (HACCP) ---- */
+function pfAbrirTemp(id){const e=pfEq(id);if(!e)return;
+  setHead('','Temperatura · '+e.nombre,(e.temp_min!=null||e.temp_max!=null)?'Rango '+(e.temp_min??'—')+' a '+(e.temp_max??'—')+' °C':'Sin rango definido');$('#sheet-mark').innerHTML='<span class="material-symbols-outlined">device_thermostat</span>';
+  const hist=state.pf.temps.filter(x=>x.equipo_id===id).slice(0,8);
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Lectura del termómetro (°C)</div><input class="input" id="tp-val" type="number" step="0.1" inputmode="decimal" autofocus></div>
+    <div class="sheet-section grid2"><button class="btn ghost" id="tp-no">Atrás</button><button class="btn primary" id="tp-si">Va · registrar</button></div>
+    ${hist.length?`<div class="sheet-section"><table class="tbl"><tr><th>Cuándo</th><th>°C</th><th>Quién</th></tr>${hist.map(x=>`<tr class="${pfFuera(e,x.temp)?'rojo':''}"><td>${new Date(x.created_at).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'})}</td><td class="mono">${num(x.temp)}</td><td>${pfEsc(x.usuario||'')}</td></tr>`).join('')}</table></div>`:''}`;
+  $('#tp-no').onclick=closeSheet;$('#tp-si').onclick=()=>pfGuardarTemp(id,$('#tp-val').value);openSheet()}
+async function pfGuardarTemp(id,val){const e=pfEq(id);if(val===''||isNaN(Number(val))){toast('Escribe la temperatura','warn');return}
+  const r=await sb.from('inv_temp_registros').insert({equipo_id:id,local_id:LOCAL,temp:Number(val),usuario:pfQuien()});if(r.error){toast('Atrás · '+r.error.message,'err');return}
+  closeSheet();await loadProduccion();render();
+  if(pfFuera(e,val))toast('Atrás · '+e.nombre+' está a '+val+' °C, fuera de rango ('+(e.temp_min??'—')+' a '+(e.temp_max??'—')+'). Revisa la puerta y el producto.','err');else toast('Servido · '+e.nombre+' '+val+' °C','ok')}
+function pfRenderTemps(){const eqs=state.pf.equipos.filter(e=>e.activo);
+  $('#pf-body').innerHTML=`${eqs.map(e=>{const ut=pfUltTemp(e.id),hs=state.pf.temps.filter(x=>x.equipo_id===e.id).slice(0,6);const horas=ut?Math.round((Date.now()-new Date(ut.created_at))/36e5):null;
+    return `<div class="row-card"><span class="pf-ico ${e.tipo}"><span class="material-symbols-outlined">${pfIcoEq(e)}</span></span>
+      <div class="row-main"><h3>${pfEsc(e.nombre)}</h3><div class="row-meta"><span>Rango ${e.temp_min??'—'} a ${e.temp_max??'—'} °C</span><span>${ut?'última hace '+(horas<1?'menos de 1 h':horas+' h'):'sin lecturas'}</span></div>
+        <div class="row-meta">${hs.map(x=>`<span style="${pfFuera(e,x.temp)?'color:var(--secondary);font-weight:700':''}">${num(x.temp)}°</span>`).join('')}</div></div>
+      <div class="row-right"><span class="pf-temp ${ut?(pfFuera(e,ut.temp)?'mal':''):'sin'}">${ut?num(ut.temp)+' °C':'— °C'}</span><button class="mini-btn primary" data-temp="${e.id}">Registrar</button></div></div>`}).join('')||'<div class="empty-state">Sin equipos activos</div>'}`;
+  $$('#pf-body [data-temp]').forEach(b=>b.onclick=()=>pfAbrirTemp(b.dataset.temp))}
+
+/* ---- Hoja A4 por equipo y etiqueta QR/NFC ---- */
+function pfLink(e){return location.origin+'/mercado?equipo='+encodeURIComponent(e.clave)+'&marca='+encodeURIComponent(MARCA)+'&local='+encodeURIComponent(LOCAL)}
+function pfCodigoHoja(e){return 'PF-'+e.clave+'-'+hoyISO().replace(/-/g,'')}
+function pfVentana(titulo,cuerpo,css){const w=window.open('','_blank');if(!w){toast('Permite ventanas emergentes para imprimir','warn');return}
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${pfEsc(titulo)}</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'IBM Plex Sans',sans-serif;color:#171c20;-webkit-print-color-adjust:exact;print-color-adjust:exact}.mono{font-family:'IBM Plex Mono',monospace}${css}</style></head>
+  <body>${cuerpo}<script>
+  document.querySelectorAll('[data-qr]').forEach(function(el){new QRCode(el,{text:el.getAttribute('data-qr'),width:+el.getAttribute('data-s')||96,height:+el.getAttribute('data-s')||96,correctLevel:QRCode.CorrectLevel.M})});
+  setTimeout(function(){window.print()},600);<\/script></body></html>`);w.document.close()}
+function pfImprimirHoja(id){const e=pfEq(id);if(!e)return;const ts=state.pf.tandas.filter(t=>t.equipo_id===id);const cod=pfCodigoHoja(e);const vacias=Math.max(6,16-ts.length);
+  const fila=t=>`<tr><td>${t?pfEsc(t.nombre):''}</td><td>${t?pfEsc(t.envase||''):''}</td><td class="mono">${t?pfFecha(t.elaborado):''}</td><td class="mono">${t?(t.vence?PF_DIAS[new Date(t.vence+'T12:00:00').getDay()][0]+' '+pfFecha(t.vence):''):''}</td><td class="mono c">${t?num(t.cantidad):''}</td><td></td><td></td><td></td></tr>`;
+  pfVentana('Hoja '+e.nombre,`<div class="pg"><i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i>
+    <header><div><div class="mono up">Prep! · Mercado · Producción y frío</div><h1>${pfEsc(e.nombre)}</h1><div class="mono">${pfEsc(document.querySelector('.brand-txt .cli')?.textContent||'')} · clave ${pfEsc(e.clave)} · rango ${e.temp_min??'—'} a ${e.temp_max??'—'} °C</div></div>
+      <div class="qr"><div data-qr="${pfLink(e)}" data-s="92"></div><div class="mono cod">${cod}</div></div></header>
+    <table><thead><tr><th>Preparación</th><th>Envase</th><th>Hecho</th><th>Vence</th><th>Había</th><th>Quedan</th><th>Usado</th><th>Botado</th></tr></thead><tbody>${ts.map(fila).join('')}${Array.from({length:vacias},()=>fila(null)).join('')}</tbody></table>
+    <div class="temps"><b>Temperaturas</b>${['Apertura','Mediodía','Tarde','Cierre'].map(x=>`<span>${x}: ______ °C</span>`).join('')}</div>
+    <footer class="mono">Llena con letra clara: "Quedan" es lo que ves en el equipo. Firma: ____________ · Fecha: ____/____ · ${cod}</footer></div>`,
+  `@page{size:A4;margin:10mm}.pg{position:relative;padding:12mm 10mm;min-height:270mm}.k{position:absolute;width:10mm;height:10mm;border:0 solid #000}.tl{top:0;left:0;border-top-width:3px;border-left-width:3px}.tr{top:0;right:0;border-top-width:3px;border-right-width:3px}.bl{bottom:0;left:0;border-bottom-width:3px;border-left-width:3px}.br{bottom:0;right:0;border-bottom-width:3px;border-right-width:3px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}h1{font-size:26px;margin:4px 0}.up{font-size:10px;text-transform:uppercase;letter-spacing:.08em}.qr{text-align:center}.cod{font-size:10px;margin-top:4px}
+  table{width:100%;border-collapse:collapse;font-size:12px}th{background:#171c20;color:#fff;text-align:left;padding:6px;font-size:10px;text-transform:uppercase;letter-spacing:.05em}td{border:1px solid #000;height:9mm;padding:3px 6px}td.c{text-align:center}
+  .temps{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:13px}footer{position:absolute;bottom:8mm;left:10mm;right:10mm;font-size:10px;border-top:1px solid #000;padding-top:6px}`)}
+function pfImprimirEtiqueta(id){const e=pfEq(id);if(!e)return;const url=pfLink(e);
+  pfVentana('Etiqueta '+e.nombre,`<div class="et"><div data-qr="${url}" data-s="150"></div><h2>${pfEsc(e.nombre)}</h2><div class="mono">${pfEsc(e.clave)}</div><div class="mono url">${pfEsc(url)}</div><div class="mono nfc">Para NFC: graba este mismo enlace en la etiqueta.</div></div>`,
+  `@page{size:A6;margin:6mm}.et{border:3px solid #000;border-radius:14px;padding:14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}h2{font-size:22px}.url{font-size:8px;word-break:break-all}.nfc{font-size:9px;opacity:.7}`)}
+
+/* ---- Cargar la hoja llenada ---- */
+// La lectura automática de la foto necesita la clave de Anthropic en Prep (aún no está). Mientras, se pasa a mano.
+function pfCargarHoja(id){const e=pfEq(id);if(!e)return;const ts=state.pf.tandas.filter(t=>t.equipo_id===id);const extra=[];
+  setHead('','Cargar hoja · '+e.nombre,pfCodigoHoja(e));$('#sheet-mark').innerHTML='<span class="material-symbols-outlined">fact_check</span>';
+  const draw=()=>{$('#sheet-body').innerHTML=`
+    <div class="sheet-section"><button class="btn ghost" id="ch-foto"><span class="material-symbols-outlined">photo_camera</span>Leer la hoja con una foto</button><div class="row-meta" id="ch-aviso" style="margin-top:6px"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Lo que quedó en el equipo</div><table class="tbl pf-tbl"><tr><th>Preparación</th><th>Había</th><th>Quedan</th><th>Botado</th></tr>
+      ${ts.map(t=>`<tr><td>${pfEsc(t.nombre)}<div class="row-meta">${pfEsc(t.envase||'')} · ${pfFecha(t.vence)}</div></td><td class="mono">${num(t.cantidad)}</td><td><input type="number" min="0" step="0.5" data-q="${t.id}" value="${t.cantidad}"></td><td><input type="number" min="0" step="0.5" data-b="${t.id}" value="0"></td></tr>`).join('')}
+      ${extra.map((x,i)=>`<tr><td><input data-xn="${i}" value="${pfEsc(x.nombre)}" placeholder="Nueva preparación"></td><td>—</td><td><input type="number" min="0" step="0.5" data-xq="${i}" value="${x.cantidad}"></td><td><input type="date" data-xv="${i}" value="${x.vence}"></td></tr>`).join('')}</table>
+      <button class="mini-btn ghost" id="ch-add" style="margin-top:8px">+ Fila que no estaba en la hoja</button></div>
+    <div class="sheet-section grid2"><button class="btn ghost" id="ch-no">Atrás</button><button class="btn primary" id="ch-si">Va · aplicar</button></div>`;
+    const keep=()=>extra.forEach((x,i)=>{x.nombre=$(`[data-xn="${i}"]`).value;x.cantidad=Number($(`[data-xq="${i}"]`).value)||0;x.vence=$(`[data-xv="${i}"]`).value});
+    $('#ch-foto').onclick=()=>{$('#ch-aviso').textContent='Falta la clave de Anthropic para leer la foto. Mientras tanto, pasa los números de la hoja a mano en la tabla.'};
+    $('#ch-add').onclick=()=>{keep();extra.push({nombre:'',cantidad:1,vence:pfMas(pfVida(null,pfCongela(e)))});draw()};
+    $('#ch-no').onclick=closeSheet;
+    $('#ch-si').onclick=async()=>{keep();let cambios=0;
+      for(const t of ts){const q=Number($(`[data-q="${t.id}"]`).value),b=Number($(`[data-b="${t.id}"]`).value)||0;if(isNaN(q))continue;
+        const had=Number(t.cantidad),bot=Math.min(Math.max(b,0),had),uso=Math.max(0,+(had-bot-q).toFixed(3));
+        if(bot>0){await pfSalidaSilenciosa(t,bot,'botar');cambios++}
+        if(uso>0){await pfSalidaSilenciosa(t,uso,'usar');cambios++}
+        const esperado=+(had-bot-uso).toFixed(3);
+        if(q!==esperado){const r=await sb.from('inv_tandas').update(q>0?{cantidad:q,estado:'activa',updated_at:nowISO()}:{cantidad:0,estado:'consumida',updated_at:nowISO()}).eq('id',t.id);if(!r.error){await pfLog(t,'ajuste',+(q-esperado).toFixed(3),null,null);cambios++}}}
+      for(const x of extra.filter(x=>x.nombre.trim()&&x.cantidad>0)){const r=await sb.from('inv_tandas').insert({local_id:LOCAL,nombre:x.nombre.trim(),equipo_id:id,cantidad:x.cantidad,vence:x.vence||null,responsable:pfQuien(),notas:'Cargada desde la hoja '+pfCodigoHoja(e)}).select().single();if(!r.error){await pfLog(r.data,'crear',x.cantidad,null,id);cambios++}}
+      closeSheet();await Promise.all([loadProduccion(),loadMermas()]);render();toast(cambios?'Servido · '+cambios+' cambios aplicados':'Sin cambios',cambios?'ok':'');};
+  };draw();openSheet()}
+// Igual que pfSalida pero sin repintar ni avisar en cada fila (para la carga de la hoja)
+async function pfSalidaSilenciosa(t,qty,tipo){const fresh=(await sb.from('inv_tandas').select('*').eq('id',t.id).single()).data||t;
+  qty=Math.min(Number(qty),Number(fresh.cantidad));if(!(qty>0))return;const queda=+(Number(fresh.cantidad)-qty).toFixed(3);
+  await sb.from('inv_tandas').update(queda>0?{cantidad:queda,updated_at:nowISO()}:{cantidad:0,estado:tipo==='botar'?'botada':'consumida',updated_at:nowISO()}).eq('id',t.id);
+  await pfLog(t,tipo==='botar'?'botar':'consumir',qty,t.equipo_id,null);
+  if(tipo==='botar')await sb.from('inv_mermas').insert({local_id:LOCAL,producto_id:'tanda:'+t.id,tanda_id:t.id,nombre:t.nombre+(t.envase?' · '+t.envase:''),cantidad:qty,motivo:'Vencimiento',valor_perdido:+(pfCostoEnvase(t)*qty).toFixed(2),area:pfEq(t.equipo_id)?.nombre||null,responsable:pfQuien(),notas:'Hoja '+(pfEq(t.equipo_id)?pfCodigoHoja(pfEq(t.equipo_id)):''),fecha:hoyISO()})}
+
+/* ---- Arrastrar y soltar (pointer events: mouse y táctil) ---- */
+let PFD=null;
+function pfDockHTML(desde){return state.pf.equipos.filter(e=>e.activo&&e.id!==desde).map(e=>`<div data-drop="${e.id}"><span class="material-symbols-outlined">${pfIcoEq(e)}</span>${pfEsc(e.nombre)}</div>`).join('')
+  +'<div class="usar" data-drop="usar"><span class="material-symbols-outlined">restaurant</span>Se usó</div><div class="botar" data-drop="botar"><span class="material-symbols-outlined">delete</span>Se botó</div>'}
+function pfDestinoEn(x,y){const el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('[data-drop]'):null}
+function pfLimpiarDrag(){if(!PFD)return;if(PFD.ghost)PFD.ghost.remove();$$('[data-drop].over').forEach(e=>e.classList.remove('over'));const d=$('#pf-dock');if(d)d.classList.remove('on');document.body.classList.remove('pf-dragging');PFD=null}
+document.addEventListener('pointerdown',e=>{if(e.button>0)return;const board=$('#pf-board');if(!board||!board.contains(e.target))return;
+  const drag=e.target.closest('[data-drag]'),card=e.target.closest('[data-edit]');if(!drag&&!card)return;
+  PFD={drag,edit:card&&card.dataset.edit,x:e.clientX,y:e.clientY,started:false}});
+document.addEventListener('pointermove',e=>{if(!PFD||!PFD.drag)return;
+  if(!PFD.started){if(Math.hypot(e.clientX-PFD.x,e.clientY-PFD.y)<6)return;const t=pfTanda(PFD.drag.dataset.drag);if(!t){pfLimpiarDrag();return}
+    PFD.started=true;PFD.id=t.id;PFD.qty=PFD.drag.dataset.uno?1:Number(t.cantidad);PFD.desde=t.equipo_id;
+    PFD.ghost=document.createElement('div');PFD.ghost.className='pf-ghost';PFD.ghost.textContent=(PFD.drag.dataset.uno?'1 × ':num(t.cantidad)+' × ')+(t.envase||'envase')+' · '+t.nombre;document.body.appendChild(PFD.ghost);
+    const dock=$('#pf-dock');dock.innerHTML=pfDockHTML(t.equipo_id);dock.classList.add('on');document.body.classList.add('pf-dragging')}
+  e.preventDefault();PFD.ghost.style.transform='translate('+(e.clientX+12)+'px,'+(e.clientY+12)+'px)';
+  const t=pfDestinoEn(e.clientX,e.clientY);$$('[data-drop].over').forEach(x=>{if(x!==t)x.classList.remove('over')});if(t&&t.dataset.drop!==PFD.desde)t.classList.add('over')},{passive:false});
+document.addEventListener('pointerup',e=>{if(!PFD)return;const d=PFD;
+  if(d.started){const t=pfDestinoEn(e.clientX,e.clientY);pfLimpiarDrag();if(!t)return;const dest=t.dataset.drop;
+    if(dest===d.desde)return;if(dest==='usar')pfSalida(d.id,d.qty,'usar');else if(dest==='botar')pfAbrirBotar(d.id,d.qty);else pfMover(d.id,d.qty,dest)}
+  else{PFD=null;if(d.edit&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<6)pfAbrirTanda(d.edit)}});
+document.addEventListener('pointercancel',pfLimpiarDrag);
+
+// Cambios de otro equipo (tablet de cocina, celular): se juntan para no repintar a media acción
+let pfRefT=null;function pfRefrescar(){clearTimeout(pfRefT);pfRefT=setTimeout(async()=>{if(PFD||$('#sheet').classList.contains('open')){pfRefrescar();return}await loadProduccion();if(state.view==='produccion')render();else renderTabs()},700)}
 /* ===== REALTIME ===== */
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);
   state.channel=sb.channel('mercado_'+LOCAL)
     .on('postgres_changes',{event:'*',schema:'public',table:'inv_movimientos',filter:'local_id=eq.'+LOCAL},async()=>{await loadMovs();render()})
     .on('postgres_changes',{event:'*',schema:'public',table:'inv_ordenes_compra',filter:'local_id=eq.'+LOCAL},async()=>{await loadOrdenes();render()})
+    .on('postgres_changes',{event:'*',schema:'public',table:'inv_tandas',filter:'local_id=eq.'+LOCAL},()=>pfRefrescar())
+    .on('postgres_changes',{event:'*',schema:'public',table:'inv_equipos_frio',filter:'local_id=eq.'+LOCAL},()=>pfRefrescar())
     .subscribe();
 }
 $('#sheet-close').addEventListener('click',closeSheet);
