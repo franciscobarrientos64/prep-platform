@@ -51,6 +51,7 @@ El turno de los clientes es sagrado: una caída en hora punta es el problema #1 
 - **Monitoreo:** `prep_monitor_turno()` corre por pg_cron cada 2 min y abre incidentes en `prep_incidentes` (equipos sin latido >3 min, ventas en cola o rechazadas, comandas >20 min sin avanzar, errores del POS, BD lenta >500 ms). Se ven en **/portal › Salud del turno** (RPC `prep_salud_turno`) y se avisan por WhatsApp con la Edge Function `turno-alertas` (secrets `WA_TOKEN`, `WA_PHONE_ID`, `ALERTA_WHATSAPP_ADMIN`; sin llave quedan `pendiente_llave`). Horario de cada local: `config_local.horario_turno`.
 - **RLS rápida:** las políticas por tenant usan `(SELECT prep_is_super()) OR local_id = ANY (ARRAY(SELECT unnest(prep_mis_locales())))` (y `prep_mis_marcas()`), que se calcula una vez por consulta. **No escribas políticas nuevas con `prep_can_local(col)` por fila**: con miles de filas el POS se pone lento (medido: 1,6 s → 22 ms). Respaldo de las políticas anteriores en `prep_policy_backup`.
 - **Plan de contingencia para el local:** `docs/CONTINGENCIA.md` (se ve en `/instalacion?doc=contingencia`).
+- **Impresión (ojo):** el POS imprime con `window.print()` (diálogo del sistema); `li_estaciones.impresora_ip` se guarda pero NO se usa para enviar. La impresora debe estar instalada en el SO del equipo. Instalación en curso de Casa Italia Oxapampa: `docs/INSTALACION-OXAPAMPA.md`.
 
 ## 4. ESTRUCTURA DE ARCHIVOS
 
