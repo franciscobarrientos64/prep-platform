@@ -52,7 +52,7 @@
   var RUTA_MOD={
     '/pase':'pase','/pos':'pos','/pos-v2':'pos','/pos-legacy':'pos','/pos2':'pos',
     '/kds':'linea','/linea':'linea','/bienvenida':'bienvenida','/reservar':'bienvenida',
-    '/mercado':'mercado','/inventario':'mercado','/recetas':'recetas','/rrhh':'rrhh',
+    '/mercado':'mercado','/inventario':'mercado','/recetas':'recetas','/rrhh':'rrhh','/asistencia':'asistencia','/marcar':'asistencia',
     '/delivery':'delivery','/finanzas':'contabilidad','/contabilidad':'contabilidad','/caja-chica':'contabilidad',
     '/vuelto':'vuelto','/el-libro':'libro','/examen-reporte':'libro','/libro':'libro','/directorio':'directorio',
     '/engagement':'engagement','/prediccion':'prediccion',

@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 command -v node >/dev/null || { echo "smoke: falta node"; exit 1; }
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
-HTML="pos-v2.html kds.html mercado.html bienvenida.html el-libro.html directorio.html hub.html index.html casa-italia.html login.html inventario.html recetas.html portal.html carta.html"
+HTML="pos-v2.html kds.html mercado.html bienvenida.html el-libro.html directorio.html hub.html index.html casa-italia.html login.html inventario.html recetas.html portal.html carta.html asistencia.html"
 JS="auth-guard.js tenant.js client-name.js role-view.js offline.js prep-sync.js sw.js"
 fail=0
 for f in $HTML; do

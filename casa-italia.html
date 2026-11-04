@@ -159,6 +159,7 @@ const MODULOS=[
   {n:'Mercado',d:'Compras + inventario',ico:'inventory_2',href:'/mercado',ac:'#10b981'},
   {n:'Recetas',d:'Costeo + food cost + carta',ico:'menu_book',href:'/recetas',ac:'#d4a000'},
   {n:'RRHH',d:'Equipo + asistencia + planilla',ico:'badge',href:'/rrhh',ac:'#e8735a'},
+  {n:'Asistencia',d:'Marca con foto + puntualidad',ico:'fingerprint',href:'/asistencia',ac:'#e8735a'},
   {n:'Delivery',d:'Pedidos + repartidores + zonas',ico:'delivery_dining',href:'/delivery',ac:'#7c3aed'},
   {n:'Contabilidad',d:'Finanzas + presupuesto',ico:'receipt_long',href:'/finanzas',ac:'#0d3d34'},
   {n:'Vuelto',d:'Caja chica',ico:'savings',href:'/vuelto',ac:'#ffcc00'},
@@ -169,7 +170,7 @@ const MODULOS=[
   {n:'Voz del Cliente',d:'Mystery Shopper, encuestas y reseñas',ico:'reviews',href:'/voz-cliente',ac:'#7c3aed'},
   {n:'Carta QR',d:'Menú digital + pedido en mesa',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
 ];
-const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'prediccion','Voz del Cliente':'mystery'};
+const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Asistencia':'asistencia','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'prediccion','Voz del Cliente':'mystery'};
 // Features principales por módulo (para el teaser de upsell cuando el módulo no está en el paquete del cliente)
 const MODFEAT={
   pase:['Cubiertos, ventas y food cost en vivo','Menu engineering (estrellas/perros)','Comparativo entre sedes','Alertas al celular del dueño'],
@@ -183,6 +184,7 @@ const MODFEAT={
   contabilidad:['Registro automático de facturas','Libro de ventas/compras','Presupuesto vs real','Cierre mensual'],
   vuelto:['Caja chica por voz/foto','Centro de costo','Aprobación de supervisor','Cierre diario'],
   engagement:['Loyalty con niveles y puntos','CRM 360 del comensal','Campañas por WhatsApp','Reseñas'],
+  asistencia:['Marca desde el celular con foto y ubicación','Tardanzas, faltas y horas extra automáticas','Kiosco en tablet para el local','Reporte de puntualidad exportable a Excel'],
   prediccion:['Pronóstico de demanda a 7 días','Qué preparar mañana','Horas pico','Detección de días atípicos']
 };
 const access={user:null,mm:[],roles:[],usuarios:[],authed:false,authEmail:null};
@@ -198,7 +200,7 @@ async function loadAccess(){
     access.user=access.usuarios.find(u=>u.id===uid)||access.usuarios.find(u=>u.rol_sistema==='superadmin')||access.usuarios[0]||null;
   }
 }
-function nivelDeMod(k){const v=window.prepNivel&&window.prepNivel(k);if(v)return v;const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||'ninguno'}
+function nivelDeMod(k){const v=window.prepNivel&&window.prepNivel(k);if(v)return v;const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||(k==='asistencia'?'operar':'ninguno')}
 function moduloActivo(k){const u=access.user;if(!u||(u.rol_sistema==='superadmin'&&!window.PREP_VISTA))return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
 // Paquete del cliente activo (por marca en pantalla). null = sin config => todo permitido.
 function enPaquete(k){const rows=access.mm.filter(x=>x.marca_id===MARCA);if(!rows.length)return true;return rows.some(x=>x.modulo===k&&x.activo)}

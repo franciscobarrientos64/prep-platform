@@ -1,0 +1,307 @@
+<!-- Curso: Pasos de servicio de Casa Italia · Academia Prep! · cliente m6 -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fcf9f8">
+<title>Pasos de servicio de Casa Italia · Prep!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-guard.js"></script>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--gray-soft:#dfe3e8;--green:#10b981;
+--font-display:'Bagel Fat One',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow-sm:4px 4px 0 0 #000;--shadow:6px 6px 0 0 #000;--shadow-lg:10px 10px 0 0 #000;
+/* Casa Italia: verde albahaca + rojo tomate */
+--ci:#1f6b45;--ci-soft:#e3f1e8;--tomate:#c8372d;--tomate-soft:#fbe7e5;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-feature-settings:'liga';font-size:20px;line-height:1;vertical-align:middle}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 90px}
+a{color:inherit}
+.top{background:var(--bg);border-bottom:2px solid var(--outline);position:sticky;top:0;z-index:20}
+.top .hbar{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px;flex-wrap:wrap;min-height:52px}
+.top .hlogo{width:88px;height:28px;display:block;flex-shrink:0;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.top .mod{font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.top .nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.top .nav a{font-family:var(--font-mono);font-size:11px;font-weight:600;text-decoration:none;padding:5px 10px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);white-space:nowrap}
+.hero{background:var(--ci);color:#fff;border:2px solid var(--outline);border-radius:20px;box-shadow:var(--shadow-lg);padding:24px 22px;margin:20px 0 10px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:0;top:0;bottom:0;width:14px;background:linear-gradient(var(--ci) 0 33%,#fff 33% 66%,var(--tomate) 66%);border-left:2px solid var(--outline)}
+.hero .k{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.hero h1{font-family:var(--font-display);font-size:clamp(30px,5.5vw,50px);line-height:1;margin:8px 0 12px;font-weight:400}
+.hero p{font-size:15px;max-width:660px;opacity:.95}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero .meta span{font-family:var(--font-mono);font-size:11px;font-weight:600;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 11px}
+section{scroll-margin-top:70px;margin-top:34px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh .n{flex:0 0 auto;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;background:var(--tertiary);border:2px solid var(--outline);border-radius:11px;box-shadow:var(--shadow-sm)}
+.sh h2{font-family:var(--font-display);font-size:clamp(20px,3vw,27px);line-height:1;font-weight:400}
+.sh .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--ci-soft);color:var(--ci);border:2px solid var(--ci);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.lead{font-size:14px;opacity:.9;margin-bottom:14px;max-width:770px}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.callout{background:var(--tertiary);border:2px solid var(--outline);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.callout b{font-family:var(--font-display);font-weight:400}
+.paso{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--gray-soft)}
+.paso:last-child{border-bottom:none}
+.paso .ico{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:19px;background:var(--ci-soft);border:2px solid var(--outline);border-radius:12px}
+.paso h4{font-size:14.5px;margin-bottom:2px}.paso p{font-size:13px;opacity:.9}.paso .t{font-family:var(--font-mono);font-size:11px;color:var(--ci);font-weight:600}
+.frase{display:block;margin-top:6px;font-size:13px;font-style:italic;border-left:3px solid var(--tomate);padding:2px 0 2px 9px;background:var(--tomate-soft);border-radius:0 8px 8px 0}
+.do2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}@media(max-width:640px){.do2{grid-template-columns:1fr}}
+.do2 .box{border:2px solid var(--outline);border-radius:13px;padding:13px}.do2 .yes{background:#eafaf3}.do2 .no{background:#fdecea}
+.do2 h4{font-size:13.5px;margin-bottom:6px}.do2 ul{list-style:none;font-size:12.5px}.do2 li{padding:2px 0 2px 18px;position:relative}
+.do2 .yes li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}.do2 .no li:before{content:"✕";position:absolute;left:0;color:var(--secondary);font-weight:800}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.t th,table.t td{border:1.5px solid var(--outline);padding:7px 8px;text-align:left;vertical-align:top}
+table.t thead th{background:var(--ink);color:#fff;font-family:var(--font-mono);font-size:11px}
+.ruta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ruta a{display:flex;align-items:center;gap:7px;text-decoration:none;font-size:12.5px;font-weight:600;background:var(--surface);border:2px solid var(--outline);border-radius:999px;padding:5px 12px 5px 5px;box-shadow:2px 2px 0 0 #000}
+.ruta a span{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:50%;background:var(--ci);color:#fff;font-family:var(--font-mono);font-size:11px}
+.onepager{background:var(--surface);border:3px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-lg);padding:18px;margin-top:16px}
+.onepager .opt{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--outline);padding-bottom:9px;margin-bottom:12px}
+.onepager .opt .oplogo{width:80px;height:25px;display:inline-block;-webkit-mask:url(/logo.png) left center/contain no-repeat;mask:url(/logo.png) left center/contain no-repeat;background:var(--ink)}
+.onepager .opt h3{font-family:var(--font-display);font-size:19px;font-weight:400}
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:720px){.op-grid{grid-template-columns:1fr}}
+.op-box{border:2px solid var(--outline);border-radius:11px;padding:11px}
+.op-box h4{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ci);margin-bottom:7px;font-weight:700}
+.op-box ol{font-size:12px;padding-left:18px}.op-box li{padding:1px 0}
+.foot{text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:44px}
+</style>
+<style id="no-print">@media print{html,body{display:none!important}}</style>
+</head>
+<body>
+<header class="top">
+  <div class="hbar">
+    <a href="/el-libro" class="hlogo" aria-label="Prep!"></a><span class="mod">Curso · Pasos de servicio</span>
+    <nav class="nav">
+      <a href="#m1">1 · Bienvenida</a><a href="#m2">2 · En mesa</a><a href="#m3">3 · Provocación</a><a href="#m4">4 · Sostenimiento</a><a href="#m5">5 · Postre y café</a><a href="#m6">6 · Despedida</a><a href="#m7">7 · Cobro</a><a href="#resumen">Resumen</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <div class="hero">
+    <div class="k">Academia Prep! · Casa Italia · Sala</div>
+    <h1>Pasos de servicio de Casa Italia</h1>
+    <p>Lo que pasa con cada invitado desde que cruza la puerta hasta que paga y se va. Son siete momentos y cada uno tiene su tiempo, sus frases y sus errores típicos. Si todos los hacemos igual, el invitado vive la misma experiencia en cualquier mesa y con cualquier mozo.</p>
+    <div class="meta"><span>📚 7 módulos</span><span>⏱️ ~35 min</span><span>🎯 Anfitriona, mozos y caja</span><span>📄 Resumen de una cara</span></div>
+  </div>
+  <div class="callout"><b>La idea de fondo:</b> el invitado no recuerda cada paso, pero sí se da cuenta cuando uno falla: la mesa donde nadie llegó, el agua que no se repuso, la cuenta que demoró veinte minutos. Los pasos sirven para que no falle ninguno, y también para ganar la venta en el momento justo: la entrada al empezar, la segunda bebida a mitad de la comida y el postre al final.</div>
+
+  <div class="ruta">
+    <a href="#m1"><span>1</span>Bienvenida en la puerta</a><a href="#m2"><span>2</span>Bienvenida en mesa</a><a href="#m3"><span>3</span>Provocación</a><a href="#m4"><span>4</span>Sostenimiento</a><a href="#m5"><span>5</span>Postre y bebida caliente</a><a href="#m6"><span>6</span>Despedida</a><a href="#m7"><span>7</span>Cobro</a>
+  </div>
+
+  <!-- 1 -->
+  <section id="m1"><div class="sh"><div class="n">1</div><h2>La bienvenida en la puerta</h2><span class="tag">Anfitriona</span></div>
+    <p class="lead">La primera persona que ve el invitado es la anfitriona, o quien esté en la puerta en ese momento. En los primeros treinta segundos el invitado ya decidió si es bienvenido o si molesta. Este paso le toca a quien esté más cerca de la puerta, no solo a la anfitriona.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Antes de abrir</div><h4>Revisa el libro del día</h4><p>En <b>Bienvenida</b> mira las reservas del turno: cuántas hay, a qué hora, quién es VIP, quién viene por un cumpleaños y quién tiene alergias. Ten pensada la mesa para cada reserva antes de que llegue.</p></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">0 – 30 segundos</div><h4>Saluda apenas entran</h4><p>Míralo a los ojos, sonríe y saluda antes que él. Si estás atendiendo a otro invitado o al teléfono, haz contacto visual y un gesto de "ya estoy contigo". Que nadie se quede parado en la puerta sin que lo vean.</p><span class="frase">"¡Buenas noches, bienvenidos a Casa Italia! ¿Tienen reserva?"</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Con reserva</div><h4>Búscala y llámalo por su nombre</h4><p>Encuéntrala en Bienvenida y confirma cuántos son. Desde ese momento dirígete a él por su apellido. Si la ficha dice que es su cumpleaños o que tiene una alergia, avísale al mozo antes de que llegue a la mesa.</p><span class="frase">"Señor Rojas, mesa para cuatro, los estábamos esperando."</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Sin reserva</div><h4>Ofrece mesa o un tiempo de espera honesto</h4><p>Si hay mesa, siéntalo. Si no hay, dale un tiempo real; nunca digas "cinco minutos" si van a ser veinte. Anótalo en la lista de espera con su teléfono para avisarle por WhatsApp y ofrécele esperar en la barra.</p><span class="frase">"Ahora mismo estamos completos. Calculo unos veinte minutos. ¿Le anoto y le aviso por WhatsApp? Si gusta, puede esperar en la barra."</span></div></div>
+      <div class="paso"><div class="ico">5</div><div><div class="t">Siempre</div><h4>Atiende primero a quien tiene prioridad</h4><p>Adultos mayores, embarazadas, familias con niños pequeños y personas con discapacidad pasan primero en la lista de espera. Dales la mesa más cómoda: cerca de la entrada, sin escalones y lejos del paso de la cocina.</p></div></div>
+      <div class="paso"><div class="ico">6</div><div><div class="t">El recorrido</div><h4>Acompáñalo hasta la mesa</h4><p>Camina delante, a su ritmo, sin señalar la mesa desde lejos. Retira la silla si hay personas mayores, entrega una carta a cada invitado (abierta y del lado correcto) y presenta al mozo que lo va a atender.</p><span class="frase">"Esta es su mesa. En un momento los atiende Diego. ¡Que disfruten!"</span></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Siempre</h4><ul>
+        <li>Saludar antes que el invitado</li>
+        <li>Usar su nombre si tiene reserva</li>
+        <li>Avisar al mozo de alergias, cumpleaños y VIP</li>
+        <li>Dar un tiempo de espera real</li>
+        <li>Acompañar hasta la mesa</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca</h4><ul>
+        <li>Dejar a alguien parado en la puerta sin mirarlo</li>
+        <li>Preguntar "¿cuántos?" sin haber saludado</li>
+        <li>Señalar la mesa desde la entrada</li>
+        <li>Prometer cinco minutos cuando son veinte</li>
+        <li>Sentar a un grupo en una mesa sucia o sin montar</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="m2"><div class="sh"><div class="n">2</div><h2>Bienvenida en mesa</h2><span class="tag">Mozo</span></div>
+    <p class="lead">El invitado ya se sentó. Ahora el que cuenta eres tú. Lo que buscas en este momento es que sepa quién lo atiende, que tenga algo en la mesa rápido y que ya hayas preguntado lo que puede salir mal, como una alergia.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Antes de 1 minuto</div><h4>Llega a la mesa y preséntate</h4><p>Aunque estés ocupado, pasa, saluda y di tu nombre. Si de verdad no puedes quedarte, avisa que vuelves enseguida. Una mesa sin atender por más de un minuto ya siente que la olvidaron.</p><span class="frase">"Buenas noches, bienvenidos. Mi nombre es Andrea y los voy a atender hoy."</span></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">Al llegar</div><h4>Pregunta si es su primera vez</h4><p>Si es su primera vez, cuéntale en una frase qué es la casa: la masa de pizza que se hace aquí, la pasta fresca y la lasaña de la abuela. Si ya vino antes, dale la bienvenida de vuelta.</p><span class="frase">"¿Es su primera vez con nosotros? Aquí todo es casero: la masa de las pizzas, la pasta fresca y la lasaña de la abuelita."</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Antes de tomar el pedido</div><h4>Pregunta por alergias, siempre</h4><p>Pregunta a toda la mesa, no solo a uno. Si alguien tiene una alergia, márcala en el POS <b>en su silla</b>. Si comparten un plato, la alergia también aplica a ese plato. Cocina lo ve en la comanda.</p><span class="frase">"Antes de empezar: ¿alguien tiene alguna alergia o algo que no pueda comer?"</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Detalles</div><h4>Fíjate en la ocasión</h4><p>Si es cumpleaños o aniversario, o si hay niños o alguien mayor, ajusta el servicio: una silla para el bebé, la vela en el postre o hablar más pausado. Que el invitado sienta que lo viste.</p></div></div>
+    </div>
+    <div class="callout"><b>Ojo con el POS:</b> la mesa la abres apenas tomas el primer pedido, con el número correcto de invitados. Usa siempre la misma numeración de sillas que usa el resto del equipo; si no la tienes clara, pregúntale al jefe de servicio. Si las sillas no están bien numeradas, el plato con la alergia puede llegar a la persona equivocada.</div>
+  </section>
+
+  <!-- 3 -->
+  <section id="m3"><div class="sh"><div class="n">3</div><h2>Provocación</h2><span class="tag">Mozo</span></div>
+    <p class="lead">Provocar no es presionar. Es <b>recomendar algo concreto</b> antes de que el invitado decida solo. Quien no recibe una sugerencia termina pidiendo agua y un plato para todos. Quien escucha "el pan al ajo... la Pizza Oxa... la sangría de la casa" pide más y se va más contento. Aquí se gana la venta de bebida y de entrada.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Primeros 2 minutos</div><h4>Bebida primero, con dos opciones con nombre</h4><p>No preguntes "¿qué van a tomar?". Recomienda dos bebidas por su nombre: una con alcohol y una sin alcohol. La bebida tiene que estar en la mesa en menos de 5 minutos.</p><span class="frase">"Para empezar les recomiendo la sangría de la casa, que también viene en botella para compartir, o un Aperol Spritz. Y sin alcohol, la limonada de hierba luisa es la favorita."</span></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">Al llevar las bebidas</div><h4>Ofrece una entrada para compartir</h4><p>No preguntes si quieren entrada. Sugiere una, para el centro de la mesa, mientras esperan: el pan al ajo, la schiacciata o las drusquetas. Si son cuatro o más, sugiere dos.</p><span class="frase">"Mientras eligen, ¿les traigo un pan al ajo o una schiacciata para el centro? Salen rápido."</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Al tomar el pedido</div><h4>Recomienda el plato de la casa</h4><p>Si dudan, lleva la conversación a dos o tres platos que conoces bien: la <b>Pizza Oxa</b>, la <b>lasaña de la abuelita</b> o los <b>ravioles</b>. Explica el tamaño: la pizza personal es para uno y la grande se comparte entre dos o tres.</p><span class="frase">"Si es su primera vez, la lasaña de la abuelita es la que más piden. Y si quieren compartir, la Pizza Oxa grande alcanza para dos o tres."</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Antes de mandar a cocina</div><h4>Toma el pedido por silla y repítelo</h4><p>Anota cada plato en la silla de quien lo pidió. Pregunta el término y las notas (sin cebolla, salsa aparte) y repite el pedido completo en voz alta. Luego márchalo en el POS por tiempos: primero las entradas y después los fondos.</p><span class="frase">"Les confirmo: una Pizza Oxa grande al centro, una lasaña para la señora, unos ravioles para el señor, y antes el pan al ajo. ¿Correcto?"</span></div></div>
+    </div>
+    <div class="card" style="margin-top:14px;overflow-x:auto">
+      <table class="t">
+        <thead><tr><th>El invitado dice</th><th>Tú ofreces</th><th>Precio</th></tr></thead>
+        <tbody>
+          <tr><td>"Algo para tomar, no sé qué"</td><td>Sangría de la casa (copa o botella) · Aperol Spritz</td><td>S/15 · S/39 · S/22</td></tr>
+          <tr><td>"Yo no tomo / manejo"</td><td>Limonada de hierba luisa · Quito Quito</td><td>S/10</td></tr>
+          <tr><td>"Algo para picar mientras"</td><td>Pan al ajo · Schiacciata · Drusquetas</td><td>S/12 · S/15 · S/20</td></tr>
+          <tr><td>"Algo liviano"</td><td>Ensalada Casa Italia · Crema de zapallo</td><td>S/28 · S/19</td></tr>
+          <tr><td>"Lo que más piden"</td><td>Lasaña de la abuelita · Pizza Oxa</td><td>S/35 · S/45 grande</td></tr>
+          <tr><td>"Queremos compartir"</td><td>Una pizza grande al centro + una pasta</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Siempre</h4><ul>
+        <li>Recomendar con nombre: dos opciones, no la carta entera</li>
+        <li>Ofrecer siempre una opción sin alcohol</li>
+        <li>Anotar el pedido por silla y repetirlo</li>
+        <li>Confirmar con cocina si no sabes qué lleva un plato</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca</h4><ul>
+        <li>"¿Qué van a querer?" sin sugerir nada</li>
+        <li>"Todo es rico": eso no es recomendar</li>
+        <li>Inventar un ingrediente</li>
+        <li>Insistir después del segundo "no, gracias"</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="m4"><div class="sh"><div class="n">4</div><h2>Sostenimiento</h2><span class="tag">Mozo</span></div>
+    <p class="lead">La comida ya llegó. Ahora la mesa tiene que sentirse atendida sin sentirse vigilada. Sostener es pasar, mirar y adelantarte: llegar con la segunda bebida antes de que la pidan y retirar el plato cuando corresponde, sin interrumpir la conversación.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Al servir</div><h4>Cada plato a su silla, sin preguntar "¿quién pidió…?"</h4><p>Por eso tomaste el pedido por silla. Sirve por la derecha y nombra el plato. La pizza para compartir va al centro, con un plato y cubiertos para cada uno.</p><span class="frase">"Su lasaña de la abuelita. ¡Buen provecho!"</span></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">2 minutos o 2 bocados después</div><h4>Pregunta algo concreto</h4><p>Vuelve una vez, rápido. No preguntes "¿todo bien?", que siempre te van a responder que sí. Pregunta algo puntual que te permita corregir a tiempo.</p><span class="frase">"¿La pasta está en su punto? ¿Les traigo un poco más de parmesano o ají?"</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Cuando la bebida va a un tercio</div><h4>Ofrece la segunda ronda</h4><p>No esperes a que el vaso esté vacío. Ofrece algo distinto o la botella si están tomando por copa. Rellena el agua sin preguntar.</p><span class="frase">"¿Les traigo otra copa de sangría, o mejor la botella para la mesa?"</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Durante la comida</div><h4>Mantén la mesa limpia</h4><p>Retira lo que ya no se usa: vasos vacíos, la canasta de pan terminada, servilletas usadas. Los platos de fondo se retiran cuando <b>todos</b> terminaron, salvo que alguien te pida retirar el suyo antes.</p></div></div>
+      <div class="paso"><div class="ico">5</div><div><div class="t">Si algo falla</div><h4>Escucha, discúlpate y resuelve</h4><p>Si un plato llega frío o no es lo que pidieron, no discutas ni le eches la culpa a cocina. Discúlpate, ofrece cambiarlo de inmediato y avisa al jefe de turno. Si hace falta una cortesía, la aprueba el gerente en el POS.</p><span class="frase">"Tiene toda la razón, disculpe. Se lo cambio ahora mismo."</span></div></div>
+    </div>
+    <div class="callout"><b>La regla de la mirada:</b> cada vez que pases por tu zona, mira todas tus mesas, aunque no vayas a ninguna. El invitado que levanta la mano y no encuentra a nadie es el que después escribe la reseña. Si ves que una mesa te busca, haz contacto visual y un gesto, aunque estés llevando otra cosa.</div>
+  </section>
+
+  <!-- 5 -->
+  <section id="m5"><div class="sh"><div class="n">5</div><h2>Provocación de postre y bebida caliente</h2><span class="tag">Mozo</span></div>
+    <p class="lead">Es el momento en que más venta se pierde. La mesa terminó, está satisfecha, y si el mozo pregunta "¿algo más?" la respuesta es "la cuenta". Pero un postre para compartir y un café alargan la sobremesa, mejoran el recuerdo de la noche y suben el ticket sin esfuerzo.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Al retirar los platos de fondo</div><h4>Limpia la mesa y deja el espacio listo</h4><p>Retira platos, cubiertos usados, el salero y las migas. Una mesa limpia invita a quedarse; una mesa sucia invita a pedir la cuenta.</p></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">Enseguida</div><h4>Describe el postre, no preguntes si quieren</h4><p>Nombra uno o dos postres con una frase que los haga apetecibles. El tiramisú se ofrece para compartir, con dos cucharas.</p><span class="frase">"Para cerrar, el tiramisú es de la casa y se comparte bien entre dos. También tenemos crema volteada. ¿Les traigo uno con dos cucharas?"</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Junto con el postre</div><h4>Ofrece la bebida caliente</h4><p>Ofrece un espresso o un americano para acompañar el postre, y la tetera de infusiones de estación si son tres o más. A quien no quiere café ni postre, ofrécele una infusión en filtrante.</p><span class="frase">"¿Un espresso para acompañar el tiramisú? Y si prefieren algo sin cafeína, la tetera de infusiones es para compartir."</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Si hay celebración</div><h4>Sorprende con la vela</h4><p>Si en Bienvenida figura un cumpleaños o un aniversario, coordina con cocina para llevar el postre con una vela y, si la mesa quiere, que el equipo cante. Es lo que más se recuerda de la noche.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Siempre</h4><ul>
+        <li>Ofrecer el postre con nombre y para compartir</li>
+        <li>Ofrecer café o infusión junto con el postre</li>
+        <li>Dejar cucharas para todos los que comparten</li>
+        <li>Revisar si había una celebración en la reserva</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca</h4><ul>
+        <li>"¿Desean algo más o la cuenta?"</li>
+        <li>Dejar la mesa sucia y esperar que pidan postre</li>
+        <li>Llevar la cuenta sin que la pidan</li>
+        <li>Olvidar el café que acompañaba al postre</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="m6"><div class="sh"><div class="n">6</div><h2>Despedida</h2><span class="tag">Mozo y anfitriona</span></div>
+    <p class="lead">El final pesa tanto como el inicio: es lo último que el invitado se lleva. Una despedida apurada o hecha de espaldas borra una buena noche. Una despedida cálida y con su nombre hace que vuelva.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Al terminar el cobro</div><h4>Agradece y pregunta cómo les fue</h4><p>Pregunta algo concreto, con interés de verdad. Si mencionan algo que no salió bien, agradece el comentario y avísale al jefe de turno antes de que se vayan.</p><span class="frase">"Muchas gracias por venir. ¿Qué les pareció la lasaña?"</span></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">Antes de que se levanten</div><h4>Invita a volver con algo concreto</h4><p>Menciona un plato que no probaron o cuéntales que pueden reservar por WhatsApp o en la web. Si te dicen la fecha de la próxima visita, anótala en su ficha.</p><span class="frase">"La próxima vez prueben los ravioles. Pueden reservar por WhatsApp y les guardamos la mesa de la terraza."</span></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Al levantarse</div><h4>Ayuda con lo que llevan</h4><p>Ayuda con los abrigos y las sillas, y revisa que no olviden nada (celulares, lentes, la bolsa con lo que sobró). Si piden llevar lo que sobró, empácalo en la cocina, ciérralo bien y entrégalo en la mesa.</p></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">En la puerta</div><h4>Despídelo quien esté más cerca</h4><p>La anfitriona o el mozo despide al invitado en la puerta, mirándolo a los ojos, y por su nombre si lo sabe. Todo el equipo que esté cerca también se despide.</p><span class="frase">"¡Gracias, señora García! Que tengan buenas noches, los esperamos pronto."</span></div></div>
+      <div class="paso"><div class="ico">5</div><div><div class="t">Después</div><h4>Deja la mesa lista en menos de 5 minutos</h4><p>Retira todo, limpia y monta la mesa de nuevo. Si hay gente esperando, avísale a la anfitriona apenas esté lista.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="m7"><div class="sh"><div class="n">7</div><h2>Pasos para el cobro</h2><span class="tag">Mozo y caja</span></div>
+    <p class="lead">El cobro tiene que ser rápido, exacto y transparente. La regla es simple: la cuenta llega cuando la piden, en menos de 3 minutos, y el pago se hace siempre a la vista del invitado. Todo queda registrado en el POS.</p>
+    <div class="card">
+      <div class="paso"><div class="ico">1</div><div><div class="t">Cuando la piden</div><h4>Confirma cómo van a pagar antes de imprimir</h4><p>Pregunta si la cuenta va junta o separada, y si quieren boleta o factura. Así imprimes la pre-cuenta correcta a la primera.</p><span class="frase">"Con gusto. ¿La cuenta va junta o separada? ¿Boleta o factura?"</span></div></div>
+      <div class="paso"><div class="ico">2</div><div><div class="t">En el POS</div><h4>Revisa la cuenta antes de llevarla</h4><p>Entra a <b>Cobrar</b>, revisa que estén todos los ítems y que no haya nada de más ni nada repetido, y que las cortesías aprobadas figuren a S/0. Si van a dividir, hazlo aquí: por ítem (cada uno paga lo suyo) o en partes iguales.</p></div></div>
+      <div class="paso"><div class="ico">3</div><div><div class="t">Máximo 3 minutos</div><h4>Lleva la pre-cuenta impresa en la carpeta</h4><p>Entrega la carpeta a quien la pidió, o deja en el centro de la mesa si no sabes quién paga. No digas el total en voz alta. La pre-cuenta trae el QR de la encuesta: comenta en una frase que pueden dejar su opinión.</p><span class="frase">"Aquí tienen. Si tienen un minuto, el QR de abajo es una encuesta cortita sobre cómo los atendimos."</span></div></div>
+      <div class="paso"><div class="ico">4</div><div><div class="t">Factura</div><h4>Pide el RUC y la razón social, y verifícalos</h4><p>Anota el RUC completo (11 dígitos) y la razón social tal como figura en SUNAT, y léeselos de vuelta al invitado antes de emitir. Si el RUC está mal, el comprobante no le sirve al invitado.</p></div></div>
+      <div class="paso"><div class="ico">5</div><div><div class="t">Tarjeta</div><h4>El terminal va a la mesa; la tarjeta nunca sale de su vista</h4><p>Lleva el terminal de tarjetas a la mesa y deja que el invitado inserte o acerque su tarjeta. Si el terminal pide propina, gíralo hacia el invitado y deja que elija sin mirar. Entrégale su voucher.</p></div></div>
+      <div class="paso"><div class="ico">6</div><div><div class="t">Yape o Plin</div><h4>Confirma que el pago llegó antes de cerrar</h4><p>Muestra el QR del local. La captura de pantalla del invitado no basta: el pago está hecho cuando la notificación llega al celular de caja, con el monto y el nombre correctos.</p></div></div>
+      <div class="paso"><div class="ico">7</div><div><div class="t">Efectivo</div><h4>Cuenta delante del invitado y di el monto en voz alta</h4><p>Di cuánto recibiste, cuenta el vuelto delante de él y entrégalo en la carpeta. Revisa los billetes de S/100 y S/200 antes de aceptarlos.</p><span class="frase">"Recibo doscientos soles; su vuelto son cuarenta y ocho."</span></div></div>
+      <div class="paso"><div class="ico">8</div><div><div class="t">Al final</div><h4>Registra en el POS y cierra la mesa</h4><p>Registra cada método con su monto exacto. Si pagaron con dos medios, registra los dos. Anota la propina en su campo, sin sumarla al consumo. La mesa se cierra en el POS antes de que se vaya el invitado, no al final del turno.</p></div></div>
+    </div>
+    <div class="do2">
+      <div class="box yes"><h4>Siempre</h4><ul>
+        <li>Preguntar cuenta junta o separada antes de imprimir</li>
+        <li>Revisar ítems y cortesías antes de llevarla</li>
+        <li>Pago con tarjeta en la mesa, a la vista</li>
+        <li>Confirmar Yape/Plin en el celular de caja</li>
+        <li>Cerrar la mesa en el POS al momento</li>
+      </ul></div>
+      <div class="box no"><h4>Nunca</h4><ul>
+        <li><b>Pedir propina</b> ni insinuarla: es voluntaria</li>
+        <li>Llevarse la tarjeta del invitado lejos de la mesa</li>
+        <li>Aceptar una captura de Yape como pago</li>
+        <li>Llevar la cuenta sin que la pidan (se siente que lo apuran)</li>
+        <li>Cobrar en papel y registrar después</li>
+      </ul></div>
+    </div>
+    <div class="callout"><b>Sobre la propina:</b> no se pide, no se sugiere un monto y no se pone mala cara si no la dejan. Si el invitado pregunta si el servicio está incluido, contesta con la verdad: no lo está y es voluntario. Pedir propina es una de las faltas más graves en una evaluación de servicio.</div>
+  </section>
+
+  <section id="resumen"><div class="sh"><div class="n">✓</div><h2>Resumen de una cara</h2><span class="tag">Para la estación</span></div>
+    <p class="lead">Los siete momentos con sus tiempos, para repasar antes del turno.</p>
+    <div class="onepager">
+      <div class="opt"><span class="oplogo"></span><h3>Pasos de servicio · Casa Italia</h3></div>
+      <div class="op-grid">
+        <div class="op-box"><h4>1 · Bienvenida en la puerta</h4><ol>
+          <li>Revisar las reservas del día en Bienvenida</li><li>Saludar en menos de 30 s, antes que el invitado</li><li>Con reserva: usar su nombre. Sin reserva: dar un tiempo real</li><li>Prioridad: mayores, embarazadas, niños, discapacidad</li><li>Acompañar hasta la mesa y presentar al mozo</li></ol></div>
+        <div class="op-box"><h4>2 · Bienvenida en mesa</h4><ol>
+          <li>Llegar antes de 1 minuto y decir tu nombre</li><li>¿Primera vez? Contar qué es la casa en una frase</li><li>Preguntar alergias a toda la mesa y marcarlas por silla</li><li>Fijarse en la ocasión (cumpleaños, niños, mayores)</li></ol></div>
+        <div class="op-box"><h4>3 · Provocación</h4><ol>
+          <li>Recomendar dos bebidas con nombre y una sin alcohol</li><li>Bebida en la mesa en menos de 5 min</li><li>Ofrecer una entrada para el centro</li><li>Recomendar el plato de la casa y explicar los tamaños</li><li>Tomar el pedido por silla, repetirlo y marchar por tiempos</li></ol></div>
+        <div class="op-box"><h4>4 · Sostenimiento</h4><ol>
+          <li>Servir cada plato en su silla y nombrarlo</li><li>A los 2 bocados, preguntar algo concreto</li><li>Segunda bebida cuando el vaso va a un tercio</li><li>Retirar lo vacío; los fondos cuando todos terminen</li><li>Si algo falla: disculparse, cambiarlo y avisar</li></ol></div>
+        <div class="op-box"><h4>5 · Postre y bebida caliente</h4><ol>
+          <li>Limpiar la mesa por completo</li><li>Describir el postre: tiramisú para compartir</li><li>Ofrecer espresso o americano con el postre</li><li>Si hay celebración: vela y canto</li></ol></div>
+        <div class="op-box"><h4>6 · Despedida</h4><ol>
+          <li>Agradecer y preguntar algo concreto</li><li>Invitar a volver con un plato que no probaron</li><li>Ayudar con abrigos y revisar olvidos</li><li>Despedir en la puerta, por su nombre</li><li>Mesa lista en menos de 5 min</li></ol></div>
+        <div class="op-box" style="grid-column:1/-1"><h4>7 · Cobro</h4><ol>
+          <li>Preguntar: ¿junta o separada? ¿boleta o factura?</li><li>Revisar en el POS los ítems, las cortesías y la división</li><li>Pre-cuenta en carpeta en menos de 3 min, con el QR de la encuesta</li><li>Factura: verificar RUC (11 dígitos) y razón social</li><li>Tarjeta en la mesa · Yape/Plin confirmado en el celular de caja · efectivo contado delante del invitado</li><li>Registrar cada método y la propina por separado; cerrar la mesa al momento. <b>Nunca pedir propina.</b></li></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Academia Prep! · Casa Italia · Pasos de servicio · Formación interna · v1</div>
+</div>
+<script src="/course-protect.js"></script>
+<script src="/course-audio.js"></script>
+<script>
+/* Este curso es del cliente Casa Italia (m6) y solo se abre si la gerencia lo habilitó
+   en El Libro → Cursos. El super admin siempre puede verlo (para revisarlo antes). */
+(function(){
+  try{
+    var sb=window.supabase.createClient('https://jmkvphayyhwzootlybde.supabase.co','sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M');
+    sb.auth.getSession().then(function(r){
+      var s=r&&r.data&&r.data.session; if(!s||!s.user)return;
+      sb.from('prep_usuarios').select('rol_sistema').eq('email',s.user.email).maybeSingle().then(function(ru){
+        if(ru&&ru.data&&ru.data.rol_sistema==='superadmin')return;
+        sb.from('lb_cursos').select('activo').eq('slug','casa-italia-servicio').maybeSingle().then(function(rc){
+          if(rc&&rc.data&&rc.data.activo)return;
+          document.body.innerHTML='<div style="max-width:520px;margin:16vh auto;padding:26px;text-align:center;font-family:\'IBM Plex Sans\',system-ui,sans-serif">'
+            +'<div style="font-family:\'Bagel Fat One\',system-ui;font-size:30px;margin-bottom:10px">Todavía no</div>'
+            +'<p style="font-size:15px;opacity:.85">Este material aún no está habilitado. Cuando la gerencia lo publique lo vas a ver en <b>El Libro → Cursos</b>.</p>'
+            +'<p style="margin-top:18px"><a href="/el-libro" style="display:inline-block;padding:9px 18px;border:2px solid #000;border-radius:999px;background:#1f6b45;color:#fff;text-decoration:none;font-weight:600">Volver a El Libro</a></p></div>';
+        }).catch(function(){});
+      }).catch(function(){});
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

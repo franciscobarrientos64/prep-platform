@@ -150,6 +150,14 @@
       "destination": "/rrhh.html"
     },
     {
+      "source": "/asistencia",
+      "destination": "/asistencia.html"
+    },
+    {
+      "source": "/marcar",
+      "destination": "/asistencia.html"
+    },
+    {
       "source": "/engagement",
       "destination": "/engagement.html"
     },
