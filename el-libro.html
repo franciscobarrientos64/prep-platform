@@ -189,6 +189,13 @@ async function loadRol(){
     }
   }catch(e){}
   if(state.esAdmin)state.puedeRevisar=true;
+  // Subir/editar recetas en el Recetario: gerencia o rol con El Libro >= operar
+  try{
+    if(window.PREP_VISTA){const n=window.prepNivel&&window.prepNivel('libro');state.puedeRecetas=state.esAdmin||['operar','aprobar','admin'].includes(n);}
+    else if(state.esAdmin)state.puedeRecetas=true;
+    else{const s1=(await sb.auth.getSession()).data.session;if(s1&&s1.user){const{data:u}=await sb.from('prep_usuarios').select('rol_id').eq('email',s1.user.email).maybeSingle();
+      if(u&&u.rol_id){const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',u.rol_id).maybeSingle();state.puedeRecetas=['operar','aprobar','admin'].includes(((rl&&rl.permisos)||{}).libro);}}}
+  }catch(e){state.puedeRecetas=!!state.esAdmin}
 }
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
@@ -270,6 +277,7 @@ function renderRecetario(){
   const fil=q?recs.filter(r=>r.nombre.toLowerCase().includes(q)):recs;
   const cats=[...new Set(fil.map(r=>r.categoria_menu||'Otros'))];
   $('#screen').innerHTML=recTabs()+`
+    ${state.puedeRecetas?`<div style="margin-bottom:10px"><button class="btn primary" id="rec-new"><span class="material-symbols-outlined">add</span>Nueva receta</button></div>`:''}
     <div style="margin-bottom:12px"><input id="rec-q" placeholder="Buscar plato..." value="${state.recQuery||''}" style="width:100%;padding:11px 14px;border:2px solid var(--outline);border-radius:12px;font-size:14px"></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">${fil.length} recetas activas · toca una para ver su preparación 👨‍🍳</div>
     ${cats.map(c=>`<div style="font-family:var(--font-display);font-size:17px;margin:14px 0 8px">${c}</div>
@@ -281,12 +289,90 @@ function renderRecetario(){
           ${op?`<div style="padding:0 14px 14px;border-top:1px dashed var(--gray-soft)">
             ${ing.length?`<div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:10px 0 6px">Ingredientes</div><div style="font-size:13px;line-height:1.7">${ing.map(i=>'• '+ingTxt(i)).join('<br>')}</div>`:''}
             <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:12px 0 6px">Preparación</div>${r.descripcion&&/^Fuente:/.test(r.descripcion)?`<div style="font-family:var(--font-mono);font-size:10px;opacity:.5;margin:-2px 0 8px">${escH(r.descripcion)}</div>`:''}
-            ${et.length?et.map((e,ix)=>{const tx=e.metodo||e.pasos||e.descripcion||e.desc||'';return `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:13px">${ix+1}. ${escH(e.nombre||e.titulo||('Paso '+(ix+1)))}</div>${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<div style="font-size:13px;line-height:1.6;margin:3px 0 4px;padding-left:10px;border-left:3px solid var(--gray-soft)">${e.ingredientes.map(i=>escH(ingTxt(i))).join('<br>')}</div>`:''}${tx?`<div style="font-size:13px;opacity:.85;white-space:pre-wrap">${escH(tx)}</div>`:''}</div>`}).join(''):'<div style="font-size:13px;opacity:.6">Sin pasos cargados. Pídele al chef que complete la receta en el módulo Recetas.</div>'}
+            ${et.length?et.map((e,ix)=>{const tx=e.metodo||e.pasos||e.descripcion||e.desc||'';return `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:13px">${ix+1}. ${escH(e.nombre||e.titulo||('Paso '+(ix+1)))}</div>${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<div style="font-size:13px;line-height:1.6;margin:3px 0 4px;padding-left:10px;border-left:3px solid var(--gray-soft)">${e.ingredientes.map(i=>escH(ingTxt(i))).join('<br>')}</div>`:''}${tx?`<div style="font-size:13px;opacity:.85;white-space:pre-wrap">${escH(tx)}</div>`:''}</div>`}).join(''):'<div style="font-size:13px;opacity:.6">Sin pasos cargados. Pídele al chef que complete la receta.</div>'}
+            ${state.puedeRecetas?`<button class="btn ghost" data-recedit="${r.id}" style="margin-top:8px;min-height:40px;padding:8px 14px"><span class="material-symbols-outlined">edit</span>Editar pasos</button>`:''}
           </div>`:''}
         </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
   $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
   $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
+  $$('#screen [data-recedit]').forEach(b=>b.onclick=()=>editarReceta(state.recetario.find(x=>x.id===b.dataset.recedit)));
+  if($('#rec-new'))$('#rec-new').onclick=()=>editarReceta(null);
   wireRecTabs();
+}
+/* Editor de recetas por pasos (formato Mise en Place): familia, nombre, rendimiento y
+   pasos con sus propios insumos y método. Una receta nueva entra como 'preparacion'
+   (modulo null, precio 0): no aparece en el POS ni en la carta. En un plato o bebida de
+   la carta solo se editan los pasos, para no tocar el nombre/familia que usa el POS. */
+function editarReceta(r){
+  const nueva=!r, soloPasos=!!r&&r.tipo!=='preparacion';
+  const fams=[...new Set((state.recetario||[]).map(x=>x.categoria_menu).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const c={nombre:r?r.nombre:'',familia:r?(r.categoria_menu||''):'',otra:'',rend:r&&r.rendimiento!=null?String(Number(r.rendimiento)):'',urend:r?(r.unidad_rendimiento||''):'',
+    pasos:JSON.parse(JSON.stringify(Array.isArray(r&&r.etapas)&&r.etapas.length?r.etapas:[{titulo:'',ingredientes:[],desc:''}]))};
+  c.pasos.forEach(p=>{p.titulo=p.titulo||p.nombre||'';p.desc=p.desc||p.metodo||p.pasos||p.descripcion||'';if(!Array.isArray(p.ingredientes))p.ingredientes=[];});
+  const inp='padding:9px 11px;border:2px solid var(--outline);border-radius:10px;font:inherit;font-size:14px;width:100%;background:var(--surface)';
+  const harvest=()=>{
+    if($('#re-nom'))c.nombre=$('#re-nom').value;if($('#re-fam'))c.familia=$('#re-fam').value;if($('#re-otra'))c.otra=$('#re-otra').value;
+    if($('#re-rend'))c.rend=$('#re-rend').value;if($('#re-urend'))c.urend=$('#re-urend').value;
+    $$('#sheet-body [data-paso]').forEach(el=>{const i=+el.dataset.paso,p=c.pasos[i];p.titulo=el.querySelector('[data-f=tit]').value;p.desc=el.querySelector('[data-f=met]').value;
+      el.querySelectorAll('[data-ing]').forEach(row=>{const k=+row.dataset.ing,g=p.ingredientes[k];const cant=row.querySelector('[data-f=cant]').value.trim().replace(',','.');
+        g.cantidad=cant===''?null:(isNaN(Number(cant))?null:Number(cant));g.unidad=row.querySelector('[data-f=uni]').value.trim();g.nombre=row.querySelector('[data-f=nom]').value.trim();
+        if(cant!==''&&isNaN(Number(cant))){g.nombre=(cant+' '+g.unidad+' '+g.nombre).trim();g.unidad='';}})});
+  };
+  const draw=()=>{
+    setHead('📖',nueva?'Nueva receta':r.nombre,soloPasos?'Plato de la carta: aquí solo se editan los pasos':'Familia, nombre y pasos con sus insumos');
+    $('#sheet-body').innerHTML=`
+      ${soloPasos?'':`<div class="sheet-section"><label class="field-lbl">Familia</label>
+        <select id="re-fam" style="${inp}"><option value="">— elige la familia —</option>${fams.map(f=>`<option ${c.familia===f?'selected':''}>${escH(f)}</option>`).join('')}<option value="__otra" ${c.familia==='__otra'?'selected':''}>Otra familia…</option></select>
+        ${c.familia==='__otra'?`<input id="re-otra" style="${inp};margin-top:8px" placeholder="Nombre de la familia nueva" value="${escH(c.otra)}">`:''}</div>
+      <div class="sheet-section"><label class="field-lbl">Nombre de la receta</label><input id="re-nom" style="${inp}" placeholder="Ej.: Tortilla de cangrejo, arroz, picante" value="${escH(c.nombre)}"></div>`}
+      <div class="sheet-section"><label class="field-lbl">Rinde (opcional)</label><div style="display:flex;gap:8px"><input id="re-rend" style="${inp};max-width:110px" inputmode="decimal" placeholder="10" value="${escH(c.rend)}"><input id="re-urend" style="${inp}" placeholder="porciones, kg, litros, bollos…" value="${escH(c.urend)}"></div></div>
+      <div class="sheet-section"><label class="field-lbl">Pasos</label>
+      ${c.pasos.map((p,i)=>`<div data-paso="${i}" style="border:2px solid var(--outline);border-radius:14px;padding:12px;margin-bottom:12px;background:var(--bg)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><span style="font-family:var(--font-display);font-size:18px;min-width:22px">${i+1}</span>
+          <input data-f="tit" style="${inp}" placeholder="Ej.: Para el fondo de pescado" value="${escH(p.titulo)}">
+          <button type="button" data-mv="${i}" data-d="-1" title="Subir" style="border:none;background:none;cursor:pointer" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+          <button type="button" data-mv="${i}" data-d="1" title="Bajar" style="border:none;background:none;cursor:pointer" ${i===c.pasos.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+          <button type="button" data-delpaso="${i}" title="Quitar paso" style="border:none;background:none;cursor:pointer;color:var(--secondary)"><span class="material-symbols-outlined">delete</span></button></div>
+        <div class="field-lbl" style="margin-top:4px">Insumos</div>
+        ${p.ingredientes.map((g,k)=>`<div data-ing="${k}" style="display:grid;grid-template-columns:72px 72px 1fr 32px;gap:6px;margin-bottom:6px">
+          <input data-f="cant" style="${inp};padding:8px" inputmode="decimal" placeholder="450" value="${g.cantidad==null?'':escH(String(g.cantidad).replace('.',','))}">
+          <input data-f="uni" style="${inp};padding:8px" placeholder="g" value="${escH(g.unidad||'')}">
+          <input data-f="nom" style="${inp};padding:8px" placeholder="huesos de pescado, blanco" value="${escH(g.nombre||'')}">
+          <button type="button" data-delins="${i}:${k}" title="Quitar insumo" style="border:none;background:none;cursor:pointer;opacity:.6"><span class="material-symbols-outlined">close</span></button></div>`).join('')}
+        <button type="button" data-addins="${i}" class="btn ghost" style="min-height:36px;padding:6px 12px;font-size:13px"><span class="material-symbols-outlined">add</span>Insumo</button>
+        <div class="field-lbl" style="margin-top:10px">Método</div>
+        <textarea data-f="met" rows="4" style="${inp};resize:vertical" placeholder="Un paso por línea:&#10;Llevar el agua y sal a ebullición&#10;Agregar el buey de mar durante 5 min">${escH(p.desc)}</textarea>
+      </div>`).join('')}
+      <button type="button" id="re-addpaso" class="btn ghost"><span class="material-symbols-outlined">add</span>Agregar paso</button></div>
+      <div class="sheet-section"><button class="btn primary" id="re-save"><span class="material-symbols-outlined">save</span>Guardar receta</button></div>`;
+    if($('#re-fam'))$('#re-fam').onchange=()=>{harvest();draw()};
+    $('#re-addpaso').onclick=()=>{harvest();c.pasos.push({titulo:'',ingredientes:[],desc:''});draw();const all=$$('#sheet-body [data-paso]');all[all.length-1].querySelector('[data-f=tit]').focus()};
+    $$('#sheet-body [data-addins]').forEach(b=>b.onclick=()=>{harvest();const i=+b.dataset.addins;c.pasos[i].ingredientes.push({cantidad:null,unidad:'',nombre:''});draw();const rows=$$(`#sheet-body [data-paso="${i}"] [data-ing]`);rows[rows.length-1].querySelector('[data-f=cant]').focus()});
+    $$('#sheet-body [data-delins]').forEach(b=>b.onclick=()=>{harvest();const[i,k]=b.dataset.delins.split(':').map(Number);c.pasos[i].ingredientes.splice(k,1);draw()});
+    $$('#sheet-body [data-delpaso]').forEach(b=>b.onclick=()=>{harvest();if(c.pasos.length===1){c.pasos=[{titulo:'',ingredientes:[],desc:''}]}else c.pasos.splice(+b.dataset.delpaso,1);draw()});
+    $$('#sheet-body [data-mv]').forEach(b=>b.onclick=()=>{harvest();const i=+b.dataset.mv,j=i+Number(b.dataset.d);if(j<0||j>=c.pasos.length)return;[c.pasos[i],c.pasos[j]]=[c.pasos[j],c.pasos[i]];draw()});
+    $('#re-save').onclick=guardar;
+  };
+  const guardar=async()=>{
+    harvest();
+    const fam=c.familia==='__otra'?c.otra.trim():c.familia.trim(), nom=c.nombre.trim();
+    if(!soloPasos&&!fam){toast('Atrás: elige la familia','err');return}
+    if(!soloPasos&&!nom){toast('Atrás: escribe el nombre de la receta','err');return}
+    const pasos=c.pasos.map(p=>({titulo:p.titulo.trim(),ingredientes:p.ingredientes.filter(g=>(g.nombre||'').trim()||g.cantidad!=null).map(g=>({cantidad:g.cantidad,unidad:(g.unidad||'').trim(),nombre:(g.nombre||'').trim()})),desc:p.desc.trim()})).filter(p=>p.titulo||p.desc||p.ingredientes.length);
+    if(!pasos.length){toast('Atrás: agrega al menos un paso','err');return}
+    if(!soloPasos&&(state.recetario||[]).some(x=>x.nombre.trim().toLowerCase()===nom.toLowerCase()&&(!r||x.id!==r.id))){toast('Atrás: ya existe una receta con ese nombre','err');return}
+    const rend=c.rend.trim()===''?null:Number(c.rend.replace(',','.'));
+    const payload={etapas:pasos,rendimiento:isNaN(rend)?null:rend,unidad_rendimiento:c.urend.trim()||null};
+    if(!soloPasos){payload.nombre=nom;payload.categoria_menu=fam;}
+    const b=$('#re-save');b.disabled=true;b.textContent='Oído…';
+    let res;
+    if(nueva){const em=((await sb.auth.getSession()).data.session||{}).user;
+      res=await sb.from('inv_recetas').insert(Object.assign(payload,{marca_id:MARCA,tipo:'preparacion',modulo:null,precio_venta:0,ingredientes:[],activo:true,emoji:'📖',descripcion:'Subida desde El Libro'+(em&&em.email?' por '+em.email:'')}));}
+    else res=await sb.from('inv_recetas').update(payload).eq('id',r.id);
+    if(res.error){b.disabled=false;b.textContent='Guardar receta';toast('Atrás: '+res.error.message,'err');return}
+    await loadRecetario();closeSheet();state.recTab='recetas';renderRecetario();toast('Servido · receta guardada','ok');
+  };
+  draw();openSheet();
 }
 /* ===== CURSOS (capacitación) ===== */
 const CATALOGO=[
