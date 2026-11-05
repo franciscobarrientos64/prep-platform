@@ -98,6 +98,20 @@ textarea.input{min-height:90px;resize:vertical}
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const SECCIONES=['Entradas','Piqueos','Fondos','Postres','Cócteles','Bebidas','Vinos','Cervezas'];
+// Lo que sale en la carta / POS (las preparaciones y salsas internas no se venden solas)
+const enCarta=r=>!['preparacion','salsa'].includes(r.tipo);
+// Secciones = las de la casa (las que ya usa la carta) + las genéricas + «Nueva sección…»
+function seccionesOpts(cur){
+  const casa=[...new Set(state.recetas.filter(enCarta).map(r=>r.categoria_menu).filter(Boolean))];
+  const lista=[...new Set([...casa,...(casa.length?[]:SECCIONES),cur].filter(Boolean))];
+  return lista.map(x=>`<option ${cur===x?'selected':''}>${x}</option>`).join('')+'<option value="__nueva">+ Nueva sección…</option>';
+}
+function pedirSeccion(sel,prev){
+  if(sel.value!=='__nueva')return sel.value;
+  const n=(prompt('Nombre de la sección nueva (ej. Pizzas, Sopas, Infusiones y café):')||'').trim();
+  if(!n){sel.value=prev||'';return null}
+  const o=document.createElement('option');o.textContent=n;o.selected=true;sel.insertBefore(o,sel.lastElementChild);return n;
+}
 const FCDEF=30;
 const state={recetas:[],productos:[],menus:[],stockMap:{},ventas:[],view:'recetas',cat:'todas',q:'',channel:null};
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
@@ -203,7 +217,7 @@ function editarReceta(r){
     const fc=Number(c.precio_venta)>0?cp/Number(c.precio_venta)*100:null;
     $('#sheet-body').innerHTML=`
       <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="r-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Emoji</div><input class="input" id="r-emo" value="${c.emoji||''}"></div></div>
-      <div class="sheet-section grid2"><div><div class="field-lbl">Sección de carta</div><select class="select" id="r-cat">${[...new Set([...SECCIONES,c.categoria_menu].filter(Boolean))].map(s=>`<option ${c.categoria_menu===s?'selected':''}>${s}</option>`).join('')}</select></div><div><div class="field-lbl">Precio venta (S/)</div><input class="input" id="r-pv" type="number" step="0.5" value="${c.precio_venta||''}"></div></div>
+      <div class="sheet-section grid2"><div><div class="field-lbl">Sección de carta</div><select class="select" id="r-cat">${seccionesOpts(c.categoria_menu)}</select></div><div><div class="field-lbl">Precio venta (S/)</div><input class="input" id="r-pv" type="number" step="0.5" value="${c.precio_venta||''}"></div></div>
       <div class="sheet-section grid3"><div><div class="field-lbl">Rinde (porciones)</div><input class="input" id="r-rend" type="number" min="1" value="${c.rendimiento||1}"></div><div><div class="field-lbl">Food cost obj. %</div><input class="input" id="r-obj" type="number" value="${c.costo_objetivo||FCDEF}"></div><div><div class="field-lbl">Activo</div><div class="switch ${c.activo?'on':''}" id="r-act"><div class="k"></div></div></div></div>
       <div class="cost-box"><div class="row"><span>Costo/porción</span><strong class="mono">${money(cp)}</strong></div><div class="row"><span>Food cost</span><strong class="mono">${fc!=null?fc.toFixed(1)+'%':'—'}</strong></div><div class="row" style="font-size:12px;opacity:.8"><span>Precio sugerido (${c.costo_objetivo||FCDEF}%)</span><span>${money((c.costo_objetivo>0)?cp/(c.costo_objetivo/100):0)}</span></div></div>
       <div class="sheet-section"><div class="field-lbl">Ingredientes (insumos de Mercado o sub-recetas)</div><div id="r-ings">${c.ingredientes.map((it,i)=>ingEditor(it,i,ed?r.id:null)).join('')}</div><button class="btn ghost sm" id="r-adding" style="margin-top:8px">+ Ingrediente</button></div>
@@ -213,7 +227,7 @@ function editarReceta(r){
       <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="r-cancel">${ed?'Volver':'Atrás'}</button><button class="btn primary" id="r-save"><span class="material-symbols-outlined">save</span>Guardar receta</button></div></div>`;
     // binds
     const setv=()=>{c.nombre=$('#r-nom').value;c.emoji=$('#r-emo').value;c.categoria_menu=$('#r-cat').value;c.precio_venta=$('#r-pv').value;c.rendimiento=$('#r-rend').value;c.costo_objetivo=$('#r-obj').value};
-    ['r-nom','r-emo','r-cat','r-pv','r-rend','r-obj'].forEach(id=>{const el=$('#'+id);el.onchange=()=>{setv();draw()}});
+    ['r-nom','r-emo','r-cat','r-pv','r-rend','r-obj'].forEach(id=>{const el=$('#'+id);el.onchange=()=>{if(id==='r-cat'&&pedirSeccion(el,c.categoria_menu)==null)return;setv();draw()}});
     $('#r-act').onclick=()=>{setv();c.activo=!c.activo;draw()};
     $$('#r-ings [data-ing]').forEach(row=>{const i=+row.dataset.ing;
       row.querySelector('[data-f=ref]').onchange=e=>{setv();const v=e.target.value;const it=c.ingredientes[i];if(v.startsWith('p:')){it.pid=v.slice(2);it.rid=null;const p=prod(it.pid);if(p){it.nombre=p.nombre;it.unidad=p.unidad}}else if(v.startsWith('r:')){it.rid=v.slice(2);it.pid=null;const sr=state.recetas.find(x=>x.id===it.rid);if(sr){it.nombre=sr.nombre;it.unidad='porción'}}else{it.pid=null;it.rid=null}draw()};
@@ -247,16 +261,17 @@ async function guardarReceta(id,c){
 
 /* ====== CARTA / MENÚ ====== */
 function renderCarta(){
-  const cats=[...new Set(state.recetas.map(r=>r.categoria_menu||'Sin sección'))];
-  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Activa/desactiva platos de la carta y ajusta su sección. Lo activo es lo que ve el cliente / POS.</div>`+
-    cats.map(cat=>{const rs=state.recetas.filter(r=>(r.categoria_menu||'Sin sección')===cat);
+  const carta=state.recetas.filter(enCarta);
+  const cats=[...new Set(carta.map(r=>r.categoria_menu||'Sin sección'))];
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Activa/desactiva platos de la carta y cambia su familia con el selector (o crea una con «+ Nueva sección…»). Lo activo es lo que ven el POS y la carta QR.</div>`+
+    cats.map(cat=>{const rs=carta.filter(r=>(r.categoria_menu||'Sin sección')===cat);
       return `<div class="grp-t">${cat} <span style="font-family:var(--font-mono);font-size:12px;opacity:.55">· ${rs.filter(r=>r.activo).length}/${rs.length} activos</span></div>`+
       rs.map(r=>`<div class="carta-item ${r.activo?'':'off'}"><span style="font-size:22px">${r.emoji||'🍽️'}</span><div class="nm">${r.nombre}<div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${money(r.precio_venta)}${foodCost(r)!=null?(' · FC '+foodCost(r).toFixed(0)+'%'):''}</div></div>
-        <select class="input" data-sec="${r.id}" style="width:130px;font-size:12px;padding:6px">${[...new Set([...SECCIONES,r.categoria_menu].filter(Boolean))].map(s=>`<option ${r.categoria_menu===s?'selected':''}>${s}</option>`).join('')}</select>
+        <select class="input" data-sec="${r.id}" data-prev="${r.categoria_menu||''}" style="width:150px;font-size:12px;padding:6px">${seccionesOpts(r.categoria_menu)}</select>
         <div class="switch ${r.activo?'on':''}" data-act="${r.id}"><div class="k"></div></div></div>`).join('');
     }).join('');
   $$('#screen [data-act]').forEach(sw=>sw.onclick=()=>toggleActivo(sw.dataset.act));
-  $$('#screen [data-sec]').forEach(se=>se.onchange=()=>cambiarSeccion(se.dataset.sec,se.value));
+  $$('#screen [data-sec]').forEach(se=>se.onchange=()=>{const v=pedirSeccion(se,se.dataset.prev);if(v)cambiarSeccion(se.dataset.sec,v)});
 }
 async function toggleActivo(id){const r=state.recetas.find(x=>x.id===id);const{error}=await sb.from('inv_recetas').update({activo:!r.activo}).eq('id',id);if(error){toast('Atrás','err');return}await loadRecetas();render();toast(r.activo?'Quitado de la carta':'Activado en la carta','ok')}
 async function cambiarSeccion(id,sec){const{error}=await sb.from('inv_recetas').update({categoria_menu:sec}).eq('id',id);if(error){toast('Atrás','err');return}await loadRecetas();render();toast('Sección actualizada','ok')}
