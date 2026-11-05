@@ -310,7 +310,7 @@ function fichaServicio(r){
   return `<div class="fs"><div class="fs-h">Notas de servicio</div>
     <div class="fs-r"><span>Vajilla</span><span>${escH(sv.vajilla||'—')}</span></div>
     <div class="fs-r"><span>Cubertería</span><span>${escH(sv.cuberteria||'—')}</span></div>
-    <div class="fs-r"><span>Acabado y presentación</span><span style="min-height:60px">${escH(sv.acabado||'—')}</span></div>
+    <div class="fs-r"><span>Emplatado · acabado y presentación</span><span style="min-height:60px">${escH(sv.acabado||'—')}</span></div>
     <div class="fs-r"><span>Fotografía</span><span class="fs-f">${foto?`<img src="${escH(foto)}" alt="Foto de ${escH(r.nombre)}" loading="lazy">`:'<span style="opacity:.5">Sin foto todavía</span>'}</span></div></div>`;
 }
 function renderRecetario(){
@@ -396,7 +396,7 @@ function editarReceta(r){
       <div class="sheet-section"><label class="field-lbl">Notas de servicio</label>
         <input id="re-vaj" style="${inp};margin-bottom:8px" placeholder="Vajilla · ej.: Plato tendido 28 cm" value="${escH(c.vajilla)}">
         <input id="re-cub" style="${inp};margin-bottom:8px" placeholder="Cubertería · ej.: Cuchara y tenedor" value="${escH(c.cuberteria)}">
-        <textarea id="re-aca" rows="3" style="${inp};resize:vertical" placeholder="Acabado y presentación">${escH(c.acabado)}</textarea>
+        <textarea id="re-aca" rows="3" style="${inp};resize:vertical" placeholder="Emplatado · acabado y presentación">${escH(c.acabado)}</textarea>
         <div class="field-lbl" style="margin-top:10px">Fotografía</div>
         ${c.foto?`<img src="${escH(c.foto)}" alt="" style="display:block;max-width:100%;max-height:220px;border:2px solid var(--outline);border-radius:10px;margin-bottom:8px">`:''}
         <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn ghost" style="cursor:pointer"><span class="material-symbols-outlined">photo_camera</span>${c.foto?'Cambiar foto':'Subir foto'}<input type="file" id="re-foto" accept="image/*" style="display:none"></label>

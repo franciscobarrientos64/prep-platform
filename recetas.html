@@ -185,6 +185,7 @@ function drawFicha(r){
     <div class="sheet-section"><div class="field-lbl">Ingredientes para ${escala} ${escala==1?'porción':'porciones'} · ${money(costoTotal(r)*factor)}</div>
       ${ings(r).length?ings(r).map(it=>`<div class="ing"><div><div class="nm">${it.nombre||prod(it.pid)?.nombre||'—'}</div><div class="sub">${(Number(it.cantidad||0)*factor).toLocaleString('en-US',{maximumFractionDigits:3})} ${it.unidad||''}${it.merma?(' · merma '+it.merma+'%'):''}${it.pid?'':' · manual'}</div></div><div class="mono" style="font-size:13px">${money(costoIng(it)*factor)}</div><div></div></div>`).join(''):'<div style="opacity:.5;font-size:13px">Sin ingredientes. Edita la receta para costearla.</div>'}</div>
     ${etapas(r).length?`<div class="sheet-section"><div class="field-lbl">Preparación por etapas</div>${etapas(r).map((e,i)=>`<div class="etapa"><h4>${i+1}. ${e.titulo||'Etapa'}</h4>${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<ul style="margin:4px 0 6px 18px;font-size:13px">${e.ingredientes.map(x=>`<li>${x.cantidad!=null?Number(x.cantidad)+' '+(x.unidad||'')+' · ':''}${String(x.nombre||'').replace(/</g,'&lt;')}</li>`).join('')}</ul>`:''}<p style="white-space:pre-wrap">${(e.desc||'').replace(/</g,'&lt;')}</p></div>`).join('')}</div>`:(r.instrucciones?`<div class="sheet-section"><div class="field-lbl">Preparación</div><div class="etapa"><p>${(r.instrucciones||'').replace(/</g,'&lt;')}</p></div></div>`:'')}
+    <div class="sheet-section">${servicioHTML(r)}<div style="font-size:11px;opacity:.6;margin-top:4px">Se edita en El Libro › Recetario › Editar receta.</div></div>
     ${(r.alergenos&&r.alergenos.length)?`<div class="sheet-section"><div class="field-lbl">⚠ Alérgenos</div><div class="chips">${r.alergenos.map(a=>`<span class="chip" style="cursor:default">${a}</span>`).join('')}</div></div>`:''}
     <div class="sheet-section"><div class="grid2"><button class="btn ghost" id="fic-edit"><span class="material-symbols-outlined">edit</span>Editar receta</button><button class="btn ghost" id="fic-print"><span class="material-symbols-outlined">print</span>Ficha técnica</button></div></div>`;
   $('#es-1').onclick=()=>{escala=1;drawFicha(r)};$('#es-base').onclick=()=>{escala=porciones(r);drawFicha(r)};$('#es-10').onclick=()=>{escala=porciones(r)*10;drawFicha(r)};
@@ -326,11 +327,19 @@ async function guardarMenu(id,c){
   if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadMenus();render();toast('Servido · menú guardado','ok');
 }
 
+function servicioHTML(r,print){const sv=r.servicio||{},e=t=>String(t||'—').replace(/</g,'&lt;'),f=r.foto_url||r.imagen_url||'';
+  const b=print?'1px solid #000':'2px solid var(--outline)',c='padding:6px 8px;font-size:13px;vertical-align:top;border:'+(print?'1px solid #000':'1px solid var(--outline)');
+  return `<div style="margin-top:12px"><div style="font-style:italic;font-weight:700;font-size:13px;margin-bottom:4px">Notas de servicio</div><table style="width:100%;border-collapse:collapse;border:${b}">
+  <tr><td style="${c};width:32%;font-weight:600">Vajilla</td><td style="${c}">${e(sv.vajilla)}</td></tr>
+  <tr><td style="${c};font-weight:600">Cubertería</td><td style="${c}">${e(sv.cuberteria)}</td></tr>
+  <tr><td style="${c};font-weight:600">Emplatado · acabado y presentación</td><td style="${c};white-space:pre-wrap;height:60px">${e(sv.acabado)}</td></tr>
+  <tr><td style="${c};font-weight:600">Fotografía</td><td style="${c}">${f?`<img src="${f}" alt="" style="max-width:100%;max-height:360px;display:block">`:'—'}</td></tr></table></div>`}
 function imprimirFicha(r){const factor=escala/porciones(r);
   const html=`<html><head><title>${r.nombre}</title><style>body{font-family:Georgia,serif;padding:30px;color:#111}h1{font-size:24px}table{width:100%;border-collapse:collapse;margin:14px 0}td,th{border-bottom:1px solid #ccc;padding:6px;text-align:left;font-size:13px}.r{text-align:right}h3{margin-top:18px}</style></head><body>
     <h1>${r.emoji||''} ${r.nombre}</h1><p>${r.categoria_menu||''} · Rinde ${escala} porciones · Food cost ${foodCost(r)!=null?foodCost(r).toFixed(1)+'%':'—'} · Costo/porción ${money(costoPorcion(r))}</p>
     <h3>Ingredientes</h3><table><tr><th>Ingrediente</th><th class="r">Cantidad</th><th class="r">Costo</th></tr>${ings(r).map(it=>`<tr><td>${it.nombre||''}</td><td class="r">${(Number(it.cantidad||0)*factor).toLocaleString('en-US',{maximumFractionDigits:3})} ${it.unidad||''}</td><td class="r">${money(costoIng(it)*factor)}</td></tr>`).join('')}</table>
     <h3>Preparación</h3>${etapas(r).map((e,i)=>`<p><b>${i+1}. ${e.titulo||''}</b></p>${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<ul style="margin:4px 0 6px 18px;font-size:13px">${e.ingredientes.map(x=>`<li>${x.cantidad!=null?Number(x.cantidad)+' '+(x.unidad||'')+' · ':''}${String(x.nombre||'').replace(/</g,'&lt;')}</li>`).join('')}</ul>`:''}<p style="white-space:pre-wrap">${(e.desc||'').replace(/</g,'&lt;')}</p>`).join('')||('<p>'+(r.instrucciones||'')+'</p>')}
+    ${servicioHTML(r,true)}
     </body></html>`;
   const w=window.open('','_blank');w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),400);
 }
