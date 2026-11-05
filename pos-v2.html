@@ -1961,7 +1961,7 @@ function renderFloorScreen() {
       opacity:${editing?0.6:(isActive?0.7:0.25)};
       transition:opacity 0.2s;
     ">${zsel ? '<span class="rs-handle"></span>' : ''}</div>
-    <div class="zona-label" style="left:${z.x+8}px; top:${z.y+6}px">${z.nombre}</div>`;
+    <div class="zona-label" style="left:${Math.max(0, +z.x) + 14}px; top:${Math.max(0, +z.y) + 12}px">${z.nombre}</div>`;
   }).join('');
   const mesasHtml = state.mesas.map(m => renderMesaEl(m, editing)).join('');
 
