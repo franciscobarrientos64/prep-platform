@@ -197,7 +197,7 @@ async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRun
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
-  $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
+  $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.filter(p=>p.tipo!=='duda_receta').length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
   // Los formatos que ve cada rol se configuran en Usuarios y permisos (prep_roles.permisos.formatos).
   // state.formatos = null significa "todos".
   const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']];
@@ -244,13 +244,32 @@ async function usarPlantilla(p){
   if(error){toast('Atrás: '+error.message,'err');return}
   await loadPosts();state.view='procedimientos';state.cat='todas';render();toast('Servido · plantilla copiada a Procedimientos','ok');
 }
+function recTabs(){const n=(state.posts||[]).filter(p=>p.tipo==='duda_receta'&&!(p.contenido||'').trim()).length;
+  return `<div style="display:flex;gap:8px;margin-bottom:12px">${[['recetas','Recetas'],['dudas','Dudas del chef'+(n?' · '+n:'')]].map(([k,l])=>`<button data-rtab="${k}" class="btn ${state.recTab===k?'primary':''}" style="padding:6px 14px">${l}</button>`).join('')}</div>`}
+function wireRecTabs(){$$('#screen [data-rtab]').forEach(b=>b.onclick=()=>{state.recTab=b.dataset.rtab;renderRecetario()})}
+function renderDudas(){
+  const ds=(state.posts||[]).filter(p=>p.tipo==='duda_receta').sort((a,b)=>(!!(a.contenido||'').trim())-(!!(b.contenido||'').trim())||new Date(a.created_at)-new Date(b.created_at));
+  $('#screen').innerHTML=recTabs()+`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Preguntas sobre las recetas cargadas. Escribe la respuesta debajo de cada una y toca Guardar.</div>`+
+  (ds.map(d=>{const ok=!!(d.contenido||'').trim();return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:10px">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.65">${escH(d.categoria||'Receta')}</span><span class="tagx ${ok?'cat':'alta'}" style="margin-left:auto">${ok?'Respondida':'Pendiente'}</span></div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:8px">${escH(d.titulo)}</div>
+    <textarea data-resp="${d.id}" rows="3" placeholder="Tu respuesta…" style="width:100%;padding:10px 12px;border:2px solid var(--outline);border-radius:10px;font:inherit;font-size:14px;resize:vertical">${escH(d.contenido||'')}</textarea>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><button class="btn primary" data-save="${d.id}" style="padding:6px 16px">Guardar</button>${ok&&d.updated_at?`<span style="font-family:var(--font-mono);font-size:11px;opacity:.55">Guardada ${new Date(d.updated_at).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'})}</span>`:''}</div></div>`}).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">No hay dudas pendientes.</div>');
+  wireRecTabs();
+  $$('#screen [data-save]').forEach(b=>b.onclick=async()=>{const id=b.dataset.save;const v=($(`#screen [data-resp="${id}"]`).value||'').trim();b.disabled=true;b.textContent='Oído…';
+    const{error}=await sb.from('lb_posts').update({contenido:v,updated_at:new Date().toISOString()}).eq('id',id);
+    if(error){b.disabled=false;b.textContent='Guardar';toast('Atrás: '+error.message,'err');return}
+    await loadPosts();renderDudas();toast('Servido · respuesta guardada','ok')});
+}
 function renderRecetario(){
+  state.recTab=state.recTab||'recetas';
+  if(state.recTab==='dudas')return renderDudas();
   state.recOpen=state.recOpen||{};
   const recs=(state.recetario||[]).slice().sort((a,b)=>(a.categoria_menu||'').localeCompare(b.categoria_menu||'')||a.nombre.localeCompare(b.nombre));
   const q=(state.recQuery||'').toLowerCase();
   const fil=q?recs.filter(r=>r.nombre.toLowerCase().includes(q)):recs;
   const cats=[...new Set(fil.map(r=>r.categoria_menu||'Otros'))];
-  $('#screen').innerHTML=`
+  $('#screen').innerHTML=recTabs()+`
     <div style="margin-bottom:12px"><input id="rec-q" placeholder="Buscar plato..." value="${state.recQuery||''}" style="width:100%;padding:11px 14px;border:2px solid var(--outline);border-radius:12px;font-size:14px"></div>
     <div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">${fil.length} recetas activas · toca una para ver su preparación 👨‍🍳</div>
     ${cats.map(c=>`<div style="font-family:var(--font-display);font-size:17px;margin:14px 0 8px">${c}</div>
@@ -267,6 +286,7 @@ function renderRecetario(){
         </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
   $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};
   $$('#screen [data-rec]').forEach(b=>b.onclick=()=>{const id=b.dataset.rec;state.recOpen[id]=!state.recOpen[id];renderRecetario()});
+  wireRecTabs();
 }
 /* ===== CURSOS (capacitación) ===== */
 const CATALOGO=[
