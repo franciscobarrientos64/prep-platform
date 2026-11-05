@@ -2911,9 +2911,12 @@ function editarLienzo() {
   $('#sheet-title').textContent = 'Tamaño del plano';
   const pintar = () => {
     const { ancho, alto } = canvasDims();
+    // Las paredes del borde son el marco del plano: se estiran y se mueven con el fondo, no lo frenan.
+    const esMarco = mu => mu.tipo === 'pared' && (
+      (+mu.w >= ancho * 0.9) || (+mu.h >= alto * 0.9) || (+mu.x >= ancho - 2) || (+mu.y >= alto - 2));
     // lo mínimo para no dejar mesas, muebles ni zonas afuera
     const bordes = [...state.mesas.map(m => [ (+m.pos_x||0) + (+m.ancho||0), (+m.pos_y||0) + (+m.alto||0) ]),
-      ...state.muebles.map(mu => [ (+mu.x||0) + (+mu.w||0), (+mu.y||0) + (+mu.h||0) ]),
+      ...state.muebles.filter(mu => !esMarco(mu)).map(mu => [ (+mu.x||0) + (+mu.w||0), (+mu.y||0) + (+mu.h||0) ]),
       ...(state.zonas || []).filter(z => z.x != null).map(z => [ +z.x + +z.w, +z.y + +z.h ])];
     const minW = Math.max(160, ...bordes.map(b => b[0])), minH = Math.max(160, ...bordes.map(b => b[1]));
     $('#sheet-meta').textContent = ancho + ' × ' + alto + (alto > ancho ? ' · vertical' : ' · horizontal');
@@ -2928,6 +2931,13 @@ function editarLienzo() {
       <div class="sheet-section"><button class="btn ghost" id="lz-cerrar" style="width:100%">Cerrar</button></div>`;
     const set = (w, h) => {
       w = Math.max(minW, Math.round(w / 10) * 10); h = Math.max(minH, Math.round(h / 10) * 10);
+      state.muebles.forEach(mu => {
+        if (!esMarco(mu)) return;
+        if (+mu.x >= ancho - 2) mu.x = w;                       // pared derecha
+        if (+mu.y >= alto - 2) mu.y = h;                        // pared de abajo
+        if (+mu.w >= ancho * 0.9) mu.w = w + (ancho - (+mu.w) < 0 ? (+mu.w) - ancho : 0);   // paredes de arriba/abajo
+        if (+mu.h >= alto * 0.9) mu.h = h + (alto - (+mu.h) < 0 ? (+mu.h) - alto : 0);      // paredes laterales
+      });
       state.floorPlan.layout = { ...(state.floorPlan.layout || {}), canvas: { ancho: w, alto: h } };
       state.edit.dirtyMuebles = true; renderFloorScreen(); pintar();
     };
