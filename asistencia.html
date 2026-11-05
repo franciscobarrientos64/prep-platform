@@ -172,7 +172,8 @@ async function loadMe(){
   state.me=data||{email:s.user.email,rol_sistema:'operativo'};
   const real=['superadmin','admin_marca','gerente'].includes(state.me.rol_sistema);
   let ger=real;
-  if(!real&&state.me.rol_id){const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',state.me.rol_id).maybeSingle();const p=(rl&&rl.permisos)||{};ger=['aprobar','admin'].includes(p.asistencia)||['aprobar','admin'].includes(p.rrhh)}
+  if(!real&&state.me.permisos){const p=state.me.permisos;ger=['aprobar','admin'].includes(p.asistencia)||['aprobar','admin'].includes(p.rrhh)}
+  else if(!real&&state.me.rol_id){const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',state.me.rol_id).maybeSingle();const p=(rl&&rl.permisos)||{};ger=['aprobar','admin'].includes(p.asistencia)||['aprobar','admin'].includes(p.rrhh)}
   // "Ver como" del super admin manda sobre el rol real
   if(window.PREP_VISTA){const n=(window.prepNivel&&(window.prepNivel('asistencia')||window.prepNivel('rrhh')))||'ninguno';ger=(window.prepEsAdminVista&&window.prepEsAdminVista())||['aprobar','admin'].includes(n)}
   state.esGerencia=ger;

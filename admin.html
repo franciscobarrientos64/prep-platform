@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fcf9f8">
-<title>Usuarios & permisos · Prep!</title>
+<title>Usuarios · Prep!</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e5af9'/><text x='50' y='70' font-family='sans-serif' font-weight='900' font-size='60' fill='%23fcf9f8' text-anchor='middle'>p!</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -61,7 +61,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 <body>
 <div id="boot" class="boot"><div class="l"></div></div>
 <header class="header">
-  <div class="brand"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">Usuarios & permisos</div></div></div>
+  <div class="brand"><a href="/" class="brand-logo"><span class="l"></span></a><div class="brand-txt"><div class="cli"></div><div class="mod">Usuarios</div></div></div>
   <div class="header-info"><a class="btn-ico" href="/prep" title="Consola Prep"><span class="material-symbols-outlined">tune</span></a><button class="btn-ico primary" id="h-add"><span class="material-symbols-outlined">add</span><span id="addl">Usuario</span></button></div>
 </header>
 <nav class="tabs" id="tabs"></nav>
@@ -72,7 +72,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
+const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['asistencia','Asistencia'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement'],['mystery','Voz del Cliente'],['prediccion','Predicción']];
 const NIVELES=['ninguno','ver','operar','aprobar','admin'];
 // Formatos de El Libro que se pueden abrir o cerrar por rol. Vacío = el rol ve todos.
 const FORMATOS=[['tablon','Tablón'],['equipo','Equipo'],['procedimientos','Procedimientos'],['recetario','Recetario'],['plantillas','Plantillas'],['cursos','Cursos'],['examenes','Exámenes'],['briefing','Briefing diario'],['checklists','Checklists'],['eventualidades','Eventualidades'],['calendario','Calendario'],['thetalk','The Talk'],['politicas','Políticas'],['bitacora','Bitácora']];
@@ -93,33 +93,47 @@ async function guard(){
 }
 async function load(){
   if(!(await guard()))return;
-  const[us,ro,ma,lo,em]=await Promise.all([
+  const[us,ro,ma,lo,em,mm]=await Promise.all([
     sb.from('prep_usuarios').select('*').order('created_at'),
     sb.from('prep_roles').select('*').order('nombre'),
     sb.from('inv_marcas').select('*').order('id'),
     sb.from('inv_locales').select('*').order('orden',{nullsFirst:false}).order('id'),
-    sb.from('rrhh_empleados').select('id,nombre,apellidos,local_id')
+    sb.from('rrhh_empleados').select('id,nombre,apellidos,local_id'),
+    sb.from('prep_marca_modulos').select('marca_id,modulo,activo')
   ]);
-  state.usuarios=us.data||[];state.roles=ro.data||[];state.marcas=ma.data||[];state.locales=lo.data||[];state.emp=em.data||[];
+  state.usuarios=us.data||[];state.roles=ro.data||[];state.marcas=ma.data||[];state.locales=lo.data||[];state.emp=em.data||[];state.mm=mm.data||[];
   render();$('#boot').classList.add('gone');
 }
 function render(){
   $('#tabs').innerHTML=[['usuarios','Usuarios','group'],['roles','Roles & permisos','admin_panel_settings']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}">${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
+  if(state.view==='usuarios')$('#tabs').insertAdjacentHTML('beforeend',`<select class="select" id="f-marca" style="margin-left:auto;max-width:240px"><option value="">Todos los restaurantes</option>${state.marcas.map(m=>`<option value="${m.id}" ${state.fMarca===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select>`);
+  if($('#f-marca'))$('#f-marca').onchange=e=>{state.fMarca=e.target.value;renderUsuarios()};
   $('#addl').textContent=state.view==='roles'?'Rol':'Usuario';
   if(state.view==='usuarios')renderUsuarios();else renderRoles();
 }
+/* Módulos de una persona: los suyos propios (prep_usuarios.permisos) o, si no tiene, los de su rol. */
+function permisosDe(u){if(u.permisos&&typeof u.permisos==='object')return u.permisos;const r=state.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos)||{}}
+function enPlan(marca,k){const rows=(state.mm||[]).filter(x=>x.marca_id===marca);if(!rows.length)return true;return rows.some(x=>x.modulo===k&&x.activo)}
+function resumenMods(u){
+  if(u.rol_sistema==='superadmin')return'todo';
+  if(u.rol_sistema!=='operativo')return'todos los de su restaurante';
+  const p=permisosDe(u);const n=MODS.filter(([k])=>p[k]&&p[k]!=='ninguno').length;
+  return n+' módulo'+(n===1?'':'s')+(u.permisos?' · propios':'');
+}
 function renderUsuarios(){
-  $('#screen').innerHTML=state.usuarios.map(u=>{const cls=u.rol_sistema==='superadmin'?'sa':u.rol_sistema==='admin_marca'?'adm':'op';
-    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}</div></div>${u.email?`<button class="pdfbtn" data-pdf="${u.id}" title="Descargar acceso en PDF"><span class="material-symbols-outlined">picture_as_pdf</span></button><button class="sendbtn" data-send="${u.id}" title="Enviar acceso por correo"><span class="material-symbols-outlined">forward_to_inbox</span></button>`:''}<span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
+  const lista=state.fMarca?state.usuarios.filter(u=>u.marca_id===state.fMarca):state.usuarios;
+  $('#screen').innerHTML=lista.map(u=>{const cls=u.rol_sistema==='superadmin'?'sa':u.rol_sistema==='admin_marca'?'adm':'op';
+    return `<div class="row" data-id="${u.id}"><div class="av">${ini(u.nombre)}</div><div class="info"><h3>${u.nombre||'—'} ${u.activo?'':'<span class="tagx op">inactivo</span>'}</h3><div class="meta"><span>${u.email||''}</span><span>${u.marca_id?marcaNom(u.marca_id):'todas las marcas'}</span>${u.rol_id?`<span>${rolNom(u.rol_id)||''}</span>`:''}<span>${resumenMods(u)}</span></div></div>${u.email?`<button class="pdfbtn" data-pdf="${u.id}" title="Descargar acceso en PDF"><span class="material-symbols-outlined">picture_as_pdf</span></button><button class="sendbtn" data-send="${u.id}" title="Enviar acceso por correo"><span class="material-symbols-outlined">forward_to_inbox</span></button>`:''}<span class="tagx ${cls}">${ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema}</span></div>`;
   }).join('')||'<div class="empty">Sin usuarios</div>';
   $$('#screen .row').forEach(r=>r.onclick=()=>editarUsuario(state.usuarios.find(u=>u.id===r.dataset.id)));
   $$('#screen .sendbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();enviarAcceso(state.usuarios.find(u=>u.id===b.dataset.send))});
   $$('#screen .pdfbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();descargarAccesoPDF(state.usuarios.find(u=>u.id===b.dataset.pdf))});
 }
 function editarUsuario(u){
-  const ed=!!u;const c=Object.assign({nombre:'',email:'',rol_sistema:'operativo',marca_id:'m6',local_id:'l11',rol_id:null,empleado_id:null,activo:true},u||{});
+  const ed=!!u;const c=Object.assign({nombre:'',email:'',rol_sistema:'operativo',marca_id:state.fMarca||'m6',local_id:'',rol_id:null,empleado_id:null,activo:true,permisos:null},JSON.parse(JSON.stringify(u||{})));
   $('#sheet-title').textContent=ed?'Editar usuario':'Nuevo usuario';
+  const harvestU=()=>{if($('#u-nom'))c.nombre=$('#u-nom').value;if($('#u-email'))c.email=$('#u-email').value;};
   const draw=()=>{
     const rolesM=state.roles.filter(r=>r.marca_id===c.marca_id);
     const empsL=state.emp.filter(e=>e.local_id===c.local_id);
@@ -127,27 +141,57 @@ function editarUsuario(u){
       <div class="sheet-section grid2"><div><div class="field-lbl">Nombre</div><input class="input" id="u-nom" value="${(c.nombre||'').replace(/"/g,'&quot;')}"></div><div><div class="field-lbl">Email</div><input class="input" id="u-email" value="${c.email||''}"></div></div>
       <div class="sheet-section"><div class="field-lbl">Rol del sistema</div><div class="chips" id="u-rs">${ROLSIS.map(r=>`<button class="chip ${c.rol_sistema===r[0]?'active':''}" data-r="${r[0]}">${r[1]}</button>`).join('')}</div></div>
       ${c.rol_sistema!=='superadmin'?`<div class="sheet-section grid2"><div><div class="field-lbl">Marca</div><select class="select" id="u-marca">${state.marcas.map(m=>`<option value="${m.id}" ${c.marca_id===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select></div><div><div class="field-lbl">Local</div><select class="select" id="u-local"><option value="">— todos —</option>${state.locales.filter(l=>l.marca_id===c.marca_id).map(l=>`<option value="${l.id}" ${c.local_id===l.id?'selected':''}>${l.nombre}</option>`).join('')}</select></div></div>`:''}
-      ${c.rol_sistema==='operativo'?`<div class="sheet-section"><div class="field-lbl">Rol / permisos</div><select class="select" id="u-rol"><option value="">— elegir rol —</option>${rolesM.map(r=>`<option value="${r.id}" ${c.rol_id===r.id?'selected':''}>${r.nombre}</option>`).join('')}</select></div>`:''}
+      ${c.rol_sistema==='operativo'?`<div class="sheet-section"><div class="field-lbl">Rol (opcional)</div><select class="select" id="u-rol"><option value="">— sin rol —</option>${rolesM.map(r=>`<option value="${r.id}" ${c.rol_id===r.id?'selected':''}>${r.nombre}</option>`).join('')}</select></div>
+      <div class="sheet-section"><div class="field-lbl">Módulos a los que entra</div>
+        <div style="font-family:var(--font-mono);font-size:10.5px;opacity:.65;margin-bottom:8px">${c.permisos?'Módulos propios de esta persona (no siguen al rol).':(c.rol_id?'Hoy usa los del rol «'+(rolNom(c.rol_id)||'')+'». Si cambias alguno, quedan como propios de esta persona.':'Sin rol: marca los módulos que puede usar.')} ver = solo mirar · operar = trabajar · aprobar = autorizar · admin = configurar.</div>
+        ${MODS.map(([k,l])=>{const v=(permisosDe(c)[k])||'ninguno',plan=enPlan(c.marca_id,k);return `<div class="permrow" style="${plan?'':'opacity:.5'}"><span class="nm">${l}${plan?'':' <span style="font-size:10px">(fuera del plan)</span>'}</span><select data-pk="${k}">${NIVELES.map(n=>`<option value="${n}" ${v===n?'selected':''}>${n==='ninguno'?'sin acceso':n}</option>`).join('')}</select></div>`}).join('')}
+        ${c.permisos&&c.rol_id?`<button class="btn ghost" id="u-delrol" style="margin-top:8px">Volver a los módulos del rol</button>`:''}</div>`:`<div class="sheet-section"><div style="font-family:var(--font-mono);font-size:11px;opacity:.65">${c.rol_sistema==='superadmin'?'Entra a todo, en todos los restaurantes.':'Entra a todos los módulos activos de su restaurante.'}</div></div>`}
       <div class="sheet-section"><div class="field-lbl">Vincular empleado (RRHH, opcional)</div><select class="select" id="u-emp"><option value="">— ninguno —</option>${empsL.map(e=>`<option value="${e.id}" ${c.empleado_id===e.id?'selected':''}>${e.nombre} ${e.apellidos||''}</option>`).join('')}</select></div>
       <div class="sheet-section"><label class="chip ${c.activo?'active':''}" id="u-act" style="cursor:pointer">${c.activo?'✓ Activo':'Inactivo'}</label></div>
       ${ed&&c.email?`<div class="sheet-section grid2"><button class="btn" id="u-pdf" style="background:var(--ink);color:#fff"><span class="material-symbols-outlined">picture_as_pdf</span>Descargar PDF</button><button class="btn" id="u-send" style="background:var(--tertiary)"><span class="material-symbols-outlined">forward_to_inbox</span>Enviar por correo</button></div><div class="field-lbl" style="margin-top:8px;opacity:.55;text-transform:none;letter-spacing:0">Cualquiera de las dos genera una contraseña temporal nueva (invalida la anterior). El usuario deberá cambiarla al ingresar.</div>`:''}
       <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="u-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="u-cancel">Atrás</button>'}<button class="btn primary" id="u-save">Guardar</button></div></div>`;
-    $$('#u-rs .chip').forEach(b=>b.onclick=()=>{c.rol_sistema=b.dataset.r;draw()});
-    if($('#u-marca'))$('#u-marca').onchange=e=>{c.marca_id=e.target.value;c.local_id='';c.rol_id=null;draw()};
+    $$('#u-rs .chip').forEach(b=>b.onclick=()=>{harvestU();c.rol_sistema=b.dataset.r;draw()});
+    if($('#u-marca'))$('#u-marca').onchange=e=>{harvestU();c.marca_id=e.target.value;c.local_id='';c.rol_id=null;draw()};
     if($('#u-local'))$('#u-local').onchange=e=>c.local_id=e.target.value;
-    if($('#u-rol'))$('#u-rol').onchange=e=>c.rol_id=e.target.value||null;
+    if($('#u-rol'))$('#u-rol').onchange=e=>{harvestU();c.rol_id=e.target.value||null;draw()};
+    $$('#sheet-body [data-pk]').forEach(sl=>sl.onchange=()=>{harvestU();const p=Object.assign({},permisosDe(c));delete p.formatos;delete p.revisar_examenes;
+      MODS.forEach(([k])=>{const el=document.querySelector(`#sheet-body [data-pk="${k}"]`);if(el){if(el.value==='ninguno')delete p[k];else p[k]=el.value;}});c.permisos=p;draw()});
+    if($('#u-delrol'))$('#u-delrol').onclick=()=>{harvestU();c.permisos=null;draw()};
     $('#u-emp').onchange=e=>c.empleado_id=e.target.value||null;
-    $('#u-act').onclick=()=>{c.activo=!c.activo;draw()};
+    $('#u-act').onclick=()=>{harvestU();c.activo=!c.activo;draw()};
     if($('#u-send'))$('#u-send').onclick=()=>enviarAcceso(u);
     if($('#u-pdf'))$('#u-pdf').onclick=()=>descargarAccesoPDF(u);
     if($('#u-cancel'))$('#u-cancel').onclick=closeSheet;
-    if($('#u-del'))$('#u-del').onclick=async()=>{if(!confirm('¿Eliminar usuario?'))return;await sb.from('prep_usuarios').delete().eq('id',u.id);closeSheet();await load();toast('Usuario eliminado')};
+    if($('#u-del'))$('#u-del').onclick=async()=>{if(!confirm(`¿Quitar a ${u.nombre||u.email}? Deja de entrar a Prep.`))return;
+      const{data,error}=await sb.functions.invoke('admin-usuarios',{body:{accion:'quitar',id:u.id}});
+      if(error||!data||!data.ok){toast('Atrás: '+((data&&data.error)||(error&&error.message)||'no se pudo'));return}
+      closeSheet();await load();toast('Servido · usuario quitado')};
     $('#u-save').onclick=async()=>{c.nombre=$('#u-nom').value;c.email=$('#u-email').value;
       if(!c.nombre){toast('Falta nombre');return}
       const p={nombre:c.nombre,email:c.email,rol_sistema:c.rol_sistema,marca_id:c.rol_sistema==='superadmin'?null:c.marca_id,local_id:c.rol_sistema==='superadmin'?null:(c.local_id||null),rol_id:c.rol_sistema==='operativo'?c.rol_id:null,empleado_id:c.empleado_id,activo:c.activo};
-      const{error}=ed?await sb.from('prep_usuarios').update(p).eq('id',u.id):await sb.from('prep_usuarios').insert(p);
-      if(error){toast('Error: '+error.message);return}closeSheet();await load();toast('Usuario guardado')};
+      p.permisos=c.rol_sistema==='operativo'?c.permisos:null;
+      if(!ed){
+        if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||'')){toast('Falta un correo válido: con él entra');return}
+        $('#u-save').disabled=true;$('#u-save').textContent='Oído…';
+        const{data,error}=await sb.functions.invoke('admin-usuarios',{body:Object.assign({accion:'crear'},p)});
+        if(error||!data||!data.ok){$('#u-save').disabled=false;$('#u-save').textContent='Guardar';toast('Atrás: '+((data&&data.error)||(error&&error.message)||'no se pudo'));return}
+        await load();mostrarAccesoNuevo(data);return;
+      }
+      const{error}=await sb.from('prep_usuarios').update(p).eq('id',u.id);
+      if(error){toast('Atrás: '+error.message);return}closeSheet();await load();toast('Servido · usuario guardado')};
   };draw();openSheet();
+}
+/* Después de crear: la clave temporal se muestra una sola vez. */
+function mostrarAccesoNuevo(d){
+  $('#sheet-title').textContent='Usuario creado';
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div style="font-size:15px;margin-bottom:10px">Servido · <b>${d.nombre}</b> ya puede entrar.</div>
+    <div style="border:2px solid var(--outline);border-radius:12px;padding:12px 14px;background:var(--bg);font-size:14px;line-height:1.8">
+      <div><b>Entra en:</b> ${(d.accesos||[]).map(a=>a.url).join(' · ')}</div><div><b>Usuario:</b> ${d.to}</div>
+      <div><b>Contraseña temporal:</b> <span class="mono" style="font-size:18px">${d.password}</span></div></div>
+    <div style="font-family:var(--font-mono);font-size:11px;opacity:.65;margin-top:6px">Al entrar la primera vez le pide crear su propia clave. Esta clave no se vuelve a mostrar: descarga el PDF o anótala.</div></div>
+    <div class="sheet-section grid2"><button class="btn" id="n-pdf" style="background:var(--ink);color:#fff"><span class="material-symbols-outlined">picture_as_pdf</span>Descargar PDF</button><button class="btn primary" id="n-ok">Listo</button></div>`;
+  $('#n-pdf').onclick=()=>{if(window.jspdf&&window.jspdf.jsPDF)buildPDF(d);else toast('No cargó el generador de PDF')};
+  $('#n-ok').onclick=closeSheet;
 }
 async function enviarAcceso(u){
   if(!u||!u.email){toast('El usuario no tiene correo');return}

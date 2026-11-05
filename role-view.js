@@ -59,7 +59,7 @@
     '/voz-cliente':'mystery','/voz':'mystery','/mystery':'mystery'
   };
   // Consolas que solo existen para el super admin de Prep: bajo una vista de cliente no se ven.
-  var SOLO_SUPER=['/portal','/prep','/admin','/prep-negocio','/presentacion','/comite','/instalacion',
+  var SOLO_SUPER=['/portal','/prep','/admin','/usuarios','/prep-negocio','/presentacion','/comite','/instalacion',
                   '/onboarding','/api','/estrategia','/audit','/importar','/features','/brand',
                   '/sistema','/prd','/analisis','/roadmap','/cuenta'];
   var modActual=RUTA_MOD[path]||(path.indexOf('/cursos/')===0?'libro':null);

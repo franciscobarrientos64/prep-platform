@@ -200,7 +200,7 @@ async function loadAccess(){
     access.user=access.usuarios.find(u=>u.id===uid)||access.usuarios.find(u=>u.rol_sistema==='superadmin')||access.usuarios[0]||null;
   }
 }
-function nivelDeMod(k){const v=window.prepNivel&&window.prepNivel(k);if(v)return v;const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||(k==='asistencia'?'operar':'ninguno')}
+function nivelDeMod(k){const v=window.prepNivel&&window.prepNivel(k);if(v)return v;const u=access.user;if(!u)return'admin';if(u.rol_sistema==='superadmin')return'admin';if(u.rol_sistema==='admin_marca'||u.rol_sistema==='gerente')return'admin';if(u.permisos&&typeof u.permisos==='object')return u.permisos[k]||(k==='asistencia'?'operar':'ninguno');const r=access.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos&&r.permisos[k])||(k==='asistencia'?'operar':'ninguno')}
 function moduloActivo(k){const u=access.user;if(!u||(u.rol_sistema==='superadmin'&&!window.PREP_VISTA))return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
 // Paquete del cliente activo (por marca en pantalla). null = sin config => todo permitido.
 function enPaquete(k){const rows=access.mm.filter(x=>x.marca_id===MARCA);if(!rows.length)return true;return rows.some(x=>x.modulo===k&&x.activo)}

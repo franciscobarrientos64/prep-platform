@@ -169,7 +169,7 @@ async function loadRol(){
   try{
     const s0=(await sb.auth.getSession()).data.session;
     if(s0&&s0.user){
-      const{data}=await sb.from('prep_usuarios').select('rol_sistema,rol_id').eq('email',s0.user.email).maybeSingle();
+      const{data}=await sb.from('prep_usuarios').select('rol_sistema,rol_id,permisos').eq('email',s0.user.email).maybeSingle();state.permPropios=(data&&data.permisos)||null;
       state.esAdmin=!!data&&['superadmin','admin_marca','gerente'].includes(data.rol_sistema);
       // Un rol operativo puede tener limitados los formatos que ve (prep_roles.permisos.formatos)
       if(data&&data.rol_id&&!state.esAdmin){
@@ -193,8 +193,9 @@ async function loadRol(){
   try{
     if(window.PREP_VISTA){const n=window.prepNivel&&window.prepNivel('libro');state.puedeRecetas=state.esAdmin||['operar','aprobar','admin'].includes(n);}
     else if(state.esAdmin)state.puedeRecetas=true;
-    else{const s1=(await sb.auth.getSession()).data.session;if(s1&&s1.user){const{data:u}=await sb.from('prep_usuarios').select('rol_id').eq('email',s1.user.email).maybeSingle();
-      if(u&&u.rol_id){const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',u.rol_id).maybeSingle();state.puedeRecetas=['operar','aprobar','admin'].includes(((rl&&rl.permisos)||{}).libro);}}}
+    else{const s1=(await sb.auth.getSession()).data.session;if(s1&&s1.user){const{data:u}=await sb.from('prep_usuarios').select('rol_id,permisos').eq('email',s1.user.email).maybeSingle();
+      if(u&&u.permisos)state.puedeRecetas=['operar','aprobar','admin'].includes(u.permisos.libro);
+      else if(u&&u.rol_id){const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',u.rol_id).maybeSingle();state.puedeRecetas=['operar','aprobar','admin'].includes(((rl&&rl.permisos)||{}).libro);}}}
   }catch(e){state.puedeRecetas=!!state.esAdmin}
 }
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}

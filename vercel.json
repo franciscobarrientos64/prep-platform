@@ -90,6 +90,10 @@
       "destination": "/admin.html"
     },
     {
+      "source": "/usuarios",
+      "destination": "/admin.html"
+    },
+    {
       "source": "/cuenta",
       "destination": "/cuenta.html"
     },
