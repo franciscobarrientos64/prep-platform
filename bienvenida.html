@@ -1233,7 +1233,7 @@ function renderMapa() {
       <span class="pill">${mapaSel?'Toca una mesa para asignar':'Arrastra o toca una reserva, luego la mesa'}</span>
     </div>
     <div class="floor-wrap">
-      <div class="floor-canvas"><div class="canvas-inner">${zonasHtml}${mueblesHtml}${mesasHtml}</div></div>
+      <div class="floor-canvas" style="${(()=>{const c=(state.floorPlan&&state.floorPlan.layout&&state.floorPlan.layout.canvas)||{};const w=+c.ancho||580,h=+c.alto||320;return `width:${w*1.2}px;height:${h*1.2}px`;})()}"><div class="canvas-inner" style="${(()=>{const c=(state.floorPlan&&state.floorPlan.layout&&state.floorPlan.layout.canvas)||{};return `width:${+c.ancho||580}px;height:${+c.alto||320}px`;})()}">${zonasHtml}${mueblesHtml}${mesasHtml}</div></div>
       <div class="unassigned-col">
         <div class="field-lbl">Sin asignar (${sinMesa.length})</div>
         ${chips}

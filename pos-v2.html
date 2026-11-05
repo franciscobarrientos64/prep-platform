@@ -159,8 +159,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .floor-canvas {
   position: relative;
-  width: calc(580px * var(--canvas-scale));
-  height: calc(320px * var(--canvas-scale));
+  width: calc(var(--cw, 580px) * var(--canvas-scale));
+  height: calc(var(--ch, 320px) * var(--canvas-scale));
   margin: 0 auto;
   background: var(--surface);
   border: 2px solid var(--outline);
@@ -181,8 +181,8 @@ button { font-family: inherit; cursor: pointer; }
   inset: 0;
   transform: scale(var(--canvas-scale));
   transform-origin: 0 0;
-  width: 580px;
-  height: 320px;
+  width: var(--cw, 580px);
+  height: var(--ch, 320px);
 }
 
 /* ZONA backgrounds */
@@ -259,6 +259,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 /* En modo edit, los muebles son interactivos */
 .editing .mueble { pointer-events: auto; cursor: grab; }
+.editing .mesa, .editing .mueble { touch-action: none; } /* en celular/tablet: arrastrar mueve la mesa, no la página */
 .editing .mueble:active { cursor: grabbing; }
 .editing .mueble.selected {
   outline: 3px dashed var(--primary);
@@ -1878,6 +1879,41 @@ function renderHeader() {
   }
 }
 
+/* ========= PLANO: tamaño, orientación y escala ========= */
+function canvasDims() {
+  const c = (state.floorPlan && state.floorPlan.layout && state.floorPlan.layout.canvas) || {};
+  return { ancho: Number(c.ancho) || 580, alto: Number(c.alto) || 320 };
+}
+// La escala se ajusta al ancho disponible (un plano vertical en celular se ve completo y grande)
+function ajustarEscalaPlano() {
+  const wrap = document.querySelector('.floor-wrap'); if (!wrap) return;
+  const { ancho, alto } = canvasDims();
+  const disp = wrap.clientWidth - 32, alt = Math.max(260, wrap.clientHeight - 32);
+  let sc = disp / ancho;
+  if (alto > ancho && window.innerWidth > 640) sc = Math.min(sc, alt / alto);   // vertical en tablet: que entre de alto
+  sc = Math.max(0.5, Math.min(2.2, sc));
+  document.documentElement.style.setProperty('--canvas-scale', sc.toFixed(3));
+}
+window.addEventListener('resize', () => { if (state.screen === 'floor' || state.screen === 'edit') ajustarEscalaPlano(); });
+// Gira todo el plano 90° a la derecha: mesas, muebles y zonas, y cambia horizontal ⇄ vertical
+function girarPlano() {
+  if (!state.floorPlan) { toast('Atrás · este local no tiene plano guardado', 'err'); return; }
+  const { ancho: W, alto: H } = canvasDims();
+  const rot = (x, y, w, h) => ({ x: Math.round(H - y - h), y: Math.round(x), w: h, h: w });
+  const nuevas = new Set((state.edit.nuevasMesas || []).map(m => m.id));
+  state.mesas.forEach(m => {
+    const r = rot(+m.pos_x || 0, +m.pos_y || 0, +m.ancho || 60, +m.alto || 60);
+    Object.assign(m, { pos_x: r.x, pos_y: r.y, ancho: r.w, alto: r.h });
+    if (!nuevas.has(m.id)) state.edit.dirtyMesas[m.id] = { ...(state.edit.dirtyMesas[m.id] || {}), pos_x: r.x, pos_y: r.y, ancho: r.w, alto: r.h };
+  });
+  state.muebles.forEach(mu => Object.assign(mu, rot(+mu.x || 0, +mu.y || 0, +mu.w || 20, +mu.h || 20)));
+  (state.zonas || []).forEach(z => { if (z.x != null) Object.assign(z, rot(+z.x, +z.y, +z.w, +z.h)); });
+  state.floorPlan.layout = { ...(state.floorPlan.layout || {}), canvas: { ancho: H, alto: W } };
+  state.edit.dirtyMuebles = true;
+  render();
+  toast('Va · plano ' + (W > H ? 'vertical' : 'horizontal') + ' · toca Guardar plano para dejarlo así', 'ok');
+}
+
 /* ========= FLOOR SCREEN ========= */
 function renderFloorScreen() {
   const editing = state.screen === 'edit';
@@ -1912,7 +1948,7 @@ function renderFloorScreen() {
   $('#screen').innerHTML = `
     ${zonaTabsHtml}
     <div class="floor-wrap">
-      <div class="floor-canvas ${editing ? 'editing' : ''}" id="floor-canvas">
+      <div class="floor-canvas ${editing ? 'editing' : ''}" id="floor-canvas" style="--cw:${canvasDims().ancho}px;--ch:${canvasDims().alto}px">
         <div class="canvas-inner" id="canvas-inner">
           ${zonasHtml}
           ${mueblesHtml}
@@ -1922,6 +1958,7 @@ function renderFloorScreen() {
     </div>
   `;
   $('#legend').style.display = (editing || state.screen !== 'floor') ? 'none' : 'flex';
+  ajustarEscalaPlano();
 
   // FAB stack en edit
   if (editing) {
@@ -1933,6 +1970,9 @@ function renderFloorScreen() {
       <button class="fab dark" id="fab-add-mueble">
         <span class="material-symbols-outlined">view_in_ar</span>+ Mueble
       </button>
+      <button class="fab" id="fab-girar" title="Girar el plano 90°">
+        <span class="material-symbols-outlined">rotate_90_degrees_cw</span>${canvasDims().alto > canvasDims().ancho ? 'Pasar a horizontal' : 'Pasar a vertical'}
+      </button>
       <button class="fab warn" id="fab-edit-help">
         <span class="material-symbols-outlined">help</span>Ayuda
       </button>
@@ -1940,6 +1980,7 @@ function renderFloorScreen() {
     $('#fab-add-mesa').onclick = addMesa;
     $('#fab-add-mueble').onclick = addMueble;
     $('#fab-edit-help').onclick = mostrarAyudaEditor;
+    $('#fab-girar').onclick = girarPlano;
   } else {
     $('#fab-stack').style.display = 'none';
   }
@@ -2501,7 +2542,7 @@ async function saveLayout() {
     const newLayout = {
       ...(state.floorPlan.layout || {}),
       muebles: state.muebles,
-      canvas: { ancho: 580, alto: 320 },
+      canvas: canvasDims(),
     };
     if (state.zonas) newLayout.zonas = state.zonas;
     tasks.push(sb.from('ms_floor_plans').update({
