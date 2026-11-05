@@ -1550,8 +1550,9 @@ function imprimirPreCuenta(ped, T) {
 async function loadAll() {
   await Promise.all([
     loadMesas(), loadEmpleados(), loadGerentes(), loadTurno(),
-    loadRecetas(), loadEstaciones(), loadFloorPlan(),
+    loadRecetas(), loadEstaciones(), loadFloorPlan(), loadUsuarioPOS(),
   ]);
+  aplicarUsuarioPOS();
   await loadPedidos();
   // determinar subtab default del menú
   const cats = subcategoriasMenu('cocina');
@@ -1584,6 +1585,32 @@ async function loadPedidos() {
   } catch (e) {
     // sin internet: lo guardado + lo que llegó de otros equipos por la central del local
     state.pedidos = PrepSync.overlay('ca_pedidos', PrepSync.cacheGet('pedidos') || state.pedidos || []).filter(p => ['abierta','suspended'].includes(p.estado));
+  }
+}
+/* Quién usa el POS. Un mesero (operativo) queda como mozo de sus mesas automáticamente:
+   no se le pregunta quién está en turno. La gerencia (dueño, admin, gerente) elige a qué
+   mesero le asigna cada mesa al abrirla. */
+async function loadUsuarioPOS() {
+  try {
+    const s = (await sb.auth.getSession()).data.session;
+    if (!s || !s.user) return;
+    const { data } = await sb.from('prep_usuarios').select('nombre,rol_sistema,empleado_id').eq('email', s.user.email.toLowerCase()).maybeSingle();
+    state.usuario = data ? Object.assign({ email: s.user.email }, data) : { email: s.user.email, rol_sistema: 'operativo' };
+    PrepSync.cacheSet('usuario_pos', state.usuario);
+  } catch (e) { state.usuario = PrepSync.cacheGet('usuario_pos') || null; }
+}
+function esGerenciaPOS() {
+  const v = window.PREP_VISTA; const rs = v ? v.rol_sistema : (state.usuario && state.usuario.rol_sistema);
+  return ['superadmin', 'admin_marca', 'gerente'].includes(rs);
+}
+function aplicarUsuarioPOS() {
+  const u = state.usuario;
+  if (!u || esGerenciaPOS()) return;
+  if (u.empleado_id) {
+    state.mozoId = u.empleado_id; state.mozoFijo = true;
+    localStorage.setItem('prep_pos_mozo', state.mozoId);
+    // si su ficha no es de Salón/Bar igual debe aparecer como mozo
+    if (!state.empleados.some(e => e.id === u.empleado_id)) state.empleados.push({ id: u.empleado_id, nombre: u.nombre || u.email, apellidos: '', rol: 'Mozo' });
   }
 }
 async function loadEmpleados() {
@@ -1794,7 +1821,7 @@ function renderHeader() {
          <button class="btn-ico ghost" id="btn-audit" title="Auditoría (CA-12)"><span class="material-symbols-outlined">history</span></button>
          <button class="btn-ico" id="btn-edit-floor"><span class="material-symbols-outlined">edit</span><span>Editar plano</span></button>
          <button class="btn-ico dark" id="mozo-select"><span class="material-symbols-outlined">person</span><span id="mozo-label">${
-           (() => { const m = state.empleados.find(e => e.id === state.mozoId); return m ? fmtMozo(m) : 'Elegir mozo'; })()
+           (() => { const m = state.empleados.find(e => e.id === state.mozoId); return esGerenciaPOS() && !state.mozoFijo ? (m ? fmtMozo(m) : 'Gerencia') : (m ? fmtMozo(m) : 'Elegir mozo'); })()
          }</span></button>`
     }
   `;
@@ -1804,7 +1831,7 @@ function renderHeader() {
     $('#btn-save-edit').onclick = () => exitEditMode(true);
   } else {
     $('#btn-edit-floor').onclick = enterEditMode;
-    $('#mozo-select').onclick = abrirPickerMozo;
+    $('#mozo-select').onclick = () => { if (state.mozoFijo) { toast('Estás como ' + fmtMozo(state.empleados.find(e => e.id === state.mozoId) || {nombre:'tú'}), 'ok'); return; } abrirPickerMozo(); };
     $('#btn-giftcards').onclick = () => abrirGestorGiftCards('vender');
     if ($('#btn-audit')) $('#btn-audit').onclick = () => window.open('/audit', 'prep_audit');
   }
@@ -2146,8 +2173,16 @@ function logAudit(accion, detalle, pedidoId, monto) {
 }
 
 /* ========= ACCIONES DB (pedido shell) ========= */
-async function abrirPedido(mesa, comensales, tabNombre = null) {
-  if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige el mozo en turno', 'warn'); return; }
+async function abrirPedido(mesa, comensales, tabNombre = null, mozoElegido = null) {
+  if (!mozoElegido) {
+    if (esGerenciaPOS()) {
+      closeSheet();
+      abrirPickerMozo(id => abrirPedido(mesa, comensales, tabNombre, id), '¿A qué mesero le asignas ' + (esBarra(mesa) ? 'esta cuenta de barra' : 'la mesa ' + mesa.numero) + '?');
+      return;
+    }
+    if (!state.mozoId) { closeSheet(); abrirPickerMozo(); toast('Primero elige quién eres', 'warn'); return; }
+  }
+  const mozoPedido = mozoElegido || state.mozoId;
   if (!state.turno) { toast('No hay turno abierto', 'err'); return; }
   const barra = esBarra(mesa);
   // Ticket: lo numera la BD de forma atómica (trigger por local+turno), así dos tablets nunca
@@ -2156,7 +2191,7 @@ async function abrirPedido(mesa, comensales, tabNombre = null) {
   const row = {
     id: PrepSync.uuid(),
     ticket_num: nextTicket, marca_id: MARCA, local_id: LOCAL, turno_id: state.turno.id,
-    mesa_id: mesa.id, comensales, mozo_id: state.mozoId,
+    mesa_id: mesa.id, comensales, mozo_id: mozoPedido,
     estado:'abierta', estado_servicio:'abierta', origen: barra ? 'barra' : 'salon',
     tab_nombre: tabNombre, abierta_at: new Date().toISOString(),
     subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
@@ -2218,7 +2253,9 @@ async function moverMesa(pedidoId, nuevaMesaId) {
 }
 
 /* ========= MOZO PICKER ========= */
-function abrirPickerMozo() {
+function abrirPickerMozo(cb, titulo) {
+  if (typeof cb !== 'function') cb = null;
+  const h3 = $('#mozo-dialog h3'); if (h3) h3.textContent = titulo || (esGerenciaPOS() ? '¿Qué mesero?' : '¿Quién eres?');
   const items = state.empleados.map(e => `
     <button class="mozo-item ${e.id===state.mozoId?'active':''}" data-id="${e.id}">
       <span class="mozo-avatar">${avatarLetters(e)}</span>
@@ -2232,6 +2269,7 @@ function abrirPickerMozo() {
   $('#mozo-list').innerHTML = items || '<p style="text-align:center;padding:24px;opacity:0.6">Sin empleados en salón/bar</p>';
   $('#mozo-dialog').classList.add('open');
   $$('#mozo-list .mozo-item').forEach(b => b.onclick = () => {
+    if (cb) { $('#mozo-dialog').classList.remove('open'); cb(b.dataset.id); return; }
     state.mozoId = b.dataset.id;
     localStorage.setItem('prep_pos_mozo', state.mozoId);
     $('#mozo-dialog').classList.remove('open');
