@@ -257,6 +257,11 @@ button { font-family: inherit; cursor: pointer; }
   border: 1.5px dashed var(--outline);
   font-size: 7px;
 }
+.rs-handle { position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; background: var(--primary);
+  border: 2px solid #fff; border-radius: 4px; cursor: nwse-resize; touch-action: none; z-index: 5; box-shadow: 0 0 0 1.5px #000; }
+.rs-handle::after { content: ''; position: absolute; inset: -10px; }   /* área de toque más grande que el cuadrito */
+.rs-handle.lienzo { position: absolute; right: auto; bottom: auto; width: 20px; height: 20px; background: var(--ink); z-index: 60; }
+.editing .mesa.selected, .editing .mueble.selected { overflow: visible; }
 .editing .zona-bg { pointer-events: auto; cursor: grab; outline: 1.5px dashed rgba(0,0,0,.35); outline-offset: -1px; touch-action: none; }
 .editing .zona-bg.selected { outline: 2.5px dashed var(--primary); }
 .mueble.barra_fisica {
@@ -1955,7 +1960,7 @@ function renderFloorScreen() {
       background:${z.color||'transparent'};
       opacity:${editing?0.6:(isActive?0.7:0.25)};
       transition:opacity 0.2s;
-    "></div>
+    ">${zsel ? '<span class="rs-handle"></span>' : ''}</div>
     <div class="zona-label" style="left:${z.x+8}px; top:${z.y+6}px">${z.nombre}</div>`;
   }).join('');
   const mesasHtml = state.mesas.map(m => renderMesaEl(m, editing)).join('');
@@ -1968,6 +1973,7 @@ function renderFloorScreen() {
           ${zonasHtml}
           ${mueblesHtml}
           ${mesasHtml}
+          ${editing ? `<span class="rs-handle lienzo" data-kind="lienzo" title="Arrastra para cambiar el tamaño del plano" style="left:${canvasDims().ancho - 20}px;top:${canvasDims().alto - 20}px"></span>` : ''}
         </div>
       </div>
     </div>
@@ -2048,6 +2054,7 @@ function renderMesaEl(m, editing) {
       <span class="cap">${barra ? (tabs.length ? tabs.length+' tab'+(tabs.length===1?'':'s') : '×'+m.capacidad) : '×'+m.capacidad}</span>
       ${desde && !editing ? `<span class="timer">${timeAgo(desde)}</span>` : ''}
       ${badgeNum && !editing ? `<span class="badge-com">${badgeNum}</span>` : ''}
+      ${selected ? '<span class="rs-handle" title="Arrastra para cambiar el tamaño"></span>' : ''}
     </button>
   `;
 }
@@ -2055,7 +2062,7 @@ function renderMesaEl(m, editing) {
 function renderMuebleEl(mu, editing) {
   const selected = editing && state.edit.selected && state.edit.selected.kind === 'mueble' && state.edit.selected.id === mu.id;
   return `<div class="mueble ${mu.tipo} ${selected?'selected':''}" data-id="${mu.id}" data-kind="mueble"
-       style="left:${mu.x}px; top:${mu.y}px; width:${mu.w}px; height:${mu.h}px">${mu.label||''}</div>`;
+       style="left:${mu.x}px; top:${mu.y}px; width:${mu.w}px; height:${mu.h}px">${mu.label||''}${selected ? '<span class="rs-handle"></span>' : ''}</div>`;
 }
 
 function updateTimers() {
@@ -2601,6 +2608,19 @@ function setupDragAndDrop() {
   const SNAP = 5; // snap a 5px
 
   canvas.addEventListener('pointerdown', (e) => {
+    const handle = e.target.closest('.rs-handle');
+    if (handle) {
+      e.preventDefault(); e.stopPropagation();
+      const sc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--canvas-scale')) || 1;
+      const lienzo = handle.dataset.kind === 'lienzo';
+      const el = lienzo ? handle : handle.parentElement;
+      const d = canvasDims();
+      drag = { mode: 'resize', el, handle, kind: lienzo ? 'lienzo' : el.dataset.kind, id: el.dataset.id,
+        startX: e.clientX, startY: e.clientY, scale: sc, moved: false,
+        origW: lienzo ? d.ancho : parseFloat(el.style.width), origH: lienzo ? d.alto : parseFloat(el.style.height) };
+      try { handle.setPointerCapture(e.pointerId); } catch(_) {}
+      return;
+    }
     const target = e.target.closest('.mesa, .mueble, .zona-bg');
     if (!target) return;
     e.preventDefault();
@@ -2621,6 +2641,16 @@ function setupDragAndDrop() {
     const dx = (e.clientX - drag.startX) / drag.scale;
     const dy = (e.clientY - drag.startY) / drag.scale;
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1) drag.moved = true;
+    if (drag.mode === 'resize') {
+      const nw = Math.max(drag.kind === 'mueble' ? 4 : 20, Math.round((drag.origW + dx) / SNAP) * SNAP);
+      const nh = Math.max(drag.kind === 'mueble' ? 4 : 20, Math.round((drag.origH + dy) / SNAP) * SNAP);
+      drag.nw = nw; drag.nh = nh;
+      if (drag.kind === 'lienzo') {
+        const fc = $('#floor-canvas'); fc.style.setProperty('--cw', nw + 'px'); fc.style.setProperty('--ch', nh + 'px');
+        drag.el.style.left = (nw - 20) + 'px'; drag.el.style.top = (nh - 20) + 'px';
+      } else { drag.el.style.width = nw + 'px'; drag.el.style.height = nh + 'px'; }
+      return;
+    }
     let nx = Math.round((drag.origX + dx) / SNAP) * SNAP;
     let ny = Math.round((drag.origY + dy) / SNAP) * SNAP;
     drag.el.style.left = nx + 'px';
@@ -2628,6 +2658,22 @@ function setupDragAndDrop() {
   });
   canvas.addEventListener('pointerup', (e) => {
     if (!drag) return;
+    if (drag.mode === 'resize') {
+      const { kind, id, nw, nh, moved } = drag; drag = null;
+      if (!moved || nw == null) return;
+      if (kind === 'lienzo') aplicarLienzo(nw, nh);
+      else if (kind === 'mesa') {
+        const m = state.mesas.find(x => x.id === id);
+        if (m) { m.ancho = nw; m.alto = nh; if (!String(id).startsWith('new_')) state.edit.dirtyMesas[id] = { ...(state.edit.dirtyMesas[id] || {}), ancho: nw, alto: nh }; }
+      } else if (kind === 'zona') {
+        const z = state.zonas[+id]; if (z) { z.w = nw; z.h = nh; state.edit.dirtyMuebles = true; }
+      } else {
+        const mu = state.muebles.find(x => x.id === id); if (mu) { mu.w = nw; mu.h = nh; state.edit.dirtyMuebles = true; }
+      }
+      renderFloorScreen();
+      if (kind !== 'lienzo' && state.edit.selected) openEditPanel(kind, id);
+      return;
+    }
     if (drag.moved) {
       const nx = parseFloat(drag.el.style.left);
       const ny = parseFloat(drag.el.style.top);
@@ -2652,6 +2698,7 @@ function setupDragAndDrop() {
 
 function openEditPanel(kind, id) {
   state.edit.selected = { kind, id };
+  renderFloorScreen();
   if (kind === 'mesa') {
     const m = state.mesas.find(x => x.id === id); if (!m) return;
     $('#sheet-mark').textContent = m.numero;
@@ -2903,6 +2950,31 @@ function renderZonaPropPanel(z, idx) {
     state.edit.selected = null; closeSheet(); dirty();
   };
 }
+// Paredes del borde = marco del plano: se estiran/mueven con el fondo y no lo frenan
+function esMarcoPlano(mu) {
+  const { ancho, alto } = canvasDims();
+  return mu.tipo === 'pared' && ((+mu.w >= ancho * 0.9) || (+mu.h >= alto * 0.9) || (+mu.x >= ancho - 2) || (+mu.y >= alto - 2));
+}
+function minimoLienzo() {
+  const bordes = [...state.mesas.map(m => [ (+m.pos_x||0) + (+m.ancho||0), (+m.pos_y||0) + (+m.alto||0) ]),
+    ...state.muebles.filter(mu => !esMarcoPlano(mu)).map(mu => [ (+mu.x||0) + (+mu.w||0), (+mu.y||0) + (+mu.h||0) ]),
+    ...(state.zonas || []).filter(z => z.x != null).map(z => [ +z.x + +z.w, +z.y + +z.h ])];
+  return { minW: Math.max(160, ...bordes.map(b => b[0])), minH: Math.max(160, ...bordes.map(b => b[1])) };
+}
+function aplicarLienzo(w, h) {
+  const { ancho, alto } = canvasDims(), { minW, minH } = minimoLienzo();
+  w = Math.max(minW, Math.round(w / 10) * 10); h = Math.max(minH, Math.round(h / 10) * 10);
+  state.muebles.forEach(mu => {
+    if (!esMarcoPlano(mu)) return;
+    if (+mu.x >= ancho - 2) mu.x = w;
+    if (+mu.y >= alto - 2) mu.y = h;
+    if (+mu.w >= ancho * 0.9) mu.w = w + Math.max(0, (+mu.w) - ancho);
+    if (+mu.h >= alto * 0.9) mu.h = h + Math.max(0, (+mu.h) - alto);
+  });
+  state.floorPlan.layout = { ...(state.floorPlan.layout || {}), canvas: { ancho: w, alto: h } };
+  state.edit.dirtyMuebles = true;
+}
+
 // Tamaño del fondo del plano (lienzo): ancho y alto en pasos de 20
 function editarLienzo() {
   if (!state.floorPlan) { toast('Atrás · este local no tiene plano guardado', 'err'); return; }
