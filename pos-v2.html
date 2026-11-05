@@ -1985,6 +1985,9 @@ function renderFloorScreen() {
       <button class="fab dark" id="fab-add-mueble">
         <span class="material-symbols-outlined">view_in_ar</span>+ Mueble
       </button>
+      <button class="fab" id="fab-lienzo">
+        <span class="material-symbols-outlined">aspect_ratio</span>Tamaño del plano
+      </button>
       <button class="fab" id="fab-add-zona">
         <span class="material-symbols-outlined">dashboard_customize</span>+ Zona
       </button>
@@ -2000,6 +2003,7 @@ function renderFloorScreen() {
     $('#fab-edit-help').onclick = mostrarAyudaEditor;
     $('#fab-girar').onclick = girarPlano;
     $('#fab-add-zona').onclick = addZona;
+    $('#fab-lienzo').onclick = editarLienzo;
   } else {
     $('#fab-stack').style.display = 'none';
   }
@@ -2899,6 +2903,42 @@ function renderZonaPropPanel(z, idx) {
     state.edit.selected = null; closeSheet(); dirty();
   };
 }
+// Tamaño del fondo del plano (lienzo): ancho y alto en pasos de 20
+function editarLienzo() {
+  if (!state.floorPlan) { toast('Atrás · este local no tiene plano guardado', 'err'); return; }
+  state.edit.selected = null;
+  $('#sheet-mark').textContent = '⇲'; $('#sheet-mark').style.background = 'var(--gray-soft)'; $('#sheet-mark').style.color = 'var(--ink)';
+  $('#sheet-title').textContent = 'Tamaño del plano';
+  const pintar = () => {
+    const { ancho, alto } = canvasDims();
+    // lo mínimo para no dejar mesas, muebles ni zonas afuera
+    const bordes = [...state.mesas.map(m => [ (+m.pos_x||0) + (+m.ancho||0), (+m.pos_y||0) + (+m.alto||0) ]),
+      ...state.muebles.map(mu => [ (+mu.x||0) + (+mu.w||0), (+mu.y||0) + (+mu.h||0) ]),
+      ...(state.zonas || []).filter(z => z.x != null).map(z => [ +z.x + +z.w, +z.y + +z.h ])];
+    const minW = Math.max(160, ...bordes.map(b => b[0])), minH = Math.max(160, ...bordes.map(b => b[1]));
+    $('#sheet-meta').textContent = ancho + ' × ' + alto + (alto > ancho ? ' · vertical' : ' · horizontal');
+    $('#sheet-body').innerHTML = `
+      <div class="sheet-section">
+        <div class="sheet-section-label">Fondo del plano</div>
+        <div class="prop-row"><label>Ancho</label><div class="stepper-mini"><button id="lz-w-minus">−</button><span class="val">${ancho}</span><button id="lz-w-plus">+</button></div></div>
+        <div class="prop-row"><label>Alto</label><div class="stepper-mini"><button id="lz-h-minus">−</button><span class="val">${alto}</span><button id="lz-h-plus">+</button></div></div>
+        <p style="font-size:12px;opacity:.7;margin-top:8px">No se puede achicar más allá de lo que ocupan las mesas, muebles y zonas (mínimo ${minW} × ${minH}). Si quieres acortarlo más, primero mueve o achica lo que queda en el borde.</p>
+        <button class="btn ghost" id="lz-ajustar" style="margin-top:10px"><span class="material-symbols-outlined">fit_screen</span>Ajustar al contenido</button>
+      </div>
+      <div class="sheet-section"><button class="btn ghost" id="lz-cerrar" style="width:100%">Cerrar</button></div>`;
+    const set = (w, h) => {
+      w = Math.max(minW, Math.round(w / 10) * 10); h = Math.max(minH, Math.round(h / 10) * 10);
+      state.floorPlan.layout = { ...(state.floorPlan.layout || {}), canvas: { ancho: w, alto: h } };
+      state.edit.dirtyMuebles = true; renderFloorScreen(); pintar();
+    };
+    $('#lz-w-minus').onclick = () => set(ancho - 20, alto); $('#lz-w-plus').onclick = () => set(ancho + 20, alto);
+    $('#lz-h-minus').onclick = () => set(ancho, alto - 20); $('#lz-h-plus').onclick = () => set(ancho, alto + 20);
+    $('#lz-ajustar').onclick = () => set(minW + 10, minH + 10);
+    $('#lz-cerrar').onclick = () => closeSheet();
+  };
+  pintar(); $('#sheet-backdrop').classList.add('open'); $('#sheet').classList.add('open');
+}
+
 function addZona() {
   if (!state.zonas) state.zonas = [];
   let n = 1; while (state.zonas.some(z => z.nombre === 'zona ' + n)) n++;
