@@ -252,6 +252,13 @@ button { font-family: inherit; cursor: pointer; }
   border: 1.5px solid var(--green);
   border-radius: 50%;
 }
+.mueble.puerta {
+  background: var(--tertiary);
+  border: 1.5px dashed var(--outline);
+  font-size: 7px;
+}
+.editing .zona-bg { pointer-events: auto; cursor: grab; outline: 1.5px dashed rgba(0,0,0,.35); outline-offset: -1px; touch-action: none; }
+.editing .zona-bg.selected { outline: 2.5px dashed var(--primary); }
 .mueble.barra_fisica {
   background: var(--primary-dark);
   color: var(--bg);
@@ -295,7 +302,7 @@ button { font-family: inherit; cursor: pointer; }
   padding: 1px 5px; border-radius: 999px; margin-top: 1px;
 }
 .mesa .badge-com {
-  position: absolute; top: -7px; right: -7px;
+  position: absolute; top: 3px; right: 3px;
   width: 18px; height: 18px;
   background: var(--tertiary); border: 2px solid var(--outline);
   border-radius: 50%;
@@ -1897,9 +1904,8 @@ function ajustarEscalaPlano() {
   const wrap = document.querySelector('.floor-wrap'); if (!wrap) return;
   const { ancho, alto } = canvasDims();
   const disp = wrap.clientWidth - 32, alt = Math.max(260, wrap.clientHeight - 32);
-  let sc = disp / ancho;
-  if (alto > ancho && window.innerWidth > 640) sc = Math.min(sc, alt / alto);   // vertical en tablet: que entre de alto
-  sc = Math.max(0.5, Math.min(2.2, sc));
+  let sc = Math.min(disp / ancho, alt / alto);   // el plano entero a la vista, sin scroll
+  sc = Math.max(0.5, Math.min(1.6, sc));
   document.documentElement.style.setProperty('--canvas-scale', sc.toFixed(3));
 }
 window.addEventListener('resize', () => { if (state.screen === 'floor' || state.screen === 'edit') ajustarEscalaPlano(); });
@@ -1926,8 +1932,8 @@ function girarPlano() {
 function renderFloorScreen() {
   const editing = state.screen === 'edit';
   const counts = zonasCount();
-  const orden = ['todas', 'salón', 'terraza', 'reservado', 'barra'];
-  const labels = { todas:'Todas', 'salón':'Salón', terraza:'Terraza', reservado:'Reservado', barra:'Barra' };
+  const orden = ['todas', ...new Set([...(state.zonas || []).map(z => z.nombre), ...Object.keys(counts).filter(k => k !== 'todas')])];
+  const labels = new Proxy({ todas:'Todas', sin_zona:'Sin zona' }, { get: (o, k) => o[k] || (String(k).charAt(0).toUpperCase() + String(k).slice(1)) });
   const zonaTabsHtml = editing ? '' : `
     <nav class="zonas">
       ${orden.filter(z => z === 'todas' || counts[z]).map(z => `
@@ -1940,13 +1946,14 @@ function renderFloorScreen() {
 
   // Render canvas con muebles + zonas + mesas
   const mueblesHtml = state.muebles.map(mu => renderMuebleEl(mu, editing)).join('');
-  const zonasHtml = state.zonas.map(z => {
+  const zonasHtml = state.zonas.map((z, zi) => {
     if (z.x == null) return '';
     const isActive = !editing && (state.zonaActiva === 'todas' || state.zonaActiva === z.nombre);
-    return `<div class="zona-bg" style="
+    const zsel = editing && state.edit.selected && state.edit.selected.kind === 'zona' && +state.edit.selected.id === zi;
+    return `<div class="zona-bg ${zsel ? 'selected' : ''}" data-kind="zona" data-id="${zi}" style="
       left:${z.x}px; top:${z.y}px; width:${z.w}px; height:${z.h}px;
       background:${z.color||'transparent'};
-      opacity:${isActive?0.7:0.25};
+      opacity:${editing?0.6:(isActive?0.7:0.25)};
       transition:opacity 0.2s;
     "></div>
     <div class="zona-label" style="left:${z.x+8}px; top:${z.y+6}px">${z.nombre}</div>`;
@@ -1978,6 +1985,9 @@ function renderFloorScreen() {
       <button class="fab dark" id="fab-add-mueble">
         <span class="material-symbols-outlined">view_in_ar</span>+ Mueble
       </button>
+      <button class="fab" id="fab-add-zona">
+        <span class="material-symbols-outlined">dashboard_customize</span>+ Zona
+      </button>
       <button class="fab" id="fab-girar" title="Girar el plano 90°">
         <span class="material-symbols-outlined">rotate_90_degrees_cw</span>${canvasDims().alto > canvasDims().ancho ? 'Pasar a horizontal' : 'Pasar a vertical'}
       </button>
@@ -1989,6 +1999,7 @@ function renderFloorScreen() {
     $('#fab-add-mueble').onclick = addMueble;
     $('#fab-edit-help').onclick = mostrarAyudaEditor;
     $('#fab-girar').onclick = girarPlano;
+    $('#fab-add-zona').onclick = addZona;
   } else {
     $('#fab-stack').style.display = 'none';
   }
@@ -2008,6 +2019,10 @@ function renderFloorScreen() {
       openEditPanel('mueble', b.dataset.id);
     });
   });
+  if (editing) $$('#canvas-inner .zona-bg').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.justDragged) { delete b.dataset.justDragged; return; }
+    openEditPanel('zona', b.dataset.id);
+  }));
 
   if (editing) setupDragAndDrop();
 }
@@ -2582,7 +2597,7 @@ function setupDragAndDrop() {
   const SNAP = 5; // snap a 5px
 
   canvas.addEventListener('pointerdown', (e) => {
-    const target = e.target.closest('.mesa, .mueble');
+    const target = e.target.closest('.mesa, .mueble, .zona-bg');
     if (!target) return;
     e.preventDefault();
     const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--canvas-scale')) || 1;
@@ -2616,6 +2631,10 @@ function setupDragAndDrop() {
         const m = state.mesas.find(x => x.id === drag.id);
         if (m) { m.pos_x = nx; m.pos_y = ny; }
         state.edit.dirtyMesas[drag.id] = { ...(state.edit.dirtyMesas[drag.id]||{}), pos_x: nx, pos_y: ny };
+      } else if (drag.kind === 'zona') {
+        const z = state.zonas[+drag.id];
+        if (z) { z.x = nx; z.y = ny; state.edit.dirtyMuebles = true; }
+        drag = null; renderFloorScreen(); return;   // repinta para mover también el nombre de la zona
       } else {
         const mu = state.muebles.find(x => x.id === drag.id);
         if (mu) { mu.x = nx; mu.y = ny; state.edit.dirtyMuebles = true; }
@@ -2637,6 +2656,14 @@ function openEditPanel(kind, id) {
     $('#sheet-title').textContent = 'Editar mesa ' + m.numero;
     $('#sheet-meta').textContent = 'ID ' + m.id + ' · ' + (m.zona||'—').toUpperCase();
     renderMesaPropPanel(m);
+  } else if (kind === 'zona') {
+    const z = state.zonas[+id]; if (!z) return;
+    $('#sheet-mark').textContent = (z.nombre || '?').charAt(0).toUpperCase();
+    $('#sheet-mark').style.background = z.color || 'var(--gray-soft)';
+    $('#sheet-mark').style.color = 'var(--ink)';
+    $('#sheet-title').textContent = 'Editar zona';
+    $('#sheet-meta').textContent = state.mesas.filter(m => m.zona === z.nombre).length + ' mesa(s) en esta zona';
+    renderZonaPropPanel(z, +id);
   } else {
     const mu = state.muebles.find(x => x.id === id); if (!mu) return;
     $('#sheet-mark').textContent = (mu.tipo||'?').charAt(0).toUpperCase();
@@ -2652,7 +2679,7 @@ function openEditPanel(kind, id) {
 
 function renderMesaPropPanel(m) {
   const formaOpts = ['rectangular','circular','barra'].map(f => `<option value="${f}" ${m.forma===f?'selected':''}>${f}</option>`).join('');
-  const zonaOpts = ['salón','terraza','reservado','barra','sin_zona'].map(z => `<option value="${z}" ${m.zona===z?'selected':''}>${z}</option>`).join('');
+  const zonaOpts = [...new Set([...(state.zonas || []).map(z => z.nombre), 'sin_zona', m.zona || 'sin_zona'])].map(z => `<option value="${z}" ${m.zona===z?'selected':''}>${z === 'sin_zona' ? 'sin zona' : z}</option>`).join('');
   $('#sheet-body').innerHTML = `
     <div class="sheet-section">
       <div class="sheet-section-label">Identificación</div>
@@ -2746,8 +2773,8 @@ function renderMesaPropPanel(m) {
 }
 
 function renderMueblePropPanel(mu) {
-  const tipos = ['pared','entrada','cocina','pase','baño','columna','planta','barra_fisica'];
-  const tiposOpts = tipos.map(t => `<option value="${t}" ${mu.tipo===t?'selected':''}>${t}</option>`).join('');
+  const tipos = [['pared','Pared'],['puerta','Puerta (cocina, baño, salida)'],['entrada','Entrada principal'],['cocina','Bloque de cocina'],['pase','Pase'],['baño','Baño'],['columna','Columna'],['planta','Planta'],['barra_fisica','Barra']];
+  const tiposOpts = tipos.map(([t, n]) => `<option value="${t}" ${mu.tipo===t?'selected':''}>${n}</option>`).join('');
   $('#sheet-body').innerHTML = `
     <div class="sheet-section">
       <div class="sheet-section-label">Mueble</div>
@@ -2826,6 +2853,60 @@ function addMesa() {
   renderFloorScreen();
   openEditPanel('mesa', id);
   toast('Mesa nueva creada · ajusta posición y propiedades', 'ok');
+}
+
+const ZONA_COLORES = [['#fdf6ec','Crema'],['#eef3ff','Azul'],['#f0f9f4','Verde'],['#fffbe0','Amarillo'],['#fdeceb','Rojo'],['#f2f2f2','Gris']];
+function renderZonaPropPanel(z, idx) {
+  const colorBtns = ZONA_COLORES.map(([c, n]) => `<button class="chip ${z.color===c?'active':''}" data-color="${c}" style="background:${c}">${n}</button>`).join('');
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-section">
+      <div class="sheet-section-label">Zona</div>
+      <div class="prop-row"><label>Nombre</label><input class="input" style="max-width:200px" id="ez-nombre" value="${(z.nombre||'').replace(/"/g,'&quot;')}"></div>
+      <div class="sheet-section-label" style="margin-top:10px">Color</div>
+      <div class="chips" id="ez-colores">${colorBtns}</div>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">Tamaño</div>
+      <div class="prop-row"><label>Ancho</label><div class="stepper-mini"><button id="ez-w-minus">−</button><span class="val" id="ez-w">${z.w}</span><button id="ez-w-plus">+</button></div></div>
+      <div class="prop-row"><label>Alto</label><div class="stepper-mini"><button id="ez-h-minus">−</button><span class="val" id="ez-h">${z.h}</span><button id="ez-h-plus">+</button></div></div>
+      <div class="prop-row" style="opacity:0.7"><label>Posición</label><span style="font-family:var(--font-mono);font-size:12px">arrastra la zona en el plano</span></div>
+    </div>
+    <div class="sheet-section">
+      <div class="btn-grid">
+        <button class="btn ghost span-2" id="ez-cerrar">Cerrar</button>
+        <button class="btn danger span-2" id="ez-eliminar"><span class="material-symbols-outlined">delete</span>Quitar zona</button>
+      </div>
+    </div>`;
+  const dirty = () => { state.edit.dirtyMuebles = true; renderFloorScreen(); };
+  const step = (id, k, dx) => { z[k] = Math.max(30, (+z[k] || 0) + dx); $(id).textContent = z[k]; dirty(); };
+  $('#ez-w-minus').onclick = () => step('#ez-w', 'w', -10); $('#ez-w-plus').onclick = () => step('#ez-w', 'w', +10);
+  $('#ez-h-minus').onclick = () => step('#ez-h', 'h', -10); $('#ez-h-plus').onclick = () => step('#ez-h', 'h', +10);
+  $$('#ez-colores .chip').forEach(b => b.onclick = () => { z.color = b.dataset.color; $$('#ez-colores .chip').forEach(x => x.classList.toggle('active', x === b)); dirty(); });
+  $('#ez-nombre').onchange = () => {
+    const nuevo = $('#ez-nombre').value.trim().toLowerCase(); if (!nuevo || nuevo === z.nombre) return;
+    // las mesas de la zona se mueven al nombre nuevo
+    state.mesas.forEach(m => { if (m.zona === z.nombre) { m.zona = nuevo; if (!String(m.id).startsWith('new_')) state.edit.dirtyMesas[m.id] = { ...(state.edit.dirtyMesas[m.id] || {}), zona: nuevo }; } });
+    if (state.zonaActiva === z.nombre) state.zonaActiva = 'todas';
+    z.nombre = nuevo; dirty();
+  };
+  $('#ez-cerrar').onclick = () => { state.edit.selected = null; closeSheet(); renderFloorScreen(); };
+  $('#ez-eliminar').onclick = () => {
+    const n = state.mesas.filter(m => m.zona === z.nombre).length;
+    if (!confirm('¿Quitar la zona ' + z.nombre + '?' + (n ? ' Sus ' + n + ' mesa(s) quedan sin zona; puedes asignarlas a otra.' : ''))) return;
+    state.mesas.forEach(m => { if (m.zona === z.nombre) { m.zona = 'sin_zona'; if (!String(m.id).startsWith('new_')) state.edit.dirtyMesas[m.id] = { ...(state.edit.dirtyMesas[m.id] || {}), zona: 'sin_zona' }; } });
+    state.zonas.splice(idx, 1);
+    if (state.zonaActiva === z.nombre) state.zonaActiva = 'todas';
+    state.edit.selected = null; closeSheet(); dirty();
+  };
+}
+function addZona() {
+  if (!state.zonas) state.zonas = [];
+  let n = 1; while (state.zonas.some(z => z.nombre === 'zona ' + n)) n++;
+  state.zonas.push({ nombre: 'zona ' + n, x: 20, y: 20, w: 160, h: 120, color: '#eef3ff' });
+  state.edit.dirtyMuebles = true;
+  const idx = state.zonas.length - 1;
+  state.edit.selected = { kind: 'zona', id: idx };
+  renderFloorScreen(); openEditPanel('zona', idx);
 }
 
 function addMueble() {
