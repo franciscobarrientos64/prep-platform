@@ -24,6 +24,15 @@ const CACHE = path.join(DATA, 'copia');
 const CFG_FILE = path.join(DATA, 'config.json');
 const COLA_FILE = path.join(DATA, 'cola.json');
 fs.mkdirSync(CACHE, { recursive: true });
+// Registro en datos/registro.txt (al arrancar oculto no hay ventana donde leer errores)
+const LOGF = path.join(DATA, 'registro.txt');
+function logArchivo(nivel, args) { try { fs.appendFileSync(LOGF, new Date().toISOString() + ' ' + nivel + ' ' + args.map(a => a && a.stack ? a.stack : String(a)).join(' ') + '\n'); } catch (e) {} }
+try { if (fs.existsSync(LOGF) && fs.statSync(LOGF).size > 2e6) fs.renameSync(LOGF, LOGF + '.anterior'); } catch (e) {}
+const _log = console.log, _err = console.error;
+console.log = (...a) => { logArchivo('INFO', a); _log(...a); };
+console.error = (...a) => { logArchivo('ERROR', a); _err(...a); };
+process.on('uncaughtException', e => { logArchivo('FATAL', [e]); _err(e); if (e && e.code === 'EADDRINUSE') { _err('El puerto 8080 ya esta en uso: Prep Local ya esta corriendo.'); process.exit(1); } });
+process.on('unhandledRejection', e => logArchivo('ERROR', [e]));
 
 // ---------- Configuración ----------
 const DEF = { puerto: 8080, origen: 'https://os.prep.rest', marca: 'm6', local: 'l11',

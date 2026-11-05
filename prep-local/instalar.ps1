@@ -52,7 +52,6 @@ Write-Host '  Listo'
 
 Paso 'Dejandolo para que arranque solo al prender la laptop'
 $vbs = "$dir\iniciar-prep-local.vbs"
-(Get-Content $vbs -Raw).Replace('node prep-local.js', "`"`"$node`"`" prep-local.js") | Set-Content $vbs -Encoding ASCII
 $startup = [Environment]::GetFolderPath('Startup')
 $sh = New-Object -ComObject WScript.Shell
 $lnk = $sh.CreateShortcut((Join-Path $startup 'Prep Local.lnk'))
