@@ -48,13 +48,23 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const ID=new URLSearchParams(location.search).get('id');
 const MESA=new URLSearchParams(location.search).get('mesa')||null;
 const MOZO=new URLSearchParams(location.search).get('mozo')||null;
+// QR impreso en la boleta: trae el pedido para enlazar la respuesta con esa atención
+const PEDIDO=(function(v){return /^[0-9a-f-]{36}$/i.test(v||'')?v:null})(new URLSearchParams(location.search).get('p'));
+// Vista previa desde Voz del Cliente: muestra la encuesta tal cual, sin guardar nada
+const PREVIEW=new URLSearchParams(location.search).get('preview');
 let ENC=null, PREG=[], VAL={}, CONTACT={nombre:'',apellido:'',telefono:'',email:''};
 const app=document.getElementById('app');
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 async function init(){
+  if(PREVIEW==='draft'){
+    let d=null;try{d=JSON.parse(localStorage.getItem('vc_preview')||'null')}catch(e){}
+    if(!d){app.innerHTML=msgBox('visibility','Sin vista previa','Vuelve al constructor de la encuesta.');return;}
+    ENC=d.enc;PREG=(d.preguntas||[]).map((p,i)=>Object.assign({id:'q'+i},p));render();return;
+  }
   if(!ID){app.innerHTML=msgBox('link','Encuesta no encontrada','Revisa el enlace o el código QR.');return;}
-  const {data:e}=await sb.from('vc_encuestas').select('*').eq('id',ID).eq('activo',true).maybeSingle();
+  let qe=sb.from('vc_encuestas').select('*').eq('id',ID);if(!PREVIEW)qe=qe.eq('activo',true);
+  const {data:e}=await qe.maybeSingle();
   if(!e){app.innerHTML=msgBox('event_busy','Encuesta no disponible','Puede haber finalizado. ¡Gracias por tu interés!');return;}
   ENC=e;
   const {data:p}=await sb.from('vc_preguntas').select('*').eq('encuesta_id',ID).order('orden');
@@ -92,34 +102,37 @@ function render(){
   // si no, queda opcional para que el restaurante pueda responder si algo salió mal.
   const oblig=ENC.contacto_obligatorio;
   h+=`<div class="q"><div class="t">${oblig
-      ?`Para enviar tu encuesta, déjanos un dato de contacto <span class="req">*</span>`
+      ?`Tu nombre y número de contacto <span class="req">*</span>`
       :`¿Te contactamos si podemos mejorar tu experiencia? <span style="font-weight:400;opacity:.6">(opcional)</span>`}
-      <div style="font-weight:400;font-size:12px;opacity:.6;margin-top:2px">${oblig?'Teléfono o email — usa el que prefieras':''}</div></div>`;
+      <div style="font-weight:400;font-size:12px;opacity:.6;margin-top:2px">${oblig?'Solo los usamos para comunicarnos contigo sobre esta visita.':''}</div></div>`;
   // Si la encuesta no pide nombre arriba, se ofrece aquí (opcional, compat. con encuestas previas)
   if(!ENC.pide_nombre){
-    h+=`<input id="c_nombre" placeholder="Tu nombre" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
+    h+=`<input id="c_nombre" placeholder="Tu nombre${oblig?' *':''}" value="${esc(CONTACT.nombre)}" oninput="CONTACT.nombre=this.value"
       style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">`;
   }
-  h+=`<input id="c_tel" placeholder="WhatsApp / teléfono" inputmode="tel" value="${esc(CONTACT.telefono)}" oninput="CONTACT.telefono=this.value"
+  h+=`<input id="c_tel" placeholder="WhatsApp / teléfono${oblig?' *':''}" inputmode="tel" value="${esc(CONTACT.telefono)}" oninput="CONTACT.telefono=this.value"
       style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px;margin-bottom:8px">
-    <input id="c_email" placeholder="Email" inputmode="email" value="${esc(CONTACT.email)}" oninput="CONTACT.email=this.value"
+    <input id="c_email" placeholder="Email${oblig?' (opcional)':''}" inputmode="email" value="${esc(CONTACT.email)}" oninput="CONTACT.email=this.value"
       style="width:100%;padding:12px;border:2px solid var(--outline);border-radius:12px;font-family:var(--font-body);font-size:15px"></div>`;
-  h+=`<button class="send" onclick="enviar()"><span class="material-symbols-outlined">send</span>Enviar</button>`;
+  h+=PREVIEW?`<div class="send" style="background:var(--gray-soft);color:var(--ink);cursor:default"><span class="material-symbols-outlined">visibility</span>Vista previa · no se envía</div>`
+    :`<button class="send" onclick="enviar()"><span class="material-symbols-outlined">send</span>Enviar</button>`;
   app.innerHTML=h;
 }
 function setNum(id,n){VAL[id]=n;render();}
 function setTxt(id,t){VAL[id]=t;render();}
 
 async function enviar(){
+  if(PREVIEW)return;
   const nom=(CONTACT.nombre||'').trim(), ape=(CONTACT.apellido||'').trim(), tel=(CONTACT.telefono||'').trim(), eml=(CONTACT.email||'').trim();
   if(ENC.pide_nombre&&(!nom||!ape)){alert('Por favor déjanos tu nombre y apellido.');const el=document.getElementById(!nom?'c_nombre':'c_apellido');if(el)el.focus();return;}
   for(const p of PREG){if(p.requerida&&(VAL[p.id]===undefined||VAL[p.id]==='')){alert('Por favor responde: '+p.texto);return;}}
-  if(ENC.contacto_obligatorio&&!tel&&!eml){alert('Para enviar tu encuesta, déjanos un teléfono o un email.');const el=document.getElementById('c_tel');if(el)el.focus();return;}
+  if(ENC.contacto_obligatorio&&!nom){alert('Por favor déjanos tu nombre.');const el=document.getElementById('c_nombre');if(el)el.focus();return;}
+  if(ENC.contacto_obligatorio&&tel.replace(/[^0-9]/g,'').length<7){alert('Por favor déjanos un número de contacto.');const el=document.getElementById('c_tel');if(el)el.focus();return;}
   const btn=document.querySelector('.send');if(btn){btn.textContent='Enviando…';btn.style.opacity=.6;}
   // Generamos el id en el cliente: anon NO puede leer vc_respuestas (privacidad),
   // así que no usamos .select()/RETURNING (violaría RLS). Insert directo.
   const rid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
-  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:'qr',mesa:MESA,mozo:MOZO,contacto_nombre:nom||null,contacto_apellido:ape||null,contacto_telefono:tel||null,contacto_email:eml||null});
+  const {error}=await sb.from('vc_respuestas').insert({id:rid,encuesta_id:ID,marca_id:ENC.marca_id,local_id:ENC.local_id,canal:PEDIDO?'boleta':'qr',pedido_id:PEDIDO,mesa:MESA,mozo:MOZO,contacto_nombre:nom||null,contacto_apellido:ape||null,contacto_telefono:tel||null,contacto_email:eml||null});
   if(error){if(btn){btn.textContent='Reintentar';btn.style.opacity=1;}return;}
   const items=PREG.filter(p=>VAL[p.id]!==undefined&&VAL[p.id]!=='').map(p=>({respuesta_id:rid,pregunta_id:p.id,
     valor_num:(p.tipo==='nps'||p.tipo==='csat'||p.tipo==='escala5')?VAL[p.id]:null,

@@ -1529,8 +1529,11 @@ function imprimirPreCuenta(ped, T) {
   // imprima sí o sí en la térmica (el iframe imprime ~250ms después de escribir el HTML).
   const printPre = (qr) => imprimirTermico('Pre-cuenta #' + ped.ticket_num, body + qr);
   if (ENCUESTA_TICKET_ID) {
+    // QR único de esta boleta: la respuesta queda enlazada al pedido (fecha, hora, mesa, mozo y consumo)
+    const mozoQR = ((state.empleados || []).find(e => e.id === ped.mozo_id) || {}).nombre || '';
     const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=' +
-      encodeURIComponent(location.origin + '/encuesta?id=' + ENCUESTA_TICKET_ID + (mesa ? '&mesa=' + encodeURIComponent(mesa.numero) : ''));
+      encodeURIComponent((location.hostname.endsWith('prep.rest') ? location.origin : 'https://os.prep.rest') + '/encuesta?id=' + ENCUESTA_TICKET_ID + '&p=' + ped.id +
+        (mesa ? '&mesa=' + encodeURIComponent(mesa.numero) : '') + (mozoQR ? '&mozo=' + encodeURIComponent(mozoQR) : ''));
     const qrHtml = `<hr><div class="center b">¿Cómo estuvo todo?</div><div class="center muted">Escanéa y cuéntanos · 30 seg</div>` +
       `<div class="center" style="margin:6px 0"><img src="${qrSrc}" alt="Encuesta" style="width:38mm;height:38mm"></div>` +
       `<div class="center muted">Tu opinión nos ayuda a mejorar</div>`;

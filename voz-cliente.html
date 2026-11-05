@@ -1171,6 +1171,63 @@ function encCSAT(encId){const a=encItemsTipo(encId,'csat');return a.length?avg(a
 function npsColor(n){return n>=50?'var(--green)':n>=0?'var(--amber)':'var(--secondary)';}
 
 function fmtDT(d){if(!d)return'—';try{return new Date(d).toLocaleString('es-PE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return d;}}
+/* Cada respuesta con su atención: si vino del QR de la boleta, muestra fecha y hora de la
+   atención y abre la boleta (pedido) con un clic. */
+ENC.ped={};
+async function cargarPedidosResp(resp){
+  const ids=[...new Set(resp.map(r=>r.pedido_id).filter(id=>id&&!(id in ENC.ped)))];if(!ids.length)return;
+  const{data}=await sb.from('ca_pedidos').select('id,ticket_num,abierta_at,cerrada_at,pagado_at,total,mesa_id,mozo_id,comprobante_tipo,comprobante_serie,comprobante_numero').in('id',ids);
+  ids.forEach(id=>ENC.ped[id]=null);(data||[]).forEach(p=>ENC.ped[p.id]=p);
+  const el=document.getElementById('enc-resp-list');if(el&&ENC.sel)el.innerHTML=respLista(ENC.resp[ENC.sel]||[]);
+}
+function horaPE(d){try{return new Date(d).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function fechaPE(d){try{return new Date(d).toLocaleDateString('es-PE',{weekday:'short',day:'2-digit',month:'short'})}catch(e){return''}}
+function atencionTxt(r){
+  const p=r.pedido_id&&ENC.ped[r.pedido_id];
+  if(p)return `${fechaPE(p.abierta_at)} · ${horaPE(p.abierta_at)}${p.cerrada_at||p.pagado_at?'–'+horaPE(p.cerrada_at||p.pagado_at):''}`;
+  return '';
+}
+function botonBoleta(r){
+  if(!r.pedido_id)return'';
+  const p=ENC.ped[r.pedido_id];
+  return `<button class="btn-ico" onclick="verBoleta('${r.pedido_id}')"><span class="material-symbols-outlined">receipt_long</span>${p?'Boleta #'+p.ticket_num:'Ver boleta'}</button>`;
+}
+function respLista(resp){
+  const rs=resp.slice().sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+  if(!rs.length)return'';
+  return rs.slice(0,100).map(r=>{const s=respScore(r),nm=[r.contacto_nombre,r.contacto_apellido].filter(Boolean).join(' ');
+    const at=atencionTxt(r);
+    return `<div class="rv-card" style="${esAlerta(s)?'border-left:6px solid var(--secondary)':''}">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${s.nps!=null?`<span class="badge" style="border:1.5px solid var(--outline);background:${s.nps>=9?'var(--green-soft)':s.nps>=7?'var(--amber-soft)':'var(--red-soft)'}">NPS ${s.nps}</span>`:''}${s.csatMin!=null?`<span class="badge" style="border:1.5px solid var(--outline)">mín. ${s.csatMin}/5</span>`:''}</div>
+        <span style="font-family:var(--font-mono);font-size:11px;opacity:.6">respondió ${fmtDT(r.created_at)}</span></div>
+      ${s.comment?`<div style="margin-top:8px;font-size:14px">“${escapeHtml(s.comment)}”</div>`:''}
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-family:var(--font-mono);font-size:11px;opacity:.8">
+        ${at?`<span>🕒 Atención: ${at}</span>`:''}${r.mesa?`<span>🍽️ Mesa ${escapeHtml(r.mesa)}</span>`:''}${r.mozo?`<span>🧑‍🍳 ${escapeHtml(r.mozo)}</span>`:''}
+        ${nm?`<span>👤 ${escapeHtml(nm)}</span>`:''}${r.contacto_telefono?`<span>📱 ${escapeHtml(r.contacto_telefono)}</span>`:''}</div>
+      ${r.pedido_id?`<div style="margin-top:10px">${botonBoleta(r)}</div>`:''}</div>`;}).join('');
+}
+async function verBoleta(id){
+  document.getElementById('shTitle').textContent='Boleta';document.getElementById('shMeta').textContent='Oído…';
+  document.getElementById('shBody').innerHTML='<div class="empty">Oído…</div>';openSheet();
+  const[pq,iq]=await Promise.all([sb.from('ca_pedidos').select('*').eq('id',id).maybeSingle(),sb.from('ca_pedido_items').select('nombre,qty,precio_total,es_cortesia,estado,seat_position,notas').eq('pedido_id',id).order('created_at')]);
+  const p=pq.data;
+  if(!p){document.getElementById('shMeta').textContent='';document.getElementById('shBody').innerHTML='<div class="empty">Atrás · no se encontró esa boleta. Puede que el pedido aún no se haya sincronizado.</div>';return}
+  let mesa='',mozo='';
+  try{const[m,e]=await Promise.all([p.mesa_id?sb.from('ca_mesas').select('numero,zona').eq('id',p.mesa_id).maybeSingle():{data:null},p.mozo_id?sb.from('rrhh_empleados').select('nombre,apellidos').eq('id',p.mozo_id).maybeSingle():{data:null}]);
+    if(m.data)mesa=m.data.numero+(m.data.zona?' · '+m.data.zona:'');if(e.data)mozo=[e.data.nombre,e.data.apellidos].filter(Boolean).join(' ');}catch(e){}
+  const its=(iq.data||[]).filter(i=>i.estado!=='cancelado');const S=n=>'S/ '+Number(n||0).toFixed(2);
+  const comp=p.comprobante_serie?`${p.comprobante_tipo||''} ${p.comprobante_serie}-${p.comprobante_numero||''}`:'';
+  document.getElementById('shTitle').textContent='Boleta #'+p.ticket_num;
+  document.getElementById('shMeta').textContent=fechaPE(p.abierta_at)+' · '+horaPE(p.abierta_at)+(p.cerrada_at?'–'+horaPE(p.cerrada_at):'');
+  document.getElementById('shBody').innerHTML=`<div class="card" style="font-size:14px">
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:12px;margin-bottom:10px">
+      ${mesa?`<span>🍽️ Mesa ${escapeHtml(String(mesa))}</span>`:''}${mozo?`<span>🧑‍🍳 ${escapeHtml(mozo)}</span>`:''}${p.comensales?`<span>👥 ${p.comensales}</span>`:''}${comp?`<span>🧾 ${escapeHtml(comp)}</span>`:''}<span>${escapeHtml(p.estado||'')}</span></div>
+    ${its.map(i=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--gray-soft)"><span>${i.qty}× ${escapeHtml(i.nombre)}${i.es_cortesia?' <span class="badge" style="border:1.5px solid var(--outline)">cortesía</span>':''}${i.notas?`<div style="font-size:12px;opacity:.6">${escapeHtml(i.notas)}</div>`:''}</span><span style="font-family:var(--font-mono)">${S(i.precio_total)}</span></div>`).join('')||'<div style="opacity:.6">Sin ítems</div>'}
+    <div style="display:flex;justify-content:space-between;margin-top:10px;font-family:var(--font-mono);font-size:12px"><span>Servicio</span><span>${S(p.servicio_monto)}</span></div>
+    ${Number(p.propina_monto)?`<div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:12px"><span>Propina</span><span>${S(p.propina_monto)}</span></div>`:''}
+    <div style="display:flex;justify-content:space-between;margin-top:6px;font-weight:700;font-size:16px"><span>Total</span><span>${S(p.total)}</span></div></div>`;
+}
 function renderAlertas(){
   const al=alertResponses();
   const back=`<button class="btn-ico" onclick="ENC.view='lista';renderEncuestas()" style="margin-bottom:14px"><span class="material-symbols-outlined">arrow_back</span>Encuestas</button>`;
@@ -1193,6 +1250,7 @@ function renderAlertas(){
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         ${wa?`<a class="btn-ico primary" href="${wa}" target="_blank" rel="noopener"><span class="material-symbols-outlined">chat</span>Contactar</a>`:''}
         ${!wa&&mail?`<a class="btn-ico primary" href="${mail}"><span class="material-symbols-outlined">mail</span>Contactar</a>`:''}
+        ${botonBoleta(r)}
         <button class="btn-ico" onclick="marcarAtendida('${r.id}')"><span class="material-symbols-outlined">done</span>Marcar atendida</button></div>
     </div>`;
   }).join('');
@@ -1208,7 +1266,7 @@ function renderEncuestas(){
   PENDING=[];
   const v=document.getElementById('enc-view');
   if(ENC.sel){v.innerHTML=encResultados(ENC.sel);mountCharts();return;}
-  if(ENC.view==='alertas'){v.innerHTML=renderAlertas();return;}
+  if(ENC.view==='alertas'){v.innerHTML=renderAlertas();const al=alertResponses().map(a=>a.r);if(al.some(r=>r.pedido_id&&!(r.pedido_id in ENC.ped)))cargarPedidosResp(al).then(()=>{if(ENC.view==='alertas'&&!ENC.sel)v.innerHTML=renderAlertas()});return;}
   if(!ENC.lista.length){v.innerHTML='<div class="empty">Aún no hay encuestas.<br>Toca «Nueva encuesta» para crear la primera.</div>';return;}
   const nAl=ENC.alertCount;
   const banner=`<div class="q-card" style="cursor:pointer;background:${nAl?'var(--red-soft)':'var(--green-soft)'}" onclick="ENC.view='alertas';renderEncuestas()">
@@ -1228,6 +1286,7 @@ function renderEncuestas(){
         <div><div style="font-family:var(--font-mono);font-size:10px;opacity:.6;font-weight:700">CSAT</div><div style="font-family:var(--font-display);font-size:24px">${resp.length?csat.toFixed(1):'—'}<span style="font-size:13px;opacity:.4">/5</span></div></div></div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="btn-ico" onclick="compartirEncuesta('${e.id}')"><span class="material-symbols-outlined">qr_code_2</span>QR / Link</button>
+        <button class="btn-ico" onclick="previewEncuesta('${e.id}')"><span class="material-symbols-outlined">visibility</span>Vista previa</button>
         <button class="btn-ico" onclick="toggleEncuesta('${e.id}')"><span class="material-symbols-outlined">${e.activo?'pause':'play_arrow'}</span>${e.activo?'Pausar':'Activar'}</button></div>
     </div>`;
   }).join('');
@@ -1255,33 +1314,74 @@ function encResultados(encId){
   const abIds=preg.filter(p=>p.tipo==='abierta').map(p=>p.id),coms=[];
   resp.forEach(r=>(ENC.items[r.id]||[]).forEach(it=>{if(abIds.includes(it.pregunta_id)&&it.valor_texto)coms.push(it.valor_texto);}));
   if(coms.length)h+=`<div class="section"><div class="section-h"><h3>Comentarios</h3><span class="hint">${coms.length}</span></div>`+coms.slice(0,25).map(c=>`<div class="rv-card">“${escapeHtml(c)}”</div>`).join('')+`</div>`;
+  h+=`<div class="section"><div class="section-h"><h3>Respuestas</h3><span class="hint">la más reciente primero</span></div><div id="enc-resp-list">`+respLista(resp)+`</div></div>`;
+  cargarPedidosResp(resp);
   return h;
 }
 function openEncuesta(){
-  ENC.build={titulo:'',descripcion:'',preguntas:[{texto:'¿Qué tan probable es que nos recomiendes a un amigo?',tipo:'nps'},{texto:'¿Cómo calificas la comida?',tipo:'csat'},{texto:'¿Cómo calificas el servicio?',tipo:'csat'},{texto:'¿Algo que podamos mejorar?',tipo:'abierta'}]};
+  ENC.build={titulo:'',descripcion:'',contacto:true,preguntas:[{texto:'¿Qué tan probable es que nos recomiendes a un amigo?',tipo:'nps'},{texto:'¿Cómo calificas la comida?',tipo:'csat'},{texto:'¿Cómo calificas el servicio?',tipo:'csat'},{texto:'¿Algo que podamos mejorar?',tipo:'abierta'}]};
   document.getElementById('shTitle').textContent='Nueva encuesta';document.getElementById('shMeta').textContent='Voz del Cliente';
   renderBuilder();openSheet();
 }
 function renderBuilder(){
   const b=ENC.build,tipos=[['nps','NPS 0-10'],['csat','CSAT 1-5'],['escala5','Escala 1-5'],['opciones','Opción múltiple'],['abierta','Texto abierto']];
-  let h=`<label class="field-lbl">Título</label><input class="input" value="${escapeHtml(b.titulo)}" oninput="ENC.build.titulo=this.value" placeholder="Encuesta post-visita">
+  let h=`<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn primary" style="flex:1" disabled><span class="material-symbols-outlined">edit</span>Editar</button><button class="btn ghost" style="flex:1" onclick="previewBuilder()"><span class="material-symbols-outlined">visibility</span>Vista previa</button></div>
+   <label class="field-lbl">Título</label><input class="input" value="${escapeHtml(b.titulo)}" oninput="ENC.build.titulo=this.value" placeholder="Encuesta post-visita">
    <label class="field-lbl">Descripción</label><input class="input" value="${escapeHtml(b.descripcion)}" oninput="ENC.build.descripcion=this.value" placeholder="Cuéntanos cómo fue tu experiencia">
-   <label class="field-lbl">Preguntas</label>`;
+   <label class="field-lbl">Preguntas <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.7">· arrastra <span class="material-symbols-outlined" style="font-size:15px">drag_indicator</span> para cambiar el orden</span></label><div id="qlist">`;
   b.preguntas.forEach((p,i)=>{
-    h+=`<div class="q-card"><div style="display:flex;gap:8px;align-items:flex-start">
-      <input class="input" value="${escapeHtml(p.texto)}" oninput="ENC.build.preguntas[${i}].texto=this.value" placeholder="Texto de la pregunta" style="flex:1">
-      <button class="sheet-close" style="width:40px;height:40px;flex-shrink:0" onclick="ENC.build.preguntas.splice(${i},1);renderBuilder()"><span class="material-symbols-outlined">delete</span></button></div>
+    h+=`<div class="q-card" data-qi="${i}" style="touch-action:auto"><div style="display:flex;gap:6px;align-items:center">
+      <span class="material-symbols-outlined qdrag" title="Arrastrar" style="cursor:grab;touch-action:none;padding:8px 2px;opacity:.6;user-select:none">drag_indicator</span>
+      <span style="font-family:var(--font-display);min-width:18px">${i+1}</span>
+      <input class="input" value="${escapeHtml(p.texto)}" oninput="ENC.build.preguntas[${i}].texto=this.value" placeholder="Texto de la pregunta" style="flex:1;margin:0">
+      <button class="sheet-close" style="width:34px;height:34px;flex-shrink:0" title="Subir" onclick="moverPregunta(${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+      <button class="sheet-close" style="width:34px;height:34px;flex-shrink:0" title="Bajar" onclick="moverPregunta(${i},1)" ${i===b.preguntas.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+      <button class="sheet-close" style="width:34px;height:34px;flex-shrink:0" title="Quitar" onclick="ENC.build.preguntas.splice(${i},1);renderBuilder()"><span class="material-symbols-outlined">delete</span></button></div>
       <select class="select" style="margin-top:8px" onchange="ENC.build.preguntas[${i}].tipo=this.value;renderBuilder()">${tipos.map(t=>`<option value="${t[0]}"${p.tipo===t[0]?' selected':''}>${t[1]}</option>`).join('')}</select>
       ${p.tipo==='opciones'?`<input class="input" style="margin-top:8px" value="${escapeHtml((p.opciones||[]).join(', '))}" oninput="ENC.build.preguntas[${i}].opciones=this.value.split(',').map(x=>x.trim()).filter(Boolean)" placeholder="Opciones separadas por coma">`:''}</div>`;
   });
-  h+=`<button class="btn ghost" onclick="ENC.build.preguntas.push({texto:'',tipo:'escala5'});renderBuilder()"><span class="material-symbols-outlined">add</span>Agregar pregunta</button>
+  h+=`</div><button class="btn ghost" onclick="ENC.build.preguntas.push({texto:'',tipo:'escala5'});renderBuilder()"><span class="material-symbols-outlined">add</span>Agregar pregunta</button>
+   <label class="q-card" style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;cursor:pointer"><input type="checkbox" ${b.contacto?'checked':''} onchange="ENC.build.contacto=this.checked" style="width:20px;height:20px;margin-top:2px">
+     <span><b>Pedir nombre y número de contacto</b><br><span style="font-size:12px;opacity:.7">Obligatorios para enviar. Así puedes llamar a quien tuvo una mala experiencia.</span></span></label>
    <div style="height:14px"></div><button class="btn primary" onclick="saveEncuesta()"><span class="material-symbols-outlined">save</span>Crear encuesta</button>`;
   document.getElementById('shBody').innerHTML=h;
+  wireDragPreguntas();
+}
+function moverPregunta(i,d){const a=ENC.build.preguntas,j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];renderBuilder();}
+// Arrastrar y soltar con pointer events (mouse y táctil): se mueve la tarjeta en el DOM y al soltar se reordena.
+function wireDragPreguntas(){
+  const list=document.getElementById('qlist');if(!list)return;
+  list.querySelectorAll('.qdrag').forEach(hd=>hd.addEventListener('pointerdown',ev=>{
+    ev.preventDefault();const card=hd.closest('[data-qi]');hd.setPointerCapture(ev.pointerId);
+    card.style.opacity='.6';card.style.boxShadow='var(--shadow)';hd.style.cursor='grabbing';
+    const move=e=>{const cards=[...list.querySelectorAll('[data-qi]')].filter(c=>c!==card);
+      const after=cards.find(c=>{const r=c.getBoundingClientRect();return e.clientY<r.top+r.height/2;});
+      if(after)list.insertBefore(card,after);else list.appendChild(card);};
+    const up=()=>{hd.removeEventListener('pointermove',move);hd.removeEventListener('pointerup',up);hd.removeEventListener('pointercancel',up);
+      const orden=[...list.querySelectorAll('[data-qi]')].map(c=>+c.dataset.qi);
+      ENC.build.preguntas=orden.map(k=>ENC.build.preguntas[k]);renderBuilder();};
+    hd.addEventListener('pointermove',move);hd.addEventListener('pointerup',up);hd.addEventListener('pointercancel',up);
+  }));
+}
+// Vista previa: la misma página que verá el comensal (encuesta.html), en un marco de celular.
+function previewBuilder(){
+  const b=ENC.build;
+  try{localStorage.setItem('vc_preview',JSON.stringify({enc:{titulo:b.titulo||'(sin título)',descripcion:b.descripcion,pide_nombre:false,contacto_obligatorio:!!b.contacto},
+    preguntas:b.preguntas.filter(p=>p.texto.trim()).map(p=>({texto:p.texto,tipo:p.tipo,opciones:p.opciones||[],requerida:p.tipo==='nps'||p.tipo==='csat'}))}));}catch(e){}
+  document.getElementById('shBody').innerHTML=`<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn ghost" style="flex:1" onclick="renderBuilder()"><span class="material-symbols-outlined">edit</span>Editar</button><button class="btn primary" style="flex:1" disabled><span class="material-symbols-outlined">visibility</span>Vista previa</button></div>
+    ${previewFrame('/encuesta?preview=draft&t='+Date.now())}`;
+}
+function previewFrame(src){return `<div style="display:flex;justify-content:center"><iframe src="${src}" title="Vista previa de la encuesta" style="width:min(375px,100%);height:640px;border:3px solid var(--outline);border-radius:28px;box-shadow:var(--shadow-sm);background:#fff"></iframe></div>
+  <div style="text-align:center;font-family:var(--font-mono);font-size:11px;opacity:.6;margin-top:8px">Así la ve el comensal en su celular. En la vista previa no se guarda nada.</div>`;}
+function previewEncuesta(id){
+  const e=ENC.lista.find(x=>x.id===id);
+  document.getElementById('shTitle').textContent='Vista previa';document.getElementById('shMeta').textContent=e?e.titulo:'';
+  document.getElementById('shBody').innerHTML=previewFrame('/encuesta?id='+id+'&preview=1');openSheet();
 }
 async function saveEncuesta(){
   const b=ENC.build;if(!b.titulo.trim()){toast('Ponle un título','warn');return;}
   const preg=b.preguntas.filter(p=>p.texto.trim());if(!preg.length){toast('Agrega al menos una pregunta','warn');return;}
-  const {data:e,error}=await sb.from('vc_encuestas').insert({marca_id:MARCA,local_id:LOCAL,titulo:b.titulo,descripcion:b.descripcion||null,activo:true}).select().single();
+  const {data:e,error}=await sb.from('vc_encuestas').insert({marca_id:MARCA,local_id:LOCAL,titulo:b.titulo,descripcion:b.descripcion||null,activo:true,pide_nombre:false,contacto_obligatorio:!!b.contacto}).select().single();
   if(error){toast('Error al crear','err');return;}
   await sb.from('vc_preguntas').insert(preg.map((p,i)=>({encuesta_id:e.id,orden:i+1,texto:p.texto,tipo:p.tipo,opciones:p.tipo==='opciones'?(p.opciones||[]):null,requerida:p.tipo==='nps'||p.tipo==='csat'})));
   toast('Encuesta creada');closeSheet();ENC.loaded=false;await loadEncuestas();
