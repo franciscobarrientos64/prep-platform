@@ -6,7 +6,7 @@
 // Lecturas se cachean para abrir offline.
 window.PrepSync = (function(){
   var URL='https://jmkvphayyhwzootlybde.supabase.co', KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-  var APP_VERSION='2026.11.05-central';
+  var APP_VERSION='2026.11.05-central2';
   var QKEY='prep_outbox', FKEY='prep_outbox_fallidos';
   var TIMEOUT_MS=10000;
   // Estado de la central del local (ver más abajo). Declarado arriba: write/overlay/badge lo leen.
@@ -150,10 +150,11 @@ window.PrepSync = (function(){
   // ── Realtime con reconexión: nunca congelado en silencio ──
   var rtBar=null, rtDown={};
   function rtBanner(){
-    var down=Object.keys(rtDown).some(function(k){return rtDown[k];}) && navigator.onLine;
+    // Conectado a la central del local: los cambios llegan por el wifi (SSE), el aviso sobra.
+    var down=Object.keys(rtDown).some(function(k){return rtDown[k];}) && navigator.onLine && !(HUB.on&&HUB.paired);
     if(!rtBar){ if(!down||!document.body) return; rtBar=document.createElement('div'); rtBar.id='prep-rtbar'; rtBar.setAttribute('role','status'); rtBar.setAttribute('aria-live','polite');
-      rtBar.style.cssText='position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:99999;background:#ffcc00;color:#171c20;border:2px solid #000;border-radius:999px;padding:7px 14px;font:700 13px system-ui,sans-serif;box-shadow:3px 3px 0 #000;display:none';
-      rtBar.textContent='Reconectando… los datos se actualizan cada 15 s mientras tanto';
+      rtBar.style.cssText='pointer-events:none;opacity:.9;position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:99999;background:#ffcc00;color:#171c20;border:2px solid #000;border-radius:999px;padding:7px 14px;font:700 13px system-ui,sans-serif;box-shadow:3px 3px 0 #000;display:none';
+      rtBar.textContent='Reconectando · se actualiza cada 15 s';
       document.body.appendChild(rtBar); }
     rtBar.style.display=down?'block':'none';
   }
