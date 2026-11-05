@@ -169,6 +169,7 @@ const MODULOS=[
   {n:'Predicción',d:'Pronóstico de demanda + qué preparar',ico:'insights',href:'/prediccion',ac:'#1e5af9'},
   {n:'Voz del Cliente',d:'Mystery Shopper, encuestas y reseñas',ico:'reviews',href:'/voz-cliente',ac:'#7c3aed'},
   {n:'Carta QR',d:'Menú digital + pedido en mesa',ico:'qr_code_2',href:'/carta',ac:'#1e5af9'},
+  {n:'Usuarios',d:'Agregar, quitar y elegir sus módulos',ico:'group',href:'/usuarios',ac:'#171c20',gerencia:true},
 ];
 const MODKEY={'Pase':'pase','POS':'pos','Línea':'linea','Bienvenida':'bienvenida','Mercado':'mercado','Recetas':'recetas','Carta QR':'carta','RRHH':'rrhh','Asistencia':'asistencia','Delivery':'delivery','Contabilidad':'contabilidad','Vuelto':'vuelto','El Libro':'libro','Directorio':'directorio','Engagement':'engagement','Predicción':'prediccion','Voz del Cliente':'mystery'};
 // Features principales por módulo (para el teaser de upsell cuando el módulo no está en el paquete del cliente)
@@ -204,7 +205,8 @@ function nivelDeMod(k){const v=window.prepNivel&&window.prepNivel(k);if(v)return
 function moduloActivo(k){const u=access.user;if(!u||(u.rol_sistema==='superadmin'&&!window.PREP_VISTA))return true;return access.mm.some(x=>x.marca_id===u.marca_id&&x.modulo===k&&x.activo)}
 // Paquete del cliente activo (por marca en pantalla). null = sin config => todo permitido.
 function enPaquete(k){const rows=access.mm.filter(x=>x.marca_id===MARCA);if(!rows.length)return true;return rows.some(x=>x.modulo===k&&x.activo)}
-function canSee(m){const k=MODKEY[m.n];if(!k)return true;return nivelDeMod(k)!=='ninguno'}
+function rolActual(){const v=window.PREP_VISTA;if(v)return v.rol_sistema;const u=access.user;return u?u.rol_sistema:null}
+function canSee(m){if(m.gerencia)return access.authed&&['superadmin','admin_marca','gerente'].includes(rolActual());const k=MODKEY[m.n];if(!k)return true;return nivelDeMod(k)!=='ninguno'}
 async function cambiarClave(){
   const np=prompt('Nueva contraseña (mínimo 6 caracteres):');if(np==null)return;
   if(np.length<6){alert('Debe tener al menos 6 caracteres');return}
@@ -223,7 +225,7 @@ function renderUserSwitcher(){
   let html=`<div class="who">${vi?vi.nombre:(u?u.nombre:'Invitado')}</div><div class="role">${u?rotulo+(u.marca_id?(' · '+u.marca_id):'')+(access.authed?'':' · demo')+(vi?' · vista':''):'sin sesión'}</div>`;
   if(access.authed){
     let adm='';
-    if(rs==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div>`;
+    if(rs==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div><div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios</div>`;
     else if(['admin_marca','gerente'].includes(rs))adm=`<div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios y permisos</div>`;
     if(['superadmin','admin_marca','gerente'].includes(rs))adm+=`<div class="mi" data-act="ajustes"><span class="material-symbols-outlined">settings</span> Ajustes del local</div>`;
     if(adm)adm+='<hr>';
@@ -250,7 +252,7 @@ function renderMods(){
   let cards=visibles.map((m,i)=>{
     const k=MODKEY[m.n];
     const built=!!m.href;
-    const incl=enPaquete(k);            // ¿está en el paquete del cliente?
+    const incl=k?enPaquete(k):true;            // ¿está en el paquete del cliente?
     let estado;                          // 'activo' | 'locked' | 'pronto'
     if(!built)estado='pronto';
     else if(!incl)estado='locked';
