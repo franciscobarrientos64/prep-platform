@@ -6,9 +6,11 @@
 // Lecturas se cachean para abrir offline.
 window.PrepSync = (function(){
   var URL='https://jmkvphayyhwzootlybde.supabase.co', KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-  var APP_VERSION='2026.10.01-turno';
+  var APP_VERSION='2026.11.05-central';
   var QKEY='prep_outbox', FKEY='prep_outbox_fallidos';
   var TIMEOUT_MS=10000;
+  // Estado de la central del local (ver más abajo). Declarado arriba: write/overlay/badge lo leen.
+  var HUB={on:false, paired:false, pend:[], seq:0, es:null, imprime:false, draining:false};
 
   // fetch con timeout: una red lenta nunca deja un botón "cargando" para siempre.
   function fetchTO(input, init){
@@ -50,8 +52,10 @@ window.PrepSync = (function(){
     if(code==='42501'&&!hasSession) return 'retry';            // RLS sin sesión = falta login, no dato malo
     return 'data';
   }
+  function clean(v){ if(Array.isArray(v)) return v.map(clean); if(!v||typeof v!=='object') return v;
+    var o={}; for(var k in v){ if(k.charAt(0)!=='_') o[k]=v[k]; } return o; }
   async function exec(op){
-    var t=_sb.from(op.table), r;
+    var t=_sb.from(op.table), r; op=Object.assign({}, op, {values:clean(op.values)});
     if(op.op==='insert'||op.op==='upsert'){ r=await t.upsert(op.values,{onConflict:op.onConflict||'id'}); }
     else if(op.op==='update'){ var u=t.update(op.values); for(var k in (op.match||{})){ var v=op.match[k]; u=Array.isArray(v)?u.in(k,v):u.eq(k,v); } r=await u; }
     else if(op.op==='delete'){ var d=t.delete(); for(var k2 in (op.match||{})){ var v2=op.match[k2]; d=Array.isArray(v2)?d.in(k2,v2):d.eq(k2,v2); } r=await d; }
@@ -65,6 +69,7 @@ window.PrepSync = (function(){
   async function write(table, op, opts){
     opts=opts||{};
     var item={table:table, op:op, values:opts.values, match:opts.match, onConflict:opts.onConflict, ts:Date.now()};
+    if(HUB.on && HUB.paired){ var hr=await hubSend([item]); if(hr) return {queued:netDown||!navigator.onLine, error:null, hub:true}; }
     // Si ya hay cola, se respeta el orden: lo nuevo va detrás (un ítem nunca sube antes que su pedido).
     if(navigator.onLine && !netDown && !q().length){
       try{ await exec(item); return {queued:false,error:null}; }
@@ -79,7 +84,7 @@ window.PrepSync = (function(){
   function overlay(table, rows){
     var out=(rows||[]).slice(), byId={};
     out.forEach(function(r,i){ byId[r.id]=i; });
-    q().forEach(function(op){
+    q().concat(HUB.pend).forEach(function(op){
       if(op.table!==table) return;
       var vals=Array.isArray(op.values)?op.values:[op.values];
       if(op.op==='insert'||op.op==='upsert'){ vals.forEach(function(v){ if(v&&v.id!=null&&byId[v.id]==null){ byId[v.id]=out.length; out.push(Object.assign({},v)); } }); }
@@ -88,7 +93,7 @@ window.PrepSync = (function(){
       else if(op.op==='delete'){ var d=op.match&&op.match.id; d=Array.isArray(d)?d:(d!=null?[d]:[]);
         d.forEach(function(id){ var i=byId[id]; if(i!=null) out[i]=null; }); }
     });
-    return out.filter(Boolean);
+    return out.filter(Boolean).map(function(r){ if(r.ticket_num==null&&r._ticket_prov!=null){ r=Object.assign({},r,{ticket_num:r._ticket_prov,_prov:true}); } return r; });
   }
 
   // ── Vaciado de la cola con backoff exponencial ──
@@ -128,7 +133,7 @@ window.PrepSync = (function(){
 
   function badge(){
     if(!document.body) return;
-    var n=q().length, nf=fq().length, el=document.getElementById('prep-syncbadge');
+    var n=q().length+HUB.pend.length, nf=fq().length, el=document.getElementById('prep-syncbadge');
     if(!el){ if(!n&&!nf)return; el=document.createElement('div'); el.id='prep-syncbadge';
       el.style.cssText='position:fixed;right:10px;bottom:46px;z-index:99998;display:flex;flex-direction:column;align-items:flex-end;gap:6px;font:700 12px system-ui,sans-serif';
       document.body.appendChild(el); }
@@ -203,6 +208,102 @@ window.PrepSync = (function(){
   }
   function closeCaida(){ if(caidaDesde){ ultimaCaida={at:new Date(caidaDesde).toISOString(), seg:Math.round((Date.now()-caidaDesde)/1000)}; caidaDesde=null; heartbeatNow(); } }
 
+
+  // ── Central del local (Prep Local en la laptop de caja) ──
+  // Si la app se abrió desde la laptop por el wifi (http://192.168.x.x:8080), cada escritura
+  // va a la central: ella la reparte al instante a los demás equipos del local (aunque no haya
+  // internet) y un equipo con sesión la sube a Supabase en el MISMO orden en que llegó.
+  // Así un cobro hecho en la caja nunca sube antes que el pedido que abrió un mozo en su celular.
+  var LAN=/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|127\.)/.test(location.hostname)||location.hostname==='localhost'||/\.local$/.test(location.hostname);
+  function hubTok(){ try{return localStorage.getItem('prep_hub_token')||''}catch(e){return ''} }
+  function hubCall(path, body, ms){
+    var ctrl=new AbortController(), t=setTimeout(function(){ ctrl.abort(); }, ms||4000);
+    return fetch('/__hub/'+path, {method:body?'POST':'GET', headers:{'Content-Type':'application/json','X-Hub-Token':hubTok()},
+      body:body?JSON.stringify(body):undefined, signal:ctrl.signal, cache:'no-store'})
+      .then(function(r){ clearTimeout(t); if(!r.ok){ var e=new Error('central '+r.status); e.status=r.status; throw e; } return r.json(); },
+            function(e){ clearTimeout(t); throw e; });
+  }
+  function hubPendSave(){ try{ localStorage.setItem('prep_hub_pend', JSON.stringify(HUB.pend)); }catch(e){} badge(); }
+  try{ HUB.pend=JSON.parse(localStorage.getItem('prep_hub_pend')||'[]'); }catch(e){ HUB.pend=[]; }
+  async function hubSend(items){
+    // lo que quedó en la cola propia (de antes de conectarse a la central) va primero
+    var own=q(); if(own.length){ try{ var r0=await hubCall('ops',{dev:deviceId(), ops:own}); setQ([]); (r0.ops||[]).forEach(hubAddPend); }catch(e){ return false; } }
+    try{ var r=await hubCall('ops',{dev:deviceId(), ops:items}); (r.ops||[]).forEach(hubAddPend); hubDrainSoon(); return true; }
+    catch(e){ if(e.status===401){ HUB.paired=false; hubPairUI(); } return false; }
+  }
+  function hubAddPend(op){ if(!op||op.seq==null) return; if(HUB.pend.some(function(x){return x.seq===op.seq;})) return; HUB.pend.push(op); HUB.pend.sort(function(a,b){return a.seq-b.seq;}); hubPendSave(); }
+  function hubDrop(seqs){ if(!seqs||!seqs.length) return; var s={}; seqs.forEach(function(n){s[n]=1;}); HUB.pend=HUB.pend.filter(function(x){return !s[x.seq];}); hubPendSave(); }
+  function hubStream(){
+    if(HUB.es) try{ HUB.es.close(); }catch(e){}
+    var es=new EventSource('/__hub/stream?token='+encodeURIComponent(hubTok())); HUB.es=es;
+    es.onmessage=function(ev){ var m; try{ m=JSON.parse(ev.data); }catch(e){ return; }
+      if(m.t==='snap'){ HUB.pend=(m.pend||[]); hubPendSave(); var nuevo=m.seq>HUB.seq; HUB.seq=m.seq; HUB.imprime=!!m.imprime;
+        if(nuevo) try{ window.dispatchEvent(new CustomEvent('prep:remote',{detail:{snap:true}})); }catch(e){} return; }
+      if(m.t==='op'){ HUB.seq=Math.max(HUB.seq,m.op.seq); if(m.op.st==='pend') hubAddPend(m.op);
+        if(m.op.dev!==deviceId()) try{ window.dispatchEvent(new CustomEvent('prep:remote',{detail:m.op})); }catch(e){}
+        hubDrainSoon(); return; }
+      if(m.t==='ack'){ hubDrop(m.ok); hubDrop((m.fail||[]).map(function(f){return f.seq;})); return; }
+      if(m.t==='cfg'){ HUB.imprime=!!m.imprime; }
+    };
+    es.onerror=function(){ /* EventSource reintenta solo */ };
+  }
+  // Un solo equipo a la vez (el que tenga la "llave" de la central) sube lo pendiente a Supabase.
+  var drainT=null;
+  function hubDrainSoon(){ if(drainT) return; drainT=setTimeout(function(){ drainT=null; hubDrain(); }, 400); }
+  async function hubDrain(){
+    if(!HUB.on||!HUB.paired||HUB.draining||!navigator.onLine||!_sb) return;
+    var s=await sessionOk(); if(!s.ok) return;
+    HUB.draining=true;
+    try{
+      var r=await hubCall('drain',{dev:deviceId()}); var ops=r.ops||[]; if(!ops.length) return;
+      var ok=[], fail=[];
+      for(var i=0;i<ops.length;i++){ var op=ops[i];
+        try{ await exec(op); ok.push(op.seq); }
+        catch(e){ var k=classify(e,true); lastErr=errMsg(e).slice(0,300);
+          if(k!=='data') break;                                   // sin internet o sesión: se para y reintenta luego
+          fail.push({seq:op.seq, error:lastErr}); var f=fq(); f.push({op:op,error:lastErr,code:e&&e.code||null,at:Date.now()}); setFq(f); }
+      }
+      if(ok.length||fail.length){ await hubCall('ack',{dev:deviceId(), ok:ok, fail:fail}); hubDrop(ok); hubDrop(fail.map(function(f){return f.seq;})); }
+      if(ok.length+fail.length===ops.length) hubDrainSoon();
+    }catch(e){} finally{ HUB.draining=false; }
+  }
+  function hubPairUI(){
+    if(!document.body){ document.addEventListener('DOMContentLoaded', hubPairUI); return; }
+    if(document.getElementById('prep-hubpair')) return;
+    var d=document.createElement('div'); d.id='prep-hubpair';
+    d.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(23,28,32,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:system-ui,sans-serif';
+    d.innerHTML='<form style="background:#fcf9f8;border:2px solid #000;border-radius:16px;box-shadow:6px 6px 0 #000;padding:20px;max-width:340px;width:100%">'+
+      '<div style="font-weight:800;font-size:18px;margin-bottom:6px">Conectar con la caja</div>'+
+      '<div style="font-size:14px;margin-bottom:12px">Escribe el PIN que aparece en la pantalla de Prep Local, en la laptop de caja. Se pide una sola vez por equipo.</div>'+
+      '<input id="prep-hubpin" inputmode="numeric" autocomplete="off" maxlength="6" style="width:100%;font-size:24px;letter-spacing:6px;text-align:center;padding:10px;border:2px solid #000;border-radius:10px">'+
+      '<div id="prep-hubmsg" style="color:#c8372d;font-size:13px;min-height:18px;margin:6px 0"></div>'+
+      '<button style="width:100%;padding:12px;border:2px solid #000;border-radius:999px;background:#1e5af9;color:#fff;font-weight:700;font-size:15px">Conectar</button>'+
+      '<button type="button" id="prep-hubskip" style="width:100%;margin-top:8px;padding:8px;border:none;background:none;font-size:13px;text-decoration:underline">Ahora no (este equipo no se avisará con los demás sin internet)</button></form>';
+    document.body.appendChild(d);
+    d.querySelector('#prep-hubskip').onclick=function(){ d.remove(); };
+    d.querySelector('form').onsubmit=function(ev){ ev.preventDefault();
+      var pin=d.querySelector('#prep-hubpin').value.trim();
+      hubCall('pair',{pin:pin, dev:deviceId(), nombre:(navigator.userAgent||'').slice(0,80)}).then(function(r){
+        try{ localStorage.setItem('prep_hub_token', r.token); }catch(e){}
+        HUB.paired=true; d.remove(); hubStream(); hubSend([]).then(function(){}); },
+        function(){ d.querySelector('#prep-hubmsg').textContent='PIN incorrecto. Revísalo en la laptop.'; });
+    };
+  }
+  async function hubInit(){
+    if(!LAN) return;
+    try{ var r=await hubCall('ping'); if(!r||!r.hub) return; }catch(e){ return; }
+    HUB.on=true; HUB.imprime=!!r.imprime; HUB.paired=!!r.paired;
+    if(!HUB.paired){ hubPairUI(); return; }
+    hubStream();
+    if(q().length) hubSend([]);
+    setInterval(hubDrain, 3000);
+  }
+  // Comanda a la impresora térmica de la laptop (sin diálogo de impresión). Devuelve false si no se pudo.
+  async function hubPrint(comanda){
+    if(!HUB.on||!HUB.paired||!HUB.imprime) return false;
+    try{ var r=await hubCall('print', comanda, 8000); return !!(r&&r.ok); }catch(e){ return false; }
+  }
+  hubInit();
   window.addEventListener('online', function(){ fails=0; nextAt=0; flush(true); badge(); });
   window.addEventListener('offline', badge);
   setInterval(function(){ flush(); }, 5000);   // respeta el backoff; si no hay cola no hace nada
@@ -213,6 +314,7 @@ window.PrepSync = (function(){
     online:function(){return navigator.onLine && !netDown},
     uuid:uuid, cacheSet:cacheSet, cacheGet:cacheGet,
     fetch:fetchTO, realtime:realtime, heartbeat:heartbeat, version:APP_VERSION,
+    hub:function(){return {on:HUB.on, paired:HUB.paired, imprime:HUB.imprime, pendientes:HUB.pend.length};}, hubPrint:hubPrint,
     _test:{classify:classify, isNet:isNet}
   };
 })();

@@ -101,8 +101,10 @@ async function loadData(){
     state.deliv=PrepSync.overlay('dl_pedidos',dl||[]).filter(d=>['recibido','preparando','listo'].includes(d.estado));
     PrepSync.cacheSet('kds_pedidos',state.pedidos);PrepSync.cacheSet('kds_items',state.items);PrepSync.cacheSet('kds_deliv',state.deliv);
   }catch(e){
-    state.pedidos=PrepSync.cacheGet('kds_pedidos')||state.pedidos||[];
-    state.items=PrepSync.cacheGet('kds_items')||state.items||[];
+    // sin internet: lo guardado + lo que llegó de otros equipos por la central del local
+    state.pedidos=PrepSync.overlay('ca_pedidos',PrepSync.cacheGet('kds_pedidos')||state.pedidos||[]).filter(p=>p.estado==='abierta');
+    const pids=state.pedidos.map(p=>p.id);
+    state.items=PrepSync.overlay('ca_pedido_items',PrepSync.cacheGet('kds_items')||state.items||[]).filter(i=>pids.includes(i.pedido_id)&&i.estado!=='servido');
     state.deliv=PrepSync.cacheGet('kds_deliv')||state.deliv||[];
   }
 }
@@ -185,6 +187,7 @@ function subscribe(){if(state.rt)return;
     .on('postgres_changes',{event:'*',schema:'public',table:'ca_pedidos',filter:'local_id=eq.'+LOCAL},reload)
     .on('postgres_changes',{event:'*',schema:'public',table:'dl_pedidos',filter:'local_id=eq.'+LOCAL},reload),
     reload);
+  window.addEventListener('prep:remote',reload);
   PrepSync.heartbeat('kds');
 }
 setInterval(()=>{if(!$('#boot').classList.contains('gone'))return;render()},30000); // refresca timers

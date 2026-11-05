@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prep Local · Central del local</title>
+<style>
+:root{--primary:#1e5af9;--secondary:#ff3b30;--tertiary:#ffcc00;--bg:#fcf9f8;--surface:#fff;--ink:#171c20;--outline:#000;--green:#10b981;--gray-soft:#dfe3e8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);padding:20px;max-width:980px;margin:0 auto}
+h1{font-size:26px;margin-bottom:4px}h2{font-size:16px;margin-bottom:10px}
+.sub{opacity:.65;font-size:13px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:4px 4px 0 #000;padding:16px}
+.big{font-size:28px;font-weight:800;letter-spacing:.02em;word-break:break-all}
+.pin{font-size:40px;font-weight:900;letter-spacing:8px;font-family:Consolas,monospace}
+.pill{display:inline-block;border:2px solid #000;border-radius:999px;padding:3px 10px;font-weight:700;font-size:12px}
+.ok{background:#d1fae5}.bad{background:#fee2e2}.warn{background:#fef3c7}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px 4px;border-bottom:1px solid var(--gray-soft);text-align:left;vertical-align:middle}
+select,button{font:inherit;font-size:14px;padding:7px 10px;border:2px solid #000;border-radius:10px;background:#fff}
+button{border-radius:999px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000}button.primary{background:var(--primary);color:#fff}
+.mono{font-family:Consolas,monospace;font-size:12px}
+.log div{padding:4px 0;border-bottom:1px dashed var(--gray-soft);font-size:13px}
+</style>
+</head>
+<body>
+<h1>Prep Local</h1>
+<div class="sub">La central del local: reparte los pedidos por el wifi aunque no haya internet e imprime las comandas. Deja esta laptop prendida durante el servicio.</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>Internet y equipos</h2>
+    <div id="estado">Oído…</div>
+  </div>
+  <div class="card">
+    <h2>Para los mozos</h2>
+    <div class="sub" style="margin-bottom:6px">En el celular o la tablet, conectados al wifi del local, abran:</div>
+    <div class="big" id="urls">—</div>
+    <div class="sub" style="margin:12px 0 4px">PIN para vincular cada equipo (se pide una sola vez):</div>
+    <div class="pin" id="pin">——</div>
+    <button id="nuevopin" style="margin-top:8px">Cambiar PIN y desvincular todos</button>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h2>Impresoras</h2>
+  <div class="sub" style="margin-bottom:8px">Las comandas salen por estación. Si una estación no tiene impresora asignada, sale en la predeterminada.</div>
+  <table><tbody>
+    <tr><td><b>Predeterminada</b></td><td><select id="impdef"></select></td><td></td></tr>
+  </tbody><tbody id="estaciones"></tbody></table>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="primary" id="guardar">Guardar</button><span class="sub" style="margin:0">Ancho del papel:</span>
+    <select id="cols"><option value="48">80 mm (48 caracteres)</option><option value="32">58 mm (32 caracteres)</option></select></div>
+  <div style="margin-top:14px"><b>Probar</b> <select id="imp-prueba"></select> <button id="probar">Imprimir prueba</button> <span id="msgp" class="sub"></span></div>
+</div>
+
+<div class="grid" style="margin-top:14px">
+  <div class="card"><h2>Últimas impresiones</h2><div class="log" id="log"><div class="sub">Todavía nada.</div></div></div>
+  <div class="card"><h2>Cambios que no se pudieron guardar</h2><div id="fallidas" class="sub">Ninguno.</div></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let E=null, editando=false;
+async function api(p,b){const r=await fetch('/__hub/admin/'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});return r.json()}
+function opts(sel,val,vacio){return (vacio?`<option value="">${vacio}</option>`:'')+E.impresoras.map(p=>`<option ${p.nombre===val?'selected':''} value="${esc(p.nombre)}">${esc(p.nombre)}${p.default?' (predeterminada de Windows)':''}</option>`).join('')}
+async function cargar(){
+  E=await api('estado');
+  $('#estado').innerHTML=`<div style="margin-bottom:8px"><span class="pill ${E.internet?'ok':'bad'}">${E.internet?'Con internet':'Sin internet · los pedidos siguen por el wifi'}</span></div>
+    <div>${E.equipos} equipo(s) conectados ahora · ${E.vinculados} vinculados</div>
+    <div style="margin-top:6px"><span class="pill ${E.pend?'warn':'ok'}">${E.pend} cambio(s) por subir a Prep</span></div>
+    <div class="sub" style="margin-top:8px">Versión ${esc(E.version)} · ${esc(E.marca)}/${esc(E.local)}</div>`;
+  $('#urls').innerHTML=E.ips.map(ip=>`http://${ip}:${E.puerto}`).join('<br>')||'Sin red';
+  $('#pin').textContent=E.pin;
+  if(!editando){
+    $('#impdef').innerHTML=opts('impdef',E.impresora_default,'— la predeterminada de Windows —');
+    $('#cols').value=String(E.columnas||48);
+    const ids=Object.keys(E.estaciones||{});
+    $('#estaciones').innerHTML=ids.length?ids.map(id=>`<tr><td>${esc(E.estaciones[id].nombre||id)}</td><td><select data-est="${esc(id)}">${opts('',E.estaciones[id].impresora,'— predeterminada —')}</select></td><td></td></tr>`).join('')
+      :'<tr><td colspan="3" class="sub">Las estaciones (cocina, barra, pizza…) aparecen aquí cuando llega la primera comanda.</td></tr>';
+    $('#imp-prueba').innerHTML=opts('',E.impresora_default);
+  }
+  $('#log').innerHTML=E.log.length?E.log.map(l=>`<div><span class="pill ${l.ok?'ok':'bad'}">${l.ok?'Impresa':'Falló'}</span> <span class="mono">${esc(l.at)}</span> ${esc(l.txt)}</div>`).join(''):'<div class="sub">Todavía nada.</div>';
+  $('#fallidas').innerHTML=E.fallidas.length?E.fallidas.map(f=>`<div class="mono">#${f.seq} ${esc(f.tabla)} · ${esc(f.op)}: ${esc(f.err)}</div>`).join('')+'<button id="reint" style="margin-top:8px">Reintentar</button>':'Ninguno.';
+  if($('#reint'))$('#reint').onclick=async()=>{await api('reintentar',{});cargar()};
+}
+document.addEventListener('change',e=>{if(e.target.matches('select'))editando=true});
+$('#guardar').onclick=async()=>{const est={};document.querySelectorAll('[data-est]').forEach(s=>est[s.dataset.est]=s.value);
+  await api('config',{impresora_default:$('#impdef').value,estaciones:est,columnas:$('#cols').value});editando=false;cargar()};
+$('#probar').onclick=async()=>{$('#msgp').textContent='Oído…';const r=await api('prueba',{impresora:$('#imp-prueba').value});$('#msgp').textContent=r.ok?'Servido · revisa la impresora':'Atrás · '+(r.error||'no se pudo');cargar()};
+$('#nuevopin').onclick=async()=>{if(!window.confirm('Se cambia el PIN y todos los celulares y tablets tendrán que vincularse de nuevo. ¿Seguir?'))return;await api('config',{nuevoPin:true});cargar()};
+cargar();setInterval(cargar,5000);
+</script>
+</body>
+</html>

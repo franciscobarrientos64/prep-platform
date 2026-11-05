@@ -1438,10 +1438,30 @@ function impresoraEstacion(stationId) {
 function horaCorta() { return new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }); }
 
 // CA-06: una comanda por estación (page-break entre estaciones = un slip por impresora)
-function imprimirComandasEstacion(ped, items, etiqueta) {
+function imprimirComandasEstacion(ped, items, etiqueta, opts) {
   const its = items.filter(it => it.estado !== 'cancelado');
   if (!its.length) { toast('Nada para imprimir', 'warn'); return; }
   const mesa = state.mesas.find(m => m.id === ped.mesa_id);
+  // Con la central del local (Prep Local en la laptop de caja) la comanda sale directo en la
+  // térmica de cada estación, sin diálogo, aunque el pedido se tome en un celular. Si falla, se
+  // imprime aquí como siempre.
+  const hub = PrepSync.hub ? PrepSync.hub() : null;
+  if (!(opts && opts.local) && hub && hub.on && hub.paired && hub.imprime) {
+    const porE = {};
+    its.forEach(it => { const k = it.station || 'sin_estacion'; (porE[k] = porE[k] || []).push(it); });
+    const mozo = (state.empleados || []).find(e => e.id === ped.mozo_id);
+    const comanda = {
+      id: PrepSync.uuid(), ticket: ped.ticket_num, mesa: mesa ? String(mesa.numero) : '—', zona: (mesa && mesa.zona) || '',
+      etiqueta: etiqueta || '', hora: horaCorta(), mozo: mozo ? mozo.nombre : '', tab: ped.tab_nombre || '',
+      estaciones: Object.keys(porE).map(st => ({ id: st, nombre: nombreEstacion(st), impresora: impresoraEstacion(st) || '',
+        items: porE[st].map(it => ({ qty: it.qty, nombre: it.nombre, silla: it.seat_position || null, curso: courseDe(it.course_step || 2).short,
+          urgente: !!it.urgente, mods: (Array.isArray(it.modificadores) ? it.modificadores : []).map(m => m.nombre).join(', '), notas: it.notas || '' })) }))
+    };
+    PrepSync.hubPrint(comanda).then(ok => {
+      if (!ok) { toast('Atrás · la caja no pudo imprimir, se imprime aquí', 'warn'); imprimirComandasEstacion(ped, items, etiqueta, { local: true }); }
+    });
+    return;
+  }
   const porEst = {};
   its.forEach(it => { const k = it.station || 'sin_estacion'; (porEst[k] = porEst[k] || []).push(it); });
   const secciones = Object.keys(porEst).map(st => {
@@ -1558,7 +1578,10 @@ async function loadPedidos() {
     // lo que el dispositivo aún no subió se superpone (no desaparece ni se reabre al recargar)
     state.pedidos = PrepSync.overlay('ca_pedidos', data || []).filter(p => ['abierta','suspended'].includes(p.estado));
     PrepSync.cacheSet('pedidos', state.pedidos);
-  } catch (e) { state.pedidos = PrepSync.cacheGet('pedidos') || state.pedidos || []; }
+  } catch (e) {
+    // sin internet: lo guardado + lo que llegó de otros equipos por la central del local
+    state.pedidos = PrepSync.overlay('ca_pedidos', PrepSync.cacheGet('pedidos') || state.pedidos || []).filter(p => ['abierta','suspended'].includes(p.estado));
+  }
 }
 async function loadEmpleados() {
   try {
@@ -1636,7 +1659,7 @@ async function loadPedidoItems(pedidoId) {
     PrepSync.cacheSet('items_' + pedidoId, rows);
     return rows;
   } catch (e) {
-    const c = state.pedidoItemsCache[pedidoId] || PrepSync.cacheGet('items_' + pedidoId) || [];
+    const c = PrepSync.overlay('ca_pedido_items', state.pedidoItemsCache[pedidoId] || PrepSync.cacheGet('items_' + pedidoId) || []).filter(it => it.pedido_id === pedidoId);
     state.pedidoItemsCache[pedidoId] = c;
     return c;
   }
@@ -2136,7 +2159,7 @@ async function abrirPedido(mesa, comensales, tabNombre = null) {
     subtotal:0, igv:0, servicio_pct:10, servicio_monto:0,
     descuento:0, propina_monto:0, total:0, moneda:'PEN', alergias_por_silla:{},
   };
-  const { error, queued } = await PrepSync.write('ca_pedidos', 'insert', { values: { ...row, ticket_num: null } });
+  const { error, queued } = await PrepSync.write('ca_pedidos', 'insert', { values: { ...row, ticket_num: null, _ticket_prov: row.ticket_num } });
   if (error) { toast('Atrás: ' + error.message, 'err'); return; }
   row._prov = true;
   state.pedidos.push(row);
@@ -4048,6 +4071,23 @@ function subscribe() {
           }
         }),
     () => debounce('resync', 200, resyncPOS));
+  // Central del local: lo que hacen los otros equipos llega por el wifi aunque no haya internet
+  window.addEventListener('prep:remote', (ev) => {
+    const op = ev.detail || {};
+    if (op.snap) { debounce('resync', 200, resyncPOS); return; }
+    if (op.table === 'ca_pedidos') debounce('pedidos', 250, async () => {
+      await loadPedidos(); render();
+      if (state.mesaAbierta && $('#sheet').classList.contains('open')) openSheet(state.mesaAbierta.id);
+    });
+    if (op.table === 'ca_pedido_items') {
+      const v = Array.isArray(op.values) ? op.values[0] : op.values;
+      const ids = new Set([v && v.pedido_id, state.pedidoAbiertoId].filter(Boolean));
+      ids.forEach(pid => debounce('items_' + pid, 250, async () => {
+        await loadPedidoItems(pid);
+        if (state.screen === 'pedido' && state.pedidoAbiertoId === pid) render();
+      }));
+    }
+  });
   PrepSync.heartbeat('pos');
 }
 
