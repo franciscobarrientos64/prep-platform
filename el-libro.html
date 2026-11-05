@@ -152,7 +152,7 @@ async function confirmarLectura(id){const n=lectorName();if(!n)return;const{erro
 async function loadRecetario(){
   try{
     const[r,p]=await Promise.all([
-      sb.from('inv_recetas').select('id,nombre,emoji,categoria_menu,tipo,etapas,ingredientes,activo,rendimiento,porciones').eq('marca_id',MARCA),
+      sb.from('inv_recetas').select('id,nombre,emoji,categoria_menu,tipo,etapas,ingredientes,activo,rendimiento,unidad_rendimiento,descripcion').eq('marca_id',MARCA),
       sb.from('inv_productos').select('id,nombre,unidad').eq('marca_id',MARCA)]);
     state.recetario=(r.data||[]).filter(x=>x.activo!==false);
     state.prodMap={};(p.data||[]).forEach(x=>state.prodMap[x.id]=x);
@@ -222,6 +222,7 @@ function noteCard(p){const ex=(p.contenido||'').split('\n')[0];
     <h3>${p.titulo}</h3><div class="ex">${ex}</div>
     <div class="nf"><span class="tagx ${p.prioridad==='alta'?'alta':'cat'}">${p.prioridad==='alta'?'importante':(p.categoria||'General')}</span><span>${fechaCorta(p.created_at)}</span></div></div>`;
 }
+function escH(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function ingTxt(i){const p=state.prodMap&&state.prodMap[i.pid];const nom=i.nombre||(p&&p.nombre)||i.pid||'ingrediente';const u=i.unidad||(p&&p.unidad)||'';return (i.cantidad!=null?(Number(i.cantidad)+' '+u+' · '):'')+nom}
 const PLANTILLAS=[
   {titulo:'Checklist de apertura',categoria:'Apertura',emoji:'🌅',contenido:'☐ Encender equipos (cocina, hornos, refrigeración)\n☐ Verificar temperaturas — HACCP\n☐ Mise en place completo\n☐ Caja con fondo y vuelto\n☐ Limpieza de salón y baños\n☐ Revisar reservas del día\n☐ Briefing con el equipo'},
@@ -256,12 +257,12 @@ function renderRecetario(){
       ${fil.filter(r=>(r.categoria_menu||'Otros')===c).map(r=>{const op=!!state.recOpen[r.id];const et=Array.isArray(r.etapas)?r.etapas:[];const ing=Array.isArray(r.ingredientes)?r.ingredientes:[];
         return `<div style="background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);margin-bottom:8px;overflow:hidden">
           <div data-rec="${r.id}" style="padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
-            <span style="font-size:22px">${r.emoji||'🍽️'}</span><div style="flex:1"><div style="font-weight:700">${r.nombre}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${ing.length} insumos · ${et.length||1} pasos${r.rendimiento?(' · rinde '+r.rendimiento):''}</div></div>
+            <span style="font-size:22px">${r.emoji||'🍽️'}</span><div style="flex:1"><div style="font-weight:700">${r.nombre}</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6">${ing.length||et.reduce((n,e)=>n+(Array.isArray(e.ingredientes)?e.ingredientes.length:0),0)} insumos · ${et.length||1} ${et.length===1?'etapa':'etapas'}${r.rendimiento?(' · rinde '+Number(r.rendimiento)+(r.unidad_rendimiento?' '+r.unidad_rendimiento:'')):''}</div></div>
             <span class="material-symbols-outlined" style="opacity:.5;transform:rotate(${op?90:0}deg);transition:.15s">chevron_right</span></div>
           ${op?`<div style="padding:0 14px 14px;border-top:1px dashed var(--gray-soft)">
             ${ing.length?`<div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:10px 0 6px">Ingredientes</div><div style="font-size:13px;line-height:1.7">${ing.map(i=>'• '+ingTxt(i)).join('<br>')}</div>`:''}
-            <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:12px 0 6px">Preparación</div>
-            ${et.length?et.map((e,ix)=>`<div style="margin-bottom:8px"><div style="font-weight:700;font-size:13px">${ix+1}. ${e.nombre||e.titulo||('Paso '+(ix+1))}</div>${(e.metodo||e.pasos||e.descripcion)?`<div style="font-size:13px;opacity:.85;white-space:pre-wrap">${e.metodo||e.pasos||e.descripcion}</div>`:''}${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<div style="font-size:12px;opacity:.6;margin-top:3px">${e.ingredientes.map(ingTxt).join(' · ')}</div>`:''}</div>`).join(''):'<div style="font-size:13px;opacity:.6">Sin pasos cargados. Pídele al chef que complete la receta en el módulo Recetas.</div>'}
+            <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;opacity:.6;margin:12px 0 6px">Preparación</div>${r.descripcion&&/^Fuente:/.test(r.descripcion)?`<div style="font-family:var(--font-mono);font-size:10px;opacity:.5;margin:-2px 0 8px">${escH(r.descripcion)}</div>`:''}
+            ${et.length?et.map((e,ix)=>{const tx=e.metodo||e.pasos||e.descripcion||e.desc||'';return `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:13px">${ix+1}. ${escH(e.nombre||e.titulo||('Paso '+(ix+1)))}</div>${Array.isArray(e.ingredientes)&&e.ingredientes.length?`<div style="font-size:13px;line-height:1.6;margin:3px 0 4px;padding-left:10px;border-left:3px solid var(--gray-soft)">${e.ingredientes.map(i=>escH(ingTxt(i))).join('<br>')}</div>`:''}${tx?`<div style="font-size:13px;opacity:.85;white-space:pre-wrap">${escH(tx)}</div>`:''}</div>`}).join(''):'<div style="font-size:13px;opacity:.6">Sin pasos cargados. Pídele al chef que complete la receta en el módulo Recetas.</div>'}
           </div>`:''}
         </div>`}).join('')}`).join('')||'<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:13px;opacity:.55">Sin recetas activas.</div>'}`;
   $('#rec-q').oninput=e=>{state.recQuery=e.target.value;renderRecetario();const el=$('#rec-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}};

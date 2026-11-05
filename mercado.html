@@ -1484,7 +1484,7 @@ function pfInsumos(r,porciones,acc,seen){acc=acc||{};seen=seen||new Set();if(!r|
   (Array.isArray(r.ingredientes)?r.ingredientes:[]).forEach(ing=>{const m=Number(ing.merma||0),f=(m>0&&m<100)?1/(1-m/100):1;const c=Number(ing.cantidad||0)*k*f;
     if(ing.rid)pfInsumos(pfReceta(ing.rid),c,acc,new Set(seen));else if(ing.pid)acc[ing.pid]=(acc[ing.pid]||0)+c});
   return acc}
-function pfEsSub(r){if(!r)return false;if(r.tipo==='salsa')return true;return state.recetas.some(x=>Array.isArray(x.ingredientes)&&x.ingredientes.some(i=>i.rid===r.id))}
+function pfEsSub(r){if(!r)return false;if(r.tipo==='salsa'||r.tipo==='preparacion')return true;return state.recetas.some(x=>Array.isArray(x.ingredientes)&&x.ingredientes.some(i=>i.rid===r.id))}
 function pfSeccion(r){return r?.categoria_menu||(r?.tipo==='salsa'?'Salsas':'Otros')}
 function pfQuien(){return state.usuario?String(state.usuario).split('@')[0]:'Mercado'}
 function pfDot(iso){if(!iso)return '<span class="pf-dot" style="background:var(--gray-soft)">Sin fecha</span>';
