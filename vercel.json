@@ -127,7 +127,7 @@
     },
     {
       "source": "/pos2",
-      "destination": "/pos/index.html"
+      "destination": "/pos-antiguo/index.html"
     },
     {
       "source": "/pos-legacy",
@@ -305,7 +305,7 @@
       ]
     },
     {
-      "source": "/pos/env.js",
+      "source": "/pos-antiguo/env.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -318,7 +318,7 @@
       ]
     },
     {
-      "source": "/pos/js/(.*)",
+      "source": "/pos-antiguo/js/(.*)",
       "headers": [
         {
           "key": "Content-Type",
@@ -331,7 +331,7 @@
       ]
     },
     {
-      "source": "/pos/css/(.*)",
+      "source": "/pos-antiguo/css/(.*)",
       "headers": [
         {
           "key": "Content-Type",
