@@ -85,6 +85,7 @@ function tokenOk(req, url) {
 }
 
 // ---------- Copia de la app (proxy con caché) ----------
+const ALIAS = { '/pos': '/pos-v2', '/linea': '/kds' };
 const EXT = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com', 'cdnjs.cloudflare.com', 'code.jquery.com'];
 const reExt = new RegExp('https://(' + EXT.map(h => h.replace(/\./g, '\\.')).join('|') + ')/', 'g');
 function cacheFile(key) { return path.join(CACHE, crypto.createHash('sha1').update(key).digest('hex')); }
@@ -110,7 +111,9 @@ async function servirApp(req, res, url) {
     if (!EXT.includes(host)) { res.writeHead(404); return res.end(); }
     destino = 'https://' + resto + url.search; key = 'ext:' + resto + url.search; primeroCopia = true;   // librerías versionadas
   } else {
-    destino = CFG.origen + url.pathname + url.search; key = 'app:' + url.pathname;                          // pantallas: primero la versión nueva
+    // /pos en Vercel puede caer en la carpeta pos/ (POS antiguo): se pide pos-v2 directo
+    const ruta = ALIAS[url.pathname] || url.pathname;
+    destino = CFG.origen + ruta + url.search; key = 'app:' + ruta;                                          // pantallas: primero la versión nueva
   }
   const copia = leerCopia(key);
   if (primeroCopia && copia) return enviar(res, 200, copia.ct, copia.buf, 'copia');
@@ -354,7 +357,7 @@ server.listen(CFG.puerto, '0.0.0.0', () => {
 });
 // precarga las pantallas del servicio para que existan offline desde el primer día
 async function precargar() {
-  const rutas = ['/pos', '/kds', '/login', '/offline.js', '/prep-sync.js', '/auth-guard.js', '/tenant.js', '/client-name.js', '/role-view.js', '/manifest.webmanifest', '/logo.png'];
+  const rutas = ['/pos-v2', '/kds', '/login', '/offline.js', '/prep-sync.js', '/auth-guard.js', '/tenant.js', '/client-name.js', '/role-view.js', '/manifest.webmanifest', '/logo.png'];
   const ext = new Set();
   const juntar = (buf, ct) => { if (/html|css/.test(ct)) (buf.toString('utf8').match(/\/__ext\/[^"')\s]+/g) || []).forEach(u => ext.add(u.replace(/&amp;/g, '&'))); };
   const UA = { headers: { 'user-agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36' } };
