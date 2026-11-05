@@ -501,7 +501,22 @@ async function vAjustes(){
   </div>`;
   $('#c-save').onclick=async()=>{const row={local_id:LOCAL,marca_id:MARCA,tolerancia_min:+$('#c-tol').value||0,falta_tras_min:+$('#c-falta').value||120,salida_anticipada_min:+$('#c-antes').value||0,extra_desde_min:+$('#c-extra').value||0,foto_obligatoria:$('#c-foto').checked,updated_at:new Date().toISOString()};
     const{error}=await sb.from('rrhh_asis_config').upsert(row,{onConflict:'local_id'});if(error){toast('Atrás: '+error.message,'err');return}state.cfg={...CFG_DEF,...row};toast('Servido · reglas guardadas','ok')};
-  $('#g-aqui').onclick=async()=>{const p=await getPos();if(!p){toast('No se pudo leer tu ubicación','err');return}$('#g-lat').value=p.lat.toFixed(6);$('#g-lng').value=p.lng.toFixed(6);toast('Ubicación tomada · precisión '+Math.round(p.acc)+' m','ok')};
+  // Ubicación del local: dice por qué falló (permiso, GPS apagado, tiempo) y reintenta con menos precisión.
+  const leerPos=(alta,ms)=>new Promise((ok,ko)=>navigator.geolocation.getCurrentPosition(ok,ko,{enableHighAccuracy:alta,timeout:ms,maximumAge:0}));
+  $('#g-aqui').onclick=async()=>{
+    if(!navigator.geolocation){toast('Este navegador no da la ubicación. Pega las coordenadas de Google Maps.','err');return}
+    if(!window.isSecureContext){toast('La ubicación solo funciona en https://casa-italia.prep.rest','err');return}
+    const b=$('#g-aqui');b.disabled=true;b.lastChild.textContent='Oído · buscando GPS…';
+    let p=null,err=null;
+    try{p=await leerPos(true,20000)}catch(e){err=e;if(e.code!==1){try{p=await leerPos(false,15000);err=null}catch(e2){err=e2}}}
+    b.disabled=false;b.lastChild.textContent='Usar mi ubicación';
+    if(!p){const m=err&&err.code===1?'Atrás · el permiso de ubicación está bloqueado. Actívalo para esta página (candado junto a la dirección › Ubicación › Permitir) y en el celular: Ajustes › Privacidad › Localización encendida para el navegador.'
+      :err&&err.code===3?'Atrás · el GPS tardó demasiado. Sal a la puerta y vuelve a intentar.':'Atrás · no se pudo leer la ubicación. Revisa que el GPS esté encendido.';
+      toast(m,'err');return}
+    $('#g-lat').value=p.coords.latitude.toFixed(6);$('#g-lng').value=p.coords.longitude.toFixed(6);
+    const acc=Math.round(p.coords.accuracy);toast('Ubicación tomada · precisión '+acc+' m'+(acc>50?' (poca: intenta de nuevo cerca de la puerta)':''),acc>50?'warn':'ok')};
+  // Si pegan "-10.57, -75.40" (copiado de Google Maps) en latitud, se separa solo
+  $('#g-lat').addEventListener('input',e=>{const m=e.target.value.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);if(m){e.target.value=m[1];$('#g-lng').value=m[2];}});
   $('#g-save').onclick=async()=>{const lat=parseFloat($('#g-lat').value),lng=parseFloat($('#g-lng').value);if(isNaN(lat)||isNaN(lng)){toast('Falta latitud o longitud','warn');return}
     const row={local_id:LOCAL,lat,lng,radio_m:+$('#g-rad').value||100,activa:$('#g-act').checked,estricta:$('#g-est').checked};
     const{data,error}=await sb.from('rrhh_geofence').upsert(row,{onConflict:'local_id'}).select().single();if(error){toast('Atrás: '+error.message,'err');return}state.gf=data;toast('Servido · ubicación guardada','ok')};
