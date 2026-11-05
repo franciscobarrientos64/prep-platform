@@ -12,7 +12,7 @@
 // Lecturas se cachean para abrir offline.
 window.PrepSync = (function(){
   var URL='https://jmkvphayyhwzootlybde.supabase.co', KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-  var APP_VERSION='2026.11.05-central3';
+  var APP_VERSION='2026.11.05-central4';
   var QKEY='prep_outbox', FKEY='prep_outbox_fallidos';
   var TIMEOUT_MS=10000;
   // Estado de la central del local (ver más abajo). Declarado arriba: write/overlay/badge lo leen.
@@ -161,13 +161,21 @@ window.PrepSync = (function(){
   // ── Realtime con reconexión: nunca congelado en silencio ──
   var rtBar=null, rtDown={};
   function rtBanner(){
-    // Conectado a la central del local: los cambios llegan por el wifi (SSE), el aviso sobra.
+    // Conectado a la central del local: los cambios llegan por el wifi (SSE), no hace falta avisar.
     var down=Object.keys(rtDown).some(function(k){return rtDown[k];}) && navigator.onLine && !(HUB.on&&HUB.paired);
-    if(!rtBar){ if(!down||!document.body) return; rtBar=document.createElement('div'); rtBar.id='prep-rtbar'; rtBar.setAttribute('role','status'); rtBar.setAttribute('aria-live','polite');
-      rtBar.style.cssText='pointer-events:none;opacity:.9;position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:99999;background:#ffcc00;color:#171c20;border:2px solid #000;border-radius:999px;padding:7px 14px;font:700 13px system-ui,sans-serif;box-shadow:3px 3px 0 #000;display:none';
-      rtBar.textContent='Reconectando · se actualiza cada 15 s';
-      document.body.appendChild(rtBar); }
+    if(!rtBar){ if(!down||!document.body) return;
+      // Solo una luz ámbar que parpadea arriba a la derecha; al tocarla se explica qué pasa.
+      var st=document.createElement('style');
+      st.textContent='@keyframes prepRtBlink{0%,100%{opacity:1}50%{opacity:.25}}#prep-rtbar{position:fixed;top:8px;right:8px;z-index:99999;width:14px;height:14px;border-radius:50%;background:#ffcc00;border:2px solid #000;cursor:pointer;animation:prepRtBlink 1.2s infinite;padding:0}#prep-rtbar:after{content:"";position:absolute;inset:-10px}#prep-rtmsg{position:fixed;top:30px;right:8px;z-index:99999;max-width:260px;background:#fff;color:#171c20;border:2px solid #000;border-radius:12px;box-shadow:3px 3px 0 #000;padding:10px 12px;font:500 13px system-ui,sans-serif;display:none}';
+      document.head.appendChild(st);
+      rtBar=document.createElement('button'); rtBar.type='button'; rtBar.id='prep-rtbar'; rtBar.setAttribute('aria-label','Reconectando');
+      var msg=document.createElement('div'); msg.id='prep-rtmsg';
+      msg.textContent='Reconectando con el servidor. Mientras tanto la pantalla se actualiza sola cada 15 s; puedes seguir trabajando.';
+      rtBar.onclick=function(e){ e.stopPropagation(); msg.style.display=msg.style.display==='block'?'none':'block'; };
+      document.addEventListener('click',function(){ msg.style.display='none'; });
+      document.body.appendChild(rtBar); document.body.appendChild(msg); }
     rtBar.style.display=down?'block':'none';
+    if(!down){ var m=document.getElementById('prep-rtmsg'); if(m) m.style.display='none'; }
   }
   // client: cliente supabase de la página · name: canal · build(ch) agrega los .on(...) · resync(): recarga desde REST
   function realtime(client, name, build, resync){
