@@ -1,3 +1,9 @@
+// crypto.randomUUID solo existe en https: por el wifi de la central (http://192.168…) faltaba y los
+// equipos inventaban ids que no son uuid → Supabase rechazaba los pedidos. getRandomValues sí existe.
+(function(){ try{ var c=window.crypto; if(c&&!c.randomUUID&&c.getRandomValues) c.randomUUID=function(){
+  var b=c.getRandomValues(new Uint8Array(16)); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+  var h=Array.prototype.map.call(b,function(x){return (x+256).toString(16).slice(1)}).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20); }; }catch(e){} })();
 // Prep Sync — cola de escritura offline (outbox) + caché de lectura + salud de conexión.
 // Las escrituras intentan ir a Supabase; si no hay red (o la sesión venció, o el servidor
 // responde 5xx/429), se encolan y se reenvían solas con backoff (idempotente vía upsert por id).
@@ -6,7 +12,7 @@
 // Lecturas se cachean para abrir offline.
 window.PrepSync = (function(){
   var URL='https://jmkvphayyhwzootlybde.supabase.co', KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
-  var APP_VERSION='2026.11.05-central2';
+  var APP_VERSION='2026.11.05-central3';
   var QKEY='prep_outbox', FKEY='prep_outbox_fallidos';
   var TIMEOUT_MS=10000;
   // Estado de la central del local (ver más abajo). Declarado arriba: write/overlay/badge lo leen.
@@ -35,6 +41,11 @@ window.PrepSync = (function(){
   function q(){ try{return JSON.parse(localStorage.getItem(QKEY)||'[]')}catch(e){return[]} }
   function setQ(a){ try{localStorage.setItem(QKEY,JSON.stringify(a))}catch(e){} badge(); }
   function fq(){ try{return JSON.parse(localStorage.getItem(FKEY)||'[]')}catch(e){return[]} }
+  // Limpieza única: operaciones con ids inválidos (creadas por http antes del arreglo) nunca van a subir.
+  (function(){ var mala=/"(id|pedido_id)":"(id1\d{9}|tmp_)/; try{
+    var f=fq(), f2=f.filter(function(x){return !mala.test(JSON.stringify(x.op||{}))}); if(f2.length!==f.length) localStorage.setItem(FKEY,JSON.stringify(f2));
+    var k2=localStorage.getItem(QKEY); if(k2){ var qq=JSON.parse(k2), q2=qq.filter(function(x){return !mala.test(JSON.stringify(x))}); if(q2.length!==qq.length) localStorage.setItem(QKEY,JSON.stringify(q2)); }
+  }catch(e){} })();
   function setFq(a){ try{localStorage.setItem(FKEY,JSON.stringify(a.slice(-200)))}catch(e){} badge(); }
   function enqueue(op){ var a=q(); a.push(op); setQ(a); }
 

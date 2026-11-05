@@ -1,3 +1,9 @@
+// crypto.randomUUID solo existe en https: por el wifi de la central (http://192.168…) faltaba y los
+// equipos inventaban ids que no son uuid → Supabase rechazaba los pedidos. getRandomValues sí existe.
+(function(){ try{ var c=window.crypto; if(c&&!c.randomUUID&&c.getRandomValues) c.randomUUID=function(){
+  var b=c.getRandomValues(new Uint8Array(16)); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+  var h=Array.prototype.map.call(b,function(x){return (x+256).toString(16).slice(1)}).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20); }; }catch(e){} })();
 // Contexto de cliente (multi-tenant). Resuelve marca/local en este orden:
 // 1) Subdominio de cliente (ej. la-calor.prep.rest -> La Calor)
 // 2) ?marca=&local= en la URL (super admin navegando desde el portal en os.prep.rest)

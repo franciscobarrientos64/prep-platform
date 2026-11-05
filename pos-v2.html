@@ -48,6 +48,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+@supports (height: 100dvh) { html, body { height: 100dvh; } }
+.sheet:not(.open) { box-shadow: none; }
 body {
   font-family: var(--font-body);
   background: var(--bg);
@@ -1157,14 +1159,18 @@ button { font-family: inherit; cursor: pointer; }
     grid-template-columns: 1fr;
     grid-template-areas: "head" "menu" "items" "foot";
   }
-  .items-col { border-right: none; border-top: 2px solid var(--outline); max-height: 38vh; }
-  .menu-col { max-height: 50vh; }
+  /* celular: cabecera · menú · ítems · totales, todo dentro de la pantalla (antes faltaba una fila y el pie quedaba bajo la barra del navegador) */
+  .pedido-screen { grid-template-rows: auto minmax(0, 1.3fr) minmax(0, 1fr) auto; min-height: 0; }
+  .items-col { border-right: none; border-top: 2px solid var(--outline); max-height: none; min-height: 0; overflow: auto; }
+  .menu-col { max-height: none; min-height: 0; overflow: auto; }
+  .pedido-foot { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .cobro-screen { grid-template-rows: auto minmax(0, 1.3fr) minmax(0, 1fr) auto; min-height: 0; }
   .cobro-screen {
     grid-template-columns: 1fr;
     grid-template-areas: "head" "right" "left" "foot";
   }
-  .cobro-left { border-right: none; border-top: 2px solid var(--outline); max-height: 32vh; }
-  .cobro-right { max-height: 55vh; }
+  .cobro-left { border-right: none; border-top: 2px solid var(--outline); max-height: none; min-height: 0; overflow: auto; }
+  .cobro-right { max-height: none; min-height: 0; overflow: auto; }
   .pay-methods { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
@@ -1734,6 +1740,7 @@ function recetasDe(modulo, subcategoria) {
 /* ========= ROUTER ========= */
 function render() {
   renderHeader();
+  if (state.screen !== 'floor' && state.screen !== 'edit') { const lg = $('#legend'); if (lg) lg.style.display = 'none'; }
   if (state.screen === 'floor' || state.screen === 'edit') {
     renderFloorScreen();
   } else if (state.screen === 'pedido') {
@@ -1880,7 +1887,7 @@ function renderFloorScreen() {
       </div>
     </div>
   `;
-  $('#legend').style.display = editing ? 'none' : 'flex';
+  $('#legend').style.display = (editing || state.screen !== 'floor') ? 'none' : 'flex';
 
   // FAB stack en edit
   if (editing) {
