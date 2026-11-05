@@ -3,6 +3,13 @@
 Si se cae el internet, los mozos siguen tomando pedidos por el wifi del local y las comandas salen en las térmicas.
 
 ## Instalar (una sola vez, con internet)
+**Rápido:** abre PowerShell **como administrador** y pega:
+
+    irm https://os.prep.rest/prep-local/instalar.ps1 | iex
+
+Hace todo lo de abajo (Node.js, carpeta, firewall, arranque automático) y abre el panel.
+
+**A mano:**
 1. Instala **Node.js LTS** desde nodejs.org (siguiente, siguiente).
 2. Copia esta carpeta a `C:\PrepLocal`.
 3. Doble clic en `iniciar-prep-local.vbs`. Si Windows pregunta por el firewall, marca **Redes privadas** y acepta.
