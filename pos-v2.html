@@ -3114,11 +3114,6 @@ function openItemPicker(r, ped) {
     </div>
     <div class="modal-body">
       <div class="sheet-section">
-        <div class="sheet-section-label">Para qué silla</div>
-        <div class="silla-picker">${sillaPicker}</div>
-        <div id="im-alerg-warn" style="display:none;margin-top:10px;font-size:12px;font-weight:600;background:var(--red-soft);color:var(--secondary);border:2px solid var(--secondary);border-radius:10px;padding:8px 12px"></div>
-      </div>
-      <div class="sheet-section">
         <div class="sheet-section-label">Tiempo / curso</div>
         <div class="chips" id="im-course">${courseBtns}</div>
       </div>
@@ -3158,6 +3153,11 @@ function openItemPicker(r, ped) {
           <div class="chips">${r.alergenos.map(a=>`<span class="chip" style="background:var(--amber-soft)">${a}</span>`).join('')}</div>
         </div>
       `:''}
+      <div class="sheet-section">
+        <div class="sheet-section-label">¿Para quién es? (también puedes elegirlo al marchar)</div>
+        <div class="silla-picker">${sillaPicker}</div>
+        <div id="im-alerg-warn" style="display:none;margin-top:10px;font-size:12px;font-weight:600;background:var(--red-soft);color:var(--secondary);border:2px solid var(--secondary);border-radius:10px;padding:8px 12px"></div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn ghost" id="im-cancel">Atrás</button>
