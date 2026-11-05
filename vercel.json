@@ -94,6 +94,10 @@
       "destination": "/admin.html"
     },
     {
+      "source": "/local",
+      "destination": "/prep-local/instalar.ps1"
+    },
+    {
       "source": "/cuenta",
       "destination": "/cuenta.html"
     },
