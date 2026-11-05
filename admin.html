@@ -47,6 +47,18 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--ink);-webkit-
 .btn.primary{background:var(--primary);color:#fff}.btn.ghost{background:transparent;box-shadow:none;border-style:dashed}
 .permrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--gray-soft)}.permrow .nm{font-weight:600;font-size:14px}
 .permrow select{width:130px}
+.pmx-wrap{overflow:auto;border:2px solid var(--outline);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm);max-height:calc(100vh - 210px)}
+.pmx{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
+.pmx th,.pmx td{border-bottom:1px solid var(--gray-soft);border-right:1px solid var(--gray-soft);padding:6px 8px;text-align:center;background:var(--surface)}
+.pmx thead th{position:sticky;top:0;z-index:2;background:var(--primary-soft);font-size:11px;font-weight:700;white-space:nowrap;border-bottom:2px solid var(--outline)}
+.pmx thead th.vt{writing-mode:vertical-rl;transform:rotate(180deg);height:118px;padding:8px 4px;text-align:left}
+.pmx th.nm,.pmx td.nm{position:sticky;left:0;z-index:1;text-align:left;min-width:190px;border-right:2px solid var(--outline)}
+.pmx thead th.nm{z-index:3}
+.pmx td.nm b{display:block;font-size:13px}.pmx td.nm span{font-family:var(--font-mono);font-size:10.5px;opacity:.6}
+.pmx input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);cursor:pointer}
+.pmx input[type=checkbox]:disabled{cursor:not-allowed;opacity:.55}
+.pmx .off{opacity:.45}
+.pmx td.lv{font-family:var(--font-mono);font-size:9.5px;opacity:.6;display:block;margin-top:2px}
 .empty{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;opacity:.55}
 .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .18s}.backdrop.open{opacity:1;pointer-events:auto}
 .sheet{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--surface);border-top:3px solid var(--outline);border-radius:24px 24px 0 0;box-shadow:0 -10px 0 0 var(--outline);transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);max-height:92vh;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
@@ -106,11 +118,11 @@ async function load(){
 }
 function render(){
   $('#tabs').innerHTML=[['usuarios','Usuarios','group'],['roles','Roles & permisos','admin_panel_settings']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}">${l}</button>`).join('');
-  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  if(state.view==='usuarios')$('#tabs').insertAdjacentHTML('beforeend',`<select class="select" id="f-marca" style="margin-left:auto;max-width:240px"><option value="">Todos los restaurantes</option>${state.marcas.map(m=>`<option value="${m.id}" ${state.fMarca===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select>`);
-  if($('#f-marca'))$('#f-marca').onchange=e=>{state.fMarca=e.target.value;renderUsuarios()};
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;if(state.view==='roles'&&!state.fMarca){const m=state.marcas.find(m=>state.usuarios.some(u=>u.marca_id===m.id));state.fMarca=m?m.id:'';}render()});
+  if(state.view==='usuarios'||state.view==='roles')$('#tabs').insertAdjacentHTML('beforeend',`<select class="select" id="f-marca" style="margin-left:auto;max-width:240px"><option value="">Todos los restaurantes</option>${state.marcas.map(m=>`<option value="${m.id}" ${state.fMarca===m.id?'selected':''}>${m.nombre}</option>`).join('')}</select>`);
+  if($('#f-marca'))$('#f-marca').onchange=e=>{state.fMarca=e.target.value;state.view==='roles'?renderPermisos():renderUsuarios()};
   $('#addl').textContent=state.view==='roles'?'Rol':'Usuario';
-  if(state.view==='usuarios')renderUsuarios();else renderRoles();
+  if(state.view==='usuarios')renderUsuarios();else renderPermisos();
 }
 /* Módulos de una persona: los suyos propios (prep_usuarios.permisos) o, si no tiene, los de su rol. */
 function permisosDe(u){if(u.permisos&&typeof u.permisos==='object')return u.permisos;const r=state.roles.find(x=>x.id===u.rol_id);return (r&&r.permisos)||{}}
@@ -306,6 +318,48 @@ async function accesoPorWA(u){
   if(error||!data||!data.ok){toast('Atrás: '+((data&&data.error)||(error&&error.message)||'no se pudo'));return}
   compartirWA(data,u);
 }
+/* Tabla de permisos: una fila por persona, una columna por módulo, check = puede entrar.
+   Marcar o desmarcar guarda al instante como módulos propios de esa persona
+   (prep_usuarios.permisos). Gerencia y super admin entran a todo: su fila va marcada y fija. */
+function renderPermisos(){
+  const marca=state.fMarca||'';
+  if(!marca){
+    $('#screen').innerHTML=`<div class="empty" style="opacity:.8">Elige un restaurante arriba a la derecha para ver la tabla de permisos.</div>${rolesHTML()}`;
+    wireRoles();return;
+  }
+  const us=state.usuarios.filter(u=>u.marca_id===marca).sort((a,b)=>{const o={admin_marca:0,gerente:1,operativo:2};return (o[a.rol_sistema]??3)-(o[b.rol_sistema]??3)||(a.nombre||'').localeCompare(b.nombre||'')});
+  const cols=MODS.filter(([k])=>enPlan(marca,k)), fuera=MODS.filter(([k])=>!enPlan(marca,k));
+  const locNom=id=>{const l=state.locales.find(x=>x.id===id);return l?l.nombre:'todos los locales'};
+  const fila=u=>{
+    const fijo=u.rol_sistema!=='operativo', p=permisosDe(u);
+    const sub=fijo?(ROLSIS.find(r=>r[0]===u.rol_sistema)?.[1]||u.rol_sistema)+' · entra a todo':((u.permisos?'módulos propios':(u.rol_id?'rol '+(rolNom(u.rol_id)||''):'sin rol'))+' · '+locNom(u.local_id));
+    return `<tr class="${u.activo===false?'off':''}"><td class="nm"><b>${u.nombre||u.email}</b><span>${sub}</span></td>${cols.map(([k])=>{const v=fijo?'admin':(p[k]||'ninguno'),on=v!=='ninguno';
+      return `<td><input type="checkbox" ${on?'checked':''} ${fijo?'disabled':''} data-u="${u.id}" data-k="${k}" title="${on?'Nivel: '+v:'Sin acceso'}">${on&&!fijo&&v!=='operar'?`<span class="lv">${v}</span>`:''}</td>`}).join('')}</tr>`;
+  };
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.7;margin-bottom:10px">✔ = puede entrar al módulo. Se guarda al tocar. Un check nuevo da nivel <b>operar</b>; para ver, aprobar o admin toca el nombre de la persona.${fuera.length?' Fuera del plan de este restaurante: '+fuera.map(x=>x[1]).join(', ')+'.':''}</div>
+    ${us.length?`<div class="pmx-wrap"><table class="pmx"><thead><tr><th class="nm">Persona</th>${cols.map(([k,l])=>`<th class="vt">${l}</th>`).join('')}</tr></thead><tbody>${us.map(fila).join('')}</tbody></table></div>`:'<div class="empty">Este restaurante no tiene usuarios todavía.</div>'}
+    ${rolesHTML()}`;
+  $$('#screen .pmx input[data-u]').forEach(cb=>cb.onchange=async()=>{
+    const u=state.usuarios.find(x=>x.id===cb.dataset.u),k=cb.dataset.k;
+    const p=Object.assign({},permisosDe(u));delete p.formatos;delete p.revisar_examenes;
+    if(cb.checked)p[k]=(permisosDe(u)[k]&&permisosDe(u)[k]!=='ninguno')?permisosDe(u)[k]:'operar';else delete p[k];
+    cb.disabled=true;
+    const{error}=await sb.from('prep_usuarios').update({permisos:p}).eq('id',u.id);
+    cb.disabled=false;
+    if(error){cb.checked=!cb.checked;toast('Atrás: '+error.message);return}
+    u.permisos=p;toast('Servido · '+(u.nombre||'')+(cb.checked?' entra a ':' ya no entra a ')+(MODS.find(x=>x[0]===k)||[,k])[1]);
+    const td=cb.parentElement.parentElement.querySelector('td.nm span');if(td)td.textContent='módulos propios · '+locNom(u.local_id);
+  });
+  $$('#screen .pmx td.nm').forEach(td=>{td.style.cursor='pointer';td.onclick=()=>{const cb=td.parentElement.querySelector('input[data-u]');if(cb)editarUsuario(state.usuarios.find(x=>x.id===cb.dataset.u))}});
+  wireRoles();
+}
+function rolesHTML(){
+  const rs=state.fMarca?state.roles.filter(r=>r.marca_id===state.fMarca):state.roles;
+  return `<div style="font-family:var(--font-display);font-size:17px;margin:22px 0 8px">Roles</div><div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:8px">Plantillas de permisos: una persona con rol y sin módulos propios usa los del rol.</div>`+
+    (rs.map(r=>{const np=Object.keys(r.permisos||{}).filter(k=>k!=='formatos'&&k!=='revisar_examenes').length;
+      return `<div class="row" data-rol="${r.id}"><div class="av"><span class="material-symbols-outlined">badge</span></div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${marcaNom(r.marca_id)}</span><span>${np} módulo(s) con acceso</span></div></div><span class="tagx op">rol</span></div>`}).join('')||'<div class="empty">Sin roles</div>');
+}
+function wireRoles(){$$('#screen [data-rol]').forEach(el=>el.onclick=()=>editarRol(state.roles.find(r=>r.id===el.dataset.rol)));}
 function renderRoles(){
   $('#screen').innerHTML=state.roles.map(r=>{const np=Object.keys(r.permisos||{}).filter(k=>k!=='formatos'&&k!=='revisar_examenes').length;
     return `<div class="row" data-id="${r.id}"><div class="av"><span class="material-symbols-outlined">badge</span></div><div class="info"><h3>${r.nombre}</h3><div class="meta"><span>${marcaNom(r.marca_id)}</span><span>${np} módulo(s) con acceso</span></div></div><span class="tagx op">rol</span></div>`;
