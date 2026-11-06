@@ -132,6 +132,18 @@ textarea.input{min-height:120px;resize:vertical}
 .jk .jv{font-family:var(--font-display);font-size:24px;line-height:1.1;margin-top:2px}
 .jk .jx{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--secondary)}
 .chip .material-symbols-outlined{vertical-align:-3px}
+.mnt{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;gap:14px;align-items:flex-start}
+.mnt:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.mnt .mf{flex:0 0 58px;text-align:center;border:2px solid var(--outline);border-radius:10px;padding:4px 0;background:var(--primary-soft)}
+.mnt .mf b{display:block;font-family:var(--font-display);font-size:22px;line-height:1.1}
+.mnt .mf span{font-family:var(--font-mono);font-size:10px;text-transform:uppercase}
+.mnt h3{font-size:16px;font-weight:700;margin-bottom:3px}
+.mnt .mm{font-family:var(--font-mono);font-size:11px;opacity:.6}
+.mdoc h4{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;opacity:.6;margin:16px 0 6px}
+.mdoc .mtx{white-space:pre-wrap;font-size:14px;line-height:1.55}
+.macu{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--outline);border-radius:10px;padding:8px 10px;margin-bottom:6px;background:var(--surface)}
+.macu.ok .mat{text-decoration:line-through;opacity:.5}
+.macu .mr{font-family:var(--font-mono);font-size:11px;opacity:.65}
 .jplan{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px;cursor:pointer}
 .jplan .jpn{font-family:var(--font-display);font-size:22px;color:var(--primary);line-height:1}
 .jplan h3{font-size:16px;font-weight:700;margin-bottom:4px}
@@ -179,7 +191,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,puedeRevisar:false,formatos:null,view:'inicio',js:{plan:[],kpis:[],vals:[],tareas:[],dias:[]},locales:[],cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,esSuper:false,minutas:[],puedeRevisar:false,formatos:null,view:'inicio',js:{plan:[],kpis:[],vals:[],tareas:[],dias:[]},locales:[],cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const APRUEBA=90; // % para aprobar cada puntaje de un examen (conocimiento y venta sugestiva)
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
@@ -220,7 +232,7 @@ async function loadRol(){
     const s0=(await sb.auth.getSession()).data.session;
     if(s0&&s0.user){
       const{data}=await sb.from('prep_usuarios').select('rol_sistema,rol_id,permisos').eq('email',s0.user.email).maybeSingle();state.permPropios=(data&&data.permisos)||null;
-      state.esAdmin=!!data&&['superadmin','admin_marca','gerente'].includes(data.rol_sistema);
+      state.esAdmin=!!data&&['superadmin','admin_marca','gerente'].includes(data.rol_sistema);state.esSuper=!!data&&data.rol_sistema==='superadmin';
       // Un rol operativo puede tener limitados los formatos que ve (prep_roles.permisos.formatos)
       if(data&&data.rol_id&&!state.esAdmin){
         const{data:rl}=await sb.from('prep_roles').select('permisos').eq('id',data.rol_id).maybeSingle();
@@ -233,7 +245,7 @@ async function loadRol(){
   // "Ver como": la vista del super admin manda sobre su rol real
   try{
     if(window.PREP_VISTA){
-      state.esAdmin=!!window.prepEsAdminVista();
+      state.esAdmin=!!window.prepEsAdminVista();state.esSuper=window.PREP_VISTA.rol_sistema==='superadmin';
       state.formatos=window.prepFormatos();
       state.puedeRevisar=state.esAdmin||((window.PREP_VISTA.permisos||{}).revisar_examenes===true);
     }
@@ -251,24 +263,25 @@ async function loadRol(){
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
 async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol(),loadJS(),loadLocales()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol(),loadJS(),loadLocales(),loadMinutas()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.filter(p=>p.tipo!=='duda_receta').length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
   // Los formatos que ve cada rol se configuran en Usuarios y permisos (prep_roles.permisos.formatos).
   // state.formatos = null significa "todos".
-  const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu'],['jefeservicio','Jefe de Servicio','supervisor_account']];
+  const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu'],['jefeservicio','Jefe de Servicio','supervisor_account'],['minutas','Minutas','summarize']];
   // "Inicio" (las secciones en cuadrados) lo ve todo el mundo; el resto según los formatos del rol
-  const secciones=state.formatos?TABS.filter(t=>state.formatos.includes(t[0])):TABS;
+  // Minutas: las lee todo el equipo (no depende de los formatos del rol); solo el super admin edita
+  const secciones=state.formatos?TABS.filter(t=>t[0]==='minutas'||state.formatos.includes(t[0])):TABS;
   const visibles=[['inicio','Inicio','apps']].concat(secciones);
   if(visibles.length&&!visibles.some(t=>t[0]===state.view))state.view=visibles[0][0];
   $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={inicio:'',jefeservicio:'',tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
-  const HIDEADD=['inicio','jefeservicio','equipo','politicas','recetario','plantillas','cursos'];
+  $('#h-add-l').textContent={inicio:'',jefeservicio:'',minutas:'',tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
+  const HIDEADD=['inicio','jefeservicio','minutas','equipo','politicas','recetario','plantillas','cursos'];
   $('#h-add').style.display=(!state.esAdmin||HIDEADD.includes(state.view))?'none':'';
-  if(state.view==='inicio')renderInicio(secciones);else if(state.view==='jefeservicio')renderJefeServicio();else if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
+  if(state.view==='inicio')renderInicio(secciones);else if(state.view==='jefeservicio')renderJefeServicio();else if(state.view==='minutas')renderMinutas();else if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -1060,12 +1073,14 @@ const SEC_INFO={
   checklists:['Apertura, cierre y limpieza','#10b981'],eventualidades:['Lo que pasó en el turno','#b45309'],
   calendario:['Eventos, capacitaciones y asistencia','#1e5af9'],thetalk:['Conversaciones uno a uno','#7c3aed'],
   politicas:['Reglas de la casa','#171c20'],bitacora:['Registro de novedades','#b45309'],
-  jefeservicio:['Plan de trabajo, KPI, tareas y plan del día','#ff3b30']};
+  jefeservicio:['Plan de trabajo, KPI, tareas y plan del día','#ff3b30'],
+  minutas:['Actas y acuerdos de las reuniones','#7c3aed']};
 function tileBadge(k){
   if(k==='checklists'){const p=state.checklists.filter(c=>!runCompleto(c)).length;return p?[p+' pendiente'+(p>1?'s':''),'']:null}
   if(k==='eventualidades'){const n=(state.eventualidades||[]).filter(e=>e.fecha===hoyISO()).length;return n?[n+' hoy','']:null}
   if(k==='jefeservicio'){const v=state.js.tareas.filter(tareaVencida).length,a=state.js.tareas.filter(t=>t.estado!=='hecha').length;
     return v?[v+' vencida'+(v>1?'s':''),'red']:a?[a+' tarea'+(a>1?'s':'')+' abierta'+(a>1?'s':''),'']:null}
+  if(k==='minutas'){const a=state.minutas.reduce((n,m)=>n+(m.acuerdos||[]).filter(x=>!x.hecho).length,0);return a?[a+' acuerdo'+(a>1?'s':'')+' abierto'+(a>1?'s':''),'']:state.minutas.length?[state.minutas.length+' minuta'+(state.minutas.length>1?'s':''),'']:null}
   if(k==='examenes'){const n=(state.examenes||[]).filter(e=>e.activo!==false).length;return n?[n+' activo'+(n>1?'s':''),'']:null}
   return null;
 }
@@ -1289,6 +1304,71 @@ function wireJS(){
   $$('#screen [data-jd]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.jd);state.jsFecha=n===0?hoyISO():sumDias(state.jsFecha||hoyISO(),n);renderJefeServicio()});
   $$('#screen [data-jdf]').forEach(c=>c.onclick=()=>{state.jsFecha=c.dataset.jdf;renderJefeServicio();window.scrollTo(0,0)});
   $$('#screen [data-ji]').forEach(b=>b.onclick=()=>jsToggleItem(Number(b.dataset.ji)));
+}
+
+/* ---------- Minutas de reunión (por marca) ----------
+   Tabla lb_minutas (RLS: lee la marca, escribe solo prep_is_super()). La ve todo rol; edita solo el super admin. */
+async function loadMinutas(){try{const{data}=await sb.from('lb_minutas').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}).order('created_at',{ascending:false});state.minutas=data||[]}catch(e){state.minutas=[]}}
+const MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function renderMinutas(){
+  const ed=state.esSuper,q=(state.mntQ||'').toLowerCase();
+  const L=state.minutas.filter(m=>!q||[m.titulo,m.asistentes,m.agenda,m.desarrollo,JSON.stringify(m.acuerdos||[])].join(' ').toLowerCase().includes(q));
+  const abiertos=state.minutas.reduce((n,m)=>n+(m.acuerdos||[]).filter(x=>!x.hecho).length,0);
+  $('#screen').innerHTML=`<div class="grp-t" style="margin-top:0">Minutas de reunión <span style="font-family:var(--font-mono);font-size:11px;opacity:.55">· ${ed?'editas tú':'solo lectura'}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+      <input class="input" id="mnt-q" placeholder="Buscar en las minutas" value="${escA(state.mntQ||'')}" style="flex:1;min-width:200px">
+      ${ed?`<button class="btn-ico primary" id="mnt-new"><span class="material-symbols-outlined" style="font-size:16px">add</span>Nueva minuta</button>`:''}</div>
+    ${abiertos?`<div class="mm" style="font-family:var(--font-mono);font-size:12px;margin-bottom:10px">${abiertos} acuerdo${abiertos>1?'s':''} abierto${abiertos>1?'s':''}</div>`:''}
+    ${L.length?L.map(m=>{const d=new Date(m.fecha+'T12:00:00'),ac=m.acuerdos||[],pend=ac.filter(x=>!x.hecho).length;
+      return `<div class="mnt" data-mn="${m.id}"><div class="mf"><b>${d.getDate()}</b><span>${MESES[d.getMonth()]} ${String(d.getFullYear()).slice(2)}</span></div>
+        <div style="flex:1;min-width:0"><h3>${escH(m.titulo)}</h3><div class="mm">${m.asistentes?escH(m.asistentes.split('\n').join(', ')).slice(0,120):'Sin asistentes'}</div>
+        <div class="mm" style="margin-top:4px">${ac.length?ac.length+' acuerdo'+(ac.length>1?'s':'')+(pend?' · '+pend+' abierto'+(pend>1?'s':''):' · todos cerrados'):'Sin acuerdos'}${m.proxima?' · próxima: '+fechaLarga(m.proxima):''}</div></div>
+        <span class="material-symbols-outlined" style="opacity:.4">chevron_right</span></div>`}).join('')
+      :`<div class="empty">${state.minutas.length?'Nada coincide con la búsqueda.':'Todavía no hay minutas.'}</div>`}`;
+  const qi=$('#mnt-q');qi.oninput=()=>{state.mntQ=qi.value;const p=qi.selectionStart;renderMinutas();const n=$('#mnt-q');n.focus();n.setSelectionRange(p,p)};
+  if(ed)$('#mnt-new').onclick=()=>mntSheet(null);
+  $$('#screen [data-mn]').forEach(c=>c.onclick=()=>mntVer(state.minutas.find(m=>m.id===c.dataset.mn)));
+}
+function mntVer(m){
+  setHead('📝',m.titulo,fechaLarga(m.fecha)+(m.lugar?' · '+m.lugar:''));
+  const ac=m.acuerdos||[],sec=(t,v)=>v?`<h4>${t}</h4><div class="mtx">${escH(v)}</div>`:'';
+  $('#sheet-body').innerHTML=`<div class="mdoc">${sec('Asistentes',m.asistentes)}${sec('Agenda',m.agenda)}${sec('Desarrollo',m.desarrollo)}
+    ${ac.length?`<h4>Acuerdos</h4>`+ac.map(a=>`<div class="macu ${a.hecho?'ok':''}"><span class="material-symbols-outlined" style="font-size:20px">${a.hecho?'check_circle':'radio_button_unchecked'}</span><div style="flex:1"><div class="mat">${escH(a.texto||'')}</div><div class="mr">${[a.responsable,a.vence?'vence '+fechaLarga(a.vence):''].filter(Boolean).map(escH).join(' · ')}</div></div></div>`).join(''):''}
+    ${m.proxima?`<h4>Próxima reunión</h4><div class="mtx">${fechaLarga(m.proxima)}</div>`:''}</div>
+    ${state.esSuper?`<div style="display:flex;gap:8px;margin-top:18px"><button class="btn primary" id="mv-ed" style="flex:1">Editar</button><button class="btn ghost" id="mv-del">Borrar</button></div>`:''}`;
+  if(state.esSuper){$('#mv-ed').onclick=()=>mntSheet(m);
+    $('#mv-del').onclick=async()=>{if(!confirm('¿Borrar esta minuta?'))return;const{error}=await sb.from('lb_minutas').delete().eq('id',m.id);if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadMinutas();render();toast('Servido · minuta borrada','ok')}}
+  openSheet();
+}
+function mntSheet(m){
+  if(!state.esSuper)return;const ed=!!m;
+  let ac=JSON.parse(JSON.stringify((m&&m.acuerdos)||[]));
+  setHead('📝',ed?'Editar minuta':'Nueva minuta','Minutas de reunión');
+  const harvest=()=>{ac=$$('#sheet-body .ma-row').map(r=>({texto:r.querySelector('[data-f=t]').value.trim(),responsable:r.querySelector('[data-f=r]').value.trim(),vence:r.querySelector('[data-f=v]').value||null,hecho:r.querySelector('[data-f=h]').checked}))};
+  const draw=()=>{
+    const keep=$('#sheet-body').querySelector('#mn-t')?{t:$('#mn-t').value,f:$('#mn-f').value,l:$('#mn-l').value,a:$('#mn-a').value,g:$('#mn-g').value,d:$('#mn-d').value,p:$('#mn-p').value}:{t:ed?m.titulo:'',f:ed?m.fecha:hoyISO(),l:ed?(m.lugar||''):'',a:ed?(m.asistentes||''):'',g:ed?(m.agenda||''):'',d:ed?(m.desarrollo||''):'',p:ed?(m.proxima||''):''};
+    $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="mn-t" value="${escA(keep.t)}" placeholder="Ej. Comité de operaciones"></div>
+      <div class="sheet-section" style="display:flex;gap:8px"><div style="flex:1"><div class="field-lbl">Fecha</div><input class="input" id="mn-f" type="date" value="${keep.f}"></div><div style="flex:1"><div class="field-lbl">Lugar</div><input class="input" id="mn-l" value="${escA(keep.l)}" placeholder="Local, oficina o virtual"></div></div>
+      <div class="sheet-section"><div class="field-lbl">Asistentes</div><textarea class="input" id="mn-a" style="min-height:70px" placeholder="Uno por línea">${escH(keep.a)}</textarea></div>
+      <div class="sheet-section"><div class="field-lbl">Agenda</div><textarea class="input" id="mn-g" style="min-height:80px" placeholder="Un tema por línea">${escH(keep.g)}</textarea></div>
+      <div class="sheet-section"><div class="field-lbl">Desarrollo</div><textarea class="input" id="mn-d" style="min-height:180px" placeholder="Lo que se conversó">${escH(keep.d)}</textarea></div>
+      <div class="sheet-section"><div class="field-lbl">Acuerdos</div>${ac.map((a,i)=>`<div class="ma-row" style="border:2px solid var(--outline);border-radius:10px;padding:8px;margin-bottom:6px">
+          <input class="input" data-f="t" value="${escA(a.texto||'')}" placeholder="Acuerdo">
+          <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><input class="input" data-f="r" value="${escA(a.responsable||'')}" placeholder="Responsable" style="flex:1"><input class="input" data-f="v" type="date" value="${a.vence||''}" style="flex:1">
+          <label style="display:flex;gap:4px;align-items:center;font-size:12px"><input type="checkbox" data-f="h" ${a.hecho?'checked':''}>Hecho</label>
+          <button class="btn-ico" data-mq="${i}" title="Quitar"><span class="material-symbols-outlined" style="font-size:16px">close</span></button></div></div>`).join('')}
+        <button class="btn ghost" id="mn-add">+ Agregar acuerdo</button></div>
+      <div class="sheet-section"><div class="field-lbl">Próxima reunión</div><input class="input" id="mn-p" type="date" value="${keep.p||''}"></div>
+      <button class="btn primary" id="mn-save" style="width:100%">${ed?'Guardar cambios':'Guardar minuta'}</button>`;
+    $('#mn-add').onclick=()=>{harvest();ac.push({texto:'',responsable:'',vence:null,hecho:false});draw()};
+    $$('#sheet-body [data-mq]').forEach(b=>b.onclick=()=>{harvest();ac.splice(Number(b.dataset.mq),1);draw()});
+    $('#mn-save').onclick=async()=>{harvest();const t=$('#mn-t').value.trim();if(!t){toast('Ponle un título','err');return}
+      const row={marca_id:MARCA,titulo:t,fecha:$('#mn-f').value||hoyISO(),lugar:$('#mn-l').value.trim()||null,asistentes:$('#mn-a').value.trim()||null,agenda:$('#mn-g').value.trim()||null,desarrollo:$('#mn-d').value.trim()||null,acuerdos:ac.filter(a=>a.texto),proxima:$('#mn-p').value||null,updated_at:nowISO()};
+      const btn=$('#mn-save');btn.disabled=true;btn.textContent='Oído…';
+      const{error}=ed?await sb.from('lb_minutas').update(row).eq('id',m.id):await sb.from('lb_minutas').insert(row);
+      if(error){btn.disabled=false;btn.textContent='Guardar';toast('Atrás: '+error.message,'err');return}
+      closeSheet();await loadMinutas();render();toast('Servido · minuta guardada','ok')};
+  };draw();openSheet();
 }
 
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('lb_'+LOCAL)
