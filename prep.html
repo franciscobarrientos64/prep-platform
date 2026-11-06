@@ -70,7 +70,7 @@ a.linkbtn{display:inline-flex;gap:6px;align-items:center;font-family:var(--font-
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['asistencia','Asistencia'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement']];
+const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['asistencia','Asistencia'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement'],['mystery','Voz del Cliente'],['prediccion','Predicción']];
 const FEATURES={
   pase:[['resumen','Resumen del día']],
   pos:[['comanda','Toma de comanda'],['cobro','Cobro y pagos'],['cortesias','Cortesías/descuentos'],['giftcards','Gift cards'],['propinas','Propinas'],['comprobante','Comprobante']],
@@ -86,7 +86,9 @@ const FEATURES={
   vuelto:[['gastos','Gastos'],['voz','Captura por voz'],['aprobacion','Aprobación'],['cierre','Cierre diario']],
   libro:[['tablon','Tablón'],['sops','Procedimientos'],['checklists','Checklists'],['bitacora','Bitácora']],
   directorio:[['dashboard','Dashboard ejecutivo']],
-  engagement:[['crm360','CRM 360'],['loyalty','Loyalty'],['campanas','Campañas'],['resenas','Reseñas']]
+  engagement:[['crm360','CRM 360'],['loyalty','Loyalty'],['campanas','Campañas'],['resenas','Reseñas']],
+  mystery:[['mystery','Mystery Shopper'],['encuestas','Encuestas'],['resenas','Reseñas']],
+  prediccion:[['pronostico','Pronóstico de ventas'],['preparar','Qué preparar'],['picos','Horas pico']]
 };
 // Dependencias: 'modulo.feature' -> requiere [ 'modulo.feature' | 'modulo' ]
 const DEPS={
