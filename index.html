@@ -225,7 +225,7 @@ function renderUserSwitcher(){
   let html=`<div class="who">${vi?vi.nombre:(u?u.nombre:'Invitado')}</div><div class="role">${u?rotulo+(u.marca_id?(' · '+u.marca_id):'')+(access.authed?'':' · demo')+(vi?' · vista':''):'sin sesión'}</div>`;
   if(access.authed){
     let adm='';
-    if(rs==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div><div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios</div>`;
+    if(rs==='superadmin')adm=`<div class="mi" data-act="portal"><span class="material-symbols-outlined">grid_view</span> Panel Prep (super admin)</div><div class="mi" data-act="modulos"><span class="material-symbols-outlined">tune</span> Módulos por cliente</div><div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios</div>`;
     else if(['admin_marca','gerente'].includes(rs))adm=`<div class="mi" data-act="usuarios"><span class="material-symbols-outlined">group</span> Usuarios y permisos</div>`;
     if(['superadmin','admin_marca','gerente'].includes(rs))adm+=`<div class="mi" data-act="ajustes"><span class="material-symbols-outlined">settings</span> Ajustes del local</div>`;
     if(adm)adm+='<hr>';
@@ -244,6 +244,7 @@ function renderUserSwitcher(){
     else if(a==='logout')sb.auth.signOut().then(()=>{localStorage.removeItem('prep_uid');try{document.cookie='prep_sso=; domain=.prep.rest; path=/; max-age=0; secure; samesite=lax'}catch(e){};location.reload()});
     else if(a==='login')location.href='/login';
     else if(a==='portal')location.href='/portal';
+    else if(a==='modulos')location.href='/prep';
     else if(a==='usuarios')location.href='/admin';
     else if(a==='ajustes')location.href='/ajustes';});
 }
