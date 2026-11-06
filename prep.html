@@ -72,21 +72,21 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const MODS=[['pase','Pase'],['pos','POS'],['linea','Línea/KDS'],['bienvenida','Bienvenida'],['mercado','Mercado'],['recetas','Recetas'],['carta','Carta QR'],['rrhh','RRHH'],['asistencia','Asistencia'],['delivery','Delivery'],['contabilidad','Finanzas'],['vuelto','Vuelto'],['libro','El Libro'],['directorio','Directorio'],['engagement','Engagement'],['mystery','Voz del Cliente'],['prediccion','Predicción']];
 const FEATURES={
-  pase:[['resumen','Resumen del día']],
-  pos:[['comanda','Toma de comanda'],['cobro','Cobro y pagos'],['cortesias','Cortesías/descuentos'],['giftcards','Gift cards'],['propinas','Propinas'],['comprobante','Comprobante']],
-  linea:[['estaciones','Estaciones'],['multicanal','Multicanal (delivery)'],['metricas','Métricas de tiempo']],
-  bienvenida:[['reservas','Reservas'],['waitlist','Lista de espera'],['mapa','Mapa de mesas'],['crm','CRM comensales']],
-  mercado:[['inventario','Inventario + PAR'],['carga','Carga rápida'],['conteo','Conteo con aprobación'],['pedido','Armar pedido'],['precios','Comparador de precios'],['comprobante','Comprobante + pago'],['teorico','Teórico vs real'],['reportes','Reportes']],
-  recetas:[['costeo','Costeo / food cost'],['subrecetas','Sub-recetas'],['carta','Gestión de carta'],['menus','Menús'],['ingenieria','Ingeniería de menú']],
+  pase:[['resumen','Resumen del día'],['kpis','KPIs en vivo'],['alertas','Alertas']],
+  pos:[['comanda','Toma de comanda'],['plano','Plano de mesas'],['tabs','Cuentas de barra'],['split','Dividir cuenta'],['cobro','Cobro y pagos'],['cortesias','Cortesías/descuentos'],['giftcards','Gift cards'],['propinas','Propinas'],['precuenta','Pre-cuenta con encuesta'],['comprobante','Comprobante'],['display','Pantalla para el comensal'],['audit','Registro de auditoría'],['pagos_online','Pasarelas de pago']],
+  linea:[['estaciones','Estaciones'],['impresion','Impresión por estación'],['multicanal','Multicanal (delivery)'],['metricas','Métricas de tiempo']],
+  bienvenida:[['reservas','Reservas'],['widget','Reservas web'],['timeline','Timeline de mesas'],['waitlist','Lista de espera'],['mapa','Mapa de mesas'],['crm','CRM comensales'],['card_hold','Garantía con tarjeta'],['confirmacion','Confirmación por WhatsApp']],
+  mercado:[['inventario','Inventario + PAR'],['carga','Carga rápida'],['conteo','Conteo con aprobación'],['pedido','Armar pedido'],['precios','Comparador de precios'],['comprobante','Comprobante + pago'],['mermas','Mermas'],['movimientos','Movimientos'],['teorico','Teórico vs real'],['produccion','Producción y frío'],['temperaturas','Temperaturas por equipo'],['reportes','Reportes']],
+  recetas:[['costeo','Costeo / food cost'],['subrecetas','Sub-recetas'],['ficha','Ficha técnica imprimible'],['carta','Gestión de carta'],['menus','Menús'],['ingenieria','Ingeniería de menú']],
   carta:[['menu_qr','Menú QR'],['pedido_mesa','Pedido en mesa'],['pago_mesa','Pago en mesa']],
-  rrhh:[['equipo','Equipo / fichas'],['asistencia','Asistencia'],['planilla','Planilla'],['turnos','Turnos']],
+  rrhh:[['equipo','Equipo / fichas'],['reclutamiento','Reclutamiento'],['documentos','Documentos'],['asistencia','Asistencia'],['permisos','Permisos y vacaciones'],['turnos','Turnos'],['planilla','Planilla'],['propinas','Propinas'],['desempeno','Desempeño']],
   asistencia:[['celular','Marca desde el celular'],['kiosco','Kiosco en tablet'],['puntualidad','Reporte de puntualidad'],['incidencias','Incidencias y justificaciones']],
   delivery:[['pedidos','Pedidos'],['repartidores','Repartidores'],['zonas','Zonas'],['publica','Página pública']],
   contabilidad:[['presupuesto','Presupuesto'],['real_auto','Real automático'],['variacion','Alertas de variación']],
-  vuelto:[['gastos','Gastos'],['voz','Captura por voz'],['aprobacion','Aprobación'],['cierre','Cierre diario']],
-  libro:[['tablon','Tablón'],['sops','Procedimientos'],['checklists','Checklists'],['bitacora','Bitácora']],
-  directorio:[['dashboard','Dashboard ejecutivo']],
-  engagement:[['crm360','CRM 360'],['loyalty','Loyalty'],['campanas','Campañas'],['resenas','Reseñas']],
+  vuelto:[['gastos','Gastos'],['voz','Captura por voz'],['aprobacion','Aprobación'],['cierre','Cierre diario'],['conciliacion','Conciliación']],
+  libro:[['tablon','Tablón'],['equipo','Equipo'],['sops','Procedimientos'],['recetario','Recetario'],['plantillas','Plantillas'],['cursos','Cursos'],['examenes','Exámenes'],['briefing','Briefing diario'],['checklists','Checklists'],['eventualidades','Eventualidades'],['calendario','Calendario'],['thetalk','The Talk'],['politicas','Políticas'],['bitacora','Bitácora'],['jefeservicio','Jefe de Servicio']],
+  directorio:[['dashboard','Dashboard ejecutivo'],['pyl','P&L vs presupuesto'],['reportes','Reportes programados']],
+  engagement:[['crm360','CRM 360'],['loyalty','Loyalty'],['campanas','Campañas'],['resenas','Reseñas'],['eventos','Catering y eventos'],['dark','Dark kitchen'],['idiomas','Menú en idiomas']],
   mystery:[['mystery','Mystery Shopper'],['encuestas','Encuestas'],['resenas','Reseñas']],
   prediccion:[['pronostico','Pronóstico de ventas'],['preparar','Qué preparar'],['picos','Horas pico']]
 };
