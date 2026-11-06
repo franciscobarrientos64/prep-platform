@@ -111,6 +111,56 @@ textarea.input{min-height:120px;resize:vertical}
 .cd-e{font-family:var(--font-mono);font-size:8.5px;font-weight:700;color:#fff;border:1.5px solid var(--outline);border-radius:4px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .exc{display:flex;align-items:center;justify-content:center;min-height:30px;border:2px solid var(--outline);border-radius:7px;font-family:var(--font-mono);font-size:12px;font-weight:700}
 @media(max-width:560px){.cd{min-height:52px}.cd-e{font-size:0;padding:4px}}
+/* Inicio: secciones del libro en cuadrados (como el hub) */
+.lt-intro{font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:14px}
+.ltgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.ltile{position:relative;aspect-ratio:1/1;background:var(--surface);border:2px solid var(--outline);border-radius:16px;box-shadow:var(--shadow-sm);padding:16px 14px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;overflow:hidden;text-align:left;font-family:var(--font-body);color:var(--ink);transition:transform .12s,box-shadow .12s}
+.ltile::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:var(--ac,var(--primary))}
+.ltile:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.ltile:active{transform:translate(2px,2px);box-shadow:none}
+.ltile .ico{font-size:34px;color:var(--ac,var(--primary));margin-top:4px}
+.ltile .nm{font-weight:700;font-size:15px;line-height:1.15}
+.ltile .ds{font-family:var(--font-mono);font-size:10.5px;opacity:.6;line-height:1.3}
+.ltile .bd{margin-top:auto;align-self:flex-start;font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1.5px solid var(--outline);background:var(--amber-soft)}
+.ltile .bd.red{background:var(--secondary);color:#fff}
+.ltile.dest{background:var(--ink);color:var(--bg)}.ltile.dest .ds{opacity:.75}
+@media(max-width:420px){.ltgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ltile{padding:14px 10px 10px}.ltile .ico{font-size:28px}.ltile .nm{font-size:13.5px}}
+/* Jefe de Servicio */
+.jsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.jk{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:10px 12px}
+.jk .jl{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.6}
+.jk .jv{font-family:var(--font-display);font-size:24px;line-height:1.1;margin-top:2px}
+.jk .jx{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--secondary)}
+.chip .material-symbols-outlined{vertical-align:-3px}
+.jplan{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px;margin-bottom:10px;cursor:pointer}
+.jplan .jpn{font-family:var(--font-display);font-size:22px;color:var(--primary);line-height:1}
+.jplan h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.jkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.jkpi{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;cursor:pointer;border-top-width:7px;border-top-color:var(--gray-soft)}
+.jkpi.ok{border-top-color:var(--green)}.jkpi.bad{border-top-color:var(--secondary)}
+.jkh{display:flex;gap:8px;align-items:flex-start}
+.jkn{font-weight:700;font-size:14px;line-height:1.2}.jkm{font-family:var(--font-mono);font-size:10.5px;opacity:.6;margin-top:2px}
+.jkv{font-family:var(--font-display);font-size:30px;line-height:1;margin-top:10px}
+.jbars{display:flex;align-items:flex-end;gap:4px;height:42px;margin-top:8px;border-bottom:1.5px solid var(--outline)}
+.jbars span{flex:1;max-width:18px;border:1.5px solid var(--outline);border-bottom:none;border-radius:3px 3px 0 0}
+.jhist{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--gray-soft);font-size:13px}
+.jtask{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--outline);border-radius:12px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.jtask.hecha .jtt{text-decoration:line-through;opacity:.5}
+.jtask.venc{border-left:7px solid var(--secondary)}
+.jtt{font-weight:600;font-size:14px;line-height:1.25}
+.jtm{font-family:var(--font-mono);font-size:10.5px;opacity:.65;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.jtm .venc-t{color:var(--secondary);font-weight:700;opacity:1}
+.tagx.js-pendiente{background:var(--gray-soft)}.tagx.js-en_proceso{background:var(--primary-soft)}.tagx.js-bloqueada{background:var(--amber-soft)}.tagx.js-hecha{background:var(--green-soft)}
+.jday{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.jday .dt{font-family:var(--font-display);font-size:18px;flex:1;min-width:140px}
+.jprog{height:12px;border:2px solid var(--outline);border-radius:999px;background:var(--surface);overflow:hidden;margin-bottom:12px}
+.jprog span{display:block;height:100%;background:var(--green)}
+.jitem{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--gray-soft)}
+.jitem .hr{font-family:var(--font-mono);font-size:12px;font-weight:700;width:46px;flex-shrink:0}
+.jitem.on .ac{text-decoration:line-through;opacity:.5}
+.jcard{background:var(--surface);border:2px solid var(--outline);border-radius:14px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:12px}
+.jrow{display:grid;grid-template-columns:92px 1fr 120px 34px;gap:6px;margin-bottom:6px;align-items:center}
+@media(max-width:520px){.jsum{grid-template-columns:1fr 1fr 1fr;gap:6px}.jk{padding:8px}.jk .jv{font-size:19px}.jrow{grid-template-columns:80px 1fr 34px}.jrow .jrs{grid-column:1/3}}
 </style>
 <style id="no-print">@media print{html,body{display:none!important}}</style>
 </head>
@@ -129,7 +179,7 @@ textarea.input{min-height:120px;resize:vertical}
 <script>
 const SB_URL='https://jmkvphayyhwzootlybde.supabase.co',SB_KEY='sb_publishable_0-znERv1Ok0Dw-Re44eksw_QAOqDc8M',MARCA=(window.PREP_MARCA||'__sin_contexto__'),LOCAL=(window.PREP_LOCAL||'__sin_contexto__');
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,puedeRevisar:false,formatos:null,view:'tablon',cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
+const state={posts:[],checklists:[],runs:[],bitacora:[],lecturas:[],cursosCasa:[],esAdmin:false,puedeRevisar:false,formatos:null,view:'inicio',js:{plan:[],kpis:[],vals:[],tareas:[],dias:[]},locales:[],cat:'todas',channel:null,equipo:[],eventos:[],examPanel:[],examNotas:[],thetalk:[],calMonth:null,briefings:[],eventualidades:[]};
 function lectorName(){let n=localStorage.getItem('lb_lector');if(!n){n=(prompt('Tu nombre (para confirmar lectura):')||'').trim();if(n)localStorage.setItem('lb_lector',n);}return n;}
 const APRUEBA=90; // % para aprobar cada puntaje de un examen (conocimiento y venta sugestiva)
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
@@ -201,22 +251,24 @@ async function loadRol(){
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
 async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol(),loadJS(),loadLocales()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
   $('#hinfo').innerHTML=`<span class="tagx cat">${state.posts.filter(p=>p.tipo!=='duda_receta').length} publicaciones</span>`+(pend?`<span class="tagx alta">${pend} checklist pendientes</span>`:'');
   // Los formatos que ve cada rol se configuran en Usuarios y permisos (prep_roles.permisos.formatos).
   // state.formatos = null significa "todos".
-  const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu']];
-  const visibles=state.formatos?TABS.filter(t=>state.formatos.includes(t[0])):TABS;
+  const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu'],['jefeservicio','Jefe de Servicio','supervisor_account']];
+  // "Inicio" (las secciones en cuadrados) lo ve todo el mundo; el resto según los formatos del rol
+  const secciones=state.formatos?TABS.filter(t=>state.formatos.includes(t[0])):TABS;
+  const visibles=[['inicio','Inicio','apps']].concat(secciones);
   if(visibles.length&&!visibles.some(t=>t[0]===state.view))state.view=visibles[0][0];
   $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
-  $('#h-add-l').textContent={tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
-  const HIDEADD=['equipo','politicas','recetario','plantillas','cursos'];
+  $('#h-add-l').textContent={inicio:'',jefeservicio:'',tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
+  const HIDEADD=['inicio','jefeservicio','equipo','politicas','recetario','plantillas','cursos'];
   $('#h-add').style.display=(!state.esAdmin||HIDEADD.includes(state.view))?'none':'';
-  if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
+  if(state.view==='inicio')renderInicio(secciones);else if(state.view==='jefeservicio')renderJefeServicio();else if(state.view==='tablon')renderTablon();else if(state.view==='equipo')renderEquipo();else if(state.view==='procedimientos')renderProcs();else if(state.view==='recetario')renderRecetario();else if(state.view==='plantillas')renderPlantillas();else if(state.view==='cursos')renderCursos();else if(state.view==='examenes')renderExamenes();else if(state.view==='briefing')renderBriefing();else if(state.view==='checklists')renderChecklists();else if(state.view==='eventualidades')renderEventualidades();else if(state.view==='calendario')renderCalendario();else if(state.view==='thetalk')renderThetalk();else if(state.view==='politicas')renderPoliticas();else renderBitacora();
 }
 
 function postCard(p){const ex=(p.contenido||'').split('\n')[0];
@@ -997,6 +1049,246 @@ function abrirChecklistNuevo(){
       const{error}=await sb.from('lb_checklists').insert({marca_id:MARCA,local_id:LOCAL,nombre:n,area:$('#c-area').value,turno:$('#c-turno').value,items:its});
       if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadChecklists();render();toast('Servido · checklist creado','ok')};
   };draw();openSheet();
+}
+
+/* ---------- Inicio: todas las secciones del libro en cuadrados ---------- */
+const SEC_INFO={
+  tablon:['Comunicados y avisos del equipo','#1e5af9'],equipo:['Quién es quién en la casa','#10b981'],
+  procedimientos:['SOPs y manuales de operación','#171c20'],recetario:['Fichas de cocina y bar','#ff3b30'],
+  plantillas:['Formatos listos para usar','#7c3aed'],cursos:['Academia y cursos de la casa','#1e5af9'],
+  examenes:['Evaluaciones y notas del equipo','#ffcc00'],briefing:['Briefing diario antes del turno','#ff3b30'],
+  checklists:['Apertura, cierre y limpieza','#10b981'],eventualidades:['Lo que pasó en el turno','#b45309'],
+  calendario:['Eventos, capacitaciones y asistencia','#1e5af9'],thetalk:['Conversaciones uno a uno','#7c3aed'],
+  politicas:['Reglas de la casa','#171c20'],bitacora:['Registro de novedades','#b45309'],
+  jefeservicio:['Plan de trabajo, KPI, tareas y plan del día','#ff3b30']};
+function tileBadge(k){
+  if(k==='checklists'){const p=state.checklists.filter(c=>!runCompleto(c)).length;return p?[p+' pendiente'+(p>1?'s':''),'']:null}
+  if(k==='eventualidades'){const n=(state.eventualidades||[]).filter(e=>e.fecha===hoyISO()).length;return n?[n+' hoy','']:null}
+  if(k==='jefeservicio'){const v=state.js.tareas.filter(tareaVencida).length,a=state.js.tareas.filter(t=>t.estado!=='hecha').length;
+    return v?[v+' vencida'+(v>1?'s':''),'red']:a?[a+' tarea'+(a>1?'s':'')+' abierta'+(a>1?'s':''),'']:null}
+  if(k==='examenes'){const n=(state.examenes||[]).filter(e=>e.activo!==false).length;return n?[n+' activo'+(n>1?'s':''),'']:null}
+  return null;
+}
+function renderInicio(secciones){
+  $('#screen').innerHTML=`<div class="lt-intro">Todo El Libro en un lugar. Toca una sección para entrar.</div>
+   <div class="ltgrid">${secciones.map(([k,l,i])=>{const inf=SEC_INFO[k]||['','#1e5af9'],b=tileBadge(k);
+     return `<button class="ltile${k==='jefeservicio'?' dest':''}" data-sec="${k}" style="--ac:${inf[1]}"><span class="material-symbols-outlined ico">${i}</span><div class="nm">${l}</div><div class="ds">${inf[0]}</div>${b?`<span class="bd ${b[1]}">${b[0]}</span>`:''}</button>`}).join('')}</div>`;
+  $$('#screen [data-sec]').forEach(b=>b.onclick=()=>{state.view=b.dataset.sec;state.cat='todas';render();window.scrollTo(0,0)});
+}
+
+/* ---------- Jefe de Servicio (corporativo: va por marca, no por sede) ----------
+   Tablas lb_js_plan, lb_js_kpis, lb_js_kpi_valores, lb_js_tareas, lb_js_dias (RLS por marca).
+   Edita la gerencia o un rol con El Libro >= operar; el resto solo lee. */
+const JS_TABS=[['plan','Plan de trabajo','map'],['kpi','KPI','monitoring'],['tareas','Tareas','task_alt'],['dia','Plan del día','today']];
+const JS_ESTADOS=[['pendiente','Pendiente'],['en_proceso','En proceso'],['bloqueada','Bloqueada'],['hecha','Hecha']];
+const JS_PLAN_BASE=['Objetivo del puesto','Responsabilidades','Rutina semanal y visitas a los locales','Estándares de servicio que audita','Formación del equipo','Reportes y reuniones'];
+async function loadJS(){
+  try{const[p,k,v,t,d]=await Promise.all([
+      sb.from('lb_js_plan').select('*').eq('marca_id',MARCA).order('orden').order('created_at'),
+      sb.from('lb_js_kpis').select('*').eq('marca_id',MARCA).eq('activo',true).order('orden').order('created_at'),
+      sb.from('lb_js_kpi_valores').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}).limit(600),
+      sb.from('lb_js_tareas').select('*').eq('marca_id',MARCA).order('created_at',{ascending:false}).limit(400),
+      sb.from('lb_js_dias').select('*').eq('marca_id',MARCA).order('fecha',{ascending:false}).limit(90)]);
+    state.js={plan:p.data||[],kpis:k.data||[],vals:v.data||[],tareas:t.data||[],dias:d.data||[]};
+  }catch(e){state.js={plan:[],kpis:[],vals:[],tareas:[],dias:[]}}
+}
+async function loadLocales(){try{const{data}=await sb.from('inv_locales').select('id,nombre').eq('marca_id',MARCA).order('id');state.locales=data||[]}catch(e){state.locales=[]}}
+function jsEdit(){return !!(state.esAdmin||state.puedeRecetas)}
+const escA=t=>escH(t).replace(/"/g,'&quot;');
+function sedeNombre(id){const l=state.locales.find(x=>x.id===id);return l?l.nombre:id}
+function sedeOpts(sel){return `<option value="">Todas / corporativo</option>`+state.locales.map(l=>`<option value="${l.id}" ${sel===l.id?'selected':''}>${escH(l.nombre)}</option>`).join('')}
+function fmtN(n,u){if(n==null||n==='')return'—';const x=Number(n);const s=Number.isInteger(x)?String(x):String(Math.round(x*10)/10);return u==='%'?s+'%':u==='S/'?'S/ '+s:(u?s+' '+u:s)}
+function fechaLarga(f){try{const d=new Date(f+'T12:00:00');return d.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'})}catch(e){return f}}
+function sumDias(f,n){const d=new Date(f+'T12:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function kpiVals(k){return state.js.vals.filter(v=>v.kpi_id===k.id).sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0)}
+function kpiOk(k,val){if(val==null||k.meta==null)return null;return k.sentido==='menor'?Number(val)<=Number(k.meta):Number(val)>=Number(k.meta)}
+function tareaVencida(t){return t.estado!=='hecha'&&!!t.vence&&t.vence<hoyISO()}
+function estadoLbl(e){const x=JS_ESTADOS.find(s=>s[0]===e);return x?x[1]:e}
+function diaDe(f){return state.js.dias.find(d=>d.fecha===f)}
+function diaPct(d){const it=(d&&Array.isArray(d.items))?d.items:[];return it.length?Math.round(it.filter(i=>i.hecho).length*100/it.length):null}
+async function jsReload(){await loadJS();render()}
+
+function renderJefeServicio(){
+  state.jsTab=state.jsTab||'plan';
+  const J=state.js,hoy=hoyISO();
+  const kOk=J.kpis.filter(k=>{const vs=kpiVals(k);return vs.length&&kpiOk(k,vs[vs.length-1].valor)}).length;
+  const abiertas=J.tareas.filter(t=>t.estado!=='hecha').length,venc=J.tareas.filter(tareaVencida).length;
+  const pHoy=diaPct(diaDe(hoy));
+  const tabs=`<div class="chips" style="margin:4px 0 14px">${JS_TABS.map(([k,l,i])=>`<button class="chip ${state.jsTab===k?'active':''}" data-jt="${k}"><span class="material-symbols-outlined" style="font-size:15px">${i}</span> ${l}</button>`).join('')}</div>`;
+  const body=state.jsTab==='plan'?jsPlanHTML():state.jsTab==='kpi'?jsKpiHTML():state.jsTab==='tareas'?jsTareasHTML():jsDiaHTML();
+  $('#screen').innerHTML=`<div class="grp-t" style="margin-top:0">Jefe de Servicio <span style="font-family:var(--font-mono);font-size:11px;opacity:.55">· corporativo${jsEdit()?'':' · solo lectura'}</span></div>
+    <div class="jsum">
+      <div class="jk"><div class="jl">KPI en meta</div><div class="jv">${J.kpis.length?kOk+'/'+J.kpis.length:'—'}</div></div>
+      <div class="jk"><div class="jl">Tareas abiertas</div><div class="jv">${abiertas}</div>${venc?`<div class="jx">${venc} vencida${venc>1?'s':''}</div>`:''}</div>
+      <div class="jk"><div class="jl">Plan de hoy</div><div class="jv">${pHoy==null?'—':pHoy+'%'}</div></div></div>`+tabs+body;
+  $$('#screen [data-jt]').forEach(b=>b.onclick=()=>{state.jsTab=b.dataset.jt;renderJefeServicio()});
+  wireJS();
+}
+
+/* Plan de trabajo: bloques de texto ordenados */
+function jsPlanHTML(){const P=state.js.plan,ed=jsEdit();
+  if(!P.length)return `<div class="empty">Todavía no hay plan de trabajo cargado.</div>`+(ed?`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+    <button class="btn-ico primary" data-jsa="plan-nuevo"><span class="material-symbols-outlined" style="font-size:16px">add</span>Agregar bloque</button>
+    <button class="btn-ico" data-jsa="plan-base"><span class="material-symbols-outlined" style="font-size:16px">view_agenda</span>Empezar con estructura sugerida</button></div>`:'');
+  return P.map((b,i)=>`<div class="jplan" data-jp="${b.id}"><div class="jpn">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><h3>${escH(b.titulo)}</h3><div class="contenido" style="font-size:14px">${escH(b.contenido||'')||'<span style="opacity:.5">Por completar</span>'}</div></div>${ed?'<span class="material-symbols-outlined" style="opacity:.4">edit</span>':''}</div>`).join('')
+    +(ed?`<button class="btn ghost" data-jsa="plan-nuevo" style="margin-top:6px">+ Agregar bloque</button>`:'');
+}
+function jsPlanSheet(b){const ed=!!b;
+  setHead('🗺️',ed?'Editar bloque':'Nuevo bloque','Plan de trabajo · Jefe de Servicio');
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Título</div><input class="input" id="jp-t" value="${ed?escA(b.titulo):''}"></div>
+    <div class="sheet-section"><div class="field-lbl">Contenido</div><textarea class="input" id="jp-c" style="min-height:220px" placeholder="Una línea por punto">${ed?escH(b.contenido||''):''}</textarea></div>
+    <div class="sheet-section"><div class="field-lbl">Orden</div><input class="input" id="jp-o" type="number" value="${ed?(b.orden||0):(state.js.plan.length+1)}"></div>
+    <div class="sheet-section"><button class="btn primary" id="jp-s">${ed?'Guardar cambios':'Agregar'}</button>${ed?'<button class="btn ghost" id="jp-d" style="margin-top:8px;color:var(--secondary)">Eliminar bloque</button>':''}</div>`;
+  openSheet();
+  $('#jp-s').onclick=async()=>{const t=$('#jp-t').value.trim();if(!t){toast('Ponle un título','warn');return}
+    const p={titulo:t,contenido:$('#jp-c').value,orden:Number($('#jp-o').value)||0,updated_at:nowISO()};
+    const{error}=ed?await sb.from('lb_js_plan').update(p).eq('id',b.id):await sb.from('lb_js_plan').insert(Object.assign({marca_id:MARCA},p));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await jsReload();toast('Servido · plan actualizado','ok')};
+  if(ed)$('#jp-d').onclick=async()=>{if(!confirm('¿Eliminar este bloque del plan?'))return;await sb.from('lb_js_plan').delete().eq('id',b.id);closeSheet();await jsReload()};
+}
+async function jsPlanBase(){
+  const{error}=await sb.from('lb_js_plan').insert(JS_PLAN_BASE.map((t,i)=>({marca_id:MARCA,titulo:t,contenido:'',orden:i+1})));
+  if(error){toast('Atrás: '+error.message,'err');return}await jsReload();toast('Va · completa cada bloque','ok');
+}
+
+/* KPI: meta + registro periódico de valores */
+function jsKpiHTML(){const K=state.js.kpis,ed=jsEdit();
+  if(!K.length)return `<div class="empty">Sin KPI definidos.</div>`+(ed?`<div style="text-align:center"><button class="btn-ico primary" data-jsa="kpi-nuevo"><span class="material-symbols-outlined" style="font-size:16px">add</span>Nuevo KPI</button></div>`:'');
+  return `<div class="jkgrid">`+K.map(k=>{const vs=kpiVals(k),u=vs[vs.length-1],ok=u?kpiOk(k,u.valor):null,last=vs.slice(-8);
+      const mx=Math.max(1,k.meta!=null?Number(k.meta):0,...last.map(v=>Number(v.valor)));
+      const bars=last.map(v=>`<span style="height:${Math.max(4,Math.round(Number(v.valor)/mx*40))}px;background:${kpiOk(k,v.valor)===false?'var(--secondary)':'var(--primary)'}" title="${v.fecha}: ${fmtN(v.valor,k.unidad)}"></span>`).join('');
+      return `<div class="jkpi ${ok===true?'ok':ok===false?'bad':''}" data-jk="${k.id}">
+        <div class="jkh"><div style="flex:1;min-width:0"><div class="jkn">${escH(k.nombre)}</div><div class="jkm">Meta ${k.sentido==='menor'?'≤':'≥'} ${fmtN(k.meta,k.unidad)} · ${k.frecuencia}</div></div>${ok===null?'':`<span class="tagx ${ok?'':'alta'}" style="${ok?'background:var(--green-soft)':''}">${ok?'En meta':'Fuera'}</span>`}</div>
+        <div class="jkv">${u?fmtN(u.valor,k.unidad):'—'}</div><div class="jkm">${u?'Último registro: '+u.fecha:'Sin registros'}</div>
+        ${last.length?`<div class="jbars">${bars}</div>`:''}
+        ${ed?`<button class="btn-ico" data-jkr="${k.id}" style="width:100%;justify-content:center;margin-top:10px"><span class="material-symbols-outlined" style="font-size:16px">add_chart</span>Registrar valor</button>`:''}</div>`}).join('')+`</div>`
+    +(ed?`<button class="btn ghost" data-jsa="kpi-nuevo" style="margin-top:12px">+ Nuevo KPI</button>`:'');
+}
+function jsKpiSheet(k){const ed=!!k,vs=ed?kpiVals(k).slice().reverse():[],puede=jsEdit();
+  setHead('📈',ed?k.nombre:'Nuevo KPI','KPI · Jefe de Servicio');
+  $('#sheet-body').innerHTML=(puede?`<div class="sheet-section"><div class="field-lbl">Nombre del KPI</div><input class="input" id="jk-n" value="${ed?escA(k.nombre):''}" placeholder="Ej. Puntaje Mystery Shopper"></div>
+    <div class="sheet-section"><div class="field-lbl">Cómo se mide</div><textarea class="input" id="jk-d" style="min-height:70px">${ed?escH(k.descripcion||''):''}</textarea></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Meta</div><input class="input" id="jk-m" type="number" step="any" value="${ed&&k.meta!=null?k.meta:''}"></div><div><div class="field-lbl">Unidad</div><input class="input" id="jk-u" value="${ed?escA(k.unidad||''):''}" placeholder="%, pts, S/, min"></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Cumple si el valor es</div><select class="select" id="jk-s"><option value="mayor">Mayor o igual a la meta</option><option value="menor">Menor o igual a la meta</option></select></div><div><div class="field-lbl">Frecuencia</div><select class="select" id="jk-f"><option value="diaria">Diaria</option><option value="semanal">Semanal</option><option value="mensual">Mensual</option></select></div></div>
+    <div class="sheet-section"><button class="btn primary" id="jk-save">${ed?'Guardar cambios':'Crear KPI'}</button>${ed?'<button class="btn ghost" id="jk-del" style="margin-top:8px;color:var(--secondary)">Quitar KPI</button>':''}</div>`
+    :`<div class="sheet-section contenido">${escH(k.descripcion||'Sin descripción')}</div><div class="sheet-section mono" style="font-size:12px">Meta ${k.sentido==='menor'?'≤':'≥'} ${fmtN(k.meta,k.unidad)} · ${k.frecuencia}</div>`)
+    +(ed?`<div class="sheet-section"><div class="field-lbl">Historial</div>${vs.length?vs.map(v=>`<div class="jhist"><span class="mono">${v.fecha}</span><b style="${kpiOk(k,v.valor)===false?'color:var(--secondary)':''}">${fmtN(v.valor,k.unidad)}</b><span style="flex:1;opacity:.7;font-size:12px">${escH(v.nota||'')}</span>${puede?`<button class="btn-ico" data-jvd="${v.id}" style="padding:4px 8px;box-shadow:none" title="Borrar registro"><span class="material-symbols-outlined" style="font-size:15px">delete</span></button>`:''}</div>`).join(''):'<div style="opacity:.55;font-size:13px">Sin registros todavía.</div>'}</div>`:'');
+  openSheet();
+  if(!puede)return;
+  if(ed){$('#jk-s').value=k.sentido||'mayor';$('#jk-f').value=k.frecuencia||'mensual'}else $('#jk-f').value='mensual';
+  $('#jk-save').onclick=async()=>{const n=$('#jk-n').value.trim();if(!n){toast('Ponle nombre al KPI','warn');return}
+    const m=$('#jk-m').value;
+    const p={nombre:n,descripcion:$('#jk-d').value||null,meta:m===''?null:Number(m),unidad:$('#jk-u').value.trim()||null,sentido:$('#jk-s').value,frecuencia:$('#jk-f').value};
+    const{error}=ed?await sb.from('lb_js_kpis').update(p).eq('id',k.id):await sb.from('lb_js_kpis').insert(Object.assign({marca_id:MARCA,orden:state.js.kpis.length+1},p));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await jsReload();toast('Servido · KPI guardado','ok')};
+  if(ed){
+    $('#jk-del').onclick=async()=>{if(!confirm('¿Quitar este KPI? Su historial se conserva.'))return;await sb.from('lb_js_kpis').update({activo:false}).eq('id',k.id);closeSheet();await jsReload()};
+    $$('#sheet-body [data-jvd]').forEach(b=>b.onclick=async()=>{if(!confirm('¿Borrar este registro?'))return;await sb.from('lb_js_kpi_valores').delete().eq('id',b.dataset.jvd);await loadJS();render();jsKpiSheet(state.js.kpis.find(x=>x.id===k.id))});
+  }
+}
+function jsValorSheet(k){
+  setHead('📈','Registrar valor',k.nombre);
+  $('#sheet-body').innerHTML=`<div class="sheet-section grid2"><div><div class="field-lbl">Fecha</div><input class="input" id="jv-f" type="date" value="${hoyISO()}"></div><div><div class="field-lbl">Valor${k.unidad?' ('+escH(k.unidad)+')':''}</div><input class="input" id="jv-v" type="number" step="any" inputmode="decimal"></div></div>
+    <div class="sheet-section"><div class="field-lbl">Nota (opcional)</div><input class="input" id="jv-n" placeholder="Fuente, contexto…"></div>
+    <div class="sheet-section"><div class="mono" style="font-size:11px;opacity:.6;margin-bottom:8px">Meta ${k.sentido==='menor'?'≤':'≥'} ${fmtN(k.meta,k.unidad)} · si ya hay un valor en esa fecha, se reemplaza</div><button class="btn primary" id="jv-s">Registrar</button></div>`;
+  openSheet();
+  $('#jv-s').onclick=async()=>{const v=$('#jv-v').value;if(v===''){toast('Escribe el valor','warn');return}
+    const{error}=await sb.from('lb_js_kpi_valores').upsert({kpi_id:k.id,marca_id:MARCA,fecha:$('#jv-f').value,valor:Number(v),nota:$('#jv-n').value||null},{onConflict:'kpi_id,fecha'});
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await jsReload();toast('Servido · valor registrado','ok')};
+}
+
+/* Tareas: seguimiento con estado, sede, responsable y vencimiento */
+function jsTareasHTML(){const T=state.js.tareas,ed=jsEdit();state.jsFil=state.jsFil||'abiertas';const fil=state.jsFil,pr={alta:0,media:1,baja:2};
+  const L=T.filter(t=>fil==='abiertas'?t.estado!=='hecha':fil==='vencidas'?tareaVencida(t):fil==='hechas'?t.estado==='hecha':true)
+    .sort((a,b)=>{const h=(a.estado==='hecha')-(b.estado==='hecha');if(h)return h;const va=a.vence||'9999-12-31',vb=b.vence||'9999-12-31';if(va!==vb)return va<vb?-1:1;return (pr[a.prioridad]||1)-(pr[b.prioridad]||1)});
+  const cnt={abiertas:T.filter(t=>t.estado!=='hecha').length,vencidas:T.filter(tareaVencida).length,hechas:T.filter(t=>t.estado==='hecha').length,todas:T.length};
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div class="chips" style="margin:0;flex:1">${[['abiertas','Abiertas'],['vencidas','Vencidas'],['hechas','Hechas'],['todas','Todas']].map(([k,l])=>`<button class="chip ${fil===k?'active':''}" data-jf="${k}">${l} · ${cnt[k]}</button>`).join('')}</div>
+    ${ed?`<button class="btn-ico primary" data-jsa="tarea-nueva" style="width:auto"><span class="material-symbols-outlined" style="font-size:16px">add</span>Nueva tarea</button>`:''}</div>`
+   +(L.length?L.map(t=>`<div class="jtask ${t.estado} ${tareaVencida(t)?'venc':''}" data-jtk="${t.id}">
+      <button class="box ${t.estado==='hecha'?'on':''}" data-jtc="${t.id}" ${ed?'':'disabled'} title="Marcar como hecha">${t.estado==='hecha'?'<span class="material-symbols-outlined" style="font-size:18px">check</span>':''}</button>
+      <div style="flex:1;min-width:0"><div class="jtt">${escH(t.titulo)}</div><div class="jtm">${t.vence?`<span class="${tareaVencida(t)?'venc-t':''}">${tareaVencida(t)?'venció':'vence'} ${fechaCorta(t.vence+'T12:00:00')}</span>`:''}${t.local_id?`<span>${escH(sedeNombre(t.local_id))}</span>`:''}${t.responsable?`<span>${escH(t.responsable)}</span>`:''}</div></div>
+      ${t.prioridad==='alta'?'<span class="tagx alta">alta</span>':''}<span class="tagx js-${t.estado}">${estadoLbl(t.estado)}</span></div>`).join('')
+     :`<div class="empty">${fil==='vencidas'?'Nada vencido. Servido.':'Sin tareas en esta vista.'}</div>`);
+}
+function jsTareaSheet(t,preset){const ed=!!t,puede=jsEdit();
+  setHead('✅',ed?'Tarea':'Nueva tarea','Seguimiento · Jefe de Servicio');
+  if(!puede){$('#sheet-body').innerHTML=`<div class="sheet-section"><h3 style="font-size:17px">${escH(t.titulo)}</h3><div class="contenido" style="margin-top:6px">${escH(t.detalle||'')}</div></div>
+    <div class="sheet-section mono" style="font-size:12px">${estadoLbl(t.estado)} · prioridad ${t.prioridad}${t.vence?' · vence '+t.vence:''}${t.local_id?' · '+escH(sedeNombre(t.local_id)):''}${t.responsable?' · '+escH(t.responsable):''}</div>`;openSheet();return}
+  const r=t||Object.assign({estado:'pendiente',prioridad:'media'},preset||{});
+  $('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Tarea</div><input class="input" id="jt-t" value="${escA(r.titulo||'')}"></div>
+    <div class="sheet-section"><div class="field-lbl">Detalle</div><textarea class="input" id="jt-d" style="min-height:90px">${escH(r.detalle||'')}</textarea></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Sede</div><select class="select" id="jt-l">${sedeOpts(r.local_id||'')}</select></div><div><div class="field-lbl">Responsable</div><input class="input" id="jt-r" value="${escA(r.responsable||'')}" placeholder="Jefe de Servicio"></div></div>
+    <div class="sheet-section grid2"><div><div class="field-lbl">Vence</div><input class="input" id="jt-v" type="date" value="${r.vence||''}"></div><div><div class="field-lbl">Prioridad</div><select class="select" id="jt-p"><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select></div></div>
+    <div class="sheet-section"><div class="field-lbl">Estado</div><div class="chips" id="jt-e">${JS_ESTADOS.map(([k,l])=>`<button class="chip ${r.estado===k?'active':''}" data-e="${k}">${l}</button>`).join('')}</div></div>
+    <div class="sheet-section"><button class="btn primary" id="jt-s">${ed?'Guardar cambios':'Crear tarea'}</button>${ed?'<button class="btn ghost" id="jt-x" style="margin-top:8px;color:var(--secondary)">Eliminar tarea</button>':''}</div>`;
+  openSheet();
+  $('#jt-p').value=r.prioridad||'media';let est=r.estado||'pendiente';
+  $$('#jt-e [data-e]').forEach(b=>b.onclick=()=>{est=b.dataset.e;$$('#jt-e [data-e]').forEach(x=>x.classList.toggle('active',x===b))});
+  $('#jt-s').onclick=async()=>{const ti=$('#jt-t').value.trim();if(!ti){toast('Escribe la tarea','warn');return}
+    const p={titulo:ti,detalle:$('#jt-d').value||null,local_id:$('#jt-l').value||null,responsable:$('#jt-r').value.trim()||null,vence:$('#jt-v').value||null,prioridad:$('#jt-p').value,estado:est,hecha_at:est==='hecha'?((t&&t.hecha_at)||nowISO()):null};
+    const{error}=ed?await sb.from('lb_js_tareas').update(p).eq('id',t.id):await sb.from('lb_js_tareas').insert(Object.assign({marca_id:MARCA},p));
+    if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await jsReload();toast(ed?'Va · tarea actualizada':'Servido · tarea creada','ok')};
+  if(ed)$('#jt-x').onclick=async()=>{if(!confirm('¿Eliminar esta tarea?'))return;await sb.from('lb_js_tareas').delete().eq('id',t.id);closeSheet();await jsReload()};
+}
+async function jsToggleTarea(id){const t=state.js.tareas.find(x=>x.id===id);if(!t)return;const hecha=t.estado!=='hecha';
+  const{error}=await sb.from('lb_js_tareas').update({estado:hecha?'hecha':'pendiente',hecha_at:hecha?nowISO():null}).eq('id',id);
+  if(error){toast('Atrás: '+error.message,'err');return}await jsReload();if(hecha)toast('Servido · tarea hecha','ok');
+}
+
+/* Plan del día: agenda por horas con check de cumplimiento, foco y cierre */
+function jsDiaHTML(){state.jsFecha=state.jsFecha||hoyISO();const f=state.jsFecha,d=diaDe(f),ed=jsEdit(),hoy=hoyISO();
+  const it=(d&&Array.isArray(d.items))?d.items:[],pct=diaPct(d);
+  const pend=state.js.tareas.filter(t=>t.estado!=='hecha'&&t.vence&&t.vence<=f);
+  const hist=state.js.dias.filter(x=>x.fecha!==f).slice(0,10);
+  return `<div class="jday"><button class="btn-ico" data-jd="-1" style="width:auto" title="Día anterior"><span class="material-symbols-outlined">chevron_left</span></button>
+      <div class="dt">${f===hoy?'Hoy · ':''}${fechaLarga(f)}</div>
+      ${f!==hoy?`<button class="btn-ico" data-jd="0" style="width:auto">Hoy</button>`:''}
+      <button class="btn-ico" data-jd="1" style="width:auto" title="Día siguiente"><span class="material-symbols-outlined">chevron_right</span></button>
+      ${ed?`<button class="btn-ico primary" data-jsa="dia-editar" style="width:auto"><span class="material-symbols-outlined" style="font-size:16px">edit_calendar</span>${d?'Editar plan':'Armar plan'}</button>`:''}</div>
+    ${pct!=null?`<div class="mono" style="font-size:11px;font-weight:700;margin-bottom:4px">${it.filter(i=>i.hecho).length} de ${it.length} hechas · ${pct}%</div><div class="jprog"><span style="width:${pct}%"></span></div>`:''}
+    ${d&&d.notas?`<div class="jcard"><div class="field-lbl">Foco del día</div><div class="contenido" style="font-size:14px">${escH(d.notas)}</div></div>`:''}
+    <div class="jcard">${it.length?it.map((x,i)=>`<div class="jitem ${x.hecho?'on':''}"><button class="box ${x.hecho?'on':''}" data-ji="${i}" ${ed?'':'disabled'}>${x.hecho?'<span class="material-symbols-outlined" style="font-size:18px">check</span>':''}</button><span class="hr">${escH(x.hora||'')}</span><div style="flex:1;min-width:0"><div class="ac" style="font-size:14px;font-weight:600">${escH(x.actividad||'')}</div>${x.local_id?`<div class="mono" style="font-size:10.5px;opacity:.6">${escH(sedeNombre(x.local_id))}</div>`:''}</div></div>`).join('')
+      :`<div class="empty" style="padding:24px">Sin plan para este día.${ed?' Toca «Armar plan».':''}</div>`}</div>
+    ${d&&d.cierre?`<div class="jcard" style="border-left:7px solid var(--green)"><div class="field-lbl">Cierre del día</div><div class="contenido" style="font-size:14px">${escH(d.cierre)}</div></div>`:''}
+    ${pend.length?`<div class="grp-t">Tareas que vencen hasta este día</div>`+pend.map(t=>`<div class="jtask ${tareaVencida(t)?'venc':''}" data-jtk="${t.id}"><div style="flex:1;min-width:0"><div class="jtt">${escH(t.titulo)}</div><div class="jtm"><span>${t.vence}</span>${t.local_id?`<span>${escH(sedeNombre(t.local_id))}</span>`:''}</div></div><span class="tagx js-${t.estado}">${estadoLbl(t.estado)}</span></div>`).join(''):''}
+    ${hist.length?`<div class="grp-t">Días anteriores</div>`+hist.map(x=>{const p=diaPct(x);return `<div class="clk" data-jdf="${x.fecha}"><span style="font-weight:600">${fechaLarga(x.fecha)}</span><span class="prog ${p===100?'full':p?'part':'none'}">${p==null?'—':p+'%'}</span></div>`}).join(''):''}`;
+}
+function jsDiaSheet(){const f=state.jsFecha,d=diaDe(f);
+  const prev=state.js.dias.filter(x=>x.fecha<f&&Array.isArray(x.items)&&x.items.length)[0];
+  let rows=(d&&Array.isArray(d.items)&&d.items.length)?d.items.map(x=>Object.assign({},x)):[{hora:'',actividad:'',local_id:'',hecho:false}];
+  setHead('🗓️','Plan del día',fechaLarga(f));
+  const harvest=()=>{rows=rows.map((r,i)=>({hora:($('#jr-h'+i)||{}).value||'',actividad:($('#jr-a'+i)||{}).value||'',local_id:($('#jr-l'+i)||{}).value||'',hecho:!!r.hecho}))};
+  const draw=()=>{$('#sheet-body').innerHTML=`<div class="sheet-section"><div class="field-lbl">Foco del día</div><textarea class="input" id="jd-n" style="min-height:70px" placeholder="Lo más importante de hoy">${escH((d&&d.notas)||'')}</textarea></div>
+    <div class="sheet-section"><div class="field-lbl">Agenda</div>${rows.map((r,i)=>`<div class="jrow"><input class="input" id="jr-h${i}" type="time" value="${escA(r.hora)}"><input class="input" id="jr-a${i}" value="${escA(r.actividad)}" placeholder="Actividad"><select class="select jrs" id="jr-l${i}">${sedeOpts(r.local_id||'')}</select><button class="btn-ico" data-jrx="${i}" style="padding:6px;box-shadow:none;justify-content:center" title="Quitar"><span class="material-symbols-outlined" style="font-size:16px">close</span></button></div>`).join('')}
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="jd-add" style="flex:1">+ Agregar actividad</button>${!d&&prev?`<button class="btn ghost" id="jd-copy" style="flex:1">Copiar plan del ${fechaCorta(prev.fecha+'T12:00:00')}</button>`:''}</div></div>
+    <div class="sheet-section"><div class="field-lbl">Cierre del día</div><textarea class="input" id="jd-c" style="min-height:80px" placeholder="Qué se logró, qué queda pendiente">${escH((d&&d.cierre)||'')}</textarea></div>
+    <div class="sheet-section"><button class="btn primary" id="jd-s">Guardar plan</button></div>`;
+    $('#jd-add').onclick=()=>{harvest();rows.push({hora:'',actividad:'',local_id:'',hecho:false});const n=$('#jd-n').value,c=$('#jd-c').value;draw();$('#jd-n').value=n;$('#jd-c').value=c};
+    $$('#sheet-body [data-jrx]').forEach(b=>b.onclick=()=>{harvest();rows.splice(Number(b.dataset.jrx),1);if(!rows.length)rows.push({hora:'',actividad:'',local_id:'',hecho:false});const n=$('#jd-n').value,c=$('#jd-c').value;draw();$('#jd-n').value=n;$('#jd-c').value=c});
+    if($('#jd-copy'))$('#jd-copy').onclick=()=>{rows=prev.items.map(x=>({hora:x.hora||'',actividad:x.actividad||'',local_id:x.local_id||'',hecho:false}));const n=$('#jd-n').value,c=$('#jd-c').value;draw();$('#jd-n').value=n;$('#jd-c').value=c};
+    $('#jd-s').onclick=async()=>{harvest();const items=rows.filter(r=>r.actividad.trim()).map(r=>({hora:r.hora,actividad:r.actividad.trim(),local_id:r.local_id||null,hecho:!!r.hecho})).sort((a,b)=>(a.hora||'99')<(b.hora||'99')?-1:1);
+      const{error}=await sb.from('lb_js_dias').upsert({marca_id:MARCA,fecha:f,items,notas:$('#jd-n').value||null,cierre:$('#jd-c').value||null,updated_at:nowISO()},{onConflict:'marca_id,fecha'});
+      if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await jsReload();toast('Servido · plan del día guardado','ok')};
+  };draw();openSheet();
+}
+async function jsToggleItem(i){const d=diaDe(state.jsFecha);if(!d)return;const items=d.items.map(x=>Object.assign({},x));items[i].hecho=!items[i].hecho;
+  d.items=items;render();
+  const{error}=await sb.from('lb_js_dias').update({items,updated_at:nowISO()}).eq('id',d.id);if(error){toast('Atrás: '+error.message,'err');await jsReload()}
+}
+
+function wireJS(){
+  $$('#screen [data-jsa]').forEach(b=>b.onclick=()=>{const a=b.dataset.jsa;
+    if(a==='plan-nuevo')jsPlanSheet(null);else if(a==='plan-base')jsPlanBase();else if(a==='kpi-nuevo')jsKpiSheet(null);
+    else if(a==='tarea-nueva')jsTareaSheet(null);else if(a==='dia-editar')jsDiaSheet()});
+  if(jsEdit())$$('#screen [data-jp]').forEach(c=>c.onclick=()=>jsPlanSheet(state.js.plan.find(b=>b.id===c.dataset.jp)));
+  $$('#screen [data-jk]').forEach(c=>c.onclick=()=>jsKpiSheet(state.js.kpis.find(k=>k.id===c.dataset.jk)));
+  $$('#screen [data-jkr]').forEach(b=>b.onclick=e=>{e.stopPropagation();jsValorSheet(state.js.kpis.find(k=>k.id===b.dataset.jkr))});
+  $$('#screen [data-jf]').forEach(b=>b.onclick=()=>{state.jsFil=b.dataset.jf;renderJefeServicio()});
+  $$('#screen [data-jtk]').forEach(c=>c.onclick=()=>jsTareaSheet(state.js.tareas.find(t=>t.id===c.dataset.jtk)));
+  $$('#screen [data-jtc]').forEach(b=>b.onclick=e=>{e.stopPropagation();jsToggleTarea(b.dataset.jtc)});
+  $$('#screen [data-jd]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.jd);state.jsFecha=n===0?hoyISO():sumDias(state.jsFecha||hoyISO(),n);renderJefeServicio()});
+  $$('#screen [data-jdf]').forEach(c=>c.onclick=()=>{state.jsFecha=c.dataset.jdf;renderJefeServicio();window.scrollTo(0,0)});
+  $$('#screen [data-ji]').forEach(b=>b.onclick=()=>jsToggleItem(Number(b.dataset.ji)));
 }
 
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('lb_'+LOCAL)
