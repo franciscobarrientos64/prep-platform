@@ -1335,11 +1335,70 @@ function mntVer(m){
   $('#sheet-body').innerHTML=`<div class="mdoc">${sec('Asistentes',m.asistentes)}${sec('Agenda',m.agenda)}${sec('Desarrollo',m.desarrollo)}
     ${ac.length?`<h4>Acuerdos</h4>`+ac.map(a=>`<div class="macu ${a.hecho?'ok':''}"><span class="material-symbols-outlined" style="font-size:20px">${a.hecho?'check_circle':'radio_button_unchecked'}</span><div style="flex:1"><div class="mat">${escH(a.texto||'')}</div><div class="mr">${[a.responsable,a.vence?'vence '+fechaLarga(a.vence):''].filter(Boolean).map(escH).join(' · ')}</div></div></div>`).join(''):''}
     ${m.proxima?`<h4>Próxima reunión</h4><div class="mtx">${fechaLarga(m.proxima)}</div>`:''}</div>
-    ${state.esSuper?`<div style="display:flex;gap:8px;margin-top:18px"><button class="btn primary" id="mv-ed" style="flex:1">Editar</button><button class="btn ghost" id="mv-del">Borrar</button></div>`:''}`;
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn primary" id="mv-share" style="flex:1"><span class="material-symbols-outlined" style="font-size:18px">share</span>Compartir</button><button class="btn" id="mv-pdf" style="flex:1"><span class="material-symbols-outlined" style="font-size:18px">picture_as_pdf</span>Descargar PDF</button></div>
+    ${state.esSuper?`<div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost" id="mv-ed" style="flex:1">Editar</button><button class="btn ghost" id="mv-del">Borrar</button></div>`:''}`;
+  $('#mv-pdf').onclick=()=>mntExport(m,false);$('#mv-share').onclick=()=>mntExport(m,true);
   if(state.esSuper){$('#mv-ed').onclick=()=>mntSheet(m);
     $('#mv-del').onclick=async()=>{if(!confirm('¿Borrar esta minuta?'))return;const{error}=await sb.from('lb_minutas').delete().eq('id',m.id);if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadMinutas();render();toast('Servido · minuta borrada','ok')}}
   openSheet();
 }
+/* PDF de la minuta (jsPDF, se carga solo al exportar) + compartir.
+   En el celular comparte el archivo (WhatsApp, correo…); si el equipo no puede compartir archivos,
+   descarga el PDF y abre WhatsApp con el resumen en texto. */
+function loadJsPDF(){if(window.jspdf)return Promise.resolve();return new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';sc.onload=ok;sc.onerror=()=>ko(new Error('No cargó el generador de PDF'));document.head.appendChild(sc)})}
+async function logoDataURL(){try{const r=await fetch('/logos/'+MARCA+'.png');if(!r.ok)return null;const b=await r.blob();return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b)})}catch(e){return null}}
+function mntNombreArchivo(m){return ('Minuta '+m.fecha+' '+m.titulo).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 _-]/g,'').trim().replace(/\s+/g,'-')+'.pdf'}
+function mntTexto(m){const ac=(m.acuerdos||[]);
+  return `*${m.titulo}*\n${fechaLarga(m.fecha)}${m.lugar?' · '+m.lugar:''}\n`+(m.asistentes?`\n*Asistentes:* ${m.asistentes.split('\n').join(', ')}\n`:'')+
+    (ac.length?`\n*Acuerdos*\n`+ac.map((a,i)=>`${i+1}. ${a.texto}${a.responsable?' — '+a.responsable:''}${a.vence?' ('+fechaLarga(a.vence)+')':''}${a.hecho?' ✓':''}`).join('\n')+'\n':'')+
+    (m.proxima?`\n*Próxima reunión:* ${fechaLarga(m.proxima)}`:'')}
+async function mntPDF(m){
+  await loadJsPDF();const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=18,CW=W-2*M;let y=0;const cliente=window.PREP_CLIENTE||'';
+  const pie=()=>{const n=doc.getNumberOfPages();for(let i=1;i<=n;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120);doc.text('Minuta · '+cliente+' · prep.rest',M,289);doc.text(i+' / '+n,W-M,289,{align:'right'})}};
+  const nueva=()=>{doc.addPage();y=20};
+  const need=h=>{if(y+h>278)nueva()};
+  // encabezado
+  doc.setFillColor(23,28,32);doc.rect(0,0,W,30,'F');
+  const lg=await logoDataURL();if(lg){try{doc.addImage(lg,'PNG',W-M-18,6,18,18)}catch(e){}}
+  doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('MINUTA DE REUNIÓN'+(cliente?' · '+cliente.toUpperCase():''),M,11);
+  doc.setFontSize(17);doc.text(doc.splitTextToSize(m.titulo,CW-24)[0],M,20);
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text(fechaLarga(m.fecha)+(m.lugar?'  ·  '+m.lugar:''),M,26);
+  y=40;doc.setTextColor(23,28,32);
+  const titulo=t=>{need(12);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(30,90,249);doc.text(t.toUpperCase(),M,y);doc.setDrawColor(30,90,249);doc.setLineWidth(.4);doc.line(M,y+1.5,W-M,y+1.5);y+=7;doc.setTextColor(23,28,32)};
+  const parrafo=t=>{doc.setFont('helvetica','normal');doc.setFontSize(10.5);String(t).split('\n').forEach(l=>{const ls=doc.splitTextToSize(l||' ',CW);ls.forEach(x=>{need(5.5);doc.text(x,M,y);y+=5.2})});y+=4};
+  if(m.asistentes){titulo('Asistentes');parrafo(m.asistentes.split('\n').filter(Boolean).join(' · '))}
+  if(m.agenda){titulo('Agenda');parrafo(m.agenda.split('\n').filter(Boolean).map((l,i)=>(i+1)+'. '+l).join('\n'))}
+  if(m.desarrollo){titulo('Desarrollo');parrafo(m.desarrollo)}
+  const ac=m.acuerdos||[];
+  if(ac.length){titulo('Acuerdos');
+    ac.forEach((a,i)=>{const ls=doc.splitTextToSize(a.texto||'',CW-12),meta=[a.responsable?'Responsable: '+a.responsable:'',a.vence?'Vence: '+fechaLarga(a.vence):'',a.hecho?'Hecho':'Abierto'].filter(Boolean).join('   ·   ');
+      const h=ls.length*5.2+9;need(h);
+      doc.setDrawColor(0);doc.setLineWidth(.3);doc.roundedRect(M,y-4.5,CW,h,2,2);
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(String(i+1),M+3.5,y+.5);
+      doc.setFontSize(10.5);ls.forEach((x,j)=>doc.text(x,M+10,y+.5+j*5.2));
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(a.hecho?16:180,a.hecho?150:80,a.hecho?90:9);doc.text(meta,M+10,y+.5+ls.length*5.2+1);doc.setTextColor(23,28,32);
+      y+=h+3});y+=2}
+  if(m.proxima){titulo('Próxima reunión');parrafo(fechaLarga(m.proxima))}
+  pie();return doc.output('blob');
+}
+async function mntExport(m,compartir){
+  const b=$(compartir?'#mv-share':'#mv-pdf'),txt=b.innerHTML;b.disabled=true;b.textContent='Oído…';
+  try{
+    const blob=await mntPDF(m),nombre=mntNombreArchivo(m);
+    const file=new File([blob],nombre,{type:'application/pdf'});
+    if(compartir&&navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:m.titulo,text:m.titulo+' · '+fechaLarga(m.fecha)});toast('Servido · minuta compartida','ok')}
+      catch(e){if(e.name!=='AbortError')throw e}
+    }else{
+      const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=nombre;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);
+      if(compartir){window.open('https://wa.me/?text='+encodeURIComponent(mntTexto(m)),'_blank');toast('Servido · PDF descargado; adjúntalo en WhatsApp','ok')}
+      else toast('Servido · PDF descargado','ok');
+    }
+  }catch(e){toast('Atrás: '+(e.message||e),'err')}
+  finally{b.disabled=false;b.innerHTML=txt}
+}
+
 function mntSheet(m){
   if(!state.esSuper)return;const ed=!!m;
   let ac=JSON.parse(JSON.stringify((m&&m.acuerdos)||[]));
