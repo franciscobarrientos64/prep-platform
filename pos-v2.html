@@ -1423,10 +1423,24 @@ function courseSugerido(r) {
   return 2; // fondos por defecto
 }
 
-// Pasta fresca (carta de Casa Italia: «elige pasta + salsa»): relleno (ravioles) → salsa → adicional
-const RAVIOLES_RELLENOS = ['Carne de res', 'Queso ricotta, albahaca y perejil', 'Zapallito loche'];
-const PASTA_ADICIONALES = [ { id: 'add_proteina', nombre: 'Adicional proteína', precio: 5 }, { id: 'add_vegetal', nombre: 'Adicional vegetal', precio: 3 } ];
-function esPastaArmable(r) { return /pasta fresca/i.test(r.categoria_menu || '') && (state.salsas || []).length > 0; }
+// Opciones por plato: relleno, salsa, adicionales… se configuran en Recetas › Adicionales
+// Opciones y adicionales por plato (Recetas › Adicionales, tabla inv_opciones):
+// cada grupo aplica a platos sueltos (recetas[]) o a familias enteras (categorias[]).
+function gruposDe(r) {
+  return (state.opciones || []).filter(g => g.activo !== false && ((g.recetas || []).includes(r.id) || (g.categorias || []).includes(r.categoria_menu)))
+    .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+}
+const escO = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// "Salsa o crema" + "Salsa Pesto" → "Salsa Pesto"; "Relleno" + "Carne de res" → "Relleno: Carne de res"
+function nombreOpcion(g, o) {
+  const w = (g.nombre || '').trim().split(/\s+/)[0] || '';
+  return w && (o.nombre || '').toLowerCase().startsWith(w.toLowerCase()) ? o.nombre : (g.nombre + ': ' + o.nombre);
+}
+function etiquetaOpcion(g, o) {
+  const w = (g.nombre || '').trim().split(/\s+/)[0] || '';
+  const re = new RegExp('^' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+(de\\s+)?', 'i');
+  return w ? (o.nombre || '').replace(re, '') || o.nombre : o.nombre;
+}
 
 // CA-10: modificadores priceados (catálogo genérico)
 // precio = delta fijo en S/ · pct = delta proporcional al precio base (0.6 = +60%)
@@ -1700,11 +1714,13 @@ async function loadRecetas() {
       .eq('marca_id', MARCA);
     if (error) throw error;
     state.recetas = (data || []).filter(r => r.activo !== false);
-    // salsas de la carta (tipo salsa, de cocina): se eligen dentro de la ficha de la pasta aunque no se vendan solas
-    state.salsas = (data || []).filter(r => r.tipo === 'salsa' && r.modulo === 'cocina')
-      .sort((a, b) => (a.orden_menu || 0) - (b.orden_menu || 0) || a.nombre.localeCompare(b.nombre));
-    PrepSync.cacheSet('recetas', state.recetas); PrepSync.cacheSet('salsas', state.salsas);
-  } catch (e) { state.recetas = PrepSync.cacheGet('recetas') || state.recetas || []; state.salsas = PrepSync.cacheGet('salsas') || state.salsas || []; }
+    PrepSync.cacheSet('recetas', state.recetas);
+  } catch (e) { state.recetas = PrepSync.cacheGet('recetas') || state.recetas || []; }
+  try {
+    const { data, error } = await sb.from('inv_opciones').select('*').eq('marca_id', MARCA);
+    if (error) throw error;
+    state.opciones = data || []; PrepSync.cacheSet('opciones', state.opciones);
+  } catch (e) { state.opciones = PrepSync.cacheGet('opciones') || state.opciones || []; }
 }
 async function loadEstaciones() {
   try {
@@ -3384,7 +3400,8 @@ function openItemPicker(r, ped) {
   let urgente = false;
   let course = courseSugerido(r);          // CA-02
   const selMods = new Set();               // CA-10: ids de modificadores activos
-  const pasta = esPastaArmable(r) ? { salsa: null, relleno: null, adic: new Set(), esRav: /ravio/i.test(r.nombre) } : null;
+  const grupos = gruposDe(r);               // opciones/adicionales configurados en Recetas
+  const selG = grupos.map(() => new Set());
   const catalogoMods = modsDe(r.modulo || state.menuTab);
   const precioBase = Number(r.precio_venta) || 0;
 
@@ -3414,19 +3431,10 @@ function openItemPicker(r, ped) {
       <button class="sheet-close" id="im-close"><span class="material-symbols-outlined">close</span></button>
     </div>
     <div class="modal-body">
-      ${pasta ? `
-        ${pasta.esRav ? `<div class="sheet-section">
-          <div class="sheet-section-label">1 · Relleno <span style="color:var(--secondary)">*</span></div>
-          <div class="chips" id="im-relleno">${RAVIOLES_RELLENOS.map(x => `<button class="chip" data-v="${x}">${x}</button>`).join('')}</div>
-        </div>` : ''}
-        <div class="sheet-section">
-          <div class="sheet-section-label">${pasta.esRav ? '2' : '1'} · Salsa o crema <span style="color:var(--secondary)">*</span></div>
-          <div class="chips" id="im-salsa">${state.salsas.map(x => `<button class="chip" data-v="${x.id}">${x.nombre.replace(/^Salsa (de )?/i, '')}</button>`).join('')}</div>
-        </div>
-        <div class="sheet-section">
-          <div class="sheet-section-label">${pasta.esRav ? '3' : '2'} · Adicional (opcional)</div>
-          <div class="chips" id="im-adic">${PASTA_ADICIONALES.map(a => `<button class="chip" data-v="${a.id}">${a.nombre.replace('Adicional ', '')} <span style="opacity:.6">+${money(a.precio)}</span></button>`).join('')}</div>
-        </div>` : ''}
+      ${grupos.map((g, gi) => `<div class="sheet-section">
+          <div class="sheet-section-label">${gi + 1} · ${escO(g.nombre)} ${g.obligatorio ? '<span style="color:var(--secondary)">*</span>' : `<span style="opacity:.6;text-transform:none">(opcional${g.multiple ? ', puedes marcar varios' : ''})</span>`}</div>
+          <div class="chips" data-grupo="${gi}">${(g.opciones || []).map((o, oi) => `<button class="chip" data-oi="${oi}">${escO(etiquetaOpcion(g, o))}${+o.precio > 0 ? ` <span style="opacity:.6">+${money(+o.precio)}</span>` : ''}</button>`).join('')}</div>
+        </div>`).join('')}
       <div class="sheet-section">
         <div class="sheet-section-label">Tiempo / curso</div>
         <div class="chips" id="im-course">${courseBtns}</div>
@@ -3485,11 +3493,10 @@ function openItemPicker(r, ped) {
 
   const modsActivos = () => {
     const base = catalogoMods.filter(m => selMods.has(m.id));
-    if (!pasta) return base;
-    const pre = [];
-    if (pasta.relleno) pre.push({ id: 'relleno', nombre: 'Relleno: ' + pasta.relleno, precio: 0 });
-    if (pasta.salsa) { const sa = state.salsas.find(x => x.id === pasta.salsa); if (sa) pre.push({ id: 'salsa:' + sa.id, nombre: sa.nombre, precio: 0 }); }
-    PASTA_ADICIONALES.forEach(a => { if (pasta.adic.has(a.id)) pre.push(a); });
+    const pre = grupos.flatMap((g, gi) => [...selG[gi]].sort((a, b) => a - b).map(oi => {
+      const o = (g.opciones || [])[oi] || {};
+      return { id: 'op:' + g.id + ':' + oi, nombre: nombreOpcion(g, o), precio: +o.precio || 0 };
+    }));
     return [...pre, ...base];
   };
   const precioUnit = () => +(precioBase + deltaModificadores(modsActivos(), precioBase)).toFixed(2);
@@ -3511,17 +3518,15 @@ function openItemPicker(r, ped) {
   const updSillas = () => $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => {
     b.classList.toggle('active', +b.dataset.s === seat);
   });
-  if (pasta) {
-    const uno = (sel, key) => $$(sel + ' .chip').forEach(b => b.onclick = () => {
-      pasta[key] = pasta[key] === b.dataset.v ? null : b.dataset.v;
-      $$(sel + ' .chip').forEach(x => x.classList.toggle('active', x.dataset.v === pasta[key]));
+  $$('#item-modal-inner [data-grupo]').forEach(box => {
+    const gi = +box.dataset.grupo, g = grupos[gi], set = selG[gi];
+    box.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      const oi = +b.dataset.oi;
+      if (set.has(oi)) set.delete(oi); else { if (!g.multiple) set.clear(); set.add(oi); }
+      box.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', set.has(+x.dataset.oi)));
+      refrescarPrecio();
     });
-    uno('#im-salsa', 'salsa'); if (pasta.esRav) uno('#im-relleno', 'relleno');
-    $$('#im-adic .chip').forEach(b => b.onclick = () => {
-      const id = b.dataset.v; if (pasta.adic.has(id)) pasta.adic.delete(id); else pasta.adic.add(id);
-      b.classList.toggle('active', pasta.adic.has(id)); refrescarPrecio();
-    });
-  }
+  });
   $('#im-minus').onclick = () => { if (qty>1) qty--; updQty(); };
   $('#im-plus').onclick = () => { if (qty<20) qty++; updQty(); };
   $$('#item-modal-inner .silla-picker .silla-pick-btn').forEach(b => b.onclick = () => { seat = +b.dataset.s; updSillas(); refrescarAlerg(); });
@@ -3551,8 +3556,8 @@ function openItemPicker(r, ped) {
   $('#im-cancel').onclick = () => $('#item-modal').classList.remove('open');
   $('#im-close').onclick = () => $('#item-modal').classList.remove('open');
   $('#im-add').onclick = async () => {
-    if (pasta && pasta.esRav && !pasta.relleno) { toast('Elige el relleno de los ravioles', 'warn'); return; }
-    if (pasta && !pasta.salsa) { toast('Elige la salsa o crema', 'warn'); return; }
+    const falta = grupos.find((g, gi) => g.obligatorio && !selG[gi].size);
+    if (falta) { toast('Elige: ' + falta.nombre.toLowerCase(), 'warn'); return; }
     const notasFinal = $('#im-notas').value.trim();
     await agregarItem(r, qty, seat, notasFinal, urgente, ped, modsActivos(), course);
     $('#item-modal').classList.remove('open');

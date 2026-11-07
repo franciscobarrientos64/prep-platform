@@ -113,7 +113,7 @@ function pedirSeccion(sel,prev){
   const o=document.createElement('option');o.textContent=n;o.selected=true;sel.insertBefore(o,sel.lastElementChild);return n;
 }
 const FCDEF=30;
-const state={recetas:[],productos:[],menus:[],stockMap:{},ventas:[],view:'recetas',cat:'todas',q:'',channel:null};
+const state={recetas:[],productos:[],menus:[],opciones:[],stockMap:{},ventas:[],view:'recetas',cat:'todas',q:'',channel:null};
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 function money(n){return 'S/ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function nowISO(){return new Date().toISOString()}
@@ -137,21 +137,22 @@ function setHead(mk,t,m,foto){const el=$('#sheet-mark');if(foto){el.style.backgr
 
 async function loadRecetas(){const{data}=await sb.from('inv_recetas').select('*').eq('marca_id',MARCA).order('categoria_menu').order('orden_menu');state.recetas=data||[]}
 async function loadProductos(){const{data}=await sb.from('inv_productos').select('id,nombre,unidad,costo').eq('marca_id',MARCA).order('nombre');state.productos=data||[]}
+async function loadOpciones(){const{data}=await sb.from('inv_opciones').select('*').eq('marca_id',MARCA).order('orden');state.opciones=data||[]}
 async function loadMenus(){const{data}=await sb.from('inv_menus').select('*').eq('marca_id',MARCA).order('orden');state.menus=data||[]}
 async function loadStock(){const{data}=await sb.from('inv_stock_actual').select('producto_id,stock').eq('local_id',LOCAL);const m={};(data||[]).forEach(r=>m[r.producto_id]=Number(r.stock||0));state.stockMap=m}
 // Trae todas las filas paginando de a 1000 (PostgREST corta en 1000 por consulta).
 async function fetchAll(mk){const out=[];for(let f=0;;f+=1000){const{data,error}=await mk().order('id').range(f,f+999);if(error)throw error;out.push(...(data||[]));if(!data||data.length<1000)break}return out}
 async function loadVentas(){const d=new Date();d.setDate(d.getDate()-30);try{state.ventas=(await fetchAll(()=>sb.from('ca_pedido_items').select('receta_id,qty,estado,ca_pedidos!inner(local_id,created_at)').eq('ca_pedidos.local_id',LOCAL).gte('ca_pedidos.created_at',d.toISOString()).neq('estado','cancelado'))).map(({ca_pedidos,...r})=>r)}catch(e){console.error(e);state.ventas=[]}}
 function stockP(pid){return state.stockMap[pid]||0}
-async function loadAll(){await Promise.all([loadRecetas(),loadProductos(),loadMenus(),loadStock(),loadVentas()]);render();subscribe();$('#boot').classList.add('gone')}
+async function loadAll(){await Promise.all([loadRecetas(),loadProductos(),loadMenus(),loadOpciones(),loadStock(),loadVentas()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const costeadas=state.recetas.filter(r=>ings(r).length>0).length;
   $('#hinfo').innerHTML=`<span class="pill">${state.recetas.length} recetas</span><span class="pill">${costeadas} costeadas</span>`;
-  $('#tabs').innerHTML=[['recetas','Recetas + costeo','restaurant_menu'],['carta','Carta / menú','menu_book'],['menus','Menús','restaurant'],['intel','Inteligencia','insights']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=[['recetas','Recetas + costeo','restaurant_menu'],['carta','Carta / menú','menu_book'],['adicionales','Adicionales','add_circle'],['menus','Menús','restaurant'],['intel','Inteligencia','insights']].map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}"><span class="material-symbols-outlined" style="font-size:16px">${i}</span>${l}</button>`).join('');
   $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render()});
-  $('#h-add-l').textContent=state.view==='menus'?'Menú':'Receta';
-  if(state.view==='recetas')renderRecetas();else if(state.view==='carta')renderCarta();else if(state.view==='menus')renderMenus();else renderIntel();
+  $('#h-add-l').textContent=state.view==='menus'?'Menú':state.view==='adicionales'?'Grupo':'Receta';
+  if(state.view==='recetas')renderRecetas();else if(state.view==='carta')renderCarta();else if(state.view==='adicionales')renderOpciones();else if(state.view==='menus')renderMenus();else renderIntel();
 }
 
 function renderRecetas(){
@@ -306,6 +307,64 @@ function renderIntel(){
   };
 }
 
+/* ====== ADICIONALES / OPCIONES POR PLATO (tabla inv_opciones) ======
+   Un grupo = una pregunta que el POS hace al tomar el plato (ej. «Salsa o crema», «Relleno», «Adicional de proteína»).
+   Aplica a familias enteras (categorias) y/o a platos sueltos (recetas). */
+const escH=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function aplicaTxt(g){const f=(g.categorias||[]),r=(g.recetas||[]).map(id=>state.recetas.find(x=>x.id===id)?.nombre).filter(Boolean);return [...f.map(x=>'Familia '+x),...r].join(' · ')||'Sin asignar'}
+function renderOpciones(){
+  const gs=state.opciones;
+  $('#screen').innerHTML=`<div style="font-family:var(--font-mono);font-size:11px;opacity:.6;margin-bottom:10px">Cada grupo es una pregunta que el POS hace al marcar el plato: salsa, relleno, adicional de proteína, término… Asígnalo a una familia completa o a platos sueltos. Con precio 0 es gratis.</div>`+
+    (gs.map(g=>`<div class="rec" data-gid="${g.id}" style="${g.activo===false?'opacity:.5':''}"><div class="em"><span class="material-symbols-outlined">${g.multiple?'checklist':'radio_button_checked'}</span></div><div class="info"><h3>${escH(g.nombre)} ${g.obligatorio?'<span class="fc bad" style="font-size:9px">obligatorio</span>':'<span class="fc none" style="font-size:9px">opcional</span>'}${g.activo===false?' <span class="fc none" style="font-size:9px">pausado</span>':''}</h3>
+      <div class="meta"><span>${(g.opciones||[]).map(o=>escH(o.nombre)+(+o.precio>0?' +'+money(o.precio):'')).join(', ')||'sin opciones'}</span></div>
+      <div class="meta"><span style="opacity:.8">Aplica a: ${escH(aplicaTxt(g))}</span></div></div></div>`).join('')||'<div class="empty">Aún no hay grupos. Crea uno con «Grupo».</div>');
+  $$('#screen .rec[data-gid]').forEach(c=>c.onclick=()=>editarOpcion(state.opciones.find(g=>g.id===c.dataset.gid)));
+}
+function editarOpcion(g){
+  const ed=!!g;const c=JSON.parse(JSON.stringify(Object.assign({nombre:'',obligatorio:false,multiple:false,opciones:[{nombre:'',precio:0}],recetas:[],categorias:[],activo:true,orden:(state.opciones.length+1)},g||{})));
+  const carta=state.recetas.filter(r=>!['preparacion','salsa'].includes(r.tipo));
+  const familias=[...new Set(carta.map(r=>r.categoria_menu).filter(Boolean))];
+  const salsas=state.recetas.filter(r=>r.tipo==='salsa');
+  setHead('＋',ed?'Editar grupo':'Nuevo grupo de opciones','Lo pregunta el POS al marcar el plato');
+  let q='';
+  const draw=()=>{
+    const platos=carta.filter(r=>!q||(r.nombre||'').toLowerCase().includes(q.toLowerCase()));
+    $('#sheet-body').innerHTML=`
+      <div class="sheet-section"><div class="field-lbl">Nombre del grupo (lo ve el mesero)</div><input class="input" id="o-nom" value="${escH(c.nombre)}" placeholder="Ej. Salsa o crema · Adicional de proteína · Relleno"></div>
+      <div class="sheet-section"><div class="chips">
+        <button class="chip ${c.obligatorio?'active':''}" id="o-obl">${c.obligatorio?'Obligatorio':'Opcional'}</button>
+        <button class="chip ${c.multiple?'active':''}" id="o-mul">${c.multiple?'Puede marcar varias':'Una sola opción'}</button>
+        <button class="chip ${c.activo!==false?'active':''}" id="o-act">${c.activo!==false?'Activo':'Pausado'}</button></div></div>
+      <div class="sheet-section"><div class="field-lbl">Opciones · precio extra en S/ (0 = gratis)</div>
+        ${c.opciones.map((o,i)=>`<div class="ing" data-op="${i}" style="grid-template-columns:1fr 90px auto"><input class="input" data-f="n" value="${escH(o.nombre)}" placeholder="Ej. Pollo"><input class="input" data-f="p" type="number" step="0.5" min="0" value="${+o.precio||0}"><div style="display:flex;gap:4px"><button class="mini-btn" data-up ${i?'':'disabled'}>↑</button><button class="mini-btn" data-del>✕</button></div></div>`).join('')}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="mini-btn" id="o-add">+ Opción</button>${salsas.length?'<button class="mini-btn" id="o-salsas">Traer las salsas del recetario</button>':''}</div></div>
+      <div class="sheet-section"><div class="field-lbl">Aplica a familias completas</div><div class="chips">${familias.map(f=>`<button class="chip ${c.categorias.includes(f)?'active':''}" data-fam="${escH(f)}">${escH(f)}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="field-lbl">… o a platos sueltos</div><input class="input" id="o-q" placeholder="Buscar plato" value="${escH(q)}" style="margin-bottom:6px">
+        <div class="chips" style="max-height:220px;overflow:auto">${platos.map(r=>`<button class="chip ${c.recetas.includes(r.id)?'active':''}" data-rec="${r.id}">${escH(r.nombre)}</button>`).join('')}</div></div>
+      <div class="sheet-section"><div class="grid2">${ed?'<button class="btn ghost" id="o-del" style="color:var(--secondary)">Eliminar</button>':'<button class="btn ghost" id="o-cancel">Atrás</button>'}<button class="btn primary" id="o-save"><span class="material-symbols-outlined">save</span>Guardar</button></div></div>`;
+    const leer=()=>{c.nombre=$('#o-nom').value.trim();$$('#sheet-body [data-op]').forEach(row=>{const o=c.opciones[+row.dataset.op];o.nombre=row.querySelector('[data-f=n]').value.trim();o.precio=Math.max(0,Number(row.querySelector('[data-f=p]').value)||0)})};
+    $('#o-obl').onclick=()=>{leer();c.obligatorio=!c.obligatorio;draw()};
+    $('#o-mul').onclick=()=>{leer();c.multiple=!c.multiple;draw()};
+    $('#o-act').onclick=()=>{leer();c.activo=c.activo===false;draw()};
+    $('#o-add').onclick=()=>{leer();c.opciones.push({nombre:'',precio:0});draw();const ins=$$('#sheet-body [data-op] [data-f=n]');ins[ins.length-1]?.focus()};
+    if($('#o-salsas'))$('#o-salsas').onclick=()=>{leer();const ya=new Set(c.opciones.map(o=>o.nombre.toLowerCase()));c.opciones=c.opciones.filter(o=>o.nombre);salsas.forEach(r=>{if(!ya.has(r.nombre.toLowerCase()))c.opciones.push({nombre:r.nombre,precio:0})});draw()};
+    $$('#sheet-body [data-op]').forEach(row=>{const i=+row.dataset.op;
+      row.querySelector('[data-del]').onclick=()=>{leer();c.opciones.splice(i,1);draw()};
+      row.querySelector('[data-up]').onclick=()=>{leer();if(i){const t=c.opciones[i-1];c.opciones[i-1]=c.opciones[i];c.opciones[i]=t;draw()}};});
+    $$('#sheet-body [data-fam]').forEach(b=>b.onclick=()=>{leer();const f=b.dataset.fam;c.categorias=c.categorias.includes(f)?c.categorias.filter(x=>x!==f):[...c.categorias,f];draw()});
+    $$('#sheet-body [data-rec]').forEach(b=>b.onclick=()=>{leer();const id=b.dataset.rec;c.recetas=c.recetas.includes(id)?c.recetas.filter(x=>x!==id):[...c.recetas,id];draw()});
+    $('#o-q').oninput=e=>{leer();q=e.target.value;draw();const el=$('#o-q');el.focus();el.setSelectionRange(q.length,q.length)};
+    if($('#o-cancel'))$('#o-cancel').onclick=closeSheet;
+    if($('#o-del'))$('#o-del').onclick=async()=>{if(!confirm('¿Eliminar el grupo «'+g.nombre+'»? El POS dejará de preguntarlo.'))return;const{error}=await sb.from('inv_opciones').delete().eq('id',g.id);if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadOpciones();render();toast('Grupo eliminado','warn')};
+    $('#o-save').onclick=async()=>{leer();c.opciones=c.opciones.filter(o=>o.nombre);
+      if(!c.nombre){toast('Ponle nombre al grupo','warn');return}if(!c.opciones.length){toast('Agrega al menos una opción','warn');return}
+      if(!c.categorias.length&&!c.recetas.length&&!confirm('No está asignado a ningún plato ni familia: el POS no lo mostrará. ¿Guardar igual?'))return;
+      const payload={marca_id:MARCA,nombre:c.nombre,obligatorio:!!c.obligatorio,multiple:!!c.multiple,activo:c.activo!==false,opciones:c.opciones,categorias:c.categorias,recetas:c.recetas,orden:+c.orden||0,updated_at:nowISO()};
+      const{error}=ed?await sb.from('inv_opciones').update(payload).eq('id',g.id):await sb.from('inv_opciones').insert(payload);
+      if(error){toast('Atrás: '+error.message,'err');return}closeSheet();await loadOpciones();render();toast('Servido · el POS ya lo pregunta','ok')};
+  };draw();openSheet();
+}
+
 /* ====== MENÚS ====== */
 function menuCosto(m){return (Array.isArray(m.items)?m.items:[]).reduce((a,it)=>{const r=state.recetas.find(x=>x.id===it.receta_id);return a+(r?costoPorcion(r):0)},0)}
 function renderMenus(){
@@ -359,7 +418,7 @@ function imprimirFicha(r){const factor=escala/porciones(r);
   const w=window.open('','_blank');w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),400);
 }
 
-function nuevo(){if(state.view==='menus')editarMenu(null);else editarReceta(null)}
+function nuevo(){if(state.view==='adicionales')editarOpcion(null);else if(state.view==='menus')editarMenu(null);else editarReceta(null)}
 function subscribe(){if(state.channel)sb.removeChannel(state.channel);state.channel=sb.channel('rec_'+MARCA).on('postgres_changes',{event:'*',schema:'public',table:'inv_recetas',filter:'marca_id=eq.'+MARCA},async()=>{await loadRecetas();render()}).subscribe()}
 $('#sheet-close').addEventListener('click',closeSheet);$('#backdrop').addEventListener('click',closeSheet);$('#h-add').addEventListener('click',nuevo);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
