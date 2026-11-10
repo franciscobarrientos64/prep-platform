@@ -279,7 +279,11 @@ async function loadRol(){
 async function loadThetalk(){const{data}=await sb.from('lb_thetalk').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false});state.thetalk=data||[]}
 async function loadBriefings(){const{data}=await sb.from('lb_briefings').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(60);state.briefings=data||[]}
 async function loadEventualidades(){const{data}=await sb.from('lb_eventualidades').select('*').eq('local_id',LOCAL).order('fecha',{ascending:false}).order('created_at',{ascending:false}).limit(80);state.eventualidades=data||[]}
-async function loadAll(){await Promise.all([loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol(),loadJS(),loadLocales(),loadMinutas()]);render();subscribe();$('#boot').classList.add('gone')}
+/* Secciones apagadas para el cliente en /prep (prep_marca_features, modulo 'libro'). En el catálogo
+   Procedimientos se llama 'sops'. Sin fila = encendida. */
+async function loadPlanLibro(){try{const{data}=await sb.from('prep_marca_features').select('feature,activo').eq('marca_id',MARCA).eq('modulo','libro');
+  state.apagadas=(data||[]).filter(x=>x.activo===false).map(x=>x.feature==='sops'?'procedimientos':x.feature)}catch(e){state.apagadas=[]}}
+async function loadAll(){await Promise.all([loadPlanLibro(),loadPosts(),loadChecklists(),loadRuns(),loadBitacora(),loadLecturas(),loadRecetario(),loadExamenes(),loadEquipo(),loadEventos(),loadExamPanel(),loadThetalk(),loadBriefings(),loadEventualidades(),loadCursosCasa(),loadRol(),loadJS(),loadLocales(),loadMinutas()]);render();subscribe();$('#boot').classList.add('gone')}
 
 function render(){
   const pend=state.checklists.filter(c=>!runCompleto(c)).length;
@@ -289,7 +293,8 @@ function render(){
   const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu'],['jefeservicio','Jefe de Servicio','supervisor_account'],['minutas','Minutas','summarize']];
   // "Inicio" (las secciones en cuadrados) lo ve todo el mundo; el resto según los formatos del rol
   // Minutas: las lee todo el equipo (no depende de los formatos del rol); solo el super admin edita
-  const secciones=state.formatos?TABS.filter(t=>t[0]==='minutas'||state.formatos.includes(t[0])):TABS;
+  const plan=TABS.filter(t=>!(state.apagadas||[]).includes(t[0]));
+  const secciones=state.formatos?plan.filter(t=>t[0]==='minutas'||state.formatos.includes(t[0])):plan;
   const visibles=[['inicio','Inicio','apps']].concat(secciones);
   if(visibles.length&&!visibles.some(t=>t[0]===state.view))state.view=visibles[0][0];
   $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}" title="${l}" style="--ac:${k==='inicio'?'var(--ink)':(SEC_INFO[k]||[0,'#1e5af9'])[1]}${(SEC_INFO[k]||[])[1]==='#ffcc00'?';--ic:var(--ink)':''}"><span class="material-symbols-outlined">${i}</span><span>${l}</span></button>`).join('');
