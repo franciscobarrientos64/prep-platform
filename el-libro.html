@@ -129,6 +129,11 @@ textarea.input{min-height:120px;resize:vertical}
 .ltile .bd{margin-top:auto;align-self:flex-start;font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1.5px solid var(--outline);background:var(--amber-soft)}
 .ltile .bd.red{background:var(--secondary);color:#fff}
 .ltile.dest{background:var(--ink);color:var(--bg)}.ltile.dest .ds{opacity:.75}
+/* Sección fuera del plan del cliente: se ve, pero apagada y sin acceso */
+.ltile.off,.tab.off{filter:grayscale(1);opacity:.45;box-shadow:none;cursor:not-allowed}
+.ltile.off:hover,.ltile.off:active,.tab.off:hover,.tab.off:active{transform:none;box-shadow:none}
+.ltile .lock,.tab .lock{position:absolute;top:10px;right:8px;font-size:16px!important;color:var(--ink)!important;opacity:.8}
+.tab .lock{top:8px;right:5px;font-size:13px!important}
 @media(max-width:420px){.ltgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ltile{padding:14px 10px 10px}.ltile .ico{font-size:28px}.ltile .nm{font-size:13.5px}}
 /* Jefe de Servicio */
 .jsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
@@ -293,13 +298,14 @@ function render(){
   const TABS=[['tablon','Tablón','campaign'],['equipo','Equipo','groups'],['procedimientos','Procedimientos','menu_book'],['recetario','Recetario','restaurant_menu'],['plantillas','Plantillas','library_books'],['cursos','Cursos','school'],['examenes','Exámenes','quiz'],['briefing','Briefing','flag'],['checklists','Checklists','checklist'],['eventualidades','Eventualidades','report'],['calendario','Calendario','calendar_month'],['thetalk','The Talk','forum'],['politicas','Políticas','gavel'],['bitacora','Bitácora','history_edu'],['jefeservicio','Jefe de Servicio','supervisor_account'],['minutas','Minutas','summarize']];
   // "Inicio" (las secciones en cuadrados) lo ve todo el mundo; el resto según los formatos del rol
   // Minutas: las lee todo el equipo (no depende de los formatos del rol); solo el super admin edita
-  const plan=TABS.filter(t=>!(state.apagadas||[]).includes(t[0]));
-  const secciones=state.formatos?plan.filter(t=>t[0]==='minutas'||state.formatos.includes(t[0])):plan;
-  const visibles=[['inicio','Inicio','apps']].concat(secciones);
-  if(visibles.length&&!visibles.some(t=>t[0]===state.view))state.view=visibles[0][0];
-  $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}" data-v="${k}" title="${l}" style="--ac:${k==='inicio'?'var(--ink)':(SEC_INFO[k]||[0,'#1e5af9'])[1]}${(SEC_INFO[k]||[])[1]==='#ffcc00'?';--ic:var(--ink)':''}"><span class="material-symbols-outlined">${i}</span><span>${l}</span></button>`).join('');
+  // Las secciones apagadas para el cliente en /prep se muestran, pero grises y sin acceso
+  const off=k=>(state.apagadas||[]).includes(k);
+  const secciones=state.formatos?TABS.filter(t=>t[0]==='minutas'||state.formatos.includes(t[0])):TABS;
+  const visibles=[['inicio','Inicio','apps']].concat(secciones.filter(t=>!off(t[0])),secciones.filter(t=>off(t[0])));
+  if(!visibles.some(t=>t[0]===state.view&&!off(t[0])))state.view='inicio';
+  $('#tabs').innerHTML=visibles.map(([k,l,i])=>`<button class="tab ${state.view===k?'active':''}${off(k)?' off':''}" data-v="${k}" title="${off(k)?l+' · no incluido en tu plan':l}" style="--ac:${k==='inicio'?'var(--ink)':(SEC_INFO[k]||[0,'#1e5af9'])[1]}${(SEC_INFO[k]||[])[1]==='#ffcc00'?';--ic:var(--ink)':''}"><span class="material-symbols-outlined">${i}</span><span>${l}</span>${off(k)?'<span class="material-symbols-outlined lock">lock</span>':''}</button>`).join('');
   const act=$('#tabs .tab.active');if(act)act.scrollIntoView({block:'nearest',inline:'nearest'});
-  $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.view=b.dataset.v;state.cat='todas';render()});
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>{if(off(b.dataset.v)){toast('Esta sección no está incluida en tu plan','warn');return}state.view=b.dataset.v;state.cat='todas';render()});
   $('#h-add-l').textContent={inicio:'',jefeservicio:'',minutas:'',tablon:'Comunicado',procedimientos:'Procedimiento',recetario:'',plantillas:'',examenes:'Examen',checklists:'Checklist',calendario:'Evento',thetalk:'The Talk',equipo:'',politicas:'',briefing:'Briefing',eventualidades:'Eventualidad',bitacora:'Bitácora'}[state.view];
   const HIDEADD=['inicio','jefeservicio','minutas','equipo','politicas','recetario','plantillas','cursos'];
   $('#h-add').style.display=(!state.esAdmin||HIDEADD.includes(state.view))?'none':'';
@@ -1107,10 +1113,13 @@ function tileBadge(k){
   return null;
 }
 function renderInicio(secciones){
+  secciones=secciones.filter(t=>t[0]!=='inicio');secciones=secciones.filter(t=>!(state.apagadas||[]).includes(t[0])).concat(secciones.filter(t=>(state.apagadas||[]).includes(t[0])));
   $('#screen').innerHTML=`<div class="lt-intro">Todo El Libro en un lugar. Toca una sección para entrar.</div>
    <div class="ltgrid">${secciones.map(([k,l,i])=>{const inf=SEC_INFO[k]||['','#1e5af9'],b=tileBadge(k);
+     const o=(state.apagadas||[]).includes(k);
+     if(o)return `<button class="ltile off" data-sec="${k}" data-off="1" style="--ac:${inf[1]}" title="No incluido en tu plan"><span class="material-symbols-outlined lock">lock</span><span class="material-symbols-outlined ico">${i}</span><div class="nm">${l}</div><div class="ds">No incluido en tu plan</div></button>`;
      return `<button class="ltile${k==='jefeservicio'?' dest':''}" data-sec="${k}" style="--ac:${inf[1]}"><span class="material-symbols-outlined ico">${i}</span><div class="nm">${l}</div><div class="ds">${inf[0]}</div>${b?`<span class="bd ${b[1]}">${b[0]}</span>`:''}</button>`}).join('')}</div>`;
-  $$('#screen [data-sec]').forEach(b=>b.onclick=()=>{state.view=b.dataset.sec;state.cat='todas';render();window.scrollTo(0,0)});
+  $$('#screen [data-sec]').forEach(b=>b.onclick=()=>{if(b.dataset.off){toast('Esta sección no está incluida en tu plan','warn');return}state.view=b.dataset.sec;state.cat='todas';render();window.scrollTo(0,0)});
 }
 
 /* ---------- Jefe de Servicio (corporativo: va por marca, no por sede) ----------
